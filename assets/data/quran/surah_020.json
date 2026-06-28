@@ -1,0 +1,684 @@
+﻿{
+    "number":  20,
+    "name":  "سُورَةُ طه",
+    "englishName":  "Taa-Haa",
+    "numberOfAyahs":  135,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ طه",
+                      "translation":  "Thaahaa."
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "مَآ أَنزَلْنَا عَلَيْكَ ٱلْقُرْءَانَ لِتَشْقَىٰٓ",
+                      "translation":  "Kami tidak menurunkan Al Quran ini kepadamu agar kamu menjadi susah;"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "إِلَّا تَذْكِرَةًۭ لِّمَن يَخْشَىٰ",
+                      "translation":  "tetapi sebagai peringatan bagi orang yang takut (kepada Allah),"
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "تَنزِيلًۭا مِّمَّنْ خَلَقَ ٱلْأَرْضَ وَٱلسَّمَٰوَٰتِ ٱلْعُلَى",
+                      "translation":  "yaitu diturunkan dari Allah yang menciptakan bumi dan langit yang tinggi."
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "ٱلرَّحْمَٰنُ عَلَى ٱلْعَرْشِ ٱسْتَوَىٰ",
+                      "translation":  "(Yaitu) Tuhan Yang Maha Pemurah. Yang bersemayam di atas \u0027Arsy."
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "لَهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ وَمَا بَيْنَهُمَا وَمَا تَحْتَ ٱلثَّرَىٰ",
+                      "translation":  "Kepunyaan-Nya-lah semua yang ada di langit, semua yang di bumi, semua yang di antara keduanya dan semua yang di bawah tanah."
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "وَإِن تَجْهَرْ بِٱلْقَوْلِ فَإِنَّهُۥ يَعْلَمُ ٱلسِّرَّ وَأَخْفَى",
+                      "translation":  "Dan jika kamu mengeraskan ucapanmu, maka sesungguhnya Dia mengetahui rahasia dan yang lebih tersembunyi."
+                  },
+                  {
+                      "numberInSurah":  8,
+                      "arabic":  "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ۖ لَهُ ٱلْأَسْمَآءُ ٱلْحُسْنَىٰ",
+                      "translation":  "Dialah Allah, tidak ada Tuhan (yang berhak disembah) melainkan Dia. Dia mempunyai al asmaaul husna (nama-nama yang baik),"
+                  },
+                  {
+                      "numberInSurah":  9,
+                      "arabic":  "وَهَلْ أَتَىٰكَ حَدِيثُ مُوسَىٰٓ",
+                      "translation":  "Apakah telah sampai kepadamu kisah Musa?"
+                  },
+                  {
+                      "numberInSurah":  10,
+                      "arabic":  "إِذْ رَءَا نَارًۭا فَقَالَ لِأَهْلِهِ ٱمْكُثُوٓا۟ إِنِّىٓ ءَانَسْتُ نَارًۭا لَّعَلِّىٓ ءَاتِيكُم مِّنْهَا بِقَبَسٍ أَوْ أَجِدُ عَلَى ٱلنَّارِ هُدًۭى",
+                      "translation":  "Ketika ia melihat api, lalu berkatalah ia kepada keluarganya: \"Tinggallah kamu (di sini), sesungguhnya aku melihat api, mudah-mudahan aku dapat membawa sedikit daripadanya kepadamu atau aku akan mendapat petunjuk di tempat api itu\"."
+                  },
+                  {
+                      "numberInSurah":  11,
+                      "arabic":  "فَلَمَّآ أَتَىٰهَا نُودِىَ يَٰمُوسَىٰٓ",
+                      "translation":  "Maka ketika ia datang ke tempat api itu ia dipanggil: \"Hai Musa."
+                  },
+                  {
+                      "numberInSurah":  12,
+                      "arabic":  "إِنِّىٓ أَنَا۠ رَبُّكَ فَٱخْلَعْ نَعْلَيْكَ ۖ إِنَّكَ بِٱلْوَادِ ٱلْمُقَدَّسِ طُوًۭى",
+                      "translation":  "Sesungguhnya Aku inilah Tuhanmu, maka tanggalkanlah kedua terompahmu; sesungguhnya kamu berada dilembah yang suci, Thuwa."
+                  },
+                  {
+                      "numberInSurah":  13,
+                      "arabic":  "وَأَنَا ٱخْتَرْتُكَ فَٱسْتَمِعْ لِمَا يُوحَىٰٓ",
+                      "translation":  "Dan Aku telah memilih kamu, maka dengarkanlah apa yang akan diwahyukan (kepadamu)."
+                  },
+                  {
+                      "numberInSurah":  14,
+                      "arabic":  "إِنَّنِىٓ أَنَا ٱللَّهُ لَآ إِلَٰهَ إِلَّآ أَنَا۠ فَٱعْبُدْنِى وَأَقِمِ ٱلصَّلَوٰةَ لِذِكْرِىٓ",
+                      "translation":  "Sesungguhnya Aku ini adalah Allah, tidak ada Tuhan (yang hak) selain Aku, maka sembahlah Aku dan dirikanlah shalat untuk mengingat Aku."
+                  },
+                  {
+                      "numberInSurah":  15,
+                      "arabic":  "إِنَّ ٱلسَّاعَةَ ءَاتِيَةٌ أَكَادُ أُخْفِيهَا لِتُجْزَىٰ كُلُّ نَفْسٍۭ بِمَا تَسْعَىٰ",
+                      "translation":  "Segungguhnya hari kiamat itu akan datang Aku merahasiakan (waktunya) agar supaya tiap-tiap diri itu dibalas dengan apa yang ia usahakan."
+                  },
+                  {
+                      "numberInSurah":  16,
+                      "arabic":  "فَلَا يَصُدَّنَّكَ عَنْهَا مَن لَّا يُؤْمِنُ بِهَا وَٱتَّبَعَ هَوَىٰهُ فَتَرْدَىٰ",
+                      "translation":  "Maka sekali-kali janganlah kamu dipalingkan daripadanya oleh orang yang tidak beriman kepadanya dan oleh orang yang mengikuti hawa nafsunya, yang menyebabkan kamu jadi binasa\"."
+                  },
+                  {
+                      "numberInSurah":  17,
+                      "arabic":  "وَمَا تِلْكَ بِيَمِينِكَ يَٰمُوسَىٰ",
+                      "translation":  "Apakah itu yang di tangan kananmu, hai Musa?"
+                  },
+                  {
+                      "numberInSurah":  18,
+                      "arabic":  "قَالَ هِىَ عَصَاىَ أَتَوَكَّؤُا۟ عَلَيْهَا وَأَهُشُّ بِهَا عَلَىٰ غَنَمِى وَلِىَ فِيهَا مَـَٔارِبُ أُخْرَىٰ",
+                      "translation":  "Berkata Musa: \"Ini adalah tongkatku, aku bertelekan padanya, dan aku pukul (daun) dengannya untuk kambingku, dan bagiku ada lagi keperluan yang lain padanya\"."
+                  },
+                  {
+                      "numberInSurah":  19,
+                      "arabic":  "قَالَ أَلْقِهَا يَٰمُوسَىٰ",
+                      "translation":  "Allah berfirman: \"Lemparkanlah ia, hai Musa!\""
+                  },
+                  {
+                      "numberInSurah":  20,
+                      "arabic":  "فَأَلْقَىٰهَا فَإِذَا هِىَ حَيَّةٌۭ تَسْعَىٰ",
+                      "translation":  "Lalu dilemparkannyalah tongkat itu, maka tiba-tiba ia menjadi seekor ular yang merayap dengan cepat."
+                  },
+                  {
+                      "numberInSurah":  21,
+                      "arabic":  "قَالَ خُذْهَا وَلَا تَخَفْ ۖ سَنُعِيدُهَا سِيرَتَهَا ٱلْأُولَىٰ",
+                      "translation":  "Allah berfirman: \"Peganglah ia dan jangan takut, Kami akan mengembalikannya kepada keadaannya semula,"
+                  },
+                  {
+                      "numberInSurah":  22,
+                      "arabic":  "وَٱضْمُمْ يَدَكَ إِلَىٰ جَنَاحِكَ تَخْرُجْ بَيْضَآءَ مِنْ غَيْرِ سُوٓءٍ ءَايَةً أُخْرَىٰ",
+                      "translation":  "dan kepitkanlah tanganmu ke ketiakmu, niscaya ia ke luar menjadi putih cemerlang tanpa cacad, sebagai mukjizat yang lain (pula),"
+                  },
+                  {
+                      "numberInSurah":  23,
+                      "arabic":  "لِنُرِيَكَ مِنْ ءَايَٰتِنَا ٱلْكُبْرَى",
+                      "translation":  "untuk Kami perlihatkan kepadamu sebahagian dari tanda-tanda kekuasaan Kami yang sangat besar,"
+                  },
+                  {
+                      "numberInSurah":  24,
+                      "arabic":  "ٱذْهَبْ إِلَىٰ فِرْعَوْنَ إِنَّهُۥ طَغَىٰ",
+                      "translation":  "Pergilah kepada Fir\u0027aun; sesungguhnya ia telah melampaui batas\"."
+                  },
+                  {
+                      "numberInSurah":  25,
+                      "arabic":  "قَالَ رَبِّ ٱشْرَحْ لِى صَدْرِى",
+                      "translation":  "Berkata Musa: \"Ya Tuhanku, lapangkanlah untukku dadaku,"
+                  },
+                  {
+                      "numberInSurah":  26,
+                      "arabic":  "وَيَسِّرْ لِىٓ أَمْرِى",
+                      "translation":  "dan mudahkanlah untukku urusanku,"
+                  },
+                  {
+                      "numberInSurah":  27,
+                      "arabic":  "وَٱحْلُلْ عُقْدَةًۭ مِّن لِّسَانِى",
+                      "translation":  "dan lepaskanlah kekakuan dari lidahku,"
+                  },
+                  {
+                      "numberInSurah":  28,
+                      "arabic":  "يَفْقَهُوا۟ قَوْلِى",
+                      "translation":  "supaya mereka mengerti perkataanku,"
+                  },
+                  {
+                      "numberInSurah":  29,
+                      "arabic":  "وَٱجْعَل لِّى وَزِيرًۭا مِّنْ أَهْلِى",
+                      "translation":  "dan jadikanlah untukku seorang pembantu dari keluargaku,"
+                  },
+                  {
+                      "numberInSurah":  30,
+                      "arabic":  "هَٰرُونَ أَخِى",
+                      "translation":  "(yaitu) Harun, saudaraku,"
+                  },
+                  {
+                      "numberInSurah":  31,
+                      "arabic":  "ٱشْدُدْ بِهِۦٓ أَزْرِى",
+                      "translation":  "teguhkanlah dengan dia kekuatanku,"
+                  },
+                  {
+                      "numberInSurah":  32,
+                      "arabic":  "وَأَشْرِكْهُ فِىٓ أَمْرِى",
+                      "translation":  "dan jadikankanlah dia sekutu dalam urusanku,"
+                  },
+                  {
+                      "numberInSurah":  33,
+                      "arabic":  "كَىْ نُسَبِّحَكَ كَثِيرًۭا",
+                      "translation":  "supaya kami banyak bertasbih kepada Engkau,"
+                  },
+                  {
+                      "numberInSurah":  34,
+                      "arabic":  "وَنَذْكُرَكَ كَثِيرًا",
+                      "translation":  "dan banyak mengingat Engkau."
+                  },
+                  {
+                      "numberInSurah":  35,
+                      "arabic":  "إِنَّكَ كُنتَ بِنَا بَصِيرًۭا",
+                      "translation":  "Sesungguhnya Engkau adalah Maha Melihat (keadaan) kami\"."
+                  },
+                  {
+                      "numberInSurah":  36,
+                      "arabic":  "قَالَ قَدْ أُوتِيتَ سُؤْلَكَ يَٰمُوسَىٰ",
+                      "translation":  "Allah berfirman: \"Sesungguhnya telah diperkenankan permintaanmu, hai Musa\"."
+                  },
+                  {
+                      "numberInSurah":  37,
+                      "arabic":  "وَلَقَدْ مَنَنَّا عَلَيْكَ مَرَّةً أُخْرَىٰٓ",
+                      "translation":  "Dan sesungguhnya Kami telah memberi nikmat kepadamu pada kali yang lain,"
+                  },
+                  {
+                      "numberInSurah":  38,
+                      "arabic":  "إِذْ أَوْحَيْنَآ إِلَىٰٓ أُمِّكَ مَا يُوحَىٰٓ",
+                      "translation":  "yaitu ketika Kami mengilhamkan kepada ibumu suatu yang diilhamkan,"
+                  },
+                  {
+                      "numberInSurah":  39,
+                      "arabic":  "أَنِ ٱقْذِفِيهِ فِى ٱلتَّابُوتِ فَٱقْذِفِيهِ فِى ٱلْيَمِّ فَلْيُلْقِهِ ٱلْيَمُّ بِٱلسَّاحِلِ يَأْخُذْهُ عَدُوٌّۭ لِّى وَعَدُوٌّۭ لَّهُۥ ۚ وَأَلْقَيْتُ عَلَيْكَ مَحَبَّةًۭ مِّنِّى وَلِتُصْنَعَ عَلَىٰ عَيْنِىٓ",
+                      "translation":  "Yaitu: \"Letakkanlah ia (Musa) didalam peti, kemudian lemparkanlah ia ke sungai (Nil), maka pasti sungai itu membawanya ke tepi, supaya diambil oleh (Fir\u0027aun) musuh-Ku dan musuhnya. Dan Aku telah melimpahkan kepadamu kasih sayang yang datang dari-Ku; dan supaya kamu diasuh di bawah pengawasan-Ku,"
+                  },
+                  {
+                      "numberInSurah":  40,
+                      "arabic":  "إِذْ تَمْشِىٓ أُخْتُكَ فَتَقُولُ هَلْ أَدُلُّكُمْ عَلَىٰ مَن يَكْفُلُهُۥ ۖ فَرَجَعْنَٰكَ إِلَىٰٓ أُمِّكَ كَىْ تَقَرَّ عَيْنُهَا وَلَا تَحْزَنَ ۚ وَقَتَلْتَ نَفْسًۭا فَنَجَّيْنَٰكَ مِنَ ٱلْغَمِّ وَفَتَنَّٰكَ فُتُونًۭا ۚ فَلَبِثْتَ سِنِينَ فِىٓ أَهْلِ مَدْيَنَ ثُمَّ جِئْتَ عَلَىٰ قَدَرٍۢ يَٰمُوسَىٰ",
+                      "translation":  "(yaitu) ketika saudaramu yang perempuan berjalan, lalu ia berkata kepada (keluarga Fir\u0027aun): \"Bolehkah saya menunjukkan kepadamu orang yang akan memeliharanya?\" Maka Kami mengembalikanmu kepada ibumu, agar senang hatinya dan tidak berduka cita. Dan kamu pernah membunuh seorang manusia, lalu Kami selamatkan kamu dari kesusahan dan Kami telah mencobamu dengan beberapa cobaan; maka kamu tinggal beberapa tahun diantara penduduk Madyan, kemudian kamu datang menurut waktu yang ditetapkan hai Musa,"
+                  },
+                  {
+                      "numberInSurah":  41,
+                      "arabic":  "وَٱصْطَنَعْتُكَ لِنَفْسِى",
+                      "translation":  "dan Aku telah memilihmu untuk diri-Ku."
+                  },
+                  {
+                      "numberInSurah":  42,
+                      "arabic":  "ٱذْهَبْ أَنتَ وَأَخُوكَ بِـَٔايَٰتِى وَلَا تَنِيَا فِى ذِكْرِى",
+                      "translation":  "Pergilah kamu beserta saudaramu dengan membawa ayat-ayat-Ku, dan janganlah kamu berdua lalai dalam mengingat-Ku;"
+                  },
+                  {
+                      "numberInSurah":  43,
+                      "arabic":  "ٱذْهَبَآ إِلَىٰ فِرْعَوْنَ إِنَّهُۥ طَغَىٰ",
+                      "translation":  "Pergilah kamu berdua kepada Fir\u0027aun, sesungguhnya dia telah melampaui batas;"
+                  },
+                  {
+                      "numberInSurah":  44,
+                      "arabic":  "فَقُولَا لَهُۥ قَوْلًۭا لَّيِّنًۭا لَّعَلَّهُۥ يَتَذَكَّرُ أَوْ يَخْشَىٰ",
+                      "translation":  "maka berbicaralah kamu berdua kepadanya dengan kata-kata yang lemah lembut, mudah-mudahan ia ingat atau takut\"."
+                  },
+                  {
+                      "numberInSurah":  45,
+                      "arabic":  "قَالَا رَبَّنَآ إِنَّنَا نَخَافُ أَن يَفْرُطَ عَلَيْنَآ أَوْ أَن يَطْغَىٰ",
+                      "translation":  "Berkatalah mereka berdua: \"Ya Tuhan kami, sesungguhnya kami khawatir bahwa ia segera menyiksa kami atau akan bertambah melampaui batas\"."
+                  },
+                  {
+                      "numberInSurah":  46,
+                      "arabic":  "قَالَ لَا تَخَافَآ ۖ إِنَّنِى مَعَكُمَآ أَسْمَعُ وَأَرَىٰ",
+                      "translation":  "Allah berfirman: \"Janganlah kamu berdua khawatir, sesungguhnya Aku beserta kamu berdua, Aku mendengar dan melihat\"."
+                  },
+                  {
+                      "numberInSurah":  47,
+                      "arabic":  "فَأْتِيَاهُ فَقُولَآ إِنَّا رَسُولَا رَبِّكَ فَأَرْسِلْ مَعَنَا بَنِىٓ إِسْرَٰٓءِيلَ وَلَا تُعَذِّبْهُمْ ۖ قَدْ جِئْنَٰكَ بِـَٔايَةٍۢ مِّن رَّبِّكَ ۖ وَٱلسَّلَٰمُ عَلَىٰ مَنِ ٱتَّبَعَ ٱلْهُدَىٰٓ",
+                      "translation":  "Maka datanglah kamu berdua kepadanya (Fir\u0027aun) dan katakanlah: \"Sesungguhnya kami berdua adalah utusan Tuhanmu, maka lepaskanlah Bani Israil bersama kami dan janganlah kamu menyiksa mereka. Sesungguhnya kami telah datang kepadamu dengan membawa bukti (atas kerasulan kami) dari Tuhanmu. Dan keselamatan itu dilimpahkan kepada orang yang mengikuti petunjuk."
+                  },
+                  {
+                      "numberInSurah":  48,
+                      "arabic":  "إِنَّا قَدْ أُوحِىَ إِلَيْنَآ أَنَّ ٱلْعَذَابَ عَلَىٰ مَن كَذَّبَ وَتَوَلَّىٰ",
+                      "translation":  "Sesungguhnya telah diwahyukan kepada kami bahwa siksa itu (ditimpakan) atas orang-orang yang mendustakan dan berpaling."
+                  },
+                  {
+                      "numberInSurah":  49,
+                      "arabic":  "قَالَ فَمَن رَّبُّكُمَا يَٰمُوسَىٰ",
+                      "translation":  "Berkata Fir\u0027aun: \"Maka siapakah Tuhanmu berdua, hai Musa?."
+                  },
+                  {
+                      "numberInSurah":  50,
+                      "arabic":  "قَالَ رَبُّنَا ٱلَّذِىٓ أَعْطَىٰ كُلَّ شَىْءٍ خَلْقَهُۥ ثُمَّ هَدَىٰ",
+                      "translation":  "Musa berkata: \"Tuhan kami ialah (Tuhan) yang telah memberikan kepada tiap-tiap sesuatu bentuk kejadiannya, kemudian memberinya petunjuk."
+                  },
+                  {
+                      "numberInSurah":  51,
+                      "arabic":  "قَالَ فَمَا بَالُ ٱلْقُرُونِ ٱلْأُولَىٰ",
+                      "translation":  "Berkata Fir\u0027aun: \"Maka bagaimanakah keadaan umat-umat yang dahulu?\""
+                  },
+                  {
+                      "numberInSurah":  52,
+                      "arabic":  "قَالَ عِلْمُهَا عِندَ رَبِّى فِى كِتَٰبٍۢ ۖ لَّا يَضِلُّ رَبِّى وَلَا يَنسَى",
+                      "translation":  "Musa menjawab: \"Pengetahuan tentang itu ada di sisi Tuhanku, di dalam sebuah kitab, Tuhan kami tidak akan salah dan tidak (pula) lupa;"
+                  },
+                  {
+                      "numberInSurah":  53,
+                      "arabic":  "ٱلَّذِى جَعَلَ لَكُمُ ٱلْأَرْضَ مَهْدًۭا وَسَلَكَ لَكُمْ فِيهَا سُبُلًۭا وَأَنزَلَ مِنَ ٱلسَّمَآءِ مَآءًۭ فَأَخْرَجْنَا بِهِۦٓ أَزْوَٰجًۭا مِّن نَّبَاتٍۢ شَتَّىٰ",
+                      "translation":  "Yang telah menjadikan bagimu bumi sebagai hamparan dan Yang telah menjadikan bagimu di bumi itu jalan-ja]an, dan menurunkan dari langit air hujan. Maka Kami tumbuhkan dengan air hujan itu berjenis-jenis dari tumbuh-tumbuhan yang bermacam-macam."
+                  },
+                  {
+                      "numberInSurah":  54,
+                      "arabic":  "كُلُوا۟ وَٱرْعَوْا۟ أَنْعَٰمَكُمْ ۗ إِنَّ فِى ذَٰلِكَ لَءَايَٰتٍۢ لِّأُو۟لِى ٱلنُّهَىٰ",
+                      "translation":  "Makanlah dan gembalakanlah binatang-binatangmu. Sesungguhnya pada yang demikian itu, terdapat tanda-tanda kekuasaan Allah bagi orang-orang yang berakal."
+                  },
+                  {
+                      "numberInSurah":  55,
+                      "arabic":  "۞ مِنْهَا خَلَقْنَٰكُمْ وَفِيهَا نُعِيدُكُمْ وَمِنْهَا نُخْرِجُكُمْ تَارَةً أُخْرَىٰ",
+                      "translation":  "Dari bumi (tanah) itulah Kami menjadikan kamu dan kepadanya Kami akan mengembalikan kamu dan daripadanya Kami akan mengeluarkan kamu pada kali yang lain,"
+                  },
+                  {
+                      "numberInSurah":  56,
+                      "arabic":  "وَلَقَدْ أَرَيْنَٰهُ ءَايَٰتِنَا كُلَّهَا فَكَذَّبَ وَأَبَىٰ",
+                      "translation":  "Dan sesungguhnya Kami telah perlihatkan kepadanya (Fir\u0027aun) tanda-tanda kekuasaan Kami semuanya maka ia mendustakan dan enggan (menerima kebenaran)."
+                  },
+                  {
+                      "numberInSurah":  57,
+                      "arabic":  "قَالَ أَجِئْتَنَا لِتُخْرِجَنَا مِنْ أَرْضِنَا بِسِحْرِكَ يَٰمُوسَىٰ",
+                      "translation":  "Berkata Fir\u0027aun: \"Adakah kamu datang kepada kami untuk mengusir kami dari negeri kami (ini) dengan sihirmu, hai Musa?"
+                  },
+                  {
+                      "numberInSurah":  58,
+                      "arabic":  "فَلَنَأْتِيَنَّكَ بِسِحْرٍۢ مِّثْلِهِۦ فَٱجْعَلْ بَيْنَنَا وَبَيْنَكَ مَوْعِدًۭا لَّا نُخْلِفُهُۥ نَحْنُ وَلَآ أَنتَ مَكَانًۭا سُوًۭى",
+                      "translation":  "Dan kamipun pasti akan mendatangkan (pula) kepadamu sihir semacam itu, maka buatlah suatu waktu untuk pertemuan antara kami dan kamu, yang kami tidak akan menyalahinya dan tidak (pula) kamu di suatu tempat yang pertengahan (letaknya)."
+                  },
+                  {
+                      "numberInSurah":  59,
+                      "arabic":  "قَالَ مَوْعِدُكُمْ يَوْمُ ٱلزِّينَةِ وَأَن يُحْشَرَ ٱلنَّاسُ ضُحًۭى",
+                      "translation":  "Berkata Musa: \"Waktu untuk pertemuan (kami dengan) kamu itu ialah di hari raya dan hendaklah dikumpulkan manusia pada waktu matahari sepenggalahan naik\"."
+                  },
+                  {
+                      "numberInSurah":  60,
+                      "arabic":  "فَتَوَلَّىٰ فِرْعَوْنُ فَجَمَعَ كَيْدَهُۥ ثُمَّ أَتَىٰ",
+                      "translation":  "Maka Fir\u0027aun meninggalkan (tempat itu), lalu mengatur tipu dayanya, kemudian dia datang."
+                  },
+                  {
+                      "numberInSurah":  61,
+                      "arabic":  "قَالَ لَهُم مُّوسَىٰ وَيْلَكُمْ لَا تَفْتَرُوا۟ عَلَى ٱللَّهِ كَذِبًۭا فَيُسْحِتَكُم بِعَذَابٍۢ ۖ وَقَدْ خَابَ مَنِ ٱفْتَرَىٰ",
+                      "translation":  "Berkata Musa kepada mereka: \"Celakalah kamu, janganlah kamu mengada-adakan kedustaan terhadap Allah, maka Dia membinasakan kamu dengan siksa\". Dan sesungguhnya telah merugi orang yang mengada-adakan kedustaan."
+                  },
+                  {
+                      "numberInSurah":  62,
+                      "arabic":  "فَتَنَٰزَعُوٓا۟ أَمْرَهُم بَيْنَهُمْ وَأَسَرُّوا۟ ٱلنَّجْوَىٰ",
+                      "translation":  "Maka mereka berbantah-bantahan tentang urusan mereka di antara mereka dan mereka merahasiakan percakapan (mereka)."
+                  },
+                  {
+                      "numberInSurah":  63,
+                      "arabic":  "قَالُوٓا۟ إِنْ هَٰذَٰنِ لَسَٰحِرَٰنِ يُرِيدَانِ أَن يُخْرِجَاكُم مِّنْ أَرْضِكُم بِسِحْرِهِمَا وَيَذْهَبَا بِطَرِيقَتِكُمُ ٱلْمُثْلَىٰ",
+                      "translation":  "Mereka berkata: \"Sesungguhnya dua orang ini adalah benar-benar ahli sihir yang hendak mengusir kamu dari negeri kamu dengan sihirnya dan hendak melenyapkan kedudukan kamu yang utama."
+                  },
+                  {
+                      "numberInSurah":  64,
+                      "arabic":  "فَأَجْمِعُوا۟ كَيْدَكُمْ ثُمَّ ٱئْتُوا۟ صَفًّۭا ۚ وَقَدْ أَفْلَحَ ٱلْيَوْمَ مَنِ ٱسْتَعْلَىٰ",
+                      "translation":  "Maka himpunkanlah segala daya (sihir) kamu sekalian, kemudian datanglah dengan berbaris. dan sesungguhnya beruntunglah oran yang menang pada hari ini."
+                  },
+                  {
+                      "numberInSurah":  65,
+                      "arabic":  "قَالُوا۟ يَٰمُوسَىٰٓ إِمَّآ أَن تُلْقِىَ وَإِمَّآ أَن نَّكُونَ أَوَّلَ مَنْ أَلْقَىٰ",
+                      "translation":  "(Setelah mereka berkumpul) mereka berkata: \"Hai Musa (pilihlah), apakah kamu yang melemparkan (dahulu) atau kamikah orang yang mula-mula melemparkan?\""
+                  },
+                  {
+                      "numberInSurah":  66,
+                      "arabic":  "قَالَ بَلْ أَلْقُوا۟ ۖ فَإِذَا حِبَالُهُمْ وَعِصِيُّهُمْ يُخَيَّلُ إِلَيْهِ مِن سِحْرِهِمْ أَنَّهَا تَسْعَىٰ",
+                      "translation":  "Berkata Musa: \"Silahkan kamu sekalian melemparkan\". Maka tiba-tiba tali-tali dan tongkat-tongkat mereka, terbayang kepada Musa seakan-akan ia merayap cepat, lantaran sihir mereka."
+                  },
+                  {
+                      "numberInSurah":  67,
+                      "arabic":  "فَأَوْجَسَ فِى نَفْسِهِۦ خِيفَةًۭ مُّوسَىٰ",
+                      "translation":  "Maka Musa merasa takut dalam hatinya."
+                  },
+                  {
+                      "numberInSurah":  68,
+                      "arabic":  "قُلْنَا لَا تَخَفْ إِنَّكَ أَنتَ ٱلْأَعْلَىٰ",
+                      "translation":  "Kami berkata: \"janganlah kamu takut, sesungguhnya kamulah yang paling unggul (menang)."
+                  },
+                  {
+                      "numberInSurah":  69,
+                      "arabic":  "وَأَلْقِ مَا فِى يَمِينِكَ تَلْقَفْ مَا صَنَعُوٓا۟ ۖ إِنَّمَا صَنَعُوا۟ كَيْدُ سَٰحِرٍۢ ۖ وَلَا يُفْلِحُ ٱلسَّاحِرُ حَيْثُ أَتَىٰ",
+                      "translation":  "Dan lemparkanlah apa yang ada ditangan kananmu, niscaya ia akan menelan apa yang mereka perbuat. \"Sesungguhnya apa yang mereka perbuat itu adalah tipu daya tukang sihir (belaka). Dan tidak akan menang tukang sihir itu, dari mana saja ia datang\"."
+                  },
+                  {
+                      "numberInSurah":  70,
+                      "arabic":  "فَأُلْقِىَ ٱلسَّحَرَةُ سُجَّدًۭا قَالُوٓا۟ ءَامَنَّا بِرَبِّ هَٰرُونَ وَمُوسَىٰ",
+                      "translation":  "Lalu tukang-tukang sihir itu tersungkur dengan bersujud, seraya berkata: \"Kami telah percaya kepada Tuhan Harun dan Musa\"."
+                  },
+                  {
+                      "numberInSurah":  71,
+                      "arabic":  "قَالَ ءَامَنتُمْ لَهُۥ قَبْلَ أَنْ ءَاذَنَ لَكُمْ ۖ إِنَّهُۥ لَكَبِيرُكُمُ ٱلَّذِى عَلَّمَكُمُ ٱلسِّحْرَ ۖ فَلَأُقَطِّعَنَّ أَيْدِيَكُمْ وَأَرْجُلَكُم مِّنْ خِلَٰفٍۢ وَلَأُصَلِّبَنَّكُمْ فِى جُذُوعِ ٱلنَّخْلِ وَلَتَعْلَمُنَّ أَيُّنَآ أَشَدُّ عَذَابًۭا وَأَبْقَىٰ",
+                      "translation":  "Berkata Fir\u0027aun: \"Apakah kamu telah beriman kepadanya (Musa) sebelum aku memberi izin kepadamu sekalian. Sesungguhnya ia adalah pemimpinmu yang mengajarkan sihir kepadamu sekalian. Maka sesungguhnya aku akan memotong tangan dan kaki kamu sekalian dengan bersilang secara bertimbal balik, dan sesungguhnya aku akan menyalib kamu sekalian pada pangkal pohon kurma dan sesungguhnya kamu akan mengetahui siapa di antara kita yang lebih pedih dan lebih kekal siksanya\"."
+                  },
+                  {
+                      "numberInSurah":  72,
+                      "arabic":  "قَالُوا۟ لَن نُّؤْثِرَكَ عَلَىٰ مَا جَآءَنَا مِنَ ٱلْبَيِّنَٰتِ وَٱلَّذِى فَطَرَنَا ۖ فَٱقْضِ مَآ أَنتَ قَاضٍ ۖ إِنَّمَا تَقْضِى هَٰذِهِ ٱلْحَيَوٰةَ ٱلدُّنْيَآ",
+                      "translation":  "Mereka berkata: \"Kami sekali-kali tidak akan mengutamakan kamu daripada bukti-bukti yang nyata (mukjizat), yang telah datang kepada kami dan daripada Tuhan yang telah menciptakan kami; maka putuskanlah apa yang hendak kamu putuskan. Sesungguhnya kamu hanya akan dapat memutuskan pada kehidupan di dunia ini saja."
+                  },
+                  {
+                      "numberInSurah":  73,
+                      "arabic":  "إِنَّآ ءَامَنَّا بِرَبِّنَا لِيَغْفِرَ لَنَا خَطَٰيَٰنَا وَمَآ أَكْرَهْتَنَا عَلَيْهِ مِنَ ٱلسِّحْرِ ۗ وَٱللَّهُ خَيْرٌۭ وَأَبْقَىٰٓ",
+                      "translation":  "Sesungguhnya kami telah beriman kepada Tuhan kami, agar Dia mengampuni kesalahan-kesalahan kami dan sihir yang telah kamu paksakan kepada kami melakukannya. Dan Allah lebih baik (pahala-Nya) dan lebih kekal (azab-Nya)\"."
+                  },
+                  {
+                      "numberInSurah":  74,
+                      "arabic":  "إِنَّهُۥ مَن يَأْتِ رَبَّهُۥ مُجْرِمًۭا فَإِنَّ لَهُۥ جَهَنَّمَ لَا يَمُوتُ فِيهَا وَلَا يَحْيَىٰ",
+                      "translation":  "Sesungguhnya barangsiapa datang kepada Tuhannya dalam keadaan berdosa, maka sesungguhnya baginya neraka Jahannam. Ia tidak mati di dalamnya dan tidak (pula) hidup."
+                  },
+                  {
+                      "numberInSurah":  75,
+                      "arabic":  "وَمَن يَأْتِهِۦ مُؤْمِنًۭا قَدْ عَمِلَ ٱلصَّٰلِحَٰتِ فَأُو۟لَٰٓئِكَ لَهُمُ ٱلدَّرَجَٰتُ ٱلْعُلَىٰ",
+                      "translation":  "Dan barangsiapa datang kepada Tuhannya dalam keadaan beriman, lagi sungguh-sungguh telah beramal saleh, maka mereka itulah orang-orang yang memperoleh tempat-tempat yang tinggi (mulia),"
+                  },
+                  {
+                      "numberInSurah":  76,
+                      "arabic":  "جَنَّٰتُ عَدْنٍۢ تَجْرِى مِن تَحْتِهَا ٱلْأَنْهَٰرُ خَٰلِدِينَ فِيهَا ۚ وَذَٰلِكَ جَزَآءُ مَن تَزَكَّىٰ",
+                      "translation":  "(yaitu) surga \u0027Adn yang mengalir sungai-sungai di bawahnya, mereka kekal di dalamnya. Dan itu adalah balasan bagi orang yang bersih (dari kekafiran dan kemaksiatan)."
+                  },
+                  {
+                      "numberInSurah":  77,
+                      "arabic":  "وَلَقَدْ أَوْحَيْنَآ إِلَىٰ مُوسَىٰٓ أَنْ أَسْرِ بِعِبَادِى فَٱضْرِبْ لَهُمْ طَرِيقًۭا فِى ٱلْبَحْرِ يَبَسًۭا لَّا تَخَٰفُ دَرَكًۭا وَلَا تَخْشَىٰ",
+                      "translation":  "Dan sesungguhnya telah Kami wahyukan kepada Musa: \"Pergilah kamu dengan hamba-hamba-Ku (Bani Israil) di malam hari, maka buatlah untuk mereka jalan yang kering dilaut itu, kamu tak usah khawatir akan tersusul dan tidak usah takut (akan tenggelam)\"."
+                  },
+                  {
+                      "numberInSurah":  78,
+                      "arabic":  "فَأَتْبَعَهُمْ فِرْعَوْنُ بِجُنُودِهِۦ فَغَشِيَهُم مِّنَ ٱلْيَمِّ مَا غَشِيَهُمْ",
+                      "translation":  "Maka Fir\u0027aun dengan bala tentaranya mengejar mereka, lalu mereka ditutup oleh laut yang menenggelamkan mereka."
+                  },
+                  {
+                      "numberInSurah":  79,
+                      "arabic":  "وَأَضَلَّ فِرْعَوْنُ قَوْمَهُۥ وَمَا هَدَىٰ",
+                      "translation":  "Dan Fir\u0027aun telah menyesatkan kaumnya dan tidak memberi petunjuk."
+                  },
+                  {
+                      "numberInSurah":  80,
+                      "arabic":  "يَٰبَنِىٓ إِسْرَٰٓءِيلَ قَدْ أَنجَيْنَٰكُم مِّنْ عَدُوِّكُمْ وَوَٰعَدْنَٰكُمْ جَانِبَ ٱلطُّورِ ٱلْأَيْمَنَ وَنَزَّلْنَا عَلَيْكُمُ ٱلْمَنَّ وَٱلسَّلْوَىٰ",
+                      "translation":  "Hai Bani Israil, sesungguhnya Kami telah menyelamatkan kamu sekalian dari musuhmu, dan Kami telah mengadakan perjanjian dengan kamu sekalian (untuk munajat) di sebelah kanan gunung itu dan Kami telah menurunkan kepada kamu sekalian manna dan salwa."
+                  },
+                  {
+                      "numberInSurah":  81,
+                      "arabic":  "كُلُوا۟ مِن طَيِّبَٰتِ مَا رَزَقْنَٰكُمْ وَلَا تَطْغَوْا۟ فِيهِ فَيَحِلَّ عَلَيْكُمْ غَضَبِى ۖ وَمَن يَحْلِلْ عَلَيْهِ غَضَبِى فَقَدْ هَوَىٰ",
+                      "translation":  "Makanlah di antara rezeki yang baik yang telah Kami berikan kepadamu, dan janganlah melampaui batas padanya, yang menyebabkan kemurkaan-Ku menimpamu. Dan barangsiapa ditimpa oleh kemurkaan-Ku, maka sesungguhnya binasalah ia."
+                  },
+                  {
+                      "numberInSurah":  82,
+                      "arabic":  "وَإِنِّى لَغَفَّارٌۭ لِّمَن تَابَ وَءَامَنَ وَعَمِلَ صَٰلِحًۭا ثُمَّ ٱهْتَدَىٰ",
+                      "translation":  "Dan sesungguhnya Aku Maha Pengampun bagi orang yang bertaubat, beriman, beramal saleh, kemudian tetap di jalan yang benar."
+                  },
+                  {
+                      "numberInSurah":  83,
+                      "arabic":  "۞ وَمَآ أَعْجَلَكَ عَن قَوْمِكَ يَٰمُوسَىٰ",
+                      "translation":  "Mengapa kamu datang lebih cepat daripada kaummu, hai Musa?"
+                  },
+                  {
+                      "numberInSurah":  84,
+                      "arabic":  "قَالَ هُمْ أُو۟لَآءِ عَلَىٰٓ أَثَرِى وَعَجِلْتُ إِلَيْكَ رَبِّ لِتَرْضَىٰ",
+                      "translation":  "Berkata, Musa: \"Itulah mereka sedang menyusuli aku dan aku bersegera kepada-Mu. Ya Tuhanku, agar supaya Engkau ridha (kepadaku)\"."
+                  },
+                  {
+                      "numberInSurah":  85,
+                      "arabic":  "قَالَ فَإِنَّا قَدْ فَتَنَّا قَوْمَكَ مِنۢ بَعْدِكَ وَأَضَلَّهُمُ ٱلسَّامِرِىُّ",
+                      "translation":  "Allah berfirman: \"Maka sesungguhnya Kami telah menguji kaummu sesudah kamu tinggalkan, dan mereka telah disesatkan oleh Samiri."
+                  },
+                  {
+                      "numberInSurah":  86,
+                      "arabic":  "فَرَجَعَ مُوسَىٰٓ إِلَىٰ قَوْمِهِۦ غَضْبَٰنَ أَسِفًۭا ۚ قَالَ يَٰقَوْمِ أَلَمْ يَعِدْكُمْ رَبُّكُمْ وَعْدًا حَسَنًا ۚ أَفَطَالَ عَلَيْكُمُ ٱلْعَهْدُ أَمْ أَرَدتُّمْ أَن يَحِلَّ عَلَيْكُمْ غَضَبٌۭ مِّن رَّبِّكُمْ فَأَخْلَفْتُم مَّوْعِدِى",
+                      "translation":  "Kemudian Musa kembali kepada kaumnya dengan marah dan bersedih hati. Berkata Musa: \"Hai kaumku, bukankah Tuhanmu telah menjanjikan kepadamu suatu janji yang baik? Maka apakah terasa lama masa yang berlalu itu bagimu atau kamu menghendaki agar kemurkaan dari Tuhanmu menimpamu, dan kamu melanggar perjanjianmu dengan aku?\"."
+                  },
+                  {
+                      "numberInSurah":  87,
+                      "arabic":  "قَالُوا۟ مَآ أَخْلَفْنَا مَوْعِدَكَ بِمَلْكِنَا وَلَٰكِنَّا حُمِّلْنَآ أَوْزَارًۭا مِّن زِينَةِ ٱلْقَوْمِ فَقَذَفْنَٰهَا فَكَذَٰلِكَ أَلْقَى ٱلسَّامِرِىُّ",
+                      "translation":  "Mereka berkata: \"Kami sekali-kali tidak melanggar perjanjianmu dengan kemauan kami sendiri, tetapi kami disuruh membawa beban-beban dari perhiasan kaum itu, maka kami telah melemparkannya, dan demikian pula Samiri melemparkannya\","
+                  },
+                  {
+                      "numberInSurah":  88,
+                      "arabic":  "فَأَخْرَجَ لَهُمْ عِجْلًۭا جَسَدًۭا لَّهُۥ خُوَارٌۭ فَقَالُوا۟ هَٰذَآ إِلَٰهُكُمْ وَإِلَٰهُ مُوسَىٰ فَنَسِىَ",
+                      "translation":  "kemudian Samiri mengeluarkan untuk mereka (dari lobang itu) anak lembu yang bertubuh dan bersuara, maka mereka berkata: \"Inilah Tuhanmu dan Tuhan Musa, tetapi Musa telah lupa\"."
+                  },
+                  {
+                      "numberInSurah":  89,
+                      "arabic":  "أَفَلَا يَرَوْنَ أَلَّا يَرْجِعُ إِلَيْهِمْ قَوْلًۭا وَلَا يَمْلِكُ لَهُمْ ضَرًّۭا وَلَا نَفْعًۭا",
+                      "translation":  "Maka apakah mereka tidak memperhatikan bahwa patung anak lembu itu tidak dapat memberi jawaban kepada mereka, dan tidak dapat memberi kemudharatan kepada mereka dan tidak (pula) kemanfaatan?"
+                  },
+                  {
+                      "numberInSurah":  90,
+                      "arabic":  "وَلَقَدْ قَالَ لَهُمْ هَٰرُونُ مِن قَبْلُ يَٰقَوْمِ إِنَّمَا فُتِنتُم بِهِۦ ۖ وَإِنَّ رَبَّكُمُ ٱلرَّحْمَٰنُ فَٱتَّبِعُونِى وَأَطِيعُوٓا۟ أَمْرِى",
+                      "translation":  "Dan sesungguhnya Harun telah berkata kepada mereka sebelumnya: \"Hai kaumku, sesungguhnya kamu hanya diberi cobaan dengan anak lembu. itu dan sesungguhnya Tuhanmu ialah (Tuhan) Yang Maha Pemurah, maka ikutilah aku dan taatilah perintahku\"."
+                  },
+                  {
+                      "numberInSurah":  91,
+                      "arabic":  "قَالُوا۟ لَن نَّبْرَحَ عَلَيْهِ عَٰكِفِينَ حَتَّىٰ يَرْجِعَ إِلَيْنَا مُوسَىٰ",
+                      "translation":  "Mereka menjawab: \"Kami akan tetap menyembah patung anak lembu ini, hingga Musa kembali kepada kami\"."
+                  },
+                  {
+                      "numberInSurah":  92,
+                      "arabic":  "قَالَ يَٰهَٰرُونُ مَا مَنَعَكَ إِذْ رَأَيْتَهُمْ ضَلُّوٓا۟",
+                      "translation":  "Berkata Musa: \"Hai Harun, apa yang menghalangi kamu ketika kamu melihat mereka telah sesat,"
+                  },
+                  {
+                      "numberInSurah":  93,
+                      "arabic":  "أَلَّا تَتَّبِعَنِ ۖ أَفَعَصَيْتَ أَمْرِى",
+                      "translation":  "(sehingga) kamu tidak mengikuti aku? Maka apakah kamu telah (sengaja) mendurhakai perintahku?\""
+                  },
+                  {
+                      "numberInSurah":  94,
+                      "arabic":  "قَالَ يَبْنَؤُمَّ لَا تَأْخُذْ بِلِحْيَتِى وَلَا بِرَأْسِىٓ ۖ إِنِّى خَشِيتُ أَن تَقُولَ فَرَّقْتَ بَيْنَ بَنِىٓ إِسْرَٰٓءِيلَ وَلَمْ تَرْقُبْ قَوْلِى",
+                      "translation":  "Harun menjawab\u0027 \"Hai putera ibuku, janganlah kamu pegang janggutku dan jangan (pula) kepalaku; sesungguhnya aku khawatir bahwa kamu akan berkata (kepadaku): \"Kamu telah memecah antara Bani Israil dan kamu tidak memelihara amanatku\"."
+                  },
+                  {
+                      "numberInSurah":  95,
+                      "arabic":  "قَالَ فَمَا خَطْبُكَ يَٰسَٰمِرِىُّ",
+                      "translation":  "Berkata Musa: \"Apakah yang mendorongmu (berbuat demikian) hai Samiri?\""
+                  },
+                  {
+                      "numberInSurah":  96,
+                      "arabic":  "قَالَ بَصُرْتُ بِمَا لَمْ يَبْصُرُوا۟ بِهِۦ فَقَبَضْتُ قَبْضَةًۭ مِّنْ أَثَرِ ٱلرَّسُولِ فَنَبَذْتُهَا وَكَذَٰلِكَ سَوَّلَتْ لِى نَفْسِى",
+                      "translation":  "Samiri menjawab: \"Aku mengetahui sesuatu yang mereka tidak mengetahuinya, maka aku ambil segenggam dari jejak rasul lalu aku melemparkannya, dan demikianlah nafsuku membujukku\"."
+                  },
+                  {
+                      "numberInSurah":  97,
+                      "arabic":  "قَالَ فَٱذْهَبْ فَإِنَّ لَكَ فِى ٱلْحَيَوٰةِ أَن تَقُولَ لَا مِسَاسَ ۖ وَإِنَّ لَكَ مَوْعِدًۭا لَّن تُخْلَفَهُۥ ۖ وَٱنظُرْ إِلَىٰٓ إِلَٰهِكَ ٱلَّذِى ظَلْتَ عَلَيْهِ عَاكِفًۭا ۖ لَّنُحَرِّقَنَّهُۥ ثُمَّ لَنَنسِفَنَّهُۥ فِى ٱلْيَمِّ نَسْفًا",
+                      "translation":  "Berkata Musa: \"Pergilah kamu, maka sesungguhnya bagimu di dalam kehidupan di dunia ini (hanya dapat) mengatakan: \"Janganlah menyentuh (aku)\". Dan sesungguhnya bagimu hukuman (di akhirat) yang kamu sekali-kali tidak dapat menghindarinya, dan lihatlah tuhanmu itu yang kamu tetap menyembahnya. Sesungguhnya kami akan membakarnya, kemudian kami sungguh-sungguh akan menghamburkannya ke dalam laut (berupa abu yang berserakan)."
+                  },
+                  {
+                      "numberInSurah":  98,
+                      "arabic":  "إِنَّمَآ إِلَٰهُكُمُ ٱللَّهُ ٱلَّذِى لَآ إِلَٰهَ إِلَّا هُوَ ۚ وَسِعَ كُلَّ شَىْءٍ عِلْمًۭا",
+                      "translation":  "Sesungguhnya Tuhanmu hanyalah Allah, yang tidak ada Tuhan selain Dia. Pengetahuan-Nya meliputi segala sesuatu\"."
+                  },
+                  {
+                      "numberInSurah":  99,
+                      "arabic":  "كَذَٰلِكَ نَقُصُّ عَلَيْكَ مِنْ أَنۢبَآءِ مَا قَدْ سَبَقَ ۚ وَقَدْ ءَاتَيْنَٰكَ مِن لَّدُنَّا ذِكْرًۭا",
+                      "translation":  "Demikianlah kami kisahkan kepadamu (Muhammad) sebagian kisah umat yang telah lalu, dan sesungguhnya telah Kami berikan kepadamu dari sisi Kami suatu peringatan (Al Quran)."
+                  },
+                  {
+                      "numberInSurah":  100,
+                      "arabic":  "مَّنْ أَعْرَضَ عَنْهُ فَإِنَّهُۥ يَحْمِلُ يَوْمَ ٱلْقِيَٰمَةِ وِزْرًا",
+                      "translation":  "Barangsiapa berpaling dari pada Al qur\u0027an maka sesungguhnya ia akan memikul dosa yang besar di hari kiamat,"
+                  },
+                  {
+                      "numberInSurah":  101,
+                      "arabic":  "خَٰلِدِينَ فِيهِ ۖ وَسَآءَ لَهُمْ يَوْمَ ٱلْقِيَٰمَةِ حِمْلًۭا",
+                      "translation":  "mereka kekal di dalam keadaan itu. Dan amat buruklah dosa itu sebagai beban bagi mereka di hari kiamat,"
+                  },
+                  {
+                      "numberInSurah":  102,
+                      "arabic":  "يَوْمَ يُنفَخُ فِى ٱلصُّورِ ۚ وَنَحْشُرُ ٱلْمُجْرِمِينَ يَوْمَئِذٍۢ زُرْقًۭا",
+                      "translation":  "(yaitu) di hari (yang di waktu itu) ditiup sangkakala dan Kami akan mengumpulkan pada hari itu orang-orang yang berdosa dengan muka yang biru muram;"
+                  },
+                  {
+                      "numberInSurah":  103,
+                      "arabic":  "يَتَخَٰفَتُونَ بَيْنَهُمْ إِن لَّبِثْتُمْ إِلَّا عَشْرًۭا",
+                      "translation":  "mereka berbisik-bisik di antara mereka: \"Kamu tidak berdiam (di dunia) melainkan hanyalah sepuluh (hari)\""
+                  },
+                  {
+                      "numberInSurah":  104,
+                      "arabic":  "نَّحْنُ أَعْلَمُ بِمَا يَقُولُونَ إِذْ يَقُولُ أَمْثَلُهُمْ طَرِيقَةً إِن لَّبِثْتُمْ إِلَّا يَوْمًۭا",
+                      "translation":  "Kami lebih mengetahui apa yang mereka katakan, ketika berkata orang yang paling lurus jalannya di antara mereka: \"Kamu tidak berdiam (di dunia), melainkan hanyalah sehari saja\"."
+                  },
+                  {
+                      "numberInSurah":  105,
+                      "arabic":  "وَيَسْـَٔلُونَكَ عَنِ ٱلْجِبَالِ فَقُلْ يَنسِفُهَا رَبِّى نَسْفًۭا",
+                      "translation":  "Dan mereka bertanya kepadamu tentang gunung-gunung, maka katakanlah: \"Tuhanku akan menghancurkannya (di hari kiamat) sehancur-hancurnya,"
+                  },
+                  {
+                      "numberInSurah":  106,
+                      "arabic":  "فَيَذَرُهَا قَاعًۭا صَفْصَفًۭا",
+                      "translation":  "maka Dia akan menjadikan (bekas) gunung-gunung itu datar sama sekali,"
+                  },
+                  {
+                      "numberInSurah":  107,
+                      "arabic":  "لَّا تَرَىٰ فِيهَا عِوَجًۭا وَلَآ أَمْتًۭا",
+                      "translation":  "tidak ada sedikitpun kamu lihat padanya tempat yang rendah dan yang tinggi-tinggi."
+                  },
+                  {
+                      "numberInSurah":  108,
+                      "arabic":  "يَوْمَئِذٍۢ يَتَّبِعُونَ ٱلدَّاعِىَ لَا عِوَجَ لَهُۥ ۖ وَخَشَعَتِ ٱلْأَصْوَاتُ لِلرَّحْمَٰنِ فَلَا تَسْمَعُ إِلَّا هَمْسًۭا",
+                      "translation":  "Pada hari itu manusia mengikuti (menuju kepada suara) penyeru dengan tidak berbelok-belok; dan merendahlah semua suara kepada Tuhan Yang Maha Pemurah, maka kamu tidak mendengar kecuali bisikan saja."
+                  },
+                  {
+                      "numberInSurah":  109,
+                      "arabic":  "يَوْمَئِذٍۢ لَّا تَنفَعُ ٱلشَّفَٰعَةُ إِلَّا مَنْ أَذِنَ لَهُ ٱلرَّحْمَٰنُ وَرَضِىَ لَهُۥ قَوْلًۭا",
+                      "translation":  "Pada hari itu tidak berguna syafa\u0027at, kecuali (syafa\u0027at) orang yang Allah Maha Pemurah telah memberi izin kepadanya, dan Dia telah meridhai perkataannya."
+                  },
+                  {
+                      "numberInSurah":  110,
+                      "arabic":  "يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِهِۦ عِلْمًۭا",
+                      "translation":  "Dia mengetahui apa yang ada di hadapan mereka dan apa yang ada di belakang mereka, sedang ilmu mereka tidak dapat meliputi ilmu-Nya."
+                  },
+                  {
+                      "numberInSurah":  111,
+                      "arabic":  "۞ وَعَنَتِ ٱلْوُجُوهُ لِلْحَىِّ ٱلْقَيُّومِ ۖ وَقَدْ خَابَ مَنْ حَمَلَ ظُلْمًۭا",
+                      "translation":  "Dan tunduklah semua muka (dengan berendah diri) kepada Tuhan Yang Hidup Kekal lagi senantiasa mengurus (makhluk-Nya). Dan sesungguhnya telah merugilah orang yang melakukan kezaliman."
+                  },
+                  {
+                      "numberInSurah":  112,
+                      "arabic":  "وَمَن يَعْمَلْ مِنَ ٱلصَّٰلِحَٰتِ وَهُوَ مُؤْمِنٌۭ فَلَا يَخَافُ ظُلْمًۭا وَلَا هَضْمًۭا",
+                      "translation":  "Dan barangsiapa mengerjakan amal-amal yang saleh dan ia dalam keadaan beriman, maka ia tidak khawatir akan perlakuan yang tidak adil (terhadapnya) dan tidak (pula) akan pengurangan haknya."
+                  },
+                  {
+                      "numberInSurah":  113,
+                      "arabic":  "وَكَذَٰلِكَ أَنزَلْنَٰهُ قُرْءَانًا عَرَبِيًّۭا وَصَرَّفْنَا فِيهِ مِنَ ٱلْوَعِيدِ لَعَلَّهُمْ يَتَّقُونَ أَوْ يُحْدِثُ لَهُمْ ذِكْرًۭا",
+                      "translation":  "Dan demikianlah Kami menurunkan Al Quran dalam bahasa Arab, dan Kami telah menerangkan dengan berulang kali, di dalamnya sebahagian dari ancaman, agar mereka bertakwa atau (agar) Al Quran itu menimbulkan pengajaran bagi mereka."
+                  },
+                  {
+                      "numberInSurah":  114,
+                      "arabic":  "فَتَعَٰلَى ٱللَّهُ ٱلْمَلِكُ ٱلْحَقُّ ۗ وَلَا تَعْجَلْ بِٱلْقُرْءَانِ مِن قَبْلِ أَن يُقْضَىٰٓ إِلَيْكَ وَحْيُهُۥ ۖ وَقُل رَّبِّ زِدْنِى عِلْمًۭا",
+                      "translation":  "Maka Maha Tinggi Allah Raja Yang sebenar-benarnya, dan janganlah kamu tergesa-gesa membaca Al qur\u0027an sebelum disempurnakan mewahyukannya kepadamu, dan katakanlah: \"Ya Tuhanku, tambahkanlah kepadaku ilmu pengetahuan\"."
+                  },
+                  {
+                      "numberInSurah":  115,
+                      "arabic":  "وَلَقَدْ عَهِدْنَآ إِلَىٰٓ ءَادَمَ مِن قَبْلُ فَنَسِىَ وَلَمْ نَجِدْ لَهُۥ عَزْمًۭا",
+                      "translation":  "Dan sesungguhnya telah Kami perintahkan kepada Adam dahulu, maka ia lupa (akan perintah itu), dan tidak Kami dapati padanya kemauan yang kuat."
+                  },
+                  {
+                      "numberInSurah":  116,
+                      "arabic":  "وَإِذْ قُلْنَا لِلْمَلَٰٓئِكَةِ ٱسْجُدُوا۟ لِءَادَمَ فَسَجَدُوٓا۟ إِلَّآ إِبْلِيسَ أَبَىٰ",
+                      "translation":  "Dan (ingatlah) ketika Kami berkata kepada malaikat: \"Sujudlah kamu kepada Adam\", maka mereka sujud kecuali iblis. Ia membangkang."
+                  },
+                  {
+                      "numberInSurah":  117,
+                      "arabic":  "فَقُلْنَا يَٰٓـَٔادَمُ إِنَّ هَٰذَا عَدُوٌّۭ لَّكَ وَلِزَوْجِكَ فَلَا يُخْرِجَنَّكُمَا مِنَ ٱلْجَنَّةِ فَتَشْقَىٰٓ",
+                      "translation":  "Maka Kami berkata: \"Hai Adam, sesungguhnya ini (iblis) adalah musuh bagimu dan bagi isterimu, maka sekali-kali janganlah sampai ia mengeluarkan kamu berdua dari surga, yang menyebabkan kamu menjadi celaka."
+                  },
+                  {
+                      "numberInSurah":  118,
+                      "arabic":  "إِنَّ لَكَ أَلَّا تَجُوعَ فِيهَا وَلَا تَعْرَىٰ",
+                      "translation":  "Sesungguhnya kamu tidak akan kelaparan di dalamnya dan tidak akan telanjang,"
+                  },
+                  {
+                      "numberInSurah":  119,
+                      "arabic":  "وَأَنَّكَ لَا تَظْمَؤُا۟ فِيهَا وَلَا تَضْحَىٰ",
+                      "translation":  "dan sesungguhnya kamu tidak akan merasa dahaga dan tidak (pula) akan ditimpa panas matahari di dalamnya\"."
+                  },
+                  {
+                      "numberInSurah":  120,
+                      "arabic":  "فَوَسْوَسَ إِلَيْهِ ٱلشَّيْطَٰنُ قَالَ يَٰٓـَٔادَمُ هَلْ أَدُلُّكَ عَلَىٰ شَجَرَةِ ٱلْخُلْدِ وَمُلْكٍۢ لَّا يَبْلَىٰ",
+                      "translation":  "Kemudian syaitan membisikkan pikiran jahat kepadanya, dengan berkata: \"Hai Adam, maukah saya tunjukkan kepada kamu pohon khuldi dan kerajaan yang tidak akan binasa?\""
+                  },
+                  {
+                      "numberInSurah":  121,
+                      "arabic":  "فَأَكَلَا مِنْهَا فَبَدَتْ لَهُمَا سَوْءَٰتُهُمَا وَطَفِقَا يَخْصِفَانِ عَلَيْهِمَا مِن وَرَقِ ٱلْجَنَّةِ ۚ وَعَصَىٰٓ ءَادَمُ رَبَّهُۥ فَغَوَىٰ",
+                      "translation":  "Maka keduanya memakan dari buah pohon itu, lalu nampaklah bagi keduanya aurat-auratnya dan mulailah keduanya menutupinya dengan daun-daun (yang ada di) surga, dan durhakalah Adam kepada Tuhan dan sesatlah ia."
+                  },
+                  {
+                      "numberInSurah":  122,
+                      "arabic":  "ثُمَّ ٱجْتَبَٰهُ رَبُّهُۥ فَتَابَ عَلَيْهِ وَهَدَىٰ",
+                      "translation":  "Kemudian Tuhannya memilihnya maka Dia menerima taubatnya dan memberinya petunjuk."
+                  },
+                  {
+                      "numberInSurah":  123,
+                      "arabic":  "قَالَ ٱهْبِطَا مِنْهَا جَمِيعًۢا ۖ بَعْضُكُمْ لِبَعْضٍ عَدُوٌّۭ ۖ فَإِمَّا يَأْتِيَنَّكُم مِّنِّى هُدًۭى فَمَنِ ٱتَّبَعَ هُدَاىَ فَلَا يَضِلُّ وَلَا يَشْقَىٰ",
+                      "translation":  "Allah berfirman: \"Turunlah kamu berdua dari surga bersama-sama, sebagian kamu menjadi musuh bagi sebagian yang lain. Maka jika datang kepadamu petunjuk daripada-Ku, lalu barangsiapa yang mengikut petunjuk-Ku, ia tidak akan sesat dan tidak akan celaka."
+                  },
+                  {
+                      "numberInSurah":  124,
+                      "arabic":  "وَمَنْ أَعْرَضَ عَن ذِكْرِى فَإِنَّ لَهُۥ مَعِيشَةًۭ ضَنكًۭا وَنَحْشُرُهُۥ يَوْمَ ٱلْقِيَٰمَةِ أَعْمَىٰ",
+                      "translation":  "Dan barangsiapa berpaling dari peringatan-Ku, maka sesungguhnya baginya penghidupan yang sempit, dan Kami akan menghimpunkannya pada hari kiamat dalam keadaan buta\"."
+                  },
+                  {
+                      "numberInSurah":  125,
+                      "arabic":  "قَالَ رَبِّ لِمَ حَشَرْتَنِىٓ أَعْمَىٰ وَقَدْ كُنتُ بَصِيرًۭا",
+                      "translation":  "Berkatalah ia: \"Ya Tuhanku, mengapa Engkau menghimpunkan aku dalam keadaan buta, padahal aku dahulunya adalah seorang yang melihat?\""
+                  },
+                  {
+                      "numberInSurah":  126,
+                      "arabic":  "قَالَ كَذَٰلِكَ أَتَتْكَ ءَايَٰتُنَا فَنَسِيتَهَا ۖ وَكَذَٰلِكَ ٱلْيَوْمَ تُنسَىٰ",
+                      "translation":  "Allah berfirman: \"Demikianlah, telah datang kepadamu ayat-ayat Kami, maka kamu melupakannya, dan begitu (pula) pada hari ini kamupun dilupakan\"."
+                  },
+                  {
+                      "numberInSurah":  127,
+                      "arabic":  "وَكَذَٰلِكَ نَجْزِى مَنْ أَسْرَفَ وَلَمْ يُؤْمِنۢ بِـَٔايَٰتِ رَبِّهِۦ ۚ وَلَعَذَابُ ٱلْءَاخِرَةِ أَشَدُّ وَأَبْقَىٰٓ",
+                      "translation":  "Dan demikianlah Kami membalas orang yang melampaui batas dan tidak percaya kepada ayat-ayat Tuhannya. Dan sesungguhnya azab di akhirat itu lebih berat dan lebih kekal."
+                  },
+                  {
+                      "numberInSurah":  128,
+                      "arabic":  "أَفَلَمْ يَهْدِ لَهُمْ كَمْ أَهْلَكْنَا قَبْلَهُم مِّنَ ٱلْقُرُونِ يَمْشُونَ فِى مَسَٰكِنِهِمْ ۗ إِنَّ فِى ذَٰلِكَ لَءَايَٰتٍۢ لِّأُو۟لِى ٱلنُّهَىٰ",
+                      "translation":  "Maka tidakkah menjadi petunjuk bagi mereka (kaum musyrikin) berapa banyaknya Kami membinasakan umat-umat sebelum mereka, padahal mereka berjalan (di bekas-bekas) tempat tinggal umat-umat itu? Sesungguhnya pada yang demikian itu terdapat tanda-tanda bagi orang yang berakal."
+                  },
+                  {
+                      "numberInSurah":  129,
+                      "arabic":  "وَلَوْلَا كَلِمَةٌۭ سَبَقَتْ مِن رَّبِّكَ لَكَانَ لِزَامًۭا وَأَجَلٌۭ مُّسَمًّۭى",
+                      "translation":  "Dan sekiranya tidak ada suatu ketetapan dari Allah yang telah terdahulu atau tidak ada ajal yang telah ditentukan, pasti (azab itu) menimpa mereka."
+                  },
+                  {
+                      "numberInSurah":  130,
+                      "arabic":  "فَٱصْبِرْ عَلَىٰ مَا يَقُولُونَ وَسَبِّحْ بِحَمْدِ رَبِّكَ قَبْلَ طُلُوعِ ٱلشَّمْسِ وَقَبْلَ غُرُوبِهَا ۖ وَمِنْ ءَانَآئِ ٱلَّيْلِ فَسَبِّحْ وَأَطْرَافَ ٱلنَّهَارِ لَعَلَّكَ تَرْضَىٰ",
+                      "translation":  "Maka sabarlah kamu atas apa yang mereka katakan, dan bertasbihlah dengan memuji Tuhanmu, sebelum terbit matahari dan sebelum terbenamnya dan bertasbih pulalah pada waktu-waktu di malam hari dan pada waktu-waktu di siang hari, supaya kamu merasa senang,"
+                  },
+                  {
+                      "numberInSurah":  131,
+                      "arabic":  "وَلَا تَمُدَّنَّ عَيْنَيْكَ إِلَىٰ مَا مَتَّعْنَا بِهِۦٓ أَزْوَٰجًۭا مِّنْهُمْ زَهْرَةَ ٱلْحَيَوٰةِ ٱلدُّنْيَا لِنَفْتِنَهُمْ فِيهِ ۚ وَرِزْقُ رَبِّكَ خَيْرٌۭ وَأَبْقَىٰ",
+                      "translation":  "Dan janganlah kamu tujukan kedua matamu kepada apa yang telah Kami berikan kepada golongan-golongan dari mereka, sebagai bunga kehidupan dunia untuk Kami cobai mereka dengannya. Dan karunia Tuhan kamu adalah lebih baik dan lebih kekal."
+                  },
+                  {
+                      "numberInSurah":  132,
+                      "arabic":  "وَأْمُرْ أَهْلَكَ بِٱلصَّلَوٰةِ وَٱصْطَبِرْ عَلَيْهَا ۖ لَا نَسْـَٔلُكَ رِزْقًۭا ۖ نَّحْنُ نَرْزُقُكَ ۗ وَٱلْعَٰقِبَةُ لِلتَّقْوَىٰ",
+                      "translation":  "Dan perintahkanlah kepada keluargamu mendirikan shalat dan bersabarlah kamu dalam mengerjakannya. Kami tidak meminta rezeki kepadamu, Kamilah yang memberi rezeki kepadamu. Dan akibat (yang baik) itu adalah bagi orang yang bertakwa."
+                  },
+                  {
+                      "numberInSurah":  133,
+                      "arabic":  "وَقَالُوا۟ لَوْلَا يَأْتِينَا بِـَٔايَةٍۢ مِّن رَّبِّهِۦٓ ۚ أَوَلَمْ تَأْتِهِم بَيِّنَةُ مَا فِى ٱلصُّحُفِ ٱلْأُولَىٰ",
+                      "translation":  "Dan mereka berkata: \"Mengapa ia tidak membawa bukti kepada kami dari Tuhannya?\" Dan apakah belum datang kepada mereka bukti yang nyata dari apa yang tersebut di dalam kitab-kitab yang dahulu?"
+                  },
+                  {
+                      "numberInSurah":  134,
+                      "arabic":  "وَلَوْ أَنَّآ أَهْلَكْنَٰهُم بِعَذَابٍۢ مِّن قَبْلِهِۦ لَقَالُوا۟ رَبَّنَا لَوْلَآ أَرْسَلْتَ إِلَيْنَا رَسُولًۭا فَنَتَّبِعَ ءَايَٰتِكَ مِن قَبْلِ أَن نَّذِلَّ وَنَخْزَىٰ",
+                      "translation":  "Dan sekiranya Kami binasakan mereka dengan suatu azab sebelum Al Quran itu (diturunkan), tentulah mereka berkata: \"Ya Tuhan kami, mengapa tidak Engkau utus seorang rasul kepada kami, lalu kami mengikuti ayat-ayat Engkau sebelum kami menjadi hina dan rendah?\""
+                  },
+                  {
+                      "numberInSurah":  135,
+                      "arabic":  "قُلْ كُلٌّۭ مُّتَرَبِّصٌۭ فَتَرَبَّصُوا۟ ۖ فَسَتَعْلَمُونَ مَنْ أَصْحَٰبُ ٱلصِّرَٰطِ ٱلسَّوِىِّ وَمَنِ ٱهْتَدَىٰ",
+                      "translation":  "Katakanlah: \"Masing-masing (kita) menanti, maka nantikanlah oleh kamu sekalian! Maka kamu kelak akan mengetahui, siapa yang menempuh jalan yang lurus dan siapa yang telah mendapat petunjuk\"."
+                  }
+              ]
+}

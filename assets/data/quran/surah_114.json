@@ -1,0 +1,39 @@
+﻿{
+    "number":  114,
+    "name":  "سُورَةُ النَّاسِ",
+    "englishName":  "An-Naas",
+    "numberOfAyahs":  6,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ",
+                      "translation":  "Katakanlah: \"Aku berlindung kepada Tuhan (yang memelihara dan menguasai) manusia."
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "مَلِكِ ٱلنَّاسِ",
+                      "translation":  "Raja manusia."
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "إِلَٰهِ ٱلنَّاسِ",
+                      "translation":  "Sembahan manusia."
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ",
+                      "translation":  "Dari kejahatan (bisikan) syaitan yang biasa bersembunyi,"
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ",
+                      "translation":  "yang membisikkan (kejahatan) ke dalam dada manusia,"
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
+                      "translation":  "dari (golongan) jin dan manusia."
+                  }
+              ]
+}

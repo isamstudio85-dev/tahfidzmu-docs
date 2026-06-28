@@ -1,0 +1,24 @@
+﻿{
+    "number":  103,
+    "name":  "سُورَةُ العَصۡرِ",
+    "englishName":  "Al-Asr",
+    "numberOfAyahs":  3,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلْعَصْرِ",
+                      "translation":  "Demi masa."
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "إِنَّ ٱلْإِنسَٰنَ لَفِى خُسْرٍ",
+                      "translation":  "Sesungguhnya manusia itu benar-benar dalam kerugian,"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ وَتَوَاصَوْا۟ بِٱلْحَقِّ وَتَوَاصَوْا۟ بِٱلصَّبْرِ",
+                      "translation":  "kecuali orang-orang yang beriman dan mengerjakan amal saleh dan nasehat menasehati supaya mentaati kebenaran dan nasehat menasehati supaya menetapi kesabaran."
+                  }
+              ]
+}

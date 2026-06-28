@@ -1,0 +1,24 @@
+﻿{
+    "number":  108,
+    "name":  "سُورَةُ الكَوۡثَرِ",
+    "englishName":  "Al-Kawthar",
+    "numberOfAyahs":  3,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ إِنَّآ أَعْطَيْنَٰكَ ٱلْكَوْثَرَ",
+                      "translation":  "Sesungguhnya Kami telah memberikan kepadamu nikmat yang banyak."
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "فَصَلِّ لِرَبِّكَ وَٱنْحَرْ",
+                      "translation":  "Maka dirikanlah shalat karena Tuhanmu; dan berkorbanlah."
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "إِنَّ شَانِئَكَ هُوَ ٱلْأَبْتَرُ",
+                      "translation":  "Sesungguhnya orang-orang yang membenci kamu dialah yang terputus."
+                  }
+              ]
+}

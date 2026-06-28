@@ -1,0 +1,104 @@
+﻿{
+    "number":  82,
+    "name":  "سُورَةُ الانفِطَارِ",
+    "englishName":  "Al-Infitaar",
+    "numberOfAyahs":  19,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ إِذَا ٱلسَّمَآءُ ٱنفَطَرَتْ",
+                      "translation":  "Apabila langit terbelah,"
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "وَإِذَا ٱلْكَوَاكِبُ ٱنتَثَرَتْ",
+                      "translation":  "dan apabila bintang-bintang jatuh berserakan,"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "وَإِذَا ٱلْبِحَارُ فُجِّرَتْ",
+                      "translation":  "dan apabila lautan menjadikan meluap,"
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "وَإِذَا ٱلْقُبُورُ بُعْثِرَتْ",
+                      "translation":  "dan apabila kuburan-kuburan dibongkar,"
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "عَلِمَتْ نَفْسٌۭ مَّا قَدَّمَتْ وَأَخَّرَتْ",
+                      "translation":  "maka tiap-tiap jiwa akan mengetahui apa yang telah dikerjakan dan yang dilalaikannya."
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "يَٰٓأَيُّهَا ٱلْإِنسَٰنُ مَا غَرَّكَ بِرَبِّكَ ٱلْكَرِيمِ",
+                      "translation":  "Hai manusia, apakah yang telah memperdayakan kamu (berbuat durhaka) terhadap Tuhanmu Yang Maha Pemurah."
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "ٱلَّذِى خَلَقَكَ فَسَوَّىٰكَ فَعَدَلَكَ",
+                      "translation":  "Yang telah menciptakan kamu lalu menyempurnakan kejadianmu dan menjadikan (susunan tubuh)mu seimbang,"
+                  },
+                  {
+                      "numberInSurah":  8,
+                      "arabic":  "فِىٓ أَىِّ صُورَةٍۢ مَّا شَآءَ رَكَّبَكَ",
+                      "translation":  "dalam bentuk apa saja yang Dia kehendaki, Dia menyusun tubuhmu."
+                  },
+                  {
+                      "numberInSurah":  9,
+                      "arabic":  "كَلَّا بَلْ تُكَذِّبُونَ بِٱلدِّينِ",
+                      "translation":  "Bukan hanya durhaka saja, bahkan kamu mendustakan hari pembalasan."
+                  },
+                  {
+                      "numberInSurah":  10,
+                      "arabic":  "وَإِنَّ عَلَيْكُمْ لَحَٰفِظِينَ",
+                      "translation":  "Padahal sesungguhnya bagi kamu ada (malaikat-malaikat) yang mengawasi (pekerjaanmu),"
+                  },
+                  {
+                      "numberInSurah":  11,
+                      "arabic":  "كِرَامًۭا كَٰتِبِينَ",
+                      "translation":  "yang mulia (di sisi Allah) dan mencatat (pekerjaan-pekerjaanmu itu),"
+                  },
+                  {
+                      "numberInSurah":  12,
+                      "arabic":  "يَعْلَمُونَ مَا تَفْعَلُونَ",
+                      "translation":  "mereka mengetahui apa yang kamu kerjakan."
+                  },
+                  {
+                      "numberInSurah":  13,
+                      "arabic":  "إِنَّ ٱلْأَبْرَارَ لَفِى نَعِيمٍۢ",
+                      "translation":  "Sesungguhnya orang-orang yang banyak berbakti benar-benar berada dalam surga yang penuh kenikmatan,"
+                  },
+                  {
+                      "numberInSurah":  14,
+                      "arabic":  "وَإِنَّ ٱلْفُجَّارَ لَفِى جَحِيمٍۢ",
+                      "translation":  "dan sesungguhnya orang-orang yang durhaka benar-benar berada dalam neraka."
+                  },
+                  {
+                      "numberInSurah":  15,
+                      "arabic":  "يَصْلَوْنَهَا يَوْمَ ٱلدِّينِ",
+                      "translation":  "Mereka masuk ke dalamnya pada hari pembalasan."
+                  },
+                  {
+                      "numberInSurah":  16,
+                      "arabic":  "وَمَا هُمْ عَنْهَا بِغَآئِبِينَ",
+                      "translation":  "Dan mereka sekali-kali tidak dapat keluar dari neraka itu."
+                  },
+                  {
+                      "numberInSurah":  17,
+                      "arabic":  "وَمَآ أَدْرَىٰكَ مَا يَوْمُ ٱلدِّينِ",
+                      "translation":  "Tahukah kamu apakah hari pembalasan itu?"
+                  },
+                  {
+                      "numberInSurah":  18,
+                      "arabic":  "ثُمَّ مَآ أَدْرَىٰكَ مَا يَوْمُ ٱلدِّينِ",
+                      "translation":  "Sekali lagi, tahukah kamu apakah hari pembalasan itu?"
+                  },
+                  {
+                      "numberInSurah":  19,
+                      "arabic":  "يَوْمَ لَا تَمْلِكُ نَفْسٌۭ لِّنَفْسٍۢ شَيْـًۭٔا ۖ وَٱلْأَمْرُ يَوْمَئِذٍۢ لِّلَّهِ",
+                      "translation":  "(Yaitu) hari (ketika) seseorang tidak berdaya sedikitpun untuk menolong orang lain. Dan segala urusan pada hari itu dalam kekuasaan Allah."
+                  }
+              ]
+}

@@ -1,0 +1,64 @@
+﻿{
+    "number":  101,
+    "name":  "سُورَةُ القَارِعَةِ",
+    "englishName":  "Al-Qaari\u0027a",
+    "numberOfAyahs":  11,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ٱلْقَارِعَةُ",
+                      "translation":  "Hari Kiamat,"
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "مَا ٱلْقَارِعَةُ",
+                      "translation":  "apakah hari Kiamat itu?"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "وَمَآ أَدْرَىٰكَ مَا ٱلْقَارِعَةُ",
+                      "translation":  "Tahukah kamu apakah hari Kiamat itu?"
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "يَوْمَ يَكُونُ ٱلنَّاسُ كَٱلْفَرَاشِ ٱلْمَبْثُوثِ",
+                      "translation":  "Pada hari itu manusia adalah seperti anai-anai yang bertebaran,"
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "وَتَكُونُ ٱلْجِبَالُ كَٱلْعِهْنِ ٱلْمَنفُوشِ",
+                      "translation":  "dan gunung-gunung adalah seperti bulu yang dihambur-hamburkan."
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "فَأَمَّا مَن ثَقُلَتْ مَوَٰزِينُهُۥ",
+                      "translation":  "Dan adapun orang-orang yang berat timbangan (kebaikan)nya,"
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "فَهُوَ فِى عِيشَةٍۢ رَّاضِيَةٍۢ",
+                      "translation":  "maka dia berada dalam kehidupan yang memuaskan."
+                  },
+                  {
+                      "numberInSurah":  8,
+                      "arabic":  "وَأَمَّا مَنْ خَفَّتْ مَوَٰزِينُهُۥ",
+                      "translation":  "Dan adapun orang-orang yang ringan timbangan (kebaikan)nya,"
+                  },
+                  {
+                      "numberInSurah":  9,
+                      "arabic":  "فَأُمُّهُۥ هَاوِيَةٌۭ",
+                      "translation":  "maka tempat kembalinya adalah neraka Hawiyah."
+                  },
+                  {
+                      "numberInSurah":  10,
+                      "arabic":  "وَمَآ أَدْرَىٰكَ مَا هِيَهْ",
+                      "translation":  "Tahukah kamu apakah neraka Hawiyah itu?"
+                  },
+                  {
+                      "numberInSurah":  11,
+                      "arabic":  "نَارٌ حَامِيَةٌۢ",
+                      "translation":  "(Yaitu) api yang sangat panas."
+                  }
+              ]
+}

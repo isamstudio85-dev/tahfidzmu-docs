@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "487767454043",
+    "project_id": "tahfidzmu-f14ce",
+    "storage_bucket": "tahfidzmu-f14ce.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487767454043:android:8088216655708cad986a7e",
+        "android_client_info": {
+          "package_name": "com.tahfidz.tahfidz_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDH25ieZqz05W0aKMhTl2zwhyXvw1iMok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

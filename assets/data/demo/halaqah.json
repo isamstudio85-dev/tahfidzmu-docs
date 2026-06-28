@@ -1,0 +1,32 @@
+[
+  {
+    "id": "H001",
+    "nama": "Halaqah Al-Ikhlas",
+    "musyrifId": "M001",
+    "level": "Lanjutan",
+    "kapasitas": 15,
+    "targetJuz": "10 Juz",
+    "jadwal": "Senin & Rabu, 15.30–17.00",
+    "lokasi": "Aula Utama Lt. 1"
+  },
+  {
+    "id": "H002",
+    "nama": "Halaqah Al-Karim",
+    "musyrifId": "M002",
+    "level": "Menengah",
+    "kapasitas": 12,
+    "targetJuz": "5 Juz",
+    "jadwal": "Selasa & Kamis, 15.30–17.00",
+    "lokasi": "Ruang Putri Lt. 2"
+  },
+  {
+    "id": "H003",
+    "nama": "Halaqah Al-Furqan",
+    "musyrifId": "M003",
+    "level": "Pemula",
+    "kapasitas": 10,
+    "targetJuz": "Juz 30",
+    "jadwal": "Senin & Jumat, 08.00–09.30",
+    "lokasi": "Mushola Pesantren"
+  }
+]

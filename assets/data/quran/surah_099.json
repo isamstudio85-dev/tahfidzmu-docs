@@ -1,0 +1,49 @@
+﻿{
+    "number":  99,
+    "name":  "سُورَةُ الزَّلۡزَلَةِ",
+    "englishName":  "Az-Zalzala",
+    "numberOfAyahs":  8,
+    "revelationType":  "Medinan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ إِذَا زُلْزِلَتِ ٱلْأَرْضُ زِلْزَالَهَا",
+                      "translation":  "Apabila bumi digoncangkan dengan goncangan (yang dahsyat),"
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "وَأَخْرَجَتِ ٱلْأَرْضُ أَثْقَالَهَا",
+                      "translation":  "dan bumi telah mengeluarkan beban-beban berat (yang dikandung)nya,"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "وَقَالَ ٱلْإِنسَٰنُ مَا لَهَا",
+                      "translation":  "dan manusia bertanya: \"Mengapa bumi (menjadi begini)?\","
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "يَوْمَئِذٍۢ تُحَدِّثُ أَخْبَارَهَا",
+                      "translation":  "pada hari itu bumi menceritakan beritanya,"
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "بِأَنَّ رَبَّكَ أَوْحَىٰ لَهَا",
+                      "translation":  "karena sesungguhnya Tuhanmu telah memerintahkan (yang sedemikian itu) kepadanya."
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "يَوْمَئِذٍۢ يَصْدُرُ ٱلنَّاسُ أَشْتَاتًۭا لِّيُرَوْا۟ أَعْمَٰلَهُمْ",
+                      "translation":  "Pada hari itu manusia ke luar dari kuburnya dalam keadaan bermacam-macam, supaya diperlihatkan kepada mereka (balasan) pekerjaan mereka,"
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًۭا يَرَهُۥ",
+                      "translation":  "Barangsiapa yang mengerjakan kebaikan seberat dzarrahpun, niscaya dia akan melihat (balasan)nya."
+                  },
+                  {
+                      "numberInSurah":  8,
+                      "arabic":  "وَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍۢ شَرًّۭا يَرَهُۥ",
+                      "translation":  "Dan barangsiapa yang mengerjakan kejahatan sebesar dzarrahpun, niscaya dia akan melihat (balasan)nya pula."
+                  }
+              ]
+}

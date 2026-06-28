@@ -1,0 +1,64 @@
+﻿{
+    "number":  100,
+    "name":  "سُورَةُ العَادِيَاتِ",
+    "englishName":  "Al-Aadiyaat",
+    "numberOfAyahs":  11,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلْعَٰدِيَٰتِ ضَبْحًۭا",
+                      "translation":  "Demi kuda perang yang berlari kencang dengan terengah-engah,"
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "فَٱلْمُورِيَٰتِ قَدْحًۭا",
+                      "translation":  "dan kuda yang mencetuskan api dengan pukulan (kuku kakinya),"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "فَٱلْمُغِيرَٰتِ صُبْحًۭا",
+                      "translation":  "dan kuda yang menyerang dengan tiba-tiba di waktu pagi,"
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "فَأَثَرْنَ بِهِۦ نَقْعًۭا",
+                      "translation":  "maka ia menerbangkan debu,"
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "فَوَسَطْنَ بِهِۦ جَمْعًا",
+                      "translation":  "dan menyerbu ke tengah-tengah kumpulan musuh,"
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "إِنَّ ٱلْإِنسَٰنَ لِرَبِّهِۦ لَكَنُودٌۭ",
+                      "translation":  "sesungguhnya manusia itu sangat ingkar, tidak berterima kasih kepada Tuhannya,"
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "وَإِنَّهُۥ عَلَىٰ ذَٰلِكَ لَشَهِيدٌۭ",
+                      "translation":  "dan sesungguhnya manusia itu menyaksikan (sendiri) keingkarannya,"
+                  },
+                  {
+                      "numberInSurah":  8,
+                      "arabic":  "وَإِنَّهُۥ لِحُبِّ ٱلْخَيْرِ لَشَدِيدٌ",
+                      "translation":  "dan sesungguhnya dia sangat bakhil karena cintanya kepada harta."
+                  },
+                  {
+                      "numberInSurah":  9,
+                      "arabic":  "۞ أَفَلَا يَعْلَمُ إِذَا بُعْثِرَ مَا فِى ٱلْقُبُورِ",
+                      "translation":  "Maka apakah dia tidak mengetahui apabila dibangkitkan apa yang ada di dalam kubur,"
+                  },
+                  {
+                      "numberInSurah":  10,
+                      "arabic":  "وَحُصِّلَ مَا فِى ٱلصُّدُورِ",
+                      "translation":  "dan dilahirkan apa yang ada di dalam dada,"
+                  },
+                  {
+                      "numberInSurah":  11,
+                      "arabic":  "إِنَّ رَبَّهُم بِهِمْ يَوْمَئِذٍۢ لَّخَبِيرٌۢ",
+                      "translation":  "sesungguhnya Tuhan mereka pada hari itu Maha Mengetahui keadaan mereka."
+                  }
+              ]
+}

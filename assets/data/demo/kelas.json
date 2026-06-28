@@ -1,0 +1,20 @@
+[
+  {
+    "id": "K001",
+    "nama": "Kelas 1",
+    "tingkat": "Pesantren",
+    "waliKelas": "Hasan Al-Fikri"
+  },
+  {
+    "id": "K002",
+    "nama": "Kelas 2",
+    "tingkat": "Pesantren",
+    "waliKelas": "Nur Aini Rahmah"
+  },
+  {
+    "id": "K003",
+    "nama": "Kelas 3",
+    "tingkat": "Pesantren",
+    "waliKelas": "Fauzi Ridwan"
+  }
+]

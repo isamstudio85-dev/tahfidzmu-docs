@@ -1,0 +1,44 @@
+﻿{
+    "number":  1,
+    "name":  "سُورَةُ ٱلْفَاتِحَةِ",
+    "englishName":  "Al-Faatiha",
+    "numberOfAyahs":  7,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "﻿بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+                      "translation":  "Dengan menyebut nama Allah Yang Maha Pemurah lagi Maha Penyayang."
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ",
+                      "translation":  "Segala puji bagi Allah, Tuhan semesta alam."
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+                      "translation":  "Maha Pemurah lagi Maha Penyayang."
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "مَٰلِكِ يَوْمِ ٱلدِّينِ",
+                      "translation":  "Yang menguasai di Hari Pembalasan."
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+                      "translation":  "Hanya Engkaulah yang kami sembah, dan hanya kepada Engkaulah kami meminta pertolongan."
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ",
+                      "translation":  "Tunjukilah kami jalan yang lurus,"
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ",
+                      "translation":  "(yaitu) Jalan orang-orang yang telah Engkau beri nikmat kepada mereka; bukan (jalan) mereka yang dimurkai dan bukan (pula jalan) mereka yang sesat."
+                  }
+              ]
+}

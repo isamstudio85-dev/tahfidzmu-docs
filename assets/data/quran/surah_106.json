@@ -1,0 +1,29 @@
+﻿{
+    "number":  106,
+    "name":  "سُورَةُ قُرَيۡشٍ",
+    "englishName":  "Quraish",
+    "numberOfAyahs":  4,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ لِإِيلَٰفِ قُرَيْشٍ",
+                      "translation":  "Karena kebiasaan orang-orang Quraisy,"
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "إِۦلَٰفِهِمْ رِحْلَةَ ٱلشِّتَآءِ وَٱلصَّيْفِ",
+                      "translation":  "(yaitu) kebiasaan mereka bepergian pada musim dingin dan musim panas."
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "فَلْيَعْبُدُوا۟ رَبَّ هَٰذَا ٱلْبَيْتِ",
+                      "translation":  "Maka hendaklah mereka menyembah Tuhan Pemilik rumah ini (Ka\u0027bah)."
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "ٱلَّذِىٓ أَطْعَمَهُم مِّن جُوعٍۢ وَءَامَنَهُم مِّنْ خَوْفٍۭ",
+                      "translation":  "Yang telah memberi makanan kepada mereka untuk menghilangkan lapar dan mengamankan mereka dari ketakutan."
+                  }
+              ]
+}

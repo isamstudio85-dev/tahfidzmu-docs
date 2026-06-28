@@ -1,0 +1,109 @@
+﻿{
+    "number":  90,
+    "name":  "سُورَةُ البَلَدِ",
+    "englishName":  "Al-Balad",
+    "numberOfAyahs":  20,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ لَآ أُقْسِمُ بِهَٰذَا ٱلْبَلَدِ",
+                      "translation":  "Aku benar-benar bersumpah dengan kota ini (Mekah),"
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "وَأَنتَ حِلٌّۢ بِهَٰذَا ٱلْبَلَدِ",
+                      "translation":  "dan kamu (Muhammad) bertempat di kota Mekah ini,"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "وَوَالِدٍۢ وَمَا وَلَدَ",
+                      "translation":  "dan demi bapak dan anaknya."
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "لَقَدْ خَلَقْنَا ٱلْإِنسَٰنَ فِى كَبَدٍ",
+                      "translation":  "Sesungguhnya Kami telah menciptakan manusia berada dalam susah payah."
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "أَيَحْسَبُ أَن لَّن يَقْدِرَ عَلَيْهِ أَحَدٌۭ",
+                      "translation":  "Apakah manusia itu menyangka bahwa sekali-kali tiada seorangpun yang berkuasa atasnya?"
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "يَقُولُ أَهْلَكْتُ مَالًۭا لُّبَدًا",
+                      "translation":  "Dan mengatakan: \"Aku telah menghabiskan harta yang banyak\"."
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "أَيَحْسَبُ أَن لَّمْ يَرَهُۥٓ أَحَدٌ",
+                      "translation":  "Apakah dia menyangka bahwa tiada seorangpun yang melihatnya?"
+                  },
+                  {
+                      "numberInSurah":  8,
+                      "arabic":  "أَلَمْ نَجْعَل لَّهُۥ عَيْنَيْنِ",
+                      "translation":  "Bukankah Kami telah memberikan kepadanya dua buah mata,"
+                  },
+                  {
+                      "numberInSurah":  9,
+                      "arabic":  "وَلِسَانًۭا وَشَفَتَيْنِ",
+                      "translation":  "lidah dan dua buah bibir."
+                  },
+                  {
+                      "numberInSurah":  10,
+                      "arabic":  "وَهَدَيْنَٰهُ ٱلنَّجْدَيْنِ",
+                      "translation":  "Dan Kami telah menunjukkan kepadanya dua jalan,"
+                  },
+                  {
+                      "numberInSurah":  11,
+                      "arabic":  "فَلَا ٱقْتَحَمَ ٱلْعَقَبَةَ",
+                      "translation":  "Tetapi dia tiada menempuh jalan yang mendaki lagi sukar."
+                  },
+                  {
+                      "numberInSurah":  12,
+                      "arabic":  "وَمَآ أَدْرَىٰكَ مَا ٱلْعَقَبَةُ",
+                      "translation":  "Tahukah kamu apakah jalan yang mendaki lagi sukar itu?"
+                  },
+                  {
+                      "numberInSurah":  13,
+                      "arabic":  "فَكُّ رَقَبَةٍ",
+                      "translation":  "(yaitu) melepaskan budak dari perbudakan,"
+                  },
+                  {
+                      "numberInSurah":  14,
+                      "arabic":  "أَوْ إِطْعَٰمٌۭ فِى يَوْمٍۢ ذِى مَسْغَبَةٍۢ",
+                      "translation":  "atau memberi makan pada hari kelaparan,"
+                  },
+                  {
+                      "numberInSurah":  15,
+                      "arabic":  "يَتِيمًۭا ذَا مَقْرَبَةٍ",
+                      "translation":  "(kepada) anak yatim yang ada hubungan kerabat,"
+                  },
+                  {
+                      "numberInSurah":  16,
+                      "arabic":  "أَوْ مِسْكِينًۭا ذَا مَتْرَبَةٍۢ",
+                      "translation":  "atau kepada orang miskin yang sangat fakir."
+                  },
+                  {
+                      "numberInSurah":  17,
+                      "arabic":  "ثُمَّ كَانَ مِنَ ٱلَّذِينَ ءَامَنُوا۟ وَتَوَاصَوْا۟ بِٱلصَّبْرِ وَتَوَاصَوْا۟ بِٱلْمَرْحَمَةِ",
+                      "translation":  "Dan dia (tidak pula) termasuk orang-orang yang beriman dan saling berpesan untuk bersabar dan saling berpesan untuk berkasih sayang."
+                  },
+                  {
+                      "numberInSurah":  18,
+                      "arabic":  "أُو۟لَٰٓئِكَ أَصْحَٰبُ ٱلْمَيْمَنَةِ",
+                      "translation":  "Mereka (orang-orang yang beriman dan saling berpesan itu) adalah golongan kanan."
+                  },
+                  {
+                      "numberInSurah":  19,
+                      "arabic":  "وَٱلَّذِينَ كَفَرُوا۟ بِـَٔايَٰتِنَا هُمْ أَصْحَٰبُ ٱلْمَشْـَٔمَةِ",
+                      "translation":  "Dan orang-orang yang kafir kepada ayat-ayat Kami, mereka itu adalah golongan kiri."
+                  },
+                  {
+                      "numberInSurah":  20,
+                      "arabic":  "عَلَيْهِمْ نَارٌۭ مُّؤْصَدَةٌۢ",
+                      "translation":  "Mereka berada dalam neraka yang ditutup rapat."
+                  }
+              ]
+}

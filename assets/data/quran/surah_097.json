@@ -1,0 +1,34 @@
+﻿{
+    "number":  97,
+    "name":  "سُورَةُ القَدۡرِ",
+    "englishName":  "Al-Qadr",
+    "numberOfAyahs":  5,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِّسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ إِنَّآ أَنزَلْنَٰهُ فِى لَيْلَةِ ٱلْقَدْرِ",
+                      "translation":  "Sesungguhnya Kami telah menurunkannya (Al Quran) pada malam kemuliaan."
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "وَمَآ أَدْرَىٰكَ مَا لَيْلَةُ ٱلْقَدْرِ",
+                      "translation":  "Dan tahukah kamu apakah malam kemuliaan itu?"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "لَيْلَةُ ٱلْقَدْرِ خَيْرٌۭ مِّنْ أَلْفِ شَهْرٍۢ",
+                      "translation":  "Malam kemuliaan itu lebih baik dari seribu bulan."
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "تَنَزَّلُ ٱلْمَلَٰٓئِكَةُ وَٱلرُّوحُ فِيهَا بِإِذْنِ رَبِّهِم مِّن كُلِّ أَمْرٍۢ",
+                      "translation":  "Pada malam itu turun malaikat-malaikat dan malaikat Jibril dengan izin Tuhannya untuk mengatur segala urusan."
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "سَلَٰمٌ هِىَ حَتَّىٰ مَطْلَعِ ٱلْفَجْرِ",
+                      "translation":  "Malam itu (penuh) kesejahteraan sampai terbit fajar."
+                  }
+              ]
+}

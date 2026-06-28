@@ -1,0 +1,49 @@
+﻿{
+    "number":  95,
+    "name":  "سُورَةُ التِّينِ",
+    "englishName":  "At-Tin",
+    "numberOfAyahs":  8,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِّسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلتِّينِ وَٱلزَّيْتُونِ",
+                      "translation":  "Demi (buah) Tin dan (buah) Zaitun,"
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "وَطُورِ سِينِينَ",
+                      "translation":  "dan demi bukit Sinai,"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "وَهَٰذَا ٱلْبَلَدِ ٱلْأَمِينِ",
+                      "translation":  "dan demi kota (Mekah) ini yang aman,"
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "لَقَدْ خَلَقْنَا ٱلْإِنسَٰنَ فِىٓ أَحْسَنِ تَقْوِيمٍۢ",
+                      "translation":  "sesungguhnya Kami telah menciptakan manusia dalam bentuk yang sebaik-baiknya."
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "ثُمَّ رَدَدْنَٰهُ أَسْفَلَ سَٰفِلِينَ",
+                      "translation":  "Kemudian Kami kembalikan dia ke tempat yang serendah-rendahnya (neraka),"
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ فَلَهُمْ أَجْرٌ غَيْرُ مَمْنُونٍۢ",
+                      "translation":  "kecuali orang-orang yang beriman dan mengerjakan amal saleh; maka bagi mereka pahala yang tiada putus-putusnya."
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "فَمَا يُكَذِّبُكَ بَعْدُ بِٱلدِّينِ",
+                      "translation":  "Maka apakah yang menyebabkan kamu mendustakan (hari) pembalasan sesudah (adanya keterangan-keterangan) itu?"
+                  },
+                  {
+                      "numberInSurah":  8,
+                      "arabic":  "أَلَيْسَ ٱللَّهُ بِأَحْكَمِ ٱلْحَٰكِمِينَ",
+                      "translation":  "Bukankah Allah Hakim yang seadil-adilnya?"
+                  }
+              ]
+}

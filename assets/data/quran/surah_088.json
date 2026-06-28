@@ -1,0 +1,139 @@
+﻿{
+    "number":  88,
+    "name":  "سُورَةُ الغَاشِيَةِ",
+    "englishName":  "Al-Ghaashiya",
+    "numberOfAyahs":  26,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ هَلْ أَتَىٰكَ حَدِيثُ ٱلْغَٰشِيَةِ",
+                      "translation":  "Sudah datangkah kepadamu berita (tentang) hari pembalasan?"
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "وُجُوهٌۭ يَوْمَئِذٍ خَٰشِعَةٌ",
+                      "translation":  "Banyak muka pada hari itu tunduk terhina,"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "عَامِلَةٌۭ نَّاصِبَةٌۭ",
+                      "translation":  "bekerja keras lagi kepayahan,"
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "تَصْلَىٰ نَارًا حَامِيَةًۭ",
+                      "translation":  "memasuki api yang sangat panas (neraka),"
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "تُسْقَىٰ مِنْ عَيْنٍ ءَانِيَةٍۢ",
+                      "translation":  "diberi minum (dengan air) dari sumber yang sangat panas."
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "لَّيْسَ لَهُمْ طَعَامٌ إِلَّا مِن ضَرِيعٍۢ",
+                      "translation":  "Mereka tiada memperoleh makanan selain dari pohon yang berduri,"
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "لَّا يُسْمِنُ وَلَا يُغْنِى مِن جُوعٍۢ",
+                      "translation":  "yang tidak menggemukkan dan tidak pula menghilangkan lapar."
+                  },
+                  {
+                      "numberInSurah":  8,
+                      "arabic":  "وُجُوهٌۭ يَوْمَئِذٍۢ نَّاعِمَةٌۭ",
+                      "translation":  "Banyak muka pada hari itu berseri-seri,"
+                  },
+                  {
+                      "numberInSurah":  9,
+                      "arabic":  "لِّسَعْيِهَا رَاضِيَةٌۭ",
+                      "translation":  "merasa senang karena usahanya,"
+                  },
+                  {
+                      "numberInSurah":  10,
+                      "arabic":  "فِى جَنَّةٍ عَالِيَةٍۢ",
+                      "translation":  "dalam surga yang tinggi,"
+                  },
+                  {
+                      "numberInSurah":  11,
+                      "arabic":  "لَّا تَسْمَعُ فِيهَا لَٰغِيَةًۭ",
+                      "translation":  "tidak kamu dengar di dalamnya perkataan yang tidak berguna."
+                  },
+                  {
+                      "numberInSurah":  12,
+                      "arabic":  "فِيهَا عَيْنٌۭ جَارِيَةٌۭ",
+                      "translation":  "Di dalamnya ada mata air yang mengalir."
+                  },
+                  {
+                      "numberInSurah":  13,
+                      "arabic":  "فِيهَا سُرُرٌۭ مَّرْفُوعَةٌۭ",
+                      "translation":  "Di dalamnya ada takhta-takhta yang ditinggikan,"
+                  },
+                  {
+                      "numberInSurah":  14,
+                      "arabic":  "وَأَكْوَابٌۭ مَّوْضُوعَةٌۭ",
+                      "translation":  "dan gelas-gelas yang terletak (di dekatnya),"
+                  },
+                  {
+                      "numberInSurah":  15,
+                      "arabic":  "وَنَمَارِقُ مَصْفُوفَةٌۭ",
+                      "translation":  "dan bantal-bantal sandaran yang tersusun,"
+                  },
+                  {
+                      "numberInSurah":  16,
+                      "arabic":  "وَزَرَابِىُّ مَبْثُوثَةٌ",
+                      "translation":  "dan permadani-permadani yang terhampar."
+                  },
+                  {
+                      "numberInSurah":  17,
+                      "arabic":  "أَفَلَا يَنظُرُونَ إِلَى ٱلْإِبِلِ كَيْفَ خُلِقَتْ",
+                      "translation":  "Maka apakah mereka tidak memperhatikan unta bagaimana dia diciptakan,"
+                  },
+                  {
+                      "numberInSurah":  18,
+                      "arabic":  "وَإِلَى ٱلسَّمَآءِ كَيْفَ رُفِعَتْ",
+                      "translation":  "Dan langit, bagaimana ia ditinggikan?"
+                  },
+                  {
+                      "numberInSurah":  19,
+                      "arabic":  "وَإِلَى ٱلْجِبَالِ كَيْفَ نُصِبَتْ",
+                      "translation":  "Dan gunung-gunung bagaimana ia ditegakkan?"
+                  },
+                  {
+                      "numberInSurah":  20,
+                      "arabic":  "وَإِلَى ٱلْأَرْضِ كَيْفَ سُطِحَتْ",
+                      "translation":  "Dan bumi bagaimana ia dihamparkan?"
+                  },
+                  {
+                      "numberInSurah":  21,
+                      "arabic":  "فَذَكِّرْ إِنَّمَآ أَنتَ مُذَكِّرٌۭ",
+                      "translation":  "Maka berilah peringatan, karena sesungguhnya kamu hanyalah orang yang memberi peringatan."
+                  },
+                  {
+                      "numberInSurah":  22,
+                      "arabic":  "لَّسْتَ عَلَيْهِم بِمُصَيْطِرٍ",
+                      "translation":  "Kamu bukanlah orang yang berkuasa atas mereka,"
+                  },
+                  {
+                      "numberInSurah":  23,
+                      "arabic":  "إِلَّا مَن تَوَلَّىٰ وَكَفَرَ",
+                      "translation":  "tetapi orang yang berpaling dan kafir,"
+                  },
+                  {
+                      "numberInSurah":  24,
+                      "arabic":  "فَيُعَذِّبُهُ ٱللَّهُ ٱلْعَذَابَ ٱلْأَكْبَرَ",
+                      "translation":  "maka Allah akan mengazabnya dengan azab yang besar."
+                  },
+                  {
+                      "numberInSurah":  25,
+                      "arabic":  "إِنَّ إِلَيْنَآ إِيَابَهُمْ",
+                      "translation":  "Sesungguhnya kepada Kami-lah kembali mereka,"
+                  },
+                  {
+                      "numberInSurah":  26,
+                      "arabic":  "ثُمَّ إِنَّ عَلَيْنَا حِسَابَهُم",
+                      "translation":  "kemudian sesungguhnya kewajiban Kami-lah menghisab mereka."
+                  }
+              ]
+}

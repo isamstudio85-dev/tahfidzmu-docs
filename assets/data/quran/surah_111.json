@@ -1,0 +1,34 @@
+﻿{
+    "number":  111,
+    "name":  "سُورَةُ المَسَدِ",
+    "englishName":  "Al-Masad",
+    "numberOfAyahs":  5,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ تَبَّتْ يَدَآ أَبِى لَهَبٍۢ وَتَبَّ",
+                      "translation":  "Binasalah kedua tangan Abu Lahab dan sesungguhnya dia akan binasa."
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "مَآ أَغْنَىٰ عَنْهُ مَالُهُۥ وَمَا كَسَبَ",
+                      "translation":  "Tidaklah berfaedah kepadanya harta bendanya dan apa yang ia usahakan."
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "سَيَصْلَىٰ نَارًۭا ذَاتَ لَهَبٍۢ",
+                      "translation":  "Kelak dia akan masuk ke dalam api yang bergejolak."
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "وَٱمْرَأَتُهُۥ حَمَّالَةَ ٱلْحَطَبِ",
+                      "translation":  "Dan (begitu pula) istrinya, pembawa kayu bakar."
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "فِى جِيدِهَا حَبْلٌۭ مِّن مَّسَدٍۭ",
+                      "translation":  "Yang di lehernya ada tali dari sabut."
+                  }
+              ]
+}

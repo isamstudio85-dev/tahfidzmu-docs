@@ -1,0 +1,254 @@
+﻿{
+    "number":  52,
+    "name":  "سُورَةُ الطُّورِ",
+    "englishName":  "At-Tur",
+    "numberOfAyahs":  49,
+    "revelationType":  "Meccan",
+    "ayahs":  [
+                  {
+                      "numberInSurah":  1,
+                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلطُّورِ",
+                      "translation":  "Demi bukit,"
+                  },
+                  {
+                      "numberInSurah":  2,
+                      "arabic":  "وَكِتَٰبٍۢ مَّسْطُورٍۢ",
+                      "translation":  "dan Kitab yang ditulis,"
+                  },
+                  {
+                      "numberInSurah":  3,
+                      "arabic":  "فِى رَقٍّۢ مَّنشُورٍۢ",
+                      "translation":  "pada lembaran yang terbuka,"
+                  },
+                  {
+                      "numberInSurah":  4,
+                      "arabic":  "وَٱلْبَيْتِ ٱلْمَعْمُورِ",
+                      "translation":  "dan demi Baitul Ma\u0027mur,"
+                  },
+                  {
+                      "numberInSurah":  5,
+                      "arabic":  "وَٱلسَّقْفِ ٱلْمَرْفُوعِ",
+                      "translation":  "dan atap yang ditinggikan (langit),"
+                  },
+                  {
+                      "numberInSurah":  6,
+                      "arabic":  "وَٱلْبَحْرِ ٱلْمَسْجُورِ",
+                      "translation":  "dan laut yang di dalam tanahnya ada api,"
+                  },
+                  {
+                      "numberInSurah":  7,
+                      "arabic":  "إِنَّ عَذَابَ رَبِّكَ لَوَٰقِعٌۭ",
+                      "translation":  "sesungguhnya azab Tuhanmu pasti terjadi,"
+                  },
+                  {
+                      "numberInSurah":  8,
+                      "arabic":  "مَّا لَهُۥ مِن دَافِعٍۢ",
+                      "translation":  "tidak seorangpun yang dapat menolaknya,"
+                  },
+                  {
+                      "numberInSurah":  9,
+                      "arabic":  "يَوْمَ تَمُورُ ٱلسَّمَآءُ مَوْرًۭا",
+                      "translation":  "pada hari ketika langit benar-benar bergoncang,"
+                  },
+                  {
+                      "numberInSurah":  10,
+                      "arabic":  "وَتَسِيرُ ٱلْجِبَالُ سَيْرًۭا",
+                      "translation":  "dan gunung benar-benar berjalan."
+                  },
+                  {
+                      "numberInSurah":  11,
+                      "arabic":  "فَوَيْلٌۭ يَوْمَئِذٍۢ لِّلْمُكَذِّبِينَ",
+                      "translation":  "Maka kecelakaan yang besarlah di hari itu bagi orang-orang yang mendustakan,"
+                  },
+                  {
+                      "numberInSurah":  12,
+                      "arabic":  "ٱلَّذِينَ هُمْ فِى خَوْضٍۢ يَلْعَبُونَ",
+                      "translation":  "(yaitu) orang-orang yang bermain-main dalam kebathilan,"
+                  },
+                  {
+                      "numberInSurah":  13,
+                      "arabic":  "يَوْمَ يُدَعُّونَ إِلَىٰ نَارِ جَهَنَّمَ دَعًّا",
+                      "translation":  "pada hari mereka didorong ke neraka Jahannam dengan sekuat-kuatnya."
+                  },
+                  {
+                      "numberInSurah":  14,
+                      "arabic":  "هَٰذِهِ ٱلنَّارُ ٱلَّتِى كُنتُم بِهَا تُكَذِّبُونَ",
+                      "translation":  "(Dikatakan kepada mereka): \"Inilah neraka yang dahulu kamu selalu mendustakannya\"."
+                  },
+                  {
+                      "numberInSurah":  15,
+                      "arabic":  "أَفَسِحْرٌ هَٰذَآ أَمْ أَنتُمْ لَا تُبْصِرُونَ",
+                      "translation":  "Maka apakah ini sihir? Ataukah kamu tidak melihat?"
+                  },
+                  {
+                      "numberInSurah":  16,
+                      "arabic":  "ٱصْلَوْهَا فَٱصْبِرُوٓا۟ أَوْ لَا تَصْبِرُوا۟ سَوَآءٌ عَلَيْكُمْ ۖ إِنَّمَا تُجْزَوْنَ مَا كُنتُمْ تَعْمَلُونَ",
+                      "translation":  "Masukklah kamu ke dalamnya (rasakanlah panas apinya); maka baik kamu bersabar atau tidak, sama saja bagimu; kamu diberi balasan terhadap apa yang telah kamu kerjakan."
+                  },
+                  {
+                      "numberInSurah":  17,
+                      "arabic":  "إِنَّ ٱلْمُتَّقِينَ فِى جَنَّٰتٍۢ وَنَعِيمٍۢ",
+                      "translation":  "Sesungguhnya orang-orang yang bertakwa berada dalam surga dan kenikmatan,"
+                  },
+                  {
+                      "numberInSurah":  18,
+                      "arabic":  "فَٰكِهِينَ بِمَآ ءَاتَىٰهُمْ رَبُّهُمْ وَوَقَىٰهُمْ رَبُّهُمْ عَذَابَ ٱلْجَحِيمِ",
+                      "translation":  "mereka bersuka ria dengan apa yang diberikan kepada mereka oleh Tuhan mereka; dan Tuhan mereka memelihara mereka dari azab neraka."
+                  },
+                  {
+                      "numberInSurah":  19,
+                      "arabic":  "كُلُوا۟ وَٱشْرَبُوا۟ هَنِيٓـًٔۢا بِمَا كُنتُمْ تَعْمَلُونَ",
+                      "translation":  "(Dikatakan kepada mereka): \"Makan dan minumlah dengan enak sebagai balasan dari apa yang telah kamu kerjakan\","
+                  },
+                  {
+                      "numberInSurah":  20,
+                      "arabic":  "مُتَّكِـِٔينَ عَلَىٰ سُرُرٍۢ مَّصْفُوفَةٍۢ ۖ وَزَوَّجْنَٰهُم بِحُورٍ عِينٍۢ",
+                      "translation":  "mereka bertelekan di atas dipan-dipan berderetan dan Kami kawinkan mereka dengan bidadari-bidadari yang cantik bermata jeli."
+                  },
+                  {
+                      "numberInSurah":  21,
+                      "arabic":  "وَٱلَّذِينَ ءَامَنُوا۟ وَٱتَّبَعَتْهُمْ ذُرِّيَّتُهُم بِإِيمَٰنٍ أَلْحَقْنَا بِهِمْ ذُرِّيَّتَهُمْ وَمَآ أَلَتْنَٰهُم مِّنْ عَمَلِهِم مِّن شَىْءٍۢ ۚ كُلُّ ٱمْرِئٍۭ بِمَا كَسَبَ رَهِينٌۭ",
+                      "translation":  "Dan orang-oranng yang beriman, dan yang anak cucu mereka mengikuti mereka dalam keimanan, Kami hubungkan anak cucu mereka dengan mereka, dan Kami tiada mengurangi sedikitpun dari pahala amal mereka. Tiap-tiap manusia terikat dengan apa yang dikerjakannya."
+                  },
+                  {
+                      "numberInSurah":  22,
+                      "arabic":  "وَأَمْدَدْنَٰهُم بِفَٰكِهَةٍۢ وَلَحْمٍۢ مِّمَّا يَشْتَهُونَ",
+                      "translation":  "Dan Kami beri mereka tambahan dengan buah-buahan dan daging dari segala jenis yang mereka ingini."
+                  },
+                  {
+                      "numberInSurah":  23,
+                      "arabic":  "يَتَنَٰزَعُونَ فِيهَا كَأْسًۭا لَّا لَغْوٌۭ فِيهَا وَلَا تَأْثِيمٌۭ",
+                      "translation":  "Di dalam surga mereka saling memperebutkan piala (gelas) yang isinya tidak (menimbulkan) kata-kata yang tidak berfaedah dan tiada pula perbuatan dosa."
+                  },
+                  {
+                      "numberInSurah":  24,
+                      "arabic":  "۞ وَيَطُوفُ عَلَيْهِمْ غِلْمَانٌۭ لَّهُمْ كَأَنَّهُمْ لُؤْلُؤٌۭ مَّكْنُونٌۭ",
+                      "translation":  "Dan berkeliling di sekitar mereka anak-anak muda untuk (melayani) mereka, seakan-akan mereka itu mutiara yang tersimpan."
+                  },
+                  {
+                      "numberInSurah":  25,
+                      "arabic":  "وَأَقْبَلَ بَعْضُهُمْ عَلَىٰ بَعْضٍۢ يَتَسَآءَلُونَ",
+                      "translation":  "Dan sebahagian mereka menghadap kepada sebahagian yang lain saling tanya-menanya."
+                  },
+                  {
+                      "numberInSurah":  26,
+                      "arabic":  "قَالُوٓا۟ إِنَّا كُنَّا قَبْلُ فِىٓ أَهْلِنَا مُشْفِقِينَ",
+                      "translation":  "Mereka berkata: \"Sesungguhnya kami dahulu, sewaktu berada di tengah-tengah keluarga kami merasa takut (akan diazab)\"."
+                  },
+                  {
+                      "numberInSurah":  27,
+                      "arabic":  "فَمَنَّ ٱللَّهُ عَلَيْنَا وَوَقَىٰنَا عَذَابَ ٱلسَّمُومِ",
+                      "translation":  "Maka Allah memberikan karunia kepada kami dan memelihara kami dari azab neraka."
+                  },
+                  {
+                      "numberInSurah":  28,
+                      "arabic":  "إِنَّا كُنَّا مِن قَبْلُ نَدْعُوهُ ۖ إِنَّهُۥ هُوَ ٱلْبَرُّ ٱلرَّحِيمُ",
+                      "translation":  "Sesungguhnya kami dahulu menyembah-Nya. Sesungguhnya Dialah yang melimpahkan kebaikan lagi Maha Penyayang."
+                  },
+                  {
+                      "numberInSurah":  29,
+                      "arabic":  "فَذَكِّرْ فَمَآ أَنتَ بِنِعْمَتِ رَبِّكَ بِكَاهِنٍۢ وَلَا مَجْنُونٍ",
+                      "translation":  "Maka tetaplah memberi peringatan, dan kamu disebabkan nikmat Tuhanmu bukanlah seorang tukang tenung dan bukan pula seorang gila."
+                  },
+                  {
+                      "numberInSurah":  30,
+                      "arabic":  "أَمْ يَقُولُونَ شَاعِرٌۭ نَّتَرَبَّصُ بِهِۦ رَيْبَ ٱلْمَنُونِ",
+                      "translation":  "Bahkan mereka mengatakan: \"Dia adalah seorang penyair yang kami tunggu-tunggu kecelakaan menimpanya\"."
+                  },
+                  {
+                      "numberInSurah":  31,
+                      "arabic":  "قُلْ تَرَبَّصُوا۟ فَإِنِّى مَعَكُم مِّنَ ٱلْمُتَرَبِّصِينَ",
+                      "translation":  "Katakanlah: \"Tunggulah, maka sesungguhnya akupun termasuk orang yang menunggu (pula) bersama kamu\"."
+                  },
+                  {
+                      "numberInSurah":  32,
+                      "arabic":  "أَمْ تَأْمُرُهُمْ أَحْلَٰمُهُم بِهَٰذَآ ۚ أَمْ هُمْ قَوْمٌۭ طَاغُونَ",
+                      "translation":  "Apakah mereka diperintah oleh fikiran-fikiran mereka untuk mengucapkan tuduhan-tuduhan ini ataukah mereka kaum yang melampaui batas?"
+                  },
+                  {
+                      "numberInSurah":  33,
+                      "arabic":  "أَمْ يَقُولُونَ تَقَوَّلَهُۥ ۚ بَل لَّا يُؤْمِنُونَ",
+                      "translation":  "Ataukah mereka mengatakan: \"Dia (Muhammad) membuat-buatnya\". Sebenarnya mereka tidak beriman."
+                  },
+                  {
+                      "numberInSurah":  34,
+                      "arabic":  "فَلْيَأْتُوا۟ بِحَدِيثٍۢ مِّثْلِهِۦٓ إِن كَانُوا۟ صَٰدِقِينَ",
+                      "translation":  "Maka hendaklah mereka mendatangkan kalimat yang semisal Al Quran itu jika mereka orang-orang yang benar."
+                  },
+                  {
+                      "numberInSurah":  35,
+                      "arabic":  "أَمْ خُلِقُوا۟ مِنْ غَيْرِ شَىْءٍ أَمْ هُمُ ٱلْخَٰلِقُونَ",
+                      "translation":  "Apakah mereka diciptakan tanpa sesuatupun ataukah mereka yang menciptakan (diri mereka sendiri)?"
+                  },
+                  {
+                      "numberInSurah":  36,
+                      "arabic":  "أَمْ خَلَقُوا۟ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۚ بَل لَّا يُوقِنُونَ",
+                      "translation":  "Ataukah mereka telah menciptakan langit dan bumi itu?; sebenarnya mereka tidak meyakini (apa yang mereka katakan)."
+                  },
+                  {
+                      "numberInSurah":  37,
+                      "arabic":  "أَمْ عِندَهُمْ خَزَآئِنُ رَبِّكَ أَمْ هُمُ ٱلْمُصَۣيْطِرُونَ",
+                      "translation":  "Ataukah di sisi mereka ada perbendaharaan Tuhanmu atau merekakah yang berkuasa?"
+                  },
+                  {
+                      "numberInSurah":  38,
+                      "arabic":  "أَمْ لَهُمْ سُلَّمٌۭ يَسْتَمِعُونَ فِيهِ ۖ فَلْيَأْتِ مُسْتَمِعُهُم بِسُلْطَٰنٍۢ مُّبِينٍ",
+                      "translation":  "Ataukah mereka mempunyai tangga (ke langit) untuk mendengarkan pada tangga itu (hal-hal yang gaib)? Maka hendaklah orang yang mendengarkan di antara mereka mendatangkan suatu keterangan yang nyata."
+                  },
+                  {
+                      "numberInSurah":  39,
+                      "arabic":  "أَمْ لَهُ ٱلْبَنَٰتُ وَلَكُمُ ٱلْبَنُونَ",
+                      "translation":  "Ataukah untuk Allah anak-anak perempuan dan untuk kamu anak-anak laki-laki?"
+                  },
+                  {
+                      "numberInSurah":  40,
+                      "arabic":  "أَمْ تَسْـَٔلُهُمْ أَجْرًۭا فَهُم مِّن مَّغْرَمٍۢ مُّثْقَلُونَ",
+                      "translation":  "Ataukah kamu meminta upah kepada mereka sehingga mereka dibebani dengan hutang?"
+                  },
+                  {
+                      "numberInSurah":  41,
+                      "arabic":  "أَمْ عِندَهُمُ ٱلْغَيْبُ فَهُمْ يَكْتُبُونَ",
+                      "translation":  "Apakah ada pada sisi mereka pengetahuan tentang yang gaib lalu mereka menuliskannya?"
+                  },
+                  {
+                      "numberInSurah":  42,
+                      "arabic":  "أَمْ يُرِيدُونَ كَيْدًۭا ۖ فَٱلَّذِينَ كَفَرُوا۟ هُمُ ٱلْمَكِيدُونَ",
+                      "translation":  "Ataukah mereka hendak melakukan tipu daya? Maka orang-orang yang kafir itu merekalah yang kena tipu daya."
+                  },
+                  {
+                      "numberInSurah":  43,
+                      "arabic":  "أَمْ لَهُمْ إِلَٰهٌ غَيْرُ ٱللَّهِ ۚ سُبْحَٰنَ ٱللَّهِ عَمَّا يُشْرِكُونَ",
+                      "translation":  "Ataukah mereka mempunyai tuhan selain Allah. Maha Suci Allah dari apa yang mereka persekutukan."
+                  },
+                  {
+                      "numberInSurah":  44,
+                      "arabic":  "وَإِن يَرَوْا۟ كِسْفًۭا مِّنَ ٱلسَّمَآءِ سَاقِطًۭا يَقُولُوا۟ سَحَابٌۭ مَّرْكُومٌۭ",
+                      "translation":  "Jika mereka melihat sebagian dari langit gugur, mereka akan mengatakan: \"Itu adalah awan yang bertindih-tindih\"."
+                  },
+                  {
+                      "numberInSurah":  45,
+                      "arabic":  "فَذَرْهُمْ حَتَّىٰ يُلَٰقُوا۟ يَوْمَهُمُ ٱلَّذِى فِيهِ يُصْعَقُونَ",
+                      "translation":  "Maka biarkanlah mereka hingga mereka menemui hari (yang dijanjikan kepada) mereka yang pada hari itu mereka dibinasakan,"
+                  },
+                  {
+                      "numberInSurah":  46,
+                      "arabic":  "يَوْمَ لَا يُغْنِى عَنْهُمْ كَيْدُهُمْ شَيْـًۭٔا وَلَا هُمْ يُنصَرُونَ",
+                      "translation":  "(yaitu) hari ketika tidak berguna bagi mereka sedikitpun tipu daya mereka dan mereka tidak ditolong."
+                  },
+                  {
+                      "numberInSurah":  47,
+                      "arabic":  "وَإِنَّ لِلَّذِينَ ظَلَمُوا۟ عَذَابًۭا دُونَ ذَٰلِكَ وَلَٰكِنَّ أَكْثَرَهُمْ لَا يَعْلَمُونَ",
+                      "translation":  "Dan sesungguhnya untuk orang-orang yang zalim ada azab selain daripada itu. Tetapi kebanyakan mereka tidak mengetahui."
+                  },
+                  {
+                      "numberInSurah":  48,
+                      "arabic":  "وَٱصْبِرْ لِحُكْمِ رَبِّكَ فَإِنَّكَ بِأَعْيُنِنَا ۖ وَسَبِّحْ بِحَمْدِ رَبِّكَ حِينَ تَقُومُ",
+                      "translation":  "Dan bersabarlah dalam menunggu ketetapan Tuhanmu, maka sesungguhnya kamu berada dalam penglihatan Kami, dan bertasbihlah dengan memuji Tuhanmu ketika kamu bangun berdiri,"
+                  },
+                  {
+                      "numberInSurah":  49,
+                      "arabic":  "وَمِنَ ٱلَّيْلِ فَسَبِّحْهُ وَإِدْبَٰرَ ٱلنُّجُومِ",
+                      "translation":  "dan bertasbihlah kepada-Nya pada beberapa saat di malam hari dan di waktu terbenam bintang-bintang (di waktu fajar)."
+                  }
+              ]
+}
