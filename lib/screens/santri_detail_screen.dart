@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../models/santri.dart';
@@ -33,31 +32,21 @@ class SantriDetailScreen extends StatelessWidget {
         final avg = santri.averageScore;
         final stars = santri.overallStarCount;
         final grade = ScoringUtils.scoreToGrade(avg);
-
+        final halaqah = provider.getHalaqahById(santri.halaqahId);
         final isAdmin = provider.isAdmin;
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('Detail Santri'),
             actions: [
               if (isAdmin)
                 IconButton(
-                  icon: const Icon(Icons.lock_reset_rounded),
-                  tooltip: 'Reset Password',
-                  onPressed: () =>
-                      _showResetPasswordDialog(context, provider, santri),
-                ),
-              if (isAdmin)
-                IconButton(
                   icon: const Icon(Icons.edit_outlined),
                   tooltip: 'Edit Profil',
-                  onPressed: () =>
-                      _showEditProfileDialog(context, provider, santri),
-                ),
-              if (isAdmin)
-                IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  tooltip: 'Hapus Santri',
-                  onPressed: () => _confirmDelete(context, provider, santri),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
+                  ),
                 ),
             ],
           ),
@@ -74,223 +63,54 @@ class SantriDetailScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile card: avatar on top, name below — prevents overflow
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.03),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                // 1. Unified Profile Header
+                _ProfileHeader(
+                  name: santri.name,
+                  subtitle: halaqah?.nama ?? 'Tanpa Halaqah',
+                  photoPath: santri.photoPath,
+                  extra: Column(
                     children: [
-                      GestureDetector(
-                        onTap: () =>
-                            _showPhotoOptions(context, provider, santri),
-                        child: AppAvatar(
-                          name: santri.name,
-                          radius: 48,
-                          imagePath: (santri.photoPath?.isNotEmpty ?? false)
-                              ? santri.photoPath
-                              : null,
-                          backgroundColor: AppTheme.primaryGreen.withValues(
-                            alpha: 0.08,
-                          ),
-                          foregroundColor: AppTheme.primaryGreen,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        santri.name,
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (santri.kelas != null) ...[
-                        const SizedBox(height: 6),
-                        Text(
-                          santri.kelas!,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
                       const SizedBox(height: 8),
-                      StarRatingWidget(rating: stars, size: 24),
+                      StarRatingWidget(rating: stars, size: 20),
                       const SizedBox(height: 6),
-                      GradeBadgeWidget(
-                        gradeName: grade,
-                        stars: stars,
-                        large: true,
-                      ),
+                      GradeBadgeWidget(gradeName: grade, stars: stars),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                // ── Tahfidz info card ──────────────────────────────────
-                if (santri.nis != null ||
-                    santri.jenisKelamin != null ||
-                    santri.namaAyah != null ||
-                    santri.namaIbu != null ||
-                    santri.nomorHpWali != null ||
-                    santri.targetHafalan != null)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.03),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Informasi Santri',
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                            color: AppTheme.primaryGreen,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        if (santri.nis != null)
-                          _InfoRow(label: 'NIS', value: santri.nis!),
-                        if (santri.jenisKelamin != null)
-                          _InfoRow(
-                            label: 'Jenis Kelamin',
-                            value: santri.jenisKelamin == 'P'
-                                ? 'Perempuan'
-                                : 'Laki-laki',
-                          ),
-                        if (santri.halaqahId != null)
-                          _InfoRow(
-                            label: 'Halaqah',
-                            value:
-                                Provider.of<AppProvider>(
-                                  context,
-                                  listen: false,
-                                ).getHalaqahById(santri.halaqahId)?.nama ??
-                                '-',
-                            valueColor: AppTheme.primaryGreen,
-                          ),
-                        if (santri.kelas != null)
-                          _InfoRow(label: 'Kelas', value: santri.kelas!),
-                        _InfoRow(
-                          label: 'Jumlah Juz Hafalan',
-                          value: santri.estimatedJuz >= 1
-                              ? '≈ ${santri.estimatedJuz.toStringAsFixed(1)} Juz'
-                              : '< 1 Juz',
-                          valueColor: AppTheme.primaryGreen,
-                        ),
-                        if (santri.targetHafalan != null)
-                          _InfoRow(
-                            label: 'Target Hafalan',
-                            value: santri.targetHafalan!,
-                            valueColor: AppTheme.primaryGreen,
-                          ),
-                        if (santri.namaAyah != null)
-                          _InfoRow(label: 'Nama Ayah', value: santri.namaAyah!),
-                        if (santri.namaIbu != null)
-                          _InfoRow(label: 'Nama Ibu', value: santri.namaIbu!),
-                        if (santri.nomorHpWali != null)
-                          _InfoRow(
-                            label: 'No. HP Wali',
-                            value: santri.nomorHpWali!,
-                          ),
-                        _InfoRow(
-                          label: 'Status',
-                          value: santri.isAktif ? 'Aktif' : 'Non-aktif',
-                          valueColor: santri.isAktif
-                              ? AppTheme.primaryGreen
-                              : Colors.grey,
-                        ),
-                      ],
-                    ),
-                  ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
+
+                // 2. Unified Stats Row
                 Row(
                   children: [
-                    Expanded(
-                      child: _StatCard(
-                        label: 'Total Setoran',
-                        value: '${santri.totalSetoranCount}',
-                        icon: Icons.list_alt_rounded,
-                        color: AppTheme.primaryGreen,
-                      ),
-                    ),
+                    _statItem('Setoran', '${santri.totalSetoranCount}', Icons.list_alt_rounded, AppTheme.primaryGreen),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: _StatCard(
-                        label: 'Rata-rata Skor',
-                        value: avg.toStringAsFixed(1),
-                        icon: Icons.bar_chart_rounded,
-                        color: AppTheme.gold,
-                      ),
-                    ),
+                    _statItem('Rata-rata', avg.toStringAsFixed(1), Icons.bar_chart_rounded, AppTheme.gold),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: _StatCard(
-                        label: 'Juz Hafalan',
-                        value: santri.estimatedJuz >= 1
-                            ? '≈ ${santri.estimatedJuz.toStringAsFixed(1)}'
-                            : '< 1',
-                        icon: Icons.menu_book_rounded,
-                        color: const Color(0xFF7B1FA2),
-                      ),
-                    ),
+                    _statItem('Hafalan', '${santri.estimatedJuz.toStringAsFixed(1)} Juz', Icons.menu_book_rounded, Colors.purple),
                   ],
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  'Riwayat Setoran',
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 8),
+
+                // 3. Unified Info Section
+                _sectionHeader('Informasi Personal'),
+                _infoCard([
+                  _infoRow(Icons.badge_outlined, 'NIS', santri.nis ?? '-'),
+                  _infoRow(Icons.male_rounded, 'Jenis Kelamin', santri.jenisKelamin == 'P' ? 'Perempuan' : 'Laki-laki'),
+                  _infoRow(Icons.email_outlined, 'Email', santri.email ?? '-'),
+                  _infoRow(Icons.family_restroom_outlined, 'Orang Tua', santri.namaOrangTua ?? '-'),
+                  _infoRow(Icons.phone_outlined, 'No. HP Wali', santri.nomorHpWali ?? '-'),
+                  _infoRow(Icons.flag_outlined, 'Target Hafalan', santri.targetHafalan ?? '-'),
+                  _infoRow(Icons.info_outline, 'Status', santri.isAktif ? 'Aktif' : 'Non-aktif',
+                      valueColor: santri.isAktif ? AppTheme.primaryGreen : Colors.grey),
+                ]),
+
+                const SizedBox(height: 24),
+                _sectionHeader('Riwayat Setoran'),
                 if (santri.setoranHistory.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: Center(
-                      child: Text(
-                        'Belum ada riwayat setoran',
-                        style: TextStyle(color: Colors.grey.shade500),
-                      ),
-                    ),
-                  )
+                  _emptyHistory()
                 else
                   ...santri.setoranHistory.reversed.map(
-                    (r) => GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              SetoranDetailScreen(record: r, santri: santri),
-                        ),
-                      ),
-                      child: _SetoranHistoryCard(record: r),
-                    ),
+                    (r) => _SetoranHistoryTile(record: r, santri: santri),
                   ),
               ],
             ),
@@ -300,443 +120,148 @@ class SantriDetailScreen extends StatelessWidget {
     );
   }
 
-  static Future<void> _showPhotoOptions(
-    BuildContext context,
-    AppProvider provider,
-    Santri santri,
-  ) async {
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  Widget _sectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      child: Text(
+        title,
+        style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.grey.shade800),
       ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 12, 0, 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 36,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Foto ${santri.name}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.camera_alt_rounded,
-                  color: AppTheme.primaryGreen,
-                ),
-                title: const Text('Ambil Foto dari Kamera'),
-                onTap: () => Navigator.pop(ctx, ImageSource.camera),
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.photo_library_rounded,
-                  color: AppTheme.primaryGreen,
-                ),
-                title: const Text('Pilih dari Galeri'),
-                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-              ),
-              if (santri.photoPath?.isNotEmpty ?? false)
-                ListTile(
-                  leading: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: Colors.red,
-                  ),
-                  title: const Text(
-                    'Hapus Foto',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    provider.updateSantriPhoto(santri.id, '');
-                  },
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-    if (source == null || !context.mounted) return;
-    final file = await ImagePicker().pickImage(
-      source: source,
-      imageQuality: 85,
-      maxWidth: 600,
-    );
-    if (file != null && context.mounted) {
-      provider.updateSantriPhoto(santri.id, file.path);
-    }
-  }
-
-  void _showEditProfileDialog(
-    BuildContext context,
-    AppProvider provider,
-    Santri santri,
-  ) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
     );
   }
 
-  static Future<void> _showResetPasswordDialog(
-    BuildContext context,
-    AppProvider provider,
-    Santri santri,
-  ) async {
-    if (santri.nis == null || santri.nis!.isEmpty) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Reset password hanya tersedia untuk santri yang sudah memiliki akun NIS.',
-            ),
-          ),
-        );
-      }
-      return;
-    }
+  Widget _infoCard(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [
+        BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 2)),
+      ]),
+      child: Column(children: children),
+    );
+  }
 
-    final passwordCtrl = TextEditingController(text: santri.nis);
-    String? error;
-
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSt) => AlertDialog(
-          title: const Text('Reset Password Santri'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: passwordCtrl,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password Baru',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              if (error != null) ...[
-                const SizedBox(height: 12),
+  Widget _infoRow(IconData icon, String label, String value, {Color? valueColor}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: Colors.grey.shade400),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
                 Text(
-                  error!,
-                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                  value,
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: valueColor ?? Colors.black87),
                 ),
               ],
-            ],
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Batal'),
-            ),
-            FilledButton(
-              onPressed: () async {
-                final newPassword = passwordCtrl.text.trim();
-                if (newPassword.length < 4) {
-                  setSt(() => error = 'Password minimal 4 karakter.');
-                  return;
-                }
-                final ok = await provider.resetPasswordForLinkedId(
-                  santri.id,
-                  newPassword,
-                );
-                if (!ctx.mounted) return;
-                if (ok) {
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Password santri berhasil direset.'),
-                    ),
-                  );
-                } else {
-                  setSt(() => error = 'Gagal mereset password.');
-                }
-              },
-              child: const Text('Reset'),
-            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _statItem(String label, String value, IconData icon, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(height: 4),
+            Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+            Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 10)),
           ],
         ),
       ),
     );
   }
 
-  void _confirmDelete(
-    BuildContext context,
-    AppProvider provider,
-    Santri santri,
-  ) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Hapus Santri?'),
-        content: Text(
-          'Data "${santri.name}" beserta seluruh riwayat setoran akan dihapus.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal'),
+  Widget _emptyHistory() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32),
+        child: Text('Belum ada riwayat setoran', style: TextStyle(color: Colors.grey.shade400)),
+      ),
+    );
+  }
+}
+
+class _ProfileHeader extends StatelessWidget {
+  const _ProfileHeader({required this.name, required this.subtitle, this.photoPath, this.extra});
+  final String name;
+  final String subtitle;
+  final String? photoPath;
+  final Widget? extra;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        children: [
+          AppAvatar(
+            name: name,
+            radius: 48,
+            imagePath: photoPath,
+            backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
+            foregroundColor: AppTheme.primaryGreen,
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade600,
-            ),
-            onPressed: () {
-              provider.removeSantri(santri.id);
-              Navigator.pop(ctx);
-              Navigator.pop(context);
-            },
-            child: const Text('Hapus'),
+          const SizedBox(height: 16),
+          Text(
+            name,
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: const TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.w600, fontSize: 14),
+          ),
+          if (extra != null) extra!,
         ],
       ),
     );
   }
 }
 
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: color,
-              ),
-            ),
-            const SizedBox(height: 2),
-            SizedBox(
-              height: 14,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SetoranHistoryCard extends StatelessWidget {
-  const _SetoranHistoryCard({required this.record});
+class _SetoranHistoryTile extends StatelessWidget {
+  const _SetoranHistoryTile({required this.record, required this.santri});
   final SetoranRecord record;
+  final Santri santri;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${record.surahEnglishName} (${record.surahName})',
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${record.juzLabel} · ${record.ayahRange} · ${record.type.label}',
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 12,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 70),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          record.finalScore.toStringAsFixed(1),
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 22,
-                            color: AppTheme.primaryGreen,
-                          ),
-                        ),
-                        StarRatingWidget(rating: record.starCount, size: 16),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: [
-                  _chip(
-                    Icons.music_note,
-                    'Tajwid: ${record.tajwidErrorCount}',
-                    AppTheme.tajwidColor,
-                  ),
-                  _chip(
-                    Icons.record_voice_over,
-                    'Makhroj: ${record.makhrojErrorCount}',
-                    AppTheme.makhrojColor,
-                  ),
-                  _chip(
-                    Icons.accessibility_new,
-                    'Kelancaran: ${record.fluencyRating}/5',
-                    AppTheme.primaryGreen,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                _formatDate(record.date),
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
-              ),
-            ],
-          ),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.grey.shade100)),
+      child: ListTile(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => SetoranDetailScreen(record: record, santri: santri)),
         ),
-      ),
-    );
-  }
-
-  Widget _chip(IconData icon, String label, Color color) {
-    return Chip(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      visualDensity: VisualDensity.compact,
-      avatar: Icon(icon, size: 14, color: color),
-      label: Text(label, style: TextStyle(fontSize: 11, color: color)),
-      backgroundColor: color.withValues(alpha: 0.1),
-      side: BorderSide(color: color.withValues(alpha: 0.3)),
-      labelPadding: const EdgeInsets.symmetric(horizontal: 2),
-    );
-  }
-
-  String _formatDate(DateTime dt) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Ags',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des',
-    ];
-    return '${dt.day} ${months[dt.month - 1]} ${dt.year}  '
-        '${dt.hour.toString().padLeft(2, '0')}:'
-        '${dt.minute.toString().padLeft(2, '0')}';
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.label, required this.value, this.valueColor});
-
-  final String label;
-  final String value;
-  final Color? valueColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.start,
-        spacing: 8,
-        runSpacing: 4,
-        children: [
-          SizedBox(
-            width: 130,
-            child: Text(
-              label,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-            ),
-          ),
-          const Text(' : ', style: TextStyle(color: Colors.grey, fontSize: 12)),
-          Flexible(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 12,
-                color: valueColor,
-              ),
-            ),
-          ),
-        ],
+        title: Text('${record.surahEnglishName} (${record.surahName})', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+        subtitle: Text('Ayat ${record.ayahStart}-${record.ayahEnd} • ${record.type.label}', style: const TextStyle(fontSize: 12)),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(record.finalScore.toStringAsFixed(1), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primaryGreen)),
+            StarRatingWidget(rating: record.starCount, size: 12),
+          ],
+        ),
       ),
     );
   }

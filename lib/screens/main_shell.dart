@@ -5,6 +5,7 @@ import '../models/user_role.dart';
 import '../providers/app_provider.dart';
 import 'home_screen.dart';
 import 'santri_list_screen.dart';
+import 'user_management_screen.dart';
 import 'laporan_screen.dart';
 import 'profil_screen.dart';
 import 'manajemen_screen.dart';
@@ -28,7 +29,7 @@ class _MainShellState extends State<MainShell> {
       case UserRole.admin:
         return const [
           HomeScreen(),
-          SantriListScreen(),
+          UserManagementScreen(),
           LaporanScreen(),
           ManajemenScreen(),
           ProfilScreen(),
@@ -36,7 +37,7 @@ class _MainShellState extends State<MainShell> {
       case UserRole.musyrif:
         return const [
           HomeScreen(),
-          SantriListScreen(),
+          UserManagementScreen(),
           LaporanScreen(),
           ProfilScreen(),
         ];
@@ -51,12 +52,12 @@ class _MainShellState extends State<MainShell> {
       selectedIcon: Icon(Icons.dashboard_rounded),
       label: 'Dashboard',
     );
-    // For admin we show "Manajemen Pengguna" (manages santri & musyrif),
+    // For admin we show "Users" (manages santri & musyrif),
     // for other roles keep the label 'Santri'.
-    final santri = NavigationDestination(
-      icon: const Icon(Icons.people_alt_outlined),
-      selectedIcon: const Icon(Icons.people_alt_rounded),
-      label: role == UserRole.admin ? 'Manajemen Pengguna' : 'Santri',
+    final users = NavigationDestination(
+      icon: const Icon(Icons.group_outlined),
+      selectedIcon: const Icon(Icons.group_rounded),
+      label: role == UserRole.admin ? 'Users' : 'Santri',
     );
     const laporan = NavigationDestination(
       icon: Icon(Icons.bar_chart_outlined),
@@ -76,9 +77,9 @@ class _MainShellState extends State<MainShell> {
 
     switch (role) {
       case UserRole.admin:
-        return [dashboard, santri, laporan, manajemen, profil];
+        return [dashboard, users, laporan, manajemen, profil];
       case UserRole.musyrif:
-        return [dashboard, santri, laporan, profil];
+        return [dashboard, users, laporan, profil];
       case UserRole.orangTua:
         return [dashboard, laporan, profil];
     }

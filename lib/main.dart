@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/app_provider.dart';
-import 'package:tahfidz_app/screens/shared/login_screen.dart';
-import 'package:tahfidz_app/screens/shared/main_shell.dart';
+import 'screens/login_screen.dart';
+import 'screens/main_shell.dart';
 import 'theme/app_theme.dart';
 
 void main() {

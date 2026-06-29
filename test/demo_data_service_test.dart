@@ -9,7 +9,6 @@ void main() {
 
     expect(bundle.musyrifList, isNotEmpty);
     expect(bundle.halaqahList, isNotEmpty);
-    expect(bundle.kelasList, isNotEmpty);
     expect(bundle.santriList, isNotEmpty);
     expect(bundle.musyrifList.first.nama, contains('Hasan'));
   });

@@ -33,8 +33,8 @@ void main() {
     WidgetTester tester,
   ) async {
     final provider = AppProvider();
-    provider.addSantri('Ali', 'Kelas 1', nis: '001');
-    provider.addSantri('Budi', 'Kelas 2', nis: '002');
+    provider.addSantri('Ali', nis: '001');
+    provider.addSantri('Budi', nis: '002');
 
     await tester.pumpWidget(
       ChangeNotifierProvider.value(
@@ -58,7 +58,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final provider = AppProvider();
-    provider.addSantri('Ali', 'Kelas 1', nis: '001');
+    provider.addSantri('Ali', nis: '001');
 
     await tester.pumpWidget(
       ChangeNotifierProvider.value(
@@ -75,7 +75,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final provider = AppProvider();
-    provider.addSantri('Ali', 'Kelas 1', nis: '001');
+    provider.addSantri('Ali', nis: '001');
     final santri = provider.santriList.first;
 
     await tester.pumpWidget(
@@ -93,7 +93,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final provider = AppProvider();
-    provider.addSantri('Ali', 'Kelas 1', nis: '001');
+    provider.addSantri('Ali', nis: '001');
 
     await tester.pumpWidget(
       ChangeNotifierProvider.value(
@@ -117,7 +117,7 @@ void main() {
   ) async {
     final provider = AppProvider();
     provider.login(UserRole.admin);
-    provider.addSantri('Ali', 'Kelas 1', nis: '001');
+    provider.addSantri('Ali', nis: '001');
     final santri = provider.santriList.first;
     provider.startSetoranSession(
       santri: santri,

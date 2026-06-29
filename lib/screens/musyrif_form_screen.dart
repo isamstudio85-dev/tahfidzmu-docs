@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../models/musyrif_data.dart';
@@ -23,12 +25,13 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
   late final TextEditingController _nipCtrl;
   late final TextEditingController _jabatanCtrl;
   late final TextEditingController _hpCtrl;
-  late final TextEditingController _catatanCtrl;
   late final TextEditingController _usernameCtrl;
   late final TextEditingController _passwordCtrl;
 
   String _jenisKelamin = 'L';
   String _status = 'aktif';
+  String? _photoPath;
+  bool _showAccountInfo = false;
 
   bool get _isEdit => widget.existing != null;
 
@@ -40,11 +43,11 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
     _nipCtrl = TextEditingController(text: m?.nip ?? '');
     _jabatanCtrl = TextEditingController(text: m?.jabatan ?? '');
     _hpCtrl = TextEditingController(text: m?.nomorHp ?? '');
-    _catatanCtrl = TextEditingController(text: m?.catatan ?? '');
     _usernameCtrl = TextEditingController();
     _passwordCtrl = TextEditingController();
     _jenisKelamin = m?.jenisKelamin ?? 'L';
     _status = m?.status ?? 'aktif';
+    _photoPath = m?.photoPath;
   }
 
   @override
@@ -53,10 +56,43 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
     _nipCtrl.dispose();
     _jabatanCtrl.dispose();
     _hpCtrl.dispose();
-    _catatanCtrl.dispose();
     _usernameCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Galeri'),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Kamera'),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (source != null) {
+      final pickedFile = await picker.pickImage(
+        source: source,
+        maxWidth: 800,
+        imageQuality: 85,
+      );
+      if (pickedFile != null) {
+        setState(() => _photoPath = pickedFile.path);
+      }
+    }
   }
 
   void _save() {
@@ -78,10 +114,7 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
       lembaga: pesantrenName,
       nomorHp: _hpCtrl.text.trim(),
       status: _status,
-      catatan: _catatanCtrl.text.trim().isEmpty
-          ? null
-          : _catatanCtrl.text.trim(),
-      photoPath: widget.existing?.photoPath,
+      photoPath: _photoPath,
     );
     _isEdit
         ? provider.updateMusyrifData(m.id, m)
@@ -103,15 +136,10 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
       appBar: AppBar(
         title: Text(_isEdit ? 'Edit Musyrif' : 'Tambah Musyrif'),
         actions: [
-          TextButton(
+          IconButton(
             onPressed: _save,
-            child: Text(
-              _isEdit ? 'Simpan' : 'Tambah',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            icon: const Icon(Icons.check_rounded, color: Colors.white),
+            tooltip: _isEdit ? 'Simpan' : 'Tambah',
           ),
         ],
       ),
@@ -120,18 +148,44 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            // Avatar preview
             Center(
-              child: AppAvatar(
-                name: _namaCtrl.text.isEmpty ? '?' : _namaCtrl.text,
-                radius: 40,
-                imagePath: widget.existing?.photoPath,
-                backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.15),
-                foregroundColor: AppTheme.primaryGreen,
+              child: Stack(
+                children: [
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: AppAvatar(
+                      name: _namaCtrl.text.isEmpty ? '?' : _namaCtrl.text,
+                      radius: 50,
+                      imagePath: _photoPath,
+                      backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                      foregroundColor: AppTheme.primaryGreen,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryGreen,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: const Icon(
+                          Icons.camera_alt_rounded,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            _section('Identitas Musyrif'),
+            const SizedBox(height: 24),
+            _section('Informasi Utama'),
             const SizedBox(height: 12),
             TextFormField(
               controller: _namaCtrl,
@@ -145,16 +199,6 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
                   (v == null || v.trim().isEmpty) ? 'Wajib diisi' : null,
             ),
             const SizedBox(height: 12),
-            TextFormField(
-              controller: _nipCtrl,
-              decoration: const InputDecoration(
-                labelText: 'NIP (Nomor Induk Pegawai)',
-                hintText: 'cth. NIP-001',
-                prefixIcon: Icon(Icons.badge_rounded),
-                helperText: 'Digunakan sebagai identitas login musyrif',
-              ),
-            ),
-            const SizedBox(height: 12),
             _labelText('Jenis Kelamin'),
             const SizedBox(height: 8),
             Row(
@@ -164,46 +208,15 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
                 _genderChip('P', 'Perempuan', Icons.female_rounded),
               ],
             ),
-            const SizedBox(height: 20),
-            _section('Jabatan'),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             TextFormField(
-              controller: _jabatanCtrl,
-              decoration: InputDecoration(
-                labelText: 'Jabatan',
-                hintText: _jenisKelamin == 'P'
-                    ? 'cth. Musyrifah, Koordinator Tahfidz...'
-                    : 'cth. Musyrif, Kepala Tahfidz, Mudir...',
-                prefixIcon: const Icon(Icons.work_rounded),
-                helperText: 'Jabatan bebas, tulis sesuai kebutuhan',
-              ),
-              textCapitalization: TextCapitalization.words,
-            ),
-            const SizedBox(height: 20),
-            _section('Akun Login'),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _usernameCtrl,
+              controller: _nipCtrl,
               decoration: const InputDecoration(
-                labelText: 'Username Login Musyrif',
-                hintText: 'cth. musyrif-01',
-                prefixIcon: Icon(Icons.person_outline_rounded),
-                helperText: 'Kosongkan untuk memakai NIP otomatis',
+                labelText: 'NIP (Nomor Induk Pegawai)',
+                hintText: 'cth. NIP-001',
+                prefixIcon: Icon(Icons.badge_rounded),
               ),
             ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _passwordCtrl,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password Login Musyrif',
-                hintText: 'minimal 4 karakter',
-                prefixIcon: Icon(Icons.lock_outline_rounded),
-                helperText: 'Kosongkan untuk memakai NIP otomatis',
-              ),
-            ),
-            const SizedBox(height: 20),
-            _section('Kontak'),
             const SizedBox(height: 12),
             TextFormField(
               controller: _hpCtrl,
@@ -215,25 +228,77 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
             ),
             const SizedBox(height: 12),
             TextFormField(
-              controller: _catatanCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Catatan (opsional)',
-                prefixIcon: Icon(Icons.notes_rounded),
+              controller: _jabatanCtrl,
+              decoration: InputDecoration(
+                labelText: 'Jabatan',
+                hintText: _jenisKelamin == 'P'
+                    ? 'cth. Musyrifah, Koordinator Tahfidz...'
+                    : 'cth. Musyrif, Kepala Tahfidz...',
+                prefixIcon: const Icon(Icons.work_rounded),
               ),
-              maxLines: 2,
+              textCapitalization: TextCapitalization.words,
             ),
-            if (_isEdit) ...[
-              const SizedBox(height: 20),
-              _section('Status'),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  _statusChip('aktif', 'Aktif', AppTheme.primaryGreen),
-                  const SizedBox(width: 12),
-                  _statusChip('nonaktif', 'Non-aktif', Colors.grey.shade600),
-                ],
+
+            const SizedBox(height: 24),
+            InkWell(
+              onTap: () => setState(() => _showAccountInfo = !_showAccountInfo),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  children: [
+                    Text(
+                      'Info Akun',
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    Icon(
+                      _showAccountInfo
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                      color: Colors.grey.shade600,
+                    ),
+                  ],
+                ),
               ),
+            ),
+            const Divider(),
+
+            if (_showAccountInfo) ...[
+              const SizedBox(height: 12),
+              if (!_isEdit) ...[
+                TextFormField(
+                  controller: _usernameCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Username Login (Kustom)',
+                    prefixIcon: Icon(Icons.person_outline_rounded),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _passwordCtrl,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Password Login (Kustom)',
+                    prefixIcon: Icon(Icons.lock_outline_rounded),
+                  ),
+                ),
+              ],
+              if (_isEdit) ...[
+                _labelText('Status Musyrif'),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _statusChip('aktif', 'Aktif', AppTheme.primaryGreen),
+                    const SizedBox(width: 12),
+                    _statusChip('nonaktif', 'Non-aktif', Colors.grey.shade600),
+                  ],
+                ),
+              ],
             ],
+
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,

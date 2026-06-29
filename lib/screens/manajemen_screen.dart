@@ -5,10 +5,6 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import 'halaqah_list_screen.dart';
-import 'kelas_list_screen.dart';
-import 'musyrif_list_screen.dart';
-import 'santri_list_screen.dart';
-import 'laporan_screen.dart';
 import 'pesantren_screen.dart';
 
 class ManajemenScreen extends StatelessWidget {
@@ -18,199 +14,166 @@ class ManajemenScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manajemen'),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 12),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.admin_panel_settings_rounded,
-                  size: 16,
-                  color: Colors.white,
-                ),
-                SizedBox(width: 4),
-                Text(
-                  'Admin',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-        ],
+        title: const Text('Pengaturan Sistem'),
+        backgroundColor: AppTheme.primaryGreen,
+        foregroundColor: Colors.white,
       ),
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {
-          final allSetorans = provider.santriList
-              .expand((s) => s.setoranHistory)
-              .toList();
+          return ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              _sectionHeader('PENGATURAN TAHFIDZ'),
+              const SizedBox(height: 12),
+              _buildTile(
+                icon: Icons.groups_rounded,
+                title: 'Kelola Halaqah',
+                subtitle: 'Atur kelompok dan pembimbing (musyrif)',
+                color: Colors.orange,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HalaqahListScreen()),
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildTile(
+                icon: Icons.tune_rounded,
+                title: 'Modul Hafalan',
+                subtitle: 'Aktifkan atau matikan modul Quran/Hadits',
+                color: Colors.teal,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PesantrenScreen(manageModulesOnly: true)),
+                ),
+              ),
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ── Overview stats ─────────────────────────────────────────
-                _sectionTitle('Ringkasan Sistem'),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    _StatCard(
-                      icon: Icons.people_alt_rounded,
-                      label: 'Total Santri',
-                      value: '${provider.santriList.length}',
-                      color: AppTheme.primaryGreen,
-                    ),
-                    const SizedBox(width: 10),
-                    _StatCard(
-                      icon: Icons.assignment_turned_in_rounded,
-                      label: 'Total Setoran',
-                      value: '${allSetorans.length}',
-                      color: AppTheme.gold,
-                    ),
-                    const SizedBox(width: 10),
-                    _StatCard(
-                      icon: Icons.menu_book_rounded,
-                      label: 'Musyrif',
-                      value: '${provider.musyrifList.length}',
-                      color: const Color(0xFF1565C0),
-                    ),
-                  ],
+              const SizedBox(height: 32),
+              _sectionHeader('INFORMASI LEMBAGA'),
+              const SizedBox(height: 12),
+              _buildTile(
+                icon: Icons.school_rounded,
+                title: 'Profil Pesantren',
+                subtitle: 'Nama, alamat, dan logo lembaga',
+                color: AppTheme.primaryGreen,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PesantrenScreen()),
                 ),
-                const SizedBox(height: 24),
+              ),
 
-                // ── Management actions ─────────────────────────────────────
-                _sectionTitle('Kelola Data'),
-                const SizedBox(height: 10),
-                _ManageTile(
-                  icon: Icons.people_alt_rounded,
-                  title: 'Kelola Santri',
-                  subtitle: '${provider.santriList.length} santri terdaftar',
-                  color: AppTheme.primaryGreen,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const SantriListScreen()),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _ManageTile(
-                  icon: Icons.menu_book_rounded,
-                  title: 'Kelola Musyrif',
-                  subtitle: '${provider.musyrifList.length} musyrif terdaftar',
-                  color: const Color(0xFF1565C0),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const MusyrifListScreen(),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _ManageTile(
-                  icon: Icons.tune_rounded,
-                  title: 'Kelola Modul Tahfidz',
-                  subtitle: 'Atur modul hafalan aktif',
-                  color: const Color(0xFF009688),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          const PesantrenScreen(manageModulesOnly: true),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _ManageTile(
-                  icon: Icons.class_rounded,
-                  title: 'Kelola Halaqah',
-                  subtitle: '${provider.halaqahList.length} halaqah terdaftar',
-                  color: const Color(0xFFF57F17),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const HalaqahListScreen(),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _ManageTile(
-                  icon: Icons.class_outlined,
-                  title: 'Kelola Kelas',
-                  subtitle: '${provider.kelasList.length} kelas terdaftar',
-                  color: const Color(0xFF7B1FA2),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const KelasListScreen()),
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                // ── Laporan ────────────────────────────────────────────────
-                _sectionTitle('Laporan'),
-                const SizedBox(height: 10),
-                _ManageTile(
-                  icon: Icons.bar_chart_rounded,
-                  title: 'Laporan Global',
-                  subtitle: 'Statistik & peringkat seluruh santri',
-                  color: AppTheme.primaryGreen,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const LaporanScreen()),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _ManageTile(
-                  icon: Icons.picture_as_pdf_rounded,
-                  title: 'Export Laporan PDF',
-                  subtitle: 'Cetak rekap setoran per periode',
-                  color: Colors.red.shade700,
-                  badge: 'Segera',
-                  onTap: () => _showComingSoon(context, 'Export PDF'),
-                ),
-                const SizedBox(height: 24),
-
-                // ── System ─────────────────────────────────────────────────
-                _sectionTitle('Sistem'),
-                const SizedBox(height: 10),
-                _ManageTile(
-                  icon: Icons.backup_rounded,
-                  title: 'Backup & Restore',
-                  subtitle: 'Export & import data JSON',
-                  color: const Color(0xFF00838F),
-                  badge: 'Segera',
-                  onTap: () => _showComingSoon(context, 'Backup & Restore'),
-                ),
-                const SizedBox(height: 10),
-                _ManageTile(
-                  icon: Icons.delete_sweep_rounded,
-                  title: 'Reset Semua Data',
-                  subtitle: 'Hapus seluruh data santri & setoran',
-                  color: Colors.red,
-                  onTap: () => _showResetConfirm(context, provider),
-                ),
-                const SizedBox(height: 32),
-              ],
-            ),
+              const SizedBox(height: 32),
+              _sectionHeader('KEAMANAN & DATA'),
+              const SizedBox(height: 12),
+              _buildTile(
+                icon: Icons.cloud_upload_rounded,
+                title: 'Backup & Restore',
+                subtitle: 'Amankan data atau pindah perangkat',
+                color: Colors.blue,
+                badge: 'Segera',
+                onTap: () => _showComingSoon(context, 'Backup & Restore'),
+              ),
+              const SizedBox(height: 12),
+              _buildTile(
+                icon: Icons.delete_sweep_rounded,
+                title: 'Reset Data',
+                subtitle: 'Hapus permanen seluruh data aplikasi',
+                color: Colors.red,
+                onTap: () => _showResetConfirm(context, provider),
+              ),
+              const SizedBox(height: 40),
+            ],
           );
         },
       ),
     );
   }
 
-  Widget _sectionTitle(String text) => Text(
-    text,
-    style: GoogleFonts.poppins(
-      fontWeight: FontWeight.w600,
-      fontSize: 13,
-      color: Colors.grey.shade600,
-      letterSpacing: 0.3,
-    ),
-  );
+  Widget _sectionHeader(String title) {
+    return Text(
+      title,
+      style: GoogleFonts.poppins(
+        fontSize: 11,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey.shade600,
+        letterSpacing: 1.2,
+      ),
+    );
+  }
+
+  Widget _buildTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+    String? badge,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      if (badge != null) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade100,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            badge,
+                            style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.amber.shade900),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: Colors.grey.shade300),
+          ],
+        ),
+      ),
+    );
+  }
 
   void _showComingSoon(BuildContext context, String feature) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -227,15 +190,10 @@ class ManajemenScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Reset Semua Data?'),
-        content: const Text(
-          'Seluruh data santri dan riwayat setoran akan dihapus permanen.',
-        ),
+        title: const Text('Reset Data?'),
+        content: const Text('Seluruh data santri, musyrif, dan riwayat hafalan akan dihapus permanen.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
@@ -245,164 +203,6 @@ class ManajemenScreen extends StatelessWidget {
             child: const Text('Hapus Semua'),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ── Sub-Widgets ────────────────────────────────────────────────────────────────
-
-class _StatCard extends StatelessWidget {
-  const _StatCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 5),
-            Text(
-              value,
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: color,
-              ),
-            ),
-            Text(
-              label,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 10),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ManageTile extends StatelessWidget {
-  const _ManageTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.color,
-    required this.onTap,
-    this.badge,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Color color;
-  final VoidCallback onTap;
-  final String? badge;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 22),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      if (badge != null) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.shade100,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            badge!,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: Colors.amber.shade800,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.chevron_right_rounded,
-              color: Colors.grey.shade300,
-              size: 20,
-            ),
-          ],
-        ),
       ),
     );
   }

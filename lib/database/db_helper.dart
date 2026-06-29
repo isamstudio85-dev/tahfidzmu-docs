@@ -4,7 +4,6 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// SQLite-based authentication helper.
-/// Stores only the users table — all other app data stays in SharedPreferences.
 class DbHelper {
   DbHelper._();
 
@@ -32,7 +31,10 @@ class DbHelper {
         created_at INTEGER NOT NULL
       )
     ''');
-    // Seed default admin account
+    await _insertDefaultAdmin(db);
+  }
+
+  static Future<void> _insertDefaultAdmin(Database db) async {
     await db.insert('users', {
       'id': 'admin_default',
       'username': 'admin',
@@ -40,46 +42,38 @@ class DbHelper {
       'role': 'admin',
       'linked_id': null,
       'created_at': DateTime.now().millisecondsSinceEpoch,
-    });
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
-
-  // ── Crypto ──────────────────────────────────────────────────────────────────
 
   static String _hash(String password) {
     final bytes = utf8.encode(password);
     return sha256.convert(bytes).toString();
   }
 
-  // ── Auth ────────────────────────────────────────────────────────────────────
+  /// Verify credentials.
+  static Future<Map<String, Object?>?> authenticate(String username, String password) async {
+    // 1. Try normal normalization (e.g. 'admin')
+    var result = await _performAuth(_normalizeUsername(username), password);
+    if (result != null) return result;
 
-  /// Verify credentials. Returns user row map, or null if invalid.
-  static Future<Map<String, Object?>?> authenticate(
-    String username,
-    String password,
-  ) async {
-    try {
-      final db = await database;
-      final rows = await db.query(
-        'users',
-        where: 'username = ? AND password_hash = ?',
-        whereArgs: [_normalizeUsername(username), _hash(password)],
-      );
-      return rows.isNotEmpty ? rows.first : null;
-    } catch (_) {
-      return null;
+    // 2. Try digit-only normalization (e.g. 'TH-2024-001' -> '2024001')
+    final numeric = onlyDigits(username);
+    if (numeric.isNotEmpty && numeric != username) {
+      result = await _performAuth(numeric, password);
+      if (result != null) return result;
     }
+    return null;
   }
 
-  // ── User CRUD ────────────────────────────────────────────────────────────────
+  static Future<Map<String, Object?>?> _performAuth(String user, String pass) async {
+    try {
+      final db = await database;
+      final rows = await db.query('users', where: 'username = ? AND password_hash = ?', whereArgs: [user, _hash(pass)]);
+      return rows.isNotEmpty ? rows.first : null;
+    } catch (_) { return null; }
+  }
 
-  /// Insert a user. Silently ignores duplicate usernames.
-  static Future<void> upsertUser({
-    required String id,
-    required String username,
-    required String password,
-    required String role,
-    String? linkedId,
-  }) async {
+  static Future<void> upsertUser({required String id, required String username, required String password, required String role, String? linkedId}) async {
     try {
       final db = await database;
       await db.insert('users', {
@@ -94,92 +88,57 @@ class DbHelper {
   }
 
   static Future<void> deleteUserByLinkedId(String linkedId) async {
-    try {
-      final db = await database;
-      await db.delete('users', where: 'linked_id = ?', whereArgs: [linkedId]);
-    } catch (_) {}
+    final db = await database;
+    await db.delete('users', where: 'linked_id = ?', whereArgs: [linkedId]);
   }
 
-  /// Admin resets password for any user (by DB id).
+  static Future<void> clearAllNonAdminUsers() async {
+    final db = await database;
+    await db.delete('users', where: 'role != ?', whereArgs: ['admin']);
+  }
+
   static Future<bool> resetPassword(String userId, String newPassword) async {
-    try {
-      final db = await database;
-      final rows = await db.update(
-        'users',
-        {'password_hash': _hash(newPassword)},
-        where: 'id = ?',
-        whereArgs: [userId],
-      );
-      return rows > 0;
-    } catch (_) {
-      return false;
-    }
+    final db = await database;
+    final rows = await db.update('users', {'password_hash': _hash(newPassword)}, where: 'id = ?', whereArgs: [userId]);
+    return rows > 0;
   }
 
-  /// User changes their own password — requires old password verification.
-  static Future<bool> changeOwnPassword(
-    String username,
-    String oldPassword,
-    String newPassword,
-  ) async {
+  static Future<bool> changeOwnPassword(String username, String oldPassword, String newPassword) async {
     final user = await authenticate(username, oldPassword);
     if (user == null) return false;
     return resetPassword(user['id'] as String, newPassword);
   }
 
-  static Future<Map<String, Object?>?> getUserByLinkedId(
-    String linkedId,
-  ) async {
-    try {
-      final db = await database;
-      final rows = await db.query(
-        'users',
-        where: 'linked_id = ?',
-        whereArgs: [linkedId],
-      );
-      return rows.isNotEmpty ? rows.first : null;
-    } catch (_) {
-      return null;
-    }
+  static Future<Map<String, Object?>?> getUserByLinkedId(String linkedId) async {
+    final db = await database;
+    final rows = await db.query('users', where: 'linked_id = ?', whereArgs: [linkedId]);
+    return rows.isNotEmpty ? rows.first : null;
   }
 
   static Future<Map<String, Object?>?> getUserById(String id) async {
-    try {
-      final db = await database;
-      final rows = await db.query('users', where: 'id = ?', whereArgs: [id]);
-      return rows.isNotEmpty ? rows.first : null;
-    } catch (_) {
-      return null;
-    }
+    final db = await database;
+    final rows = await db.query('users', where: 'id = ?', whereArgs: [id]);
+    return rows.isNotEmpty ? rows.first : null;
   }
 
-  // ── Helpers ─────────────────────────────────────────────────────────────────
+  static String onlyDigits(String? value) {
+    if (value == null) return '';
+    return value.replaceAll(RegExp(r'\D+'), '');
+  }
 
-  /// Build a clean username from NIP/NIS (primary) or nama (fallback).
   static String makeUsername(String? primary, String? fallbackName) {
-    final src = primary?.isNotEmpty == true ? primary! : fallbackName ?? 'user';
-    // Keep alphanumeric, dot, underscore, hyphen; replace spaces → _
-    final clean = src
-        .toLowerCase()
-        .replaceAll(' ', '_')
-        .replaceAll(RegExp(r'[^a-z0-9._\-]'), '');
-    final trimmed = clean.isEmpty ? 'user' : clean;
-    return trimmed.length > 30 ? trimmed.substring(0, 30) : trimmed;
+    final digits = onlyDigits(primary);
+    if (digits.isNotEmpty) return digits;
+    final src = fallbackName ?? 'user';
+    return src.toLowerCase().replaceAll(' ', '_').replaceAll(RegExp(r'[^a-z0-9._\-]'), '');
   }
 
-  /// Build a short numeric credential for demo accounts.
   static String buildDemoCredentialValue(String? primary, String? fallback) {
-    final source = primary?.isNotEmpty == true ? primary! : fallback ?? '0';
-    final digits = source.replaceAll(RegExp(r'\D+'), '');
-    if (digits.isNotEmpty) {
-      final short = digits.length > 4
-          ? digits.substring(digits.length - 4)
-          : digits;
-      return short.padLeft(4, '0');
-    }
-    return '1234';
+    final digits = onlyDigits(primary);
+    if (digits.isNotEmpty) return digits;
+    final fallbackDigits = onlyDigits(fallback);
+    return fallbackDigits.isNotEmpty ? fallbackDigits : '1234';
   }
 
-  static String _normalizeUsername(String username) =>
-      username.trim().toLowerCase();
+  static String _normalizeUsername(String username) => username.trim().toLowerCase();
 }

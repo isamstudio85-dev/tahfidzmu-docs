@@ -99,7 +99,7 @@ class _OrangTuaProfilEditScreenState extends State<OrangTuaProfilEditScreen> {
                   Expanded(
                     child: Text(
                       'Informasi wali dapat diedit di sini. Data santri seperti '
-                      'nama, kelas, dan halaqah dikelola oleh admin.',
+                      'nama dan halaqah dikelola oleh admin.',
                       style: TextStyle(
                         fontSize: 12,
                         color: AppTheme.primaryGreen,

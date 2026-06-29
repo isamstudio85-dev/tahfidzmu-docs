@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,11 +7,8 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 
-/// Full-page screen for admin to manage pesantren identity,
-/// logo, and which hafalan modules are active.
 class PesantrenScreen extends StatefulWidget {
   const PesantrenScreen({super.key, this.manageModulesOnly = false});
-
   final bool manageModulesOnly;
 
   @override
@@ -38,10 +34,7 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
 
   @override
   void dispose() {
-    _namaCtrl.dispose();
-    _alamatCtrl.dispose();
-    _telponCtrl.dispose();
-    _emailCtrl.dispose();
+    _namaCtrl.dispose(); _alamatCtrl.dispose(); _telponCtrl.dispose(); _emailCtrl.dispose();
     super.dispose();
   }
 
@@ -56,106 +49,42 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
         email: _emailCtrl.text.trim(),
       ),
     );
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Informasi pesantren disimpan'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
     Navigator.pop(context);
   }
 
   Future<void> _pickLogo() async {
+    final picker = ImagePicker();
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 12, 0, 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 36,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 8),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Logo Pesantren',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.camera_alt_rounded,
-                  color: AppTheme.primaryGreen,
-                ),
-                title: const Text('Ambil Foto dari Kamera'),
-                onTap: () => Navigator.pop(ctx, ImageSource.camera),
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.photo_library_rounded,
-                  color: AppTheme.primaryGreen,
-                ),
-                title: const Text('Pilih dari Galeri'),
-                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-              ),
-            ],
-          ),
+        child: Wrap(
+          children: [
+            ListTile(leading: const Icon(Icons.photo_library), title: const Text('Galeri'), onTap: () => Navigator.pop(ctx, ImageSource.gallery)),
+            ListTile(leading: const Icon(Icons.camera_alt), title: const Text('Kamera'), onTap: () => Navigator.pop(ctx, ImageSource.camera)),
+          ],
         ),
       ),
     );
-    if (source == null || !mounted) return;
-    final file = await ImagePicker().pickImage(
-      source: source,
-      imageQuality: 90,
-      maxWidth: 512,
-    );
-    if (file != null && mounted) {
-      context.read<AppProvider>().updatePesantrenInfo(
-        context.read<AppProvider>().pesantrenInfo.copyWith(logoPath: file.path),
-      );
-    }
-  }
 
-  void _removeLogo() {
-    final provider = context.read<AppProvider>();
-    provider.updatePesantrenInfo(provider.pesantrenInfo.copyWith(logoPath: ''));
+    if (source != null) {
+      final file = await picker.pickImage(source: source, imageQuality: 85);
+      if (file != null) {
+        context.read<AppProvider>().updatePesantrenInfo(
+          context.read<AppProvider>().pesantrenInfo.copyWith(logoPath: file.path),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.manageModulesOnly
-        ? 'Kelola Modul Tahfidz'
-        : 'Informasi Pesantren';
-
+    final title = widget.manageModulesOnly ? 'Kelola Modul' : 'Profil Pesantren';
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
         actions: [
           if (!widget.manageModulesOnly)
-            TextButton(
-              onPressed: _save,
-              child: const Text(
-                'Simpan',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+            IconButton(onPressed: _save, icon: const Icon(Icons.check_rounded, color: Colors.white)),
         ],
       ),
       body: Consumer<AppProvider>(
@@ -167,268 +96,61 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
               padding: const EdgeInsets.all(20),
               children: [
                 if (!widget.manageModulesOnly) ...[
-                  // ── Logo ─────────────────────────────────────────────────
-                  _sectionLabel('Logo Pesantren'),
-                  const SizedBox(height: 12),
                   Center(
-                    child: Column(
+                    child: Stack(
                       children: [
                         GestureDetector(
                           onTap: _pickLogo,
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Container(
-                                width: 110,
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: AppTheme.primaryGreen.withValues(
-                                    alpha: 0.08,
-                                  ),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: AppTheme.primaryGreen.withValues(
-                                      alpha: 0.3,
-                                    ),
-                                    width: 2,
-                                  ),
-                                ),
-                                clipBehavior: Clip.antiAlias,
-                                child: info.hasLogo
-                                    ? Image.file(
-                                        File(info.logoPath),
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) =>
-                                            const Icon(
-                                              Icons.school_rounded,
-                                              size: 44,
-                                              color: AppTheme.primaryGreen,
-                                            ),
-                                      )
-                                    : const Icon(
-                                        Icons.school_rounded,
-                                        size: 44,
-                                        color: AppTheme.primaryGreen,
-                                      ),
-                              ),
-                              Positioned(
-                                bottom: 2,
-                                right: 2,
-                                child: Container(
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.primaryGreen,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: const Icon(
-                                    Icons.camera_alt_rounded,
-                                    size: 14,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          child: Container(
+                            width: 100, height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.2), width: 2),
+                              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
+                            ),
+                            clipBehavior: Clip.antiAlias,
+                            child: info.hasLogo
+                                ? Image.file(File(info.logoPath), fit: BoxFit.cover)
+                                : Image.asset('assets/images/logoAlf.png', fit: BoxFit.cover, errorBuilder: (_,__,___) => const Icon(Icons.school_rounded, size: 40, color: AppTheme.primaryGreen)),
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        if (info.hasLogo)
-                          TextButton.icon(
-                            onPressed: _removeLogo,
-                            icon: const Icon(
-                              Icons.delete_outline_rounded,
-                              size: 16,
-                              color: Colors.red,
-                            ),
-                            label: const Text(
-                              'Hapus Logo',
-                              style: TextStyle(color: Colors.red, fontSize: 12),
-                            ),
-                          )
-                        else
-                          Text(
-                            'Tap untuk upload logo pesantren',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade500,
+                        Positioned(
+                          bottom: 0, right: 0,
+                          child: GestureDetector(
+                            onTap: _pickLogo,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: const BoxDecoration(color: AppTheme.primaryGreen, shape: BoxShape.circle),
+                              child: const Icon(Icons.camera_alt_rounded, size: 14, color: Colors.white),
                             ),
                           ),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 28),
-
-                  // ── Identitas ─────────────────────────────────────────────
-                  _sectionLabel('Identitas Pesantren'),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _namaCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Nama Pesantren *',
-                      prefixIcon: Icon(Icons.school_rounded),
-                      hintText: 'cth. Pesantren Darul Quran',
-                    ),
-                    textCapitalization: TextCapitalization.words,
-                    validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'Wajib diisi' : null,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _alamatCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Alamat',
-                      prefixIcon: Icon(Icons.location_on_rounded),
-                      hintText: 'cth. Jl. Raya Pesantren No. 1, Bandung',
-                      alignLabelWithHint: true,
-                    ),
-                    textCapitalization: TextCapitalization.sentences,
-                    maxLines: 2,
                   ),
                   const SizedBox(height: 24),
-
-                  // ── Kontak ────────────────────────────────────────────────
-                  _sectionLabel('Kontak'),
+                  _section('Informasi Utama'),
                   const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _telponCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'No. Telpon / WhatsApp',
-                      prefixIcon: Icon(Icons.phone_rounded),
-                      hintText: 'cth. 0812-3456-7890',
-                    ),
-                    keyboardType: TextInputType.phone,
-                  ),
+                  TextFormField(controller: _namaCtrl, decoration: const InputDecoration(labelText: 'Nama Pesantren *', prefixIcon: Icon(Icons.school_outlined)), textCapitalization: TextCapitalization.words, validator: (v) => v!.isEmpty ? 'Wajib diisi' : null),
                   const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _emailCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email_rounded),
-                      hintText: 'cth. info@pesantren.sch.id',
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 28),
+                  TextFormField(controller: _alamatCtrl, decoration: const InputDecoration(labelText: 'Alamat', prefixIcon: Icon(Icons.location_on_outlined)), maxLines: 2),
+                  const SizedBox(height: 24),
+                  _section('Kontak'),
+                  const SizedBox(height: 12),
+                  TextFormField(controller: _telponCtrl, decoration: const InputDecoration(labelText: 'No. Telpon / WA', prefixIcon: Icon(Icons.phone_outlined)), keyboardType: TextInputType.phone),
+                  const SizedBox(height: 12),
+                  TextFormField(controller: _emailCtrl, decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)), keyboardType: TextInputType.emailAddress),
                 ],
-
                 if (widget.manageModulesOnly) ...[
-                  _sectionLabel('Modul Hafalan Aktif'),
-                  const SizedBox(height: 8),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        // Al-Quran — always active, cannot be toggled off
-                        SwitchListTile(
-                          value: true,
-                          onChanged: null,
-                          title: const Text(
-                            'Tahfidz Al-Quran',
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                          subtitle: const Text('Hafalan & setoran Al-Quran'),
-                          secondary: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryGreen.withValues(
-                                alpha: 0.1,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.menu_book_rounded,
-                              color: AppTheme.primaryGreen,
-                            ),
-                          ),
-                        ),
-                        const Divider(height: 1, indent: 16),
-                        // Hadits
-                        SwitchListTile(
-                          value: provider.isModuleActive('hadits'),
-                          onChanged: (_) => provider.toggleModule('hadits'),
-                          title: const Text(
-                            'Tahfidz Hadits',
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                          subtitle: const Text('Hafalan & setoran hadits'),
-                          secondary: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.orange.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.import_contacts_rounded,
-                              color: Colors.orange,
-                            ),
-                          ),
-                        ),
-                        const Divider(height: 1, indent: 16),
-                        // Kitab Lain
-                        SwitchListTile(
-                          value: provider.isModuleActive('kitab'),
-                          onChanged: (_) => provider.toggleModule('kitab'),
-                          title: const Text(
-                            'Kitab / Matan Lain',
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                          subtitle: const Text(
-                            'Hafalan kitab atau matan pilihan',
-                          ),
-                          secondary: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.purple.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.library_books_rounded,
-                              color: Colors.purple,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  _section('Modul Hafalan'),
                   const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Text(
-                      'Modul yang dinonaktifkan tidak akan muncul di tampilan musyrif dan orang tua.',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey.shade500,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
+                  _moduleSwitch(provider, 'Quran', 'Hafalan & Setoran Al-Quran', Icons.menu_book_rounded, true),
+                  _moduleSwitch(provider, 'Hadits', 'Hafalan hadits-hadits pilihan', Icons.import_contacts_rounded, provider.isModuleActive('hadits'), onTap: () => provider.toggleModule('hadits')),
                 ],
-
+                const SizedBox(height: 32),
                 if (!widget.manageModulesOnly)
-                  FilledButton.icon(
-                    onPressed: _save,
-                    icon: const Icon(Icons.save_rounded),
-                    label: const Text('Simpan Perubahan'),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                    ),
-                  ),
-                const SizedBox(height: 24),
+                  SizedBox(width: double.infinity, height: 52, child: FilledButton.icon(onPressed: _save, icon: const Icon(Icons.save_rounded), label: const Text('Simpan Perubahan'))),
               ],
             ),
           );
@@ -437,14 +159,17 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
     );
   }
 
-  Widget _sectionLabel(String title) {
-    return Text(
-      title.toUpperCase(),
-      style: GoogleFonts.poppins(
-        fontWeight: FontWeight.w600,
-        fontSize: 11,
-        color: Colors.grey.shade600,
-        letterSpacing: 1.0,
+  Widget _section(String t) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(t, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.primaryGreen)), const Divider()]);
+
+  Widget _moduleSwitch(AppProvider p, String title, String sub, IconData icon, bool val, {VoidCallback? onTap}) {
+    return Card(
+      elevation: 0, margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.grey.shade200)),
+      child: SwitchListTile(
+        value: val, onChanged: onTap != null ? (_) => onTap() : null,
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        subtitle: Text(sub, style: const TextStyle(fontSize: 12)),
+        secondary: Icon(icon, color: AppTheme.primaryGreen),
       ),
     );
   }

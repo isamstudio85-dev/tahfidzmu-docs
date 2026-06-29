@@ -5,9 +5,11 @@ class Santri {
   final String id;
   final String name;
   final String? nis; // Nomor Induk Santri (login key)
+  final String? email;
   final String? jenisKelamin; // 'L' / 'P'
   final String? kelas;
   final String? halaqahId;
+  final String? namaOrangTua;
   final String? namaAyah;
   final String? namaIbu;
   final String? nomorHpWali; // No. HP wali (was: nomorOrtu)
@@ -18,16 +20,18 @@ class Santri {
 
   // Backward-compat getters so old references still compile
   String? get nik => nis;
-  String? get namaOrtu => namaAyah ?? namaIbu;
+  String? get namaOrtu => namaOrangTua ?? namaAyah ?? namaIbu;
   String? get nomorOrtu => nomorHpWali;
 
   const Santri({
     required this.id,
     required this.name,
     this.nis,
+    this.email,
     this.jenisKelamin,
     this.kelas,
     this.halaqahId,
+    this.namaOrangTua,
     this.namaAyah,
     this.namaIbu,
     this.nomorHpWali,
@@ -42,9 +46,11 @@ class Santri {
   Santri copyWith({
     String? name,
     String? nis,
+    String? email,
     String? jenisKelamin,
     String? kelas,
     String? halaqahId,
+    String? namaOrangTua,
     String? namaAyah,
     String? namaIbu,
     String? nomorHpWali,
@@ -61,10 +67,12 @@ class Santri {
       id: id,
       name: name ?? this.name,
       nis: nis ?? nik ?? this.nis,
+      email: email ?? this.email,
       jenisKelamin: jenisKelamin ?? this.jenisKelamin,
       kelas: kelas ?? this.kelas,
       halaqahId: halaqahId ?? this.halaqahId,
-      namaAyah: namaAyah ?? namaOrtu ?? this.namaAyah,
+      namaOrangTua: namaOrangTua ?? namaOrtu ?? this.namaOrangTua,
+      namaAyah: namaAyah ?? this.namaAyah,
       namaIbu: namaIbu ?? this.namaIbu,
       nomorHpWali: nomorHpWali ?? nomorOrtu ?? this.nomorHpWali,
       targetHafalan: targetHafalan ?? this.targetHafalan,
@@ -153,9 +161,11 @@ class Santri {
     'id': id,
     'name': name,
     'nis': nis,
+    'email': email,
     'jenisKelamin': jenisKelamin,
     'kelas': kelas,
     'halaqahId': halaqahId,
+    'namaOrangTua': namaOrangTua,
     'namaAyah': namaAyah,
     'namaIbu': namaIbu,
     'nomorHpWali': nomorHpWali,
@@ -169,10 +179,12 @@ class Santri {
     id: json['id'] as String,
     name: json['name'] as String,
     nis: (json['nis'] ?? json['nik']) as String?,
+    email: json['email'] as String?,
     jenisKelamin: json['jenisKelamin'] as String?,
     kelas: json['kelas'] as String?,
     halaqahId: json['halaqahId'] as String?,
-    namaAyah: (json['namaAyah'] ?? json['namaOrtu']) as String?,
+    namaOrangTua: (json['namaOrangTua'] ?? json['namaOrtu']) as String?,
+    namaAyah: json['namaAyah'] as String?,
     namaIbu: json['namaIbu'] as String?,
     nomorHpWali: (json['nomorHpWali'] ?? json['nomorOrtu']) as String?,
     targetHafalan: json['targetHafalan'] as String?,

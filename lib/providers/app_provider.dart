@@ -11,7 +11,6 @@ import '../models/setoran_continuation.dart';
 import '../models/user_role.dart';
 import '../models/musyrif_data.dart';
 import '../models/halaqah_data.dart';
-import '../models/kelas_data.dart';
 import '../models/pesantren_info.dart';
 import '../services/quran_service.dart';
 import '../services/demo_data_service.dart';
@@ -44,7 +43,7 @@ class AppProvider extends ChangeNotifier {
         : DbHelper.makeUsername(m.nip, m.nama);
     final resolvedPassword = (password?.trim().isNotEmpty ?? false)
         ? password!.trim()
-        : ((m.nip != null && m.nip!.isNotEmpty) ? m.nip! : '1234');
+        : DbHelper.buildDemoCredentialValue(m.nip, m.nama);
     DbHelper.upsertUser(
       id: 'musyrif_${m.id}',
       username: resolvedUsername,
@@ -129,47 +128,6 @@ class AppProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  // ── Kelas list ─────────────────────────────────────────────────────────────────
-  List<KelasData> _kelasList = [];
-  List<KelasData> get kelasList => List.unmodifiable(_kelasList);
-
-  KelasData? getKelasById(String? id) {
-    if (id == null) return null;
-    try {
-      return _kelasList.firstWhere((k) => k.id == id);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  void addKelas(KelasData k) {
-    _kelasList = [..._kelasList, k];
-    _saveKelasList();
-    notifyListeners();
-  }
-
-  void updateKelas(String id, KelasData updated) {
-    _kelasList = _kelasList.map((k) => k.id == id ? updated : k).toList();
-    _saveKelasList();
-    notifyListeners();
-  }
-
-  void removeKelas(String id) {
-    _kelasList = _kelasList.where((k) => k.id != id).toList();
-    _saveKelasList();
-    notifyListeners();
-  }
-
-  Future<void> _saveKelasList() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        'kelas_list',
-        jsonEncode(_kelasList.map((k) => k.toJson()).toList()),
-      );
-    } catch (_) {}
-  }
-
   // â”€â”€ Surah list (for pickers) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   List<SurahInfo> _surahList = [];
   List<SurahInfo> get surahList => List.unmodifiable(_surahList);
@@ -224,14 +182,16 @@ class AppProvider extends ChangeNotifier {
     if (role == null) return false;
     _currentUserId = user['id'] as String?;
     _currentRole = role;
-    _linkedSantriId = role == UserRole.orangTua
-        ? user['linked_id'] as String?
-        : null;
-    _linkedMusyrifId = role == UserRole.musyrif
-        ? user['linked_id'] as String?
-        : null;
+    _linkedSantriId = role == UserRole.orangTua ? user['linked_id'] as String? : null;
+    _linkedMusyrifId = role == UserRole.musyrif ? user['linked_id'] as String? : null;
     await LoginPreferencesService.saveLastCredentials(username, password);
     _saveRole();
+
+    // If Admin logs in, ensure all user accounts are synced to the latest format
+    if (role == UserRole.admin) {
+      _seedUserAccounts();
+    }
+
     notifyListeners();
     return true;
   }
@@ -279,7 +239,7 @@ class AppProvider extends ChangeNotifier {
     _currentRole = null;
     _currentUserId = null;
     await _saveRole();
-    await LoginPreferencesService.clearLastCredentials();
+    // Do not clear saved credentials here, so they can stay in the login fields
     notifyListeners();
   }
 
@@ -365,6 +325,23 @@ class AppProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
+  // -- Admin/Global profile ---------------------------------------------
+  String _adminPhoto = '';
+  String get adminPhoto => _adminPhoto;
+
+  void updateAdminPhoto(String path) {
+    _adminPhoto = path;
+    _saveAdminPhoto();
+    notifyListeners();
+  }
+
+  Future<void> _saveAdminPhoto() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('admin_photo', _adminPhoto);
+    } catch (_) {}
+  }
+
   // -- Musyrif profile ---------------------------------------------------
   String _musyrif = '';
   String _lembaga = '';
@@ -421,11 +398,10 @@ class AppProvider extends ChangeNotifier {
     _santriList = [];
     _musyrifList = [];
     _halaqahList = [];
-    _kelasList = [];
     _save();
     _saveMusyrifList();
     _saveHalaqahList();
-    _saveKelasList();
+    DbHelper.clearAllNonAdminUsers();
     notifyListeners();
   }
 
@@ -452,15 +428,17 @@ class AppProvider extends ChangeNotifier {
   // â”€â”€ Santri Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
   void addSantri(
-    String name,
-    String? kelas, {
+    String name, {
     String? halaqahId,
     String? nis,
+    String? email,
     String? jenisKelamin,
+    String? namaOrangTua,
     String? namaAyah,
     String? namaIbu,
     String? nomorHpWali,
     String? targetHafalan,
+    String? photoPath,
     String? username,
     String? password,
     // old-name aliases
@@ -474,9 +452,13 @@ class AppProvider extends ChangeNotifier {
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: name,
         nis: (nis ?? nik)?.isEmpty ?? true ? null : (nis ?? nik),
+        email: email,
         jenisKelamin: jenisKelamin,
-        kelas: kelas,
+        kelas: null,
         halaqahId: halaqahId,
+        namaOrangTua: (namaOrangTua ?? namaOrtu)?.isEmpty ?? true
+            ? null
+            : (namaOrangTua ?? namaOrtu),
         namaAyah: (namaAyah ?? namaOrtu)?.isEmpty ?? true
             ? null
             : (namaAyah ?? namaOrtu),
@@ -485,6 +467,7 @@ class AppProvider extends ChangeNotifier {
             ? null
             : (nomorHpWali ?? nomorOrtu),
         targetHafalan: targetHafalan?.isEmpty ?? true ? null : targetHafalan,
+        photoPath: photoPath,
       ),
     ];
     // Create orang tua login account when NIS is provided
@@ -493,10 +476,10 @@ class AppProvider extends ChangeNotifier {
     if (resolvedNis != null) {
       final resolvedUsername = (username?.trim().isNotEmpty ?? false)
           ? username!.trim()
-          : resolvedNis;
+          : DbHelper.onlyDigits(resolvedNis);
       final resolvedPassword = (password?.trim().isNotEmpty ?? false)
           ? password!.trim()
-          : resolvedNis;
+          : DbHelper.onlyDigits(resolvedNis);
       DbHelper.upsertUser(
         id: 'santri_${newSantri.id}',
         username: resolvedUsername,
@@ -513,13 +496,15 @@ class AppProvider extends ChangeNotifier {
     String santriId, {
     String? name,
     String? nis,
+    String? email,
     String? jenisKelamin,
-    String? kelas,
     String? halaqahId,
+    String? namaOrangTua,
     String? namaAyah,
     String? namaIbu,
     String? nomorHpWali,
     String? targetHafalan,
+    String? photoPath,
     String? status,
     // old-name aliases
     String? nik,
@@ -531,13 +516,16 @@ class AppProvider extends ChangeNotifier {
       return s.copyWith(
         name: name,
         nis: nis ?? nik,
+        email: email,
         jenisKelamin: jenisKelamin,
-        kelas: kelas,
+        kelas: null,
         halaqahId: halaqahId,
+        namaOrangTua: namaOrangTua ?? namaOrtu,
         namaAyah: namaAyah ?? namaOrtu,
         namaIbu: namaIbu,
         nomorHpWali: nomorHpWali ?? nomorOrtu,
         targetHafalan: targetHafalan,
+        photoPath: photoPath,
         status: status,
       );
     }).toList();
@@ -731,6 +719,7 @@ class AppProvider extends ChangeNotifier {
       _jabatan = prefs.getString('musyrif_jabatan') ?? '';
       _nomorHp = prefs.getString('musyrif_nomorhp') ?? '';
       _musyrifPhoto = prefs.getString('musyrif_photo') ?? '';
+      _adminPhoto = prefs.getString('admin_photo') ?? '';
       // Restore last login role
       _currentRole = UserRole.fromKey(prefs.getString('current_role'));
       _linkedSantriId = prefs.getString('linked_santri_id');
@@ -749,14 +738,6 @@ class AppProvider extends ChangeNotifier {
         final list = jsonDecode(rawHalaqah) as List;
         _halaqahList = list
             .map((h) => HalaqahData.fromJson(h as Map<String, dynamic>))
-            .toList();
-      }
-      // Load kelas list
-      final rawKelas = prefs.getString('kelas_list');
-      if (rawKelas != null) {
-        final list = jsonDecode(rawKelas) as List;
-        _kelasList = list
-            .map((k) => KelasData.fromJson(k as Map<String, dynamic>))
             .toList();
       }
       // Load santri list
@@ -783,18 +764,15 @@ class AppProvider extends ChangeNotifier {
       final bundle = await DemoDataService.loadDemoData();
       _musyrifList = bundle.musyrifList;
       _halaqahList = bundle.halaqahList;
-      _kelasList = bundle.kelasList;
       _santriList = bundle.santriList;
       await _save();
       await _saveMusyrifList();
       await _saveHalaqahList();
-      await _saveKelasList();
       await _seedUserAccounts();
       notifyListeners();
     } catch (_) {
       _musyrifList = [];
       _halaqahList = [];
-      _kelasList = [];
       _santriList = [];
       notifyListeners();
     }
@@ -803,7 +781,7 @@ class AppProvider extends ChangeNotifier {
   Future<void> _seedUserAccounts() async {
     // Musyrif accounts
     for (final m in _musyrifList) {
-      final username = DbHelper.buildDemoCredentialValue(m.nip, m.nama);
+      final username = DbHelper.makeUsername(m.nip, m.nama);
       final password = DbHelper.buildDemoCredentialValue(m.nip, m.nama);
       await DbHelper.upsertUser(
         id: 'musyrif_${m.id}',
@@ -816,8 +794,8 @@ class AppProvider extends ChangeNotifier {
     // OrangTua accounts (santri with NIS)
     for (final s in _santriList) {
       if (s.nis != null && s.nis!.isNotEmpty) {
-        final username = DbHelper.buildDemoCredentialValue(s.nis, s.name);
-        final password = DbHelper.buildDemoCredentialValue(s.nis, s.name);
+        final username = DbHelper.onlyDigits(s.nis);
+        final password = DbHelper.onlyDigits(s.nis);
         await DbHelper.upsertUser(
           id: 'santri_${s.id}',
           username: username,

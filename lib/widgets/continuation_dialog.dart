@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../models/santri.dart';
 import '../providers/app_provider.dart';
-import 'package:tahfidz_app/screens/musyrif/quran_reader_screen.dart';
-import 'package:tahfidz_app/screens/musyrif/setoran_form_screen.dart';
+import '../screens/quran_reader_screen.dart';
+import '../screens/setoran_form_screen.dart';
 import '../theme/app_theme.dart';
 import 'app_avatar.dart';
 
