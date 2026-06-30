@@ -40,39 +40,52 @@ class _MainShellState extends State<MainShell> {
           ProfilScreen(),
         ];
       case UserRole.orangTua:
-        return const [HomeScreen(), SetoranScreen(), ProfilScreen()];
+        return const [
+          HomeScreen(),
+          SetoranScreen(),
+          ProfilScreen(),
+        ];
     }
   }
 
   static List<NavigationDestination> _destinationsFor(UserRole role) {
-    return [
+    final List<NavigationDestination> dest = [
       const NavigationDestination(
         icon: Icon(Icons.dashboard_outlined),
         selectedIcon: Icon(Icons.dashboard_rounded),
         label: 'Beranda',
       ),
-      NavigationDestination(
+    ];
+
+    if (role != UserRole.orangTua) {
+      dest.add(NavigationDestination(
         icon: const Icon(Icons.group_outlined),
         selectedIcon: const Icon(Icons.group_rounded),
         label: role == UserRole.admin ? 'Users' : 'Santri',
-      ),
-      const NavigationDestination(
-        icon: Icon(Icons.history_edu_outlined),
-        selectedIcon: Icon(Icons.history_edu_rounded),
-        label: 'Setoran',
-      ),
-      if (role == UserRole.admin)
-        const NavigationDestination(
-          icon: Icon(Icons.settings_outlined),
-          selectedIcon: Icon(Icons.settings_rounded),
-          label: 'Sistem',
-        ),
-      const NavigationDestination(
-        icon: Icon(Icons.person_outline_rounded),
-        selectedIcon: Icon(Icons.person_rounded),
-        label: 'Profil',
-      ),
-    ];
+      ));
+    }
+
+    dest.add(const NavigationDestination(
+      icon: Icon(Icons.history_edu_outlined),
+      selectedIcon: Icon(Icons.history_edu_rounded),
+      label: 'Setoran',
+    ));
+
+    if (role == UserRole.admin) {
+      dest.add(const NavigationDestination(
+        icon: Icon(Icons.settings_outlined),
+        selectedIcon: Icon(Icons.settings_rounded),
+        label: 'Sistem',
+      ));
+    }
+
+    dest.add(const NavigationDestination(
+      icon: Icon(Icons.person_outline_rounded),
+      selectedIcon: Icon(Icons.person_rounded),
+      label: 'Profil',
+    ));
+
+    return dest;
   }
 
   @override
@@ -96,7 +109,7 @@ class _MainShellState extends State<MainShell> {
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
-              offset: const Offset(0, -2), // Shadow pointing upwards
+              offset: const Offset(0, -2),
             ),
           ],
         ),

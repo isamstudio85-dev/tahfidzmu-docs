@@ -12,7 +12,8 @@ import '../widgets/quran_widgets.dart';
 import 'assessment_screen.dart';
 
 class QuranReaderScreen extends StatefulWidget {
-  const QuranReaderScreen({super.key});
+  const QuranReaderScreen({super.key, this.isReadOnly = false});
+  final bool isReadOnly;
 
   @override
   State<QuranReaderScreen> createState() => _QuranReaderScreenState();
@@ -54,7 +55,14 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
             ),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => _confirmExit(context, provider),
+              onPressed: () {
+                if (widget.isReadOnly) {
+                  provider.clearErrors();
+                  Navigator.pop(context);
+                } else {
+                  _confirmExit(context, provider);
+                }
+              },
             ),
             actions: [
               Padding(
@@ -139,11 +147,11 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Bismillah header (not for Al-Fatiha which already has it, and not for At-Tawbah)
+          // Bismillah header
           if (surah.number != 1 && surah.number != 9 && start == 1)
             _buildBismillah(),
           // Legend
-          _buildLegend(),
+          if (!widget.isReadOnly) _buildLegend(),
           const SizedBox(height: 8),
           // Santri info banner
           _buildSantriInfo(provider),
@@ -154,15 +162,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
               ayah: ayah,
               surahNumber: surah.number,
               sessionErrors: provider.sessionErrors,
-              onWordTap: (wordIndex, word) => _onWordTap(
+              onWordTap: widget.isReadOnly ? (idx, word) {} : (wordIndex, word) => _onWordTap(
                 context,
-                provider,
-                surah.number,
-                ayah.numberInSurah,
-                wordIndex,
-                word,
-              ),
-              onWordDoubleTap: (wordIndex, word) => _onWordDoubleTap(
                 provider,
                 surah.number,
                 ayah.numberInSurah,
@@ -279,6 +280,17 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   }
 
   Widget _buildBottomBar(BuildContext context, AppProvider provider) {
+    if (widget.isReadOnly) {
+      return Container(
+        color: Colors.white,
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        child: const Text(
+          'Mode Baca Saja • Menampilkan riwayat kesalahan setoran.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
+        ),
+      );
+    }
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
@@ -367,7 +379,6 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
     final key = ErrorMark.generateKey(surahNumber, ayahNumber, wordIndex);
     final current = provider.sessionErrors[key];
     if (current == null) {
-      // No mark → set Tajwid
       provider.toggleError(
         surahNumber: surahNumber,
         ayahNumber: ayahNumber,
@@ -376,7 +387,6 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
         errorType: ErrorType.tajwid,
       );
     } else if (current.errorType == ErrorType.tajwid) {
-      // Tajwid → change to Makhroj
       provider.toggleError(
         surahNumber: surahNumber,
         ayahNumber: ayahNumber,
@@ -385,26 +395,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
         errorType: ErrorType.makhroj,
       );
     } else {
-      // Makhroj → clear
       provider.removeError(key);
     }
-  }
-
-  void _onWordDoubleTap(
-    AppProvider provider,
-    int surahNumber,
-    int ayahNumber,
-    int wordIndex,
-    String word,
-  ) {
-    // Direct double-tap: immediately set Makhroj
-    provider.toggleError(
-      surahNumber: surahNumber,
-      ayahNumber: ayahNumber,
-      wordIndex: wordIndex,
-      word: word,
-      errorType: ErrorType.makhroj,
-    );
   }
 
   void _confirmFinish(BuildContext context, AppProvider provider) {
@@ -465,21 +457,18 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   }
 }
 
-/// Widget for a single ayah with its clickable words.
 class _AyahBlock extends StatelessWidget {
   const _AyahBlock({
     required this.ayah,
     required this.surahNumber,
     required this.sessionErrors,
     required this.onWordTap,
-    required this.onWordDoubleTap,
   });
 
   final AyahModel ayah;
   final int surahNumber;
   final Map<String, ErrorMark> sessionErrors;
   final void Function(int wordIndex, String word) onWordTap;
-  final void Function(int wordIndex, String word) onWordDoubleTap;
 
   @override
   Widget build(BuildContext context) {
@@ -502,7 +491,6 @@ class _AyahBlock extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Ayah number badge
           Row(
             children: [
               Container(
@@ -529,7 +517,6 @@ class _AyahBlock extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          // Arabic words — RTL Wrap
           Directionality(
             textDirection: TextDirection.rtl,
             child: Wrap(
@@ -548,7 +535,6 @@ class _AyahBlock extends StatelessWidget {
                         )],
                     onTap: () => onWordTap(i, words[i]),
                   ),
-                // Verse end ornament
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Text(

@@ -12,6 +12,7 @@ import '../widgets/continuation_dialog.dart';
 import 'santri_detail_screen.dart';
 import 'setoran_form_screen.dart';
 import 'laporan_screen.dart';
+import 'setoran_detail_screen.dart';
 
 class SetoranScreen extends StatefulWidget {
   const SetoranScreen({super.key});
@@ -113,7 +114,12 @@ class _DaftarTab extends StatelessWidget {
             ? provider.getSantriByMusyrif(provider.linkedMusyrif!.id)
             : provider.santriList;
 
-        for (var s in sourceList) {
+        // If Parent, only show their own santri's records
+        final displayList = provider.isOrangTua 
+            ? sourceList.where((s) => s.id == provider.linkedSantriId).toList()
+            : sourceList;
+
+        for (var s in displayList) {
           for (var r in s.setoranHistory) {
             allRecords.add((s, r));
           }
@@ -225,32 +231,72 @@ class _SetoranCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.read<AppProvider>();
+    final bool isOrangTua = provider.isOrangTua;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15), side: BorderSide(color: Colors.grey.shade100)),
       color: Colors.white,
       elevation: 0.5,
       child: ListTile(
-        onTap: () => showSetoranOptions(context, santri, record: record),
+        onTap: () {
+          if (isOrangTua) {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => SetoranDetailScreen(santri: santri, record: record)));
+          } else {
+            showSetoranOptions(context, santri, record: record);
+          }
+        },
         dense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-        leading: AppAvatar(name: santri.name, radius: 18, imagePath: santri.photoPath),
+        leading: isOrangTua 
+          ? Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), shape: BoxShape.circle),
+              child: const Icon(Icons.menu_book_rounded, color: AppTheme.primaryGreen, size: 20),
+            )
+          : AppAvatar(name: santri.name, radius: 18, imagePath: santri.photoPath),
         title: Row(
           children: [
-            Expanded(child: Text(santri.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87), maxLines: 1, overflow: TextOverflow.ellipsis)),
+            Expanded(
+              child: Text(
+                isOrangTua ? '${record.surahEnglishName}' : santri.name, 
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87), 
+                maxLines: 1, 
+                overflow: TextOverflow.ellipsis
+              )
+            ),
+            const SizedBox(width: 8),
             Text(_formatDate(record.date), style: TextStyle(fontSize: 9, color: Colors.grey.shade500)),
           ],
         ),
         subtitle: Row(
           children: [
-            Expanded(child: Text('${record.surahEnglishName} • Ayat ${record.ayahStart}-${record.ayahEnd}', style: TextStyle(fontSize: 11, color: Colors.grey.shade700), maxLines: 1, overflow: TextOverflow.ellipsis)),
-            _tag(record.type.label, record.type == SetoranType.ziyadah ? AppTheme.primaryGreen : Colors.purple),
+            Expanded(
+              child: Text(
+                isOrangTua 
+                  ? 'Ayat ${record.ayahStart}-${record.ayahEnd} • ${record.type.label}' 
+                  : '${record.surahEnglishName} • Ayat ${record.ayahStart}-${record.ayahEnd}', 
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade700), 
+                maxLines: 1, 
+                overflow: TextOverflow.ellipsis
+              )
+            ),
+            if (!isOrangTua) ...[
+              const SizedBox(width: 8),
+              _tag(record.type.label, record.type == SetoranType.ziyadah ? AppTheme.primaryGreen : Colors.purple),
+            ]
           ],
         ),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          constraints: const BoxConstraints(minWidth: 40),
           decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-          child: Text(record.finalScore.toStringAsFixed(0), style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.primaryGreen)),
+          child: Text(
+            record.finalScore.toStringAsFixed(0), 
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.primaryGreen),
+          ),
         ),
       ),
     );
@@ -383,10 +429,14 @@ class _RankCard extends StatelessWidget {
         title: Text(santri.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87), maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: Text('${juz.toStringAsFixed(1)} Juz', style: const TextStyle(fontSize: 12, color: AppTheme.primaryGreen, fontWeight: FontWeight.bold)),
         trailing: juz >= 1.0 
-          ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Icon(Icons.emoji_events_rounded, color: AppTheme.gold, size: 20),
-              Text(juz.toStringAsFixed(1), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.orange)),
-            ])
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center, 
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.emoji_events_rounded, color: AppTheme.gold, size: 20),
+                Text(juz.toStringAsFixed(1), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.orange)),
+              ]
+            )
           : null,
       ),
     );
@@ -409,6 +459,7 @@ class _HalaqahRankCard extends StatelessWidget {
         subtitle: Text('Total Kolektif: ${item.juz.toStringAsFixed(1)} Juz', style: const TextStyle(fontSize: 12)),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.stars_rounded, color: AppTheme.gold, size: 20),
             Text(item.juz.toStringAsFixed(1), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
@@ -426,7 +477,10 @@ class _LaporanStatistikTab extends StatelessWidget {
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
         final sourceList = provider.isMusyrif && provider.linkedMusyrif != null ? provider.getSantriByMusyrif(provider.linkedMusyrif!.id) : provider.santriList;
-        final setorans = sourceList.expand((s) => s.setoranHistory).toList();
+        final displayList = provider.isOrangTua 
+            ? sourceList.where((s) => s.id == provider.linkedSantriId).toList()
+            : sourceList;
+        final setorans = displayList.expand((s) => s.setoranHistory).toList();
         if (setorans.isEmpty) return _emptyState(Icons.bar_chart_rounded, 'Belum ada data statistik');
         return LaporanScreenBody(setorans: setorans, provider: provider);
       },

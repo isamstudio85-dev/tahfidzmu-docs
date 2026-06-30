@@ -19,6 +19,7 @@ import 'setoran_form_screen.dart';
 import 'hadits_screen.dart';
 import 'quran_tadarus_screen.dart';
 import 'educational_list_screen.dart';
+import 'setoran_detail_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -162,7 +163,7 @@ class _AdminDashboard extends StatelessWidget {
     return Expanded(child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withValues(alpha: 0.1))),
-      child: Column(children: [Icon(icon, color: color, size: 24), const SizedBox(height: 8), Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color)), Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))]),
+      child: Column(children: [Icon(icon, color: color, size: 24), const SizedBox(height: 8), FittedBox(fit: BoxFit.scaleDown, child: Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color))), Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))]),
     ));
   }
 
@@ -184,9 +185,9 @@ class _MusyrifDashboard extends StatelessWidget {
     final musyrif = provider.linkedMusyrif;
     final myHalaqah = musyrif != null ? provider.halaqahList.where((h) => h.musyrifId == musyrif.id).toList() : <HalaqahData>[];
     final mySantri = musyrif != null ? provider.getSantriByMusyrif(musyrif.id) : provider.santriList;
-    final recent = <(String, String, SetoranRecord)>[];
-    for (final s in mySantri) { for (final r in s.setoranHistory) { recent.add((s.name, s.id, r)); } }
-    recent.sort((a, b) => b.$3.date.compareTo(a.$3.date));
+    final recent = <(Santri, SetoranRecord)>[];
+    for (final s in mySantri) { for (final r in s.setoranHistory) { recent.add((s, r)); } }
+    recent.sort((a, b) => b.$2.date.compareTo(a.$2.date));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Beranda Musyrif')),
@@ -209,7 +210,7 @@ class _MusyrifDashboard extends StatelessWidget {
             _sectionTitle('Setoran Terkini'),
             const SizedBox(height: 12),
             if (recent.isEmpty) _emptyState('Belum ada setoran dari santri Anda.')
-            else ...recent.take(5).map((item) => _RecentSetoranTile(santriName: item.$1, santriId: item.$2, record: item.$3)),
+            else ...recent.take(5).map((item) => _RecentSetoranTile(santri: item.$1, record: item.$2)),
             const SizedBox(height: 24),
             _HafalanMenuSection(provider: provider),
             const SizedBox(height: 80),
@@ -242,7 +243,7 @@ class _MusyrifDashboard extends StatelessWidget {
     return Expanded(child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withValues(alpha: 0.1))),
-      child: Column(children: [Icon(icon, color: color, size: 24), const SizedBox(height: 8), Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color)), Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))]),
+      child: Column(children: [Icon(icon, color: color, size: 24), const SizedBox(height: 8), FittedBox(fit: BoxFit.scaleDown, child: Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color))), Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))]),
     ));
   }
 }
@@ -265,9 +266,9 @@ class _OrangTuaDashboard extends StatelessWidget {
           _buildBanner(),
           const SizedBox(height: 24),
           Row(children: [
-            _oStat(Icons.list_alt_rounded, 'Total Setoran', '${setorans.length}', AppTheme.primaryGreen),
+            _oStat(Icons.list_alt_rounded, 'Setoran', '${setorans.length}', AppTheme.primaryGreen),
             const SizedBox(width: 12),
-            _oStat(Icons.star_rounded, 'Rata-rata', avg > 0 ? avg.toStringAsFixed(1) : '-', AppTheme.gold),
+            _oStat(Icons.star_rounded, 'Rata-rata', avg > 0 ? avg.toStringAsFixed(0) : '-', AppTheme.gold),
             const SizedBox(width: 12),
             _oStat(Icons.emoji_events_rounded, 'Predikat', grade, Colors.purple),
           ]),
@@ -275,7 +276,7 @@ class _OrangTuaDashboard extends StatelessWidget {
           _sectionTitle('Riwayat Terbaru'),
           const SizedBox(height: 12),
           if (setorans.isEmpty) _emptyState('Belum ada riwayat setoran.')
-          else ...setorans.take(5).map((r) => _RecentSetoranTile(santriName: child.name, santriId: child.id, record: r)),
+          else ...setorans.take(5).map((r) => _RecentSetoranTile(santri: child, record: r)),
           const SizedBox(height: 24),
           _HafalanMenuSection(provider: context.read<AppProvider>()),
           const SizedBox(height: 12),
@@ -305,9 +306,15 @@ class _OrangTuaDashboard extends StatelessWidget {
 
   Widget _oStat(IconData icon, String label, String value, Color color) {
     return Expanded(child: Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withValues(alpha: 0.1))),
-      child: Column(children: [Icon(icon, color: color, size: 24), const SizedBox(height: 8), Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: color)), Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))]),
+      child: Column(children: [
+        Icon(icon, color: color, size: 24), 
+        const SizedBox(height: 8), 
+        FittedBox(fit: BoxFit.scaleDown, child: Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: color))), 
+        const SizedBox(height: 2),
+        Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600), textAlign: TextAlign.center, maxLines: 1),
+      ]),
     ));
   }
 }
@@ -364,25 +371,39 @@ class _HafalanMenuSection extends StatelessWidget {
 }
 
 class _RecentSetoranTile extends StatelessWidget {
-  const _RecentSetoranTile({required this.santriName, required this.santriId, required this.record});
-  final String santriName; final String santriId; final SetoranRecord record;
+  const _RecentSetoranTile({required this.santri, required this.record});
+  final Santri santri; final SetoranRecord record;
   @override
   Widget build(BuildContext context) {
+    final bool isOrangTua = context.read<AppProvider>().isOrangTua;
     return Card(
       margin: const EdgeInsets.only(bottom: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: ListTile(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santriId))),
-        leading: AppAvatar(name: santriName, radius: 22),
-        title: Text(santriName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
-        subtitle: Text('${record.surahEnglishName} • Ayat ${record.ayahStart}-${record.ayahEnd}', style: const TextStyle(fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
+        onTap: () {
+          if (isOrangTua) {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => SetoranDetailScreen(santri: santri, record: record)));
+          } else {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santri.id)));
+          }
+        },
+        leading: isOrangTua 
+          ? Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), shape: BoxShape.circle), child: const Icon(Icons.menu_book_rounded, color: AppTheme.primaryGreen, size: 20))
+          : AppAvatar(name: santri.name, radius: 22, imagePath: santri.photoPath),
+        title: Text(isOrangTua ? record.surahEnglishName : santri.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
+        subtitle: Text(isOrangTua ? 'Ayat ${record.ayahStart}-${record.ayahEnd} • ${record.type.label}' : '${record.surahEnglishName} • Ayat ${record.ayahStart}-${record.ayahEnd}', style: const TextStyle(fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_rounded, color: AppTheme.gold, size: 14),
-            Text(
-              record.finalScore.toStringAsFixed(1),
-              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppTheme.primaryGreen)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const Icon(Icons.star_rounded, color: AppTheme.gold, size: 14),
+                Text(
+                  record.finalScore.toStringAsFixed(0),
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppTheme.primaryGreen)
+                ),
+              ],
             ),
           ],
         ),
