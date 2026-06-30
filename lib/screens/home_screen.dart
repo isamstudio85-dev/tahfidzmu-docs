@@ -191,7 +191,12 @@ class _MusyrifDashboard extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Beranda Musyrif')),
-      floatingActionButton: FloatingActionButton.extended(heroTag: 'fab_m_setoran', onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SetoranFormScreen())), icon: const Icon(Icons.mic_rounded), label: const Text('Mulai Setoran')),
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'fab_m_setoran', 
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SetoranFormScreen())), 
+        icon: const Icon(Icons.mic_rounded), 
+        label: const Text('Input Hafalan'),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -207,9 +212,9 @@ class _MusyrifDashboard extends StatelessWidget {
               _mStatTile('${mySantri.length}', 'Santri', Icons.people_alt_rounded, AppTheme.primaryGreen),
             ]),
             const SizedBox(height: 24),
-            _sectionTitle('Setoran Terkini'),
+            _sectionTitle('Aktivitas Terkini'),
             const SizedBox(height: 12),
-            if (recent.isEmpty) _emptyState('Belum ada setoran dari santri Anda.')
+            if (recent.isEmpty) _emptyState('Belum ada riwayat hafalan dari santri Anda.')
             else ...recent.take(5).map((item) => _RecentSetoranTile(santri: item.$1, record: item.$2)),
             const SizedBox(height: 24),
             _HafalanMenuSection(provider: provider),
@@ -265,13 +270,15 @@ class _OrangTuaDashboard extends StatelessWidget {
         children: [
           _buildBanner(),
           const SizedBox(height: 24),
-          Row(children: [
-            _oStat(Icons.list_alt_rounded, 'Setoran', '${setorans.length}', AppTheme.primaryGreen),
-            const SizedBox(width: 12),
-            _oStat(Icons.star_rounded, 'Rata-rata', avg > 0 ? avg.toStringAsFixed(0) : '-', AppTheme.gold),
-            const SizedBox(width: 12),
-            _oStat(Icons.emoji_events_rounded, 'Predikat', grade, Colors.purple),
-          ]),
+          Row(
+            children: [
+              _oStat(Icons.list_alt_rounded, 'Total Baris', '${setorans.length}', AppTheme.primaryGreen),
+              const SizedBox(width: 12),
+              _oStat(Icons.star_rounded, 'Rata-rata', avg > 0 ? avg.toStringAsFixed(0) : '-', AppTheme.gold),
+              const SizedBox(width: 12),
+              _oStat(Icons.emoji_events_rounded, 'Predikat', grade, Colors.purple),
+            ],
+          ),
           const SizedBox(height: 24),
           _sectionTitle('Riwayat Terbaru'),
           const SizedBox(height: 12),

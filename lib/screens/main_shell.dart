@@ -68,7 +68,7 @@ class _MainShellState extends State<MainShell> {
     dest.add(const NavigationDestination(
       icon: Icon(Icons.history_edu_outlined),
       selectedIcon: Icon(Icons.history_edu_rounded),
-      label: 'Setoran',
+      label: 'Hafalan',
     ));
 
     if (role == UserRole.admin) {

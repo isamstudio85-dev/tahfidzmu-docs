@@ -131,8 +131,8 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
             _OptionTile(
               icon: Icons.tune_rounded,
               color: const Color(0xFF1565C0),
-              title: 'Mulai Setoran Baru',
-              subtitle: 'Atur surah, ayat, dan jenis setoran manual',
+              title: 'Tambah Hafalan Baru',
+              subtitle: 'Atur surah, ayat, dan jenis secara manual',
               onTap: () {
                 Navigator.pop(ctx);
                 Navigator.push(

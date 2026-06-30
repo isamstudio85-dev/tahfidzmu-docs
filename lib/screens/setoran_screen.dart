@@ -47,7 +47,7 @@ class _SetoranScreenState extends State<SetoranScreen> with SingleTickerProvider
       backgroundColor: const Color(0xFFF1F8E9),
       appBar: AppBar(
         title: Text(
-          'Setoran Hafalan',
+          'Progres Tahfidz',
           style: GoogleFonts.poppins(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -90,7 +90,7 @@ class _SetoranScreenState extends State<SetoranScreen> with SingleTickerProvider
               heroTag: 'fab_setoran_main',
               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SetoranFormScreen())),
               icon: const Icon(Icons.add_circle_outline_rounded, color: Colors.white),
-              label: const Text('Setoran Baru', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              label: const Text('Input Hafalan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               backgroundColor: AppTheme.primaryGreen,
             )
           : null,
@@ -194,7 +194,7 @@ class _DaftarTab extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
       child: Row(
         children: [
-          _statBox('Total Setoran', '${records.length}', Colors.blue),
+          _statBox('Total Baris', '${records.length}', Colors.blue),
           const SizedBox(width: 12),
           _statBox('Hari Ini', '$todayCount', AppTheme.primaryGreen),
         ],

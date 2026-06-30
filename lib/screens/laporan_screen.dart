@@ -48,8 +48,8 @@ class LaporanScreenBody extends StatelessWidget {
           _buildHeroHeader(avg, setorans.length),
           const SizedBox(height: 24),
 
-          // 2. Adaptive Progress Cards (Glass-ish style)
-          _buildSectionHeader('STATISTIK JENIS HAFALAN'),
+          // 2. Adaptive Progress Cards
+          _buildSectionHeader('KOMPOSISI TAHFIDZ'),
           const SizedBox(height: 12),
           _buildDistributionCards(ziyadah, murojaah),
           const SizedBox(height: 24),
@@ -112,7 +112,7 @@ class LaporanScreenBody extends StatelessWidget {
                 const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 16),
                 const SizedBox(width: 8),
                 Text(
-                  '$total Setoran Tercatat',
+                  '$total Aktivitas Tercatat',
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
                 ),
               ],
