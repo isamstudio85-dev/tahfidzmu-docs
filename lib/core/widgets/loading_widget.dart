@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 /// Widget loading dengan animasi smooth untuk indikator proses data
 class LoadingIndicator extends StatefulWidget {

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_memorization_screen.dart';
 import '../models/user_role.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
+import '../core/theme/app_theme.dart';
 import 'home_screen.dart';
-import 'santri_list_screen.dart';
 import 'user_management_screen.dart';
-import 'setoran_screen.dart';
 import 'profil_screen.dart';
 import 'manajemen_screen.dart';
 
@@ -28,7 +27,7 @@ class _MainShellState extends State<MainShell> {
         return const [
           HomeScreen(),
           UserManagementScreen(),
-          SetoranScreen(),
+          QuranMemorizationScreen(),
           ManajemenScreen(),
           ProfilScreen(),
         ];
@@ -36,13 +35,13 @@ class _MainShellState extends State<MainShell> {
         return const [
           HomeScreen(),
           UserManagementScreen(),
-          SetoranScreen(),
+          QuranMemorizationScreen(),
           ProfilScreen(),
         ];
       case UserRole.orangTua:
         return const [
           HomeScreen(),
-          SetoranScreen(),
+          QuranMemorizationScreen(),
           ProfilScreen(),
         ];
     }

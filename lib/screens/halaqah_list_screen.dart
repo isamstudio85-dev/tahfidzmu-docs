@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../models/halaqah_data.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'santri_detail_screen.dart';
 import 'halaqah_form_screen.dart';
 

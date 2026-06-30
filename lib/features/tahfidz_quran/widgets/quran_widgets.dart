@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../models/error_mark.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/models/error_mark.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 /// A single tappable Arabic word in the Quran reader.
 /// Single tap  = Tajwid error (or advance state)

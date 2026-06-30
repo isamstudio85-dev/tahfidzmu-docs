@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
-import 'theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();

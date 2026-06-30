@@ -4,8 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_avatar.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'hadits_screen.dart';
 import 'musyrif_profil_edit_screen.dart';
 import 'ortu_profil_edit_screen.dart';

@@ -1,4 +1,4 @@
-import '../models/error_mark.dart';
+import 'package:tahfidz_app/models/error_mark.dart';
 
 class ScoringUtils {
   /// Calculates final score based on errors and fluency.

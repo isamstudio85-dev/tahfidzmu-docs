@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../models/surah_model.dart';
 import '../services/quran_service.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 // ── Entry: surah list ──────────────────────────────────────────────────────────
 

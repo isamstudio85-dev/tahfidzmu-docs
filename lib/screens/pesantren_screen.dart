@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 class PesantrenScreen extends StatefulWidget {
   const PesantrenScreen({super.key, this.manageModulesOnly = false});

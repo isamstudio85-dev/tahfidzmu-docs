@@ -7,7 +7,7 @@ import '../models/setoran.dart';
 import '../models/setoran_continuation.dart';
 import '../models/surah_model.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'quran_reader_screen.dart';
 
 class SetoranFormScreen extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'error_mark.dart';
-import '../utils/quran_juz_utils.dart';
+import 'package:tahfidz_app/core/utils/quran_juz_utils.dart';
 
 enum SetoranType {
   ziyadah,

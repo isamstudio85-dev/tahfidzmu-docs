@@ -4,11 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../database/db_helper.dart';
 import '../models/santri.dart';
-import '../models/halaqah_data.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
-import '../widgets/continuation_dialog.dart';
-import '../widgets/app_avatar.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/continuation_dialog.dart';
+import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'santri_detail_screen.dart';
 import 'santri_form_screen.dart';
 

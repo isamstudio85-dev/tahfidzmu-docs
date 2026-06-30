@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/kelas_data.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 class KelasListScreen extends StatelessWidget {
   const KelasListScreen({super.key});

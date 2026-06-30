@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/hadith.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 class HaditsDetailScreen extends StatelessWidget {
   const HaditsDetailScreen({super.key, required this.hadith});

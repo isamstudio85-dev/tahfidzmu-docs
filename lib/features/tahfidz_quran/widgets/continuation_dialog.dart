@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../models/santri.dart';
-import '../models/setoran.dart';
-import '../providers/app_provider.dart';
-import '../screens/quran_reader_screen.dart';
-import '../screens/setoran_form_screen.dart';
-import '../screens/setoran_detail_screen.dart';
-import '../theme/app_theme.dart';
-import 'app_avatar.dart';
+import 'package:tahfidz_app/models/santri.dart';
+import 'package:tahfidz_app/models/setoran.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
+import 'package:tahfidz_app/screens/quran_reader_screen.dart';
+import 'package:tahfidz_app/screens/setoran_form_screen.dart';
+import 'package:tahfidz_app/screens/setoran_detail_screen.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 
 /// Shows a bottom sheet with three choices:
 ///  1. **Lanjut** — directly start from the detected next position

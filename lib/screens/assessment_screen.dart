@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../models/setoran.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_avatar.dart';
-import '../utils/scoring_utils.dart';
-import '../widgets/quran_widgets.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/core/widgets/app_avatar.dart';
+import 'package:tahfidz_app/core/utils/scoring_utils.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'main_shell.dart';
 
 class AssessmentScreen extends StatefulWidget {

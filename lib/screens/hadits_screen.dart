@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../models/hadith.dart';
 import '../services/hadith_service.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'hadits_detail_screen.dart';
 
 class HaditsScreen extends StatefulWidget {

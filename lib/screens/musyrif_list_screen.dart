@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../database/db_helper.dart';
 import '../models/musyrif_data.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_avatar.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'musyrif_form_screen.dart';
 import 'musyrif_detail_screen.dart';
 

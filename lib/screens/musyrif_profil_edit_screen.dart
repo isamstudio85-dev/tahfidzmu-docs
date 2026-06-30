@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_avatar.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 
 /// Full-page edit screen for musyrif editing their own profile.
 /// Fields: Nama, Jabatan, No. HP only (no Lembaga — managed by Admin).

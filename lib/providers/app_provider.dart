@@ -16,7 +16,7 @@ import '../models/pesantren_info.dart';
 import '../services/quran_service.dart';
 import '../services/demo_data_service.dart';
 import '../services/login_preferences_service.dart';
-import '../utils/scoring_utils.dart';
+import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 
 class AppProvider extends ChangeNotifier {
   // ── Santri ──────────────────────────────────────────────────────────

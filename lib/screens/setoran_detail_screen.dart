@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/error_mark.dart';
 import '../models/santri.dart';
 import '../models/setoran.dart';
-import '../theme/app_theme.dart';
-import '../widgets/quran_widgets.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 
 import '../providers/app_provider.dart';
 import 'quran_reader_screen.dart';

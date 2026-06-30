@@ -6,9 +6,9 @@ import '../models/ayah_model_ext.dart';
 import '../models/error_mark.dart';
 import '../models/surah_model.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
-import '../utils/scoring_utils.dart';
-import '../widgets/quran_widgets.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/core/utils/scoring_utils.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'assessment_screen.dart';
 
 class QuranReaderScreen extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 /// Full-page edit screen for OrangTua editing their own wali info.
 /// Fields: Nama Ayah, Nama Ibu, No. HP Wali.

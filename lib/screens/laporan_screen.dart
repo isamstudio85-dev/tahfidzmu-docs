@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 import '../models/error_mark.dart';
-import '../models/santri.dart';
 import '../models/setoran.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
-import 'setoran_screen.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_memorization_screen.dart';
 
 class LaporanScreen extends StatelessWidget {
   const LaporanScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return const SetoranScreen();
+    return const QuranMemorizationScreen();
   }
 }
 

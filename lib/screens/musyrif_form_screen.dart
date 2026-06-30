@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,8 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../models/musyrif_data.dart';
 import '../providers/app_provider.dart';
-import '../theme/app_theme.dart';
-import '../widgets/app_avatar.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 
 /// Full-page form for adding or editing a MusyrifData.
 class MusyrifFormScreen extends StatefulWidget {
