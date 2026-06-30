@@ -11,6 +11,7 @@ import '../models/setoran_continuation.dart';
 import '../models/user_role.dart';
 import '../models/musyrif_data.dart';
 import '../models/halaqah_data.dart';
+import '../models/kelas_data.dart';
 import '../models/pesantren_info.dart';
 import '../services/quran_service.dart';
 import '../services/demo_data_service.dart';
@@ -18,10 +19,10 @@ import '../services/login_preferences_service.dart';
 import '../utils/scoring_utils.dart';
 
 class AppProvider extends ChangeNotifier {
-  // â”€â”€ Santri â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Santri ──────────────────────────────────────────────────────────
   List<Santri> _santriList = [];
   List<Santri> get santriList => List.unmodifiable(_santriList);
-  // â”€â”€ Musyrif list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Musyrif list ──────────────────────────────────────────────────────
   List<MusyrifData> _musyrifList = [];
   List<MusyrifData> get musyrifList => List.unmodifiable(_musyrifList);
 
@@ -76,7 +77,7 @@ class AppProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  // â”€â”€ Halaqah list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Halaqah list ──────────────────────────────────────────────────────
   List<HalaqahData> _halaqahList = [];
   List<HalaqahData> get halaqahList => List.unmodifiable(_halaqahList);
 
@@ -128,13 +129,45 @@ class AppProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  // â”€â”€ Surah list (for pickers) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Kelas list ────────────────────────────────────────────────────────
+  List<KelasData> _kelasList = [];
+  List<KelasData> get kelasList => List.unmodifiable(_kelasList);
+
+  void addKelas(KelasData k) {
+    _kelasList = [..._kelasList, k];
+    _saveKelasList();
+    notifyListeners();
+  }
+
+  void updateKelas(String id, KelasData updated) {
+    _kelasList = _kelasList.map((k) => k.id == id ? updated : k).toList();
+    _saveKelasList();
+    notifyListeners();
+  }
+
+  void removeKelas(String id) {
+    _kelasList = _kelasList.where((k) => k.id != id).toList();
+    _saveKelasList();
+    notifyListeners();
+  }
+
+  Future<void> _saveKelasList() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        'kelas_list',
+        jsonEncode(_kelasList.map((k) => k.toJson()).toList()),
+      );
+    } catch (_) {}
+  }
+
+  // ── Surah list (for pickers) ──────────────────────────────────────────
   List<SurahInfo> _surahList = [];
   List<SurahInfo> get surahList => List.unmodifiable(_surahList);
   bool isSurahListLoading = false;
   String? surahListError;
 
-  // â”€â”€ Active session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Active session ─────────────────────────────────────────────────────
   Santri? activeSetoranSantri;
   SetoranType activeSetoranType = SetoranType.ziyadah;
   int activeSetoranSurahNumber = 1;
@@ -146,7 +179,7 @@ class AppProvider extends ChangeNotifier {
   final Map<String, ErrorMark> _sessionErrors = {};
   Map<String, ErrorMark> get sessionErrors => Map.unmodifiable(_sessionErrors);
 
-  // â”€â”€ Auth / Session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Auth / Session ─────────────────────────────────────────────────────
   UserRole? _currentRole;
   String? _linkedSantriId;
   String? _linkedMusyrifId;
@@ -264,7 +297,7 @@ class AppProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  // â”€â”€ Current surah for reader â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Current surah for reader ──────────────────────────────────────────
   SurahDetail? currentSurah;
   bool isSurahLoading = false;
   String? surahLoadError;
@@ -301,8 +334,8 @@ class AppProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
-  // ── Active hafalan modules â───────────────────────────────────────
-  final Set<String> _activeModules = {'quran', 'hadits'};
+  // ── Active hafalan modules ───────────────────────────────────────
+  final Set<String> _activeModules = {'quran', 'hadits', 'tajwid', 'tahsin'};
   Set<String> get activeModules => Set.unmodifiable(_activeModules);
 
   bool isModuleActive(String key) => _activeModules.contains(key);
@@ -398,9 +431,11 @@ class AppProvider extends ChangeNotifier {
     _santriList = [];
     _musyrifList = [];
     _halaqahList = [];
+    _kelasList = [];
     _save();
     _saveMusyrifList();
     _saveHalaqahList();
+    _saveKelasList();
     DbHelper.clearAllNonAdminUsers();
     notifyListeners();
   }
@@ -425,11 +460,12 @@ class AppProvider extends ChangeNotifier {
     }
   }
 
-  // â”€â”€ Santri Management â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Santri Management ─────────────────────────────────────────────────
 
   void addSantri(
     String name, {
     String? halaqahId,
+    String? kelas,
     String? nis,
     String? email,
     String? jenisKelamin,
@@ -439,6 +475,7 @@ class AppProvider extends ChangeNotifier {
     String? nomorHpWali,
     String? targetHafalan,
     String? photoPath,
+    List<int>? initialMemorizedJuz,
     String? username,
     String? password,
     // old-name aliases
@@ -454,7 +491,7 @@ class AppProvider extends ChangeNotifier {
         nis: (nis ?? nik)?.isEmpty ?? true ? null : (nis ?? nik),
         email: email,
         jenisKelamin: jenisKelamin,
-        kelas: null,
+        kelas: kelas,
         halaqahId: halaqahId,
         namaOrangTua: (namaOrangTua ?? namaOrtu)?.isEmpty ?? true
             ? null
@@ -468,6 +505,7 @@ class AppProvider extends ChangeNotifier {
             : (nomorHpWali ?? nomorOrtu),
         targetHafalan: targetHafalan?.isEmpty ?? true ? null : targetHafalan,
         photoPath: photoPath,
+        initialMemorizedJuz: initialMemorizedJuz ?? [],
       ),
     ];
     // Create orang tua login account when NIS is provided
@@ -499,6 +537,7 @@ class AppProvider extends ChangeNotifier {
     String? email,
     String? jenisKelamin,
     String? halaqahId,
+    String? kelas,
     String? namaOrangTua,
     String? namaAyah,
     String? namaIbu,
@@ -506,6 +545,7 @@ class AppProvider extends ChangeNotifier {
     String? targetHafalan,
     String? photoPath,
     String? status,
+    List<int>? initialMemorizedJuz,
     // old-name aliases
     String? nik,
     String? namaOrtu,
@@ -518,7 +558,7 @@ class AppProvider extends ChangeNotifier {
         nis: nis ?? nik,
         email: email,
         jenisKelamin: jenisKelamin,
-        kelas: null,
+        kelas: kelas,
         halaqahId: halaqahId,
         namaOrangTua: namaOrangTua ?? namaOrtu,
         namaAyah: namaAyah ?? namaOrtu,
@@ -527,6 +567,7 @@ class AppProvider extends ChangeNotifier {
         targetHafalan: targetHafalan,
         photoPath: photoPath,
         status: status,
+        initialMemorizedJuz: initialMemorizedJuz,
       );
     }).toList();
     _save();
@@ -548,7 +589,7 @@ class AppProvider extends ChangeNotifier {
     }
   }
 
-  // â”€â”€ Setoran Session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Setoran Session ──────────────────────────────────────────────────
 
   void startSetoranSession({
     required Santri santri,
@@ -647,7 +688,7 @@ class AppProvider extends ChangeNotifier {
     return record;
   }
 
-  // â”€â”€ Quran API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Quran API ──────────────────────────────────────────────────────────
 
   Future<void> _fetchSurahList() async {
     if (_surahList.isNotEmpty) return;
@@ -680,7 +721,7 @@ class AppProvider extends ChangeNotifier {
     }
   }
 
-  // â”€â”€ Persistence â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Persistence ─────────────────────────────────────────────────────────
 
   Future<void> _save() async {
     try {
@@ -738,6 +779,14 @@ class AppProvider extends ChangeNotifier {
         final list = jsonDecode(rawHalaqah) as List;
         _halaqahList = list
             .map((h) => HalaqahData.fromJson(h as Map<String, dynamic>))
+            .toList();
+      }
+      // Load kelas list
+      final rawKelas = prefs.getString('kelas_list');
+      if (rawKelas != null) {
+        final list = jsonDecode(rawKelas) as List;
+        _kelasList = list
+            .map((k) => KelasData.fromJson(k as Map<String, dynamic>))
             .toList();
       }
       // Load santri list
@@ -806,7 +855,7 @@ class AppProvider extends ChangeNotifier {
       }
     }
   }
-  // â”€â”€ Continuation Logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Continuation Logic ─────────────────────────────────────────────────
 
   /// Returns the suggested next setoran position for a santri,
   /// or null if the santri has no history or the surah list is not loaded yet.
@@ -829,7 +878,7 @@ class AppProvider extends ChangeNotifier {
     SurahInfo nextSurah;
 
     if (last.ayahEnd >= lastSurah.numberOfAyahs) {
-      // Finished the surah â€” move to next
+      // Finished the surah — move to next
       nextSurahNumber = last.surahNumber + 1;
       if (nextSurahNumber > 114) return null;
       try {

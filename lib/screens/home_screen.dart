@@ -16,6 +16,9 @@ import 'musyrif_list_screen.dart';
 import 'santri_list_screen.dart';
 import 'santri_detail_screen.dart';
 import 'setoran_form_screen.dart';
+import 'hadits_screen.dart';
+import 'quran_tadarus_screen.dart';
+import 'educational_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -60,6 +63,8 @@ class _AdminDashboard extends StatelessWidget {
             _sectionTitle('Ringkasan Halaqah'),
             const SizedBox(height: 12),
             _buildHalaqahList(context),
+            const SizedBox(height: 24),
+            _HafalanMenuSection(provider: provider),
             const SizedBox(height: 24),
           ],
         ),
@@ -114,9 +119,9 @@ class _AdminDashboard extends StatelessWidget {
         final count = provider.getSantriByHalaqah(h.id).length;
         final m = provider.getMusyrifById(h.musyrifId);
         return Card(
-          margin: const EdgeInsets.only(bottom: 8),
+          margin: const EdgeInsets.only(bottom: 10),
           elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.grey.shade100)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.grey.shade100)),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             leading: Container(
@@ -156,7 +161,7 @@ class _AdminDashboard extends StatelessWidget {
   Widget _statTile(String value, String label, IconData icon, Color color) {
     return Expanded(child: Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(16), border: Border.all(color: color.withValues(alpha: 0.1))),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withValues(alpha: 0.1))),
       child: Column(children: [Icon(icon, color: color, size: 24), const SizedBox(height: 8), Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color)), Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))]),
     ));
   }
@@ -205,6 +210,8 @@ class _MusyrifDashboard extends StatelessWidget {
             const SizedBox(height: 12),
             if (recent.isEmpty) _emptyState('Belum ada setoran dari santri Anda.')
             else ...recent.take(5).map((item) => _RecentSetoranTile(santriName: item.$1, santriId: item.$2, record: item.$3)),
+            const SizedBox(height: 24),
+            _HafalanMenuSection(provider: provider),
             const SizedBox(height: 80),
           ],
         ),
@@ -234,7 +241,7 @@ class _MusyrifDashboard extends StatelessWidget {
   Widget _mStatTile(String value, String label, IconData icon, Color color) {
     return Expanded(child: Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(16), border: Border.all(color: color.withValues(alpha: 0.1))),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withValues(alpha: 0.1))),
       child: Column(children: [Icon(icon, color: color, size: 24), const SizedBox(height: 8), Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color)), Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))]),
     ));
   }
@@ -269,6 +276,8 @@ class _OrangTuaDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           if (setorans.isEmpty) _emptyState('Belum ada riwayat setoran.')
           else ...setorans.take(5).map((r) => _RecentSetoranTile(santriName: child.name, santriId: child.id, record: r)),
+          const SizedBox(height: 24),
+          _HafalanMenuSection(provider: context.read<AppProvider>()),
           const SizedBox(height: 12),
           SizedBox(width: double.infinity, child: OutlinedButton.icon(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: child.id))), icon: const Icon(Icons.person_search_rounded), label: const Text('Lihat Detail Lengkap'))),
         ],
@@ -297,9 +306,60 @@ class _OrangTuaDashboard extends StatelessWidget {
   Widget _oStat(IconData icon, String label, String value, Color color) {
     return Expanded(child: Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(16), border: Border.all(color: color.withValues(alpha: 0.1))),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(20), border: Border.all(color: color.withValues(alpha: 0.1))),
       child: Column(children: [Icon(icon, color: color, size: 24), const SizedBox(height: 8), Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: color)), Text(label, style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))]),
     ));
+  }
+}
+
+class _HafalanMenuSection extends StatelessWidget {
+  const _HafalanMenuSection({required this.provider});
+  final AppProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    final modules = [
+      (title: 'Al-Quran Digital', sub: 'Membaca & Tadarus Al-Quran', icon: Icons.menu_book_rounded, color: Colors.teal, type: 'quran'),
+      if (provider.isModuleActive('hadits'))
+        (title: 'Hadits Pilihan', sub: 'Kumpulan hadits shahih', icon: Icons.import_contacts_rounded, color: Colors.orange, type: 'hadits'),
+      if (provider.isModuleActive('tajwid')) 
+        (title: 'Ilmu Tajwid', sub: 'Hukum bacaan Al-Quran', icon: Icons.auto_stories_rounded, color: Colors.blue, type: 'tajwid'),
+      if (provider.isModuleActive('tahsin'))
+        (title: 'Ilmu Tahsin', sub: 'Fasih & Makharijul huruf', icon: Icons.record_voice_over_rounded, color: Colors.deepPurple, type: 'tahsin'),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionTitle('Menu Hafalan'),
+        const SizedBox(height: 12),
+        ...modules.map((m) => Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: ListTile(
+            dense: true,
+            visualDensity: VisualDensity.compact,
+            onTap: () {
+              if (m.type == 'quran') {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranTadarusScreen()));
+              } else if (m.type == 'hadits') {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const HaditsScreen()));
+              } else {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => EducationalListScreen(type: m.type)));
+              }
+            },
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: m.color.withValues(alpha: 0.1), shape: BoxShape.circle),
+              child: Icon(m.icon, color: m.color, size: 20),
+            ),
+            title: Text(m.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            subtitle: Text(m.sub, style: TextStyle(fontSize: 10, color: Colors.grey.shade600)),
+            trailing: const Icon(Icons.chevron_right_rounded, size: 18, color: Colors.grey),
+          ),
+        )),
+      ],
+    );
   }
 }
 
@@ -309,13 +369,23 @@ class _RecentSetoranTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 10), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.only(bottom: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: ListTile(
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santriId))),
         leading: AppAvatar(name: santriName, radius: 22),
-        title: Text(santriName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        subtitle: Text('${record.surahEnglishName} • Ayat ${record.ayahStart}-${record.ayahEnd}', style: const TextStyle(fontSize: 12)),
-        trailing: Text(record.finalScore.toStringAsFixed(1), style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primaryGreen)),
+        title: Text(santriName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
+        subtitle: Text('${record.surahEnglishName} • Ayat ${record.ayahStart}-${record.ayahEnd}', style: const TextStyle(fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const Icon(Icons.star_rounded, color: AppTheme.gold, size: 14),
+            Text(
+              record.finalScore.toStringAsFixed(1),
+              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppTheme.primaryGreen)
+            ),
+          ],
+        ),
       ),
     );
   }

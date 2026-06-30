@@ -66,7 +66,7 @@ class SantriDetailScreen extends StatelessWidget {
                 // 1. Unified Profile Header
                 _ProfileHeader(
                   name: santri.name,
-                  subtitle: halaqah?.nama ?? 'Tanpa Halaqah',
+                  subtitle: '${santri.kelas ?? 'Tanpa Kelas'} • ${halaqah?.nama ?? 'Tanpa Halaqah'}',
                   photoPath: santri.photoPath,
                   extra: Column(
                     children: [
@@ -84,7 +84,7 @@ class SantriDetailScreen extends StatelessWidget {
                   children: [
                     _statItem('Setoran', '${santri.totalSetoranCount}', Icons.list_alt_rounded, AppTheme.primaryGreen),
                     const SizedBox(width: 12),
-                    _statItem('Rata-rata', avg.toStringAsFixed(1), Icons.bar_chart_rounded, AppTheme.gold),
+                    _statItem('Rata-rata', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
                     const SizedBox(width: 12),
                     _statItem('Hafalan', '${santri.estimatedJuz.toStringAsFixed(1)} Juz', Icons.menu_book_rounded, Colors.purple),
                   ],
@@ -94,8 +94,10 @@ class SantriDetailScreen extends StatelessWidget {
                 // 3. Unified Info Section
                 _sectionHeader('Informasi Personal'),
                 _infoCard([
+                  _infoRow(Icons.meeting_room_rounded, 'Kelas', santri.kelas ?? '-'),
                   _infoRow(Icons.badge_outlined, 'NIS', santri.nis ?? '-'),
                   _infoRow(Icons.male_rounded, 'Jenis Kelamin', santri.jenisKelamin == 'P' ? 'Perempuan' : 'Laki-laki'),
+                  _infoRow(Icons.history_edu_rounded, 'Hafalan Awal', santri.initialMemorizedJuz.isEmpty ? 'Mulai dari Nol' : 'Sudah hafal Juz: ${santri.initialMemorizedJuz.join(', ')}'),
                   _infoRow(Icons.email_outlined, 'Email', santri.email ?? '-'),
                   _infoRow(Icons.family_restroom_outlined, 'Orang Tua', santri.namaOrangTua ?? '-'),
                   _infoRow(Icons.phone_outlined, 'No. HP Wali', santri.nomorHpWali ?? '-'),
@@ -258,7 +260,7 @@ class _SetoranHistoryTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(record.finalScore.toStringAsFixed(1), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primaryGreen)),
+            Text(record.finalScore.toStringAsFixed(0), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primaryGreen)),
             StarRatingWidget(rating: record.starCount, size: 12),
           ],
         ),

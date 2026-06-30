@@ -40,6 +40,7 @@ dependencies:
   sqflite: ^2.3.3
   path: ^1.9.0
   crypto: ^3.0.3
+  flutter_native_splash: ^2.4.7
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,8 @@ flutter:
     - assets/icons/
     - assets/data/quran/
     - assets/data/hadits/
+    - assets/data/tajwid/
+    - assets/data/tahsin/
     - assets/data/demo/
 
   # An image asset can refer to one or more resolution-specific "variants", see

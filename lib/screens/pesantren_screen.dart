@@ -147,6 +147,8 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
                   const SizedBox(height: 12),
                   _moduleSwitch(provider, 'Quran', 'Hafalan & Setoran Al-Quran', Icons.menu_book_rounded, true),
                   _moduleSwitch(provider, 'Hadits', 'Hafalan hadits-hadits pilihan', Icons.import_contacts_rounded, provider.isModuleActive('hadits'), onTap: () => provider.toggleModule('hadits')),
+                  _moduleSwitch(provider, 'Tajwid', 'Panduan hukum bacaan Al-Quran', Icons.auto_stories_rounded, provider.isModuleActive('tajwid'), onTap: () => provider.toggleModule('tajwid')),
+                  _moduleSwitch(provider, 'Tahsin', 'Panduan fasih & makharijul huruf', Icons.record_voice_over_rounded, provider.isModuleActive('tahsin'), onTap: () => provider.toggleModule('tahsin')),
                 ],
                 const SizedBox(height: 32),
                 if (!widget.manageModulesOnly)

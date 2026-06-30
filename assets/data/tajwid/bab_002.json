@@ -1,0 +1,43 @@
+{
+  "id": 2,
+  "title": "Hukum Mim Mati",
+  "introduction": "Hukum Mim Mati (مْ) apabila bertemu dengan huruf hijaiyah terbagi menjadi 3 bagian:",
+  "sections": [
+    {
+      "name": "1. Ikhfa Syafawi",
+      "definition": "Apabila Mim mati bertemu huruf Ba (ب). Dibaca samar di bibir dengan mendengung.",
+      "letters": "ب",
+      "example": [
+        {
+          "arabic": "تَرْمِيْهِمْ بِحِجَارَةٍ",
+          "latin": "Tarmiihim bi-hijaarah",
+          "note": "Mim mati bertemu Ba"
+        }
+      ]
+    },
+    {
+      "name": "2. Idgham Mutamatsilain (Idgham Mimi)",
+      "definition": "Apabila Mim mati bertemu huruf Mim (م). Dibaca masuk dengan mendengung sempurna.",
+      "letters": "م",
+      "example": [
+        {
+          "arabic": "لَهُمْ مَّا يَشَاءُوْنَ",
+          "latin": "Lahum maa yasyaa-uun",
+          "note": "Mim mati bertemu Mim"
+        }
+      ]
+    },
+    {
+      "name": "3. Izhar Syafawi",
+      "definition": "Apabila Mim mati bertemu huruf selain Ba dan Mim. Dibaca jelas di bibir tanpa mendengung.",
+      "letters": "26 Huruf Hijaiyah lainnya",
+      "example": [
+        {
+          "arabic": "لَعَلَّكُمْ تَتَّقُوْنَ",
+          "latin": "La'allakum tattaquun",
+          "note": "Mim mati bertemu Ta"
+        }
+      ]
+    }
+  ]
+}

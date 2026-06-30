@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "Makharijul Huruf",
+    "slug": "makharij",
+    "description": "Mengenal tempat-tempat keluarnya huruf Hijaiyah agar pengucapan lebih fasih.",
+    "icon": "record_voice_over"
+  },
+  {
+    "id": 2,
+    "title": "Sifatul Huruf",
+    "slug": "sifat",
+    "description": "Mengenal karakteristik suara setiap huruf (Hams, Jahr, Isti'la, dll).",
+    "icon": "settings_voice"
+  },
+  {
+    "id": 3,
+    "title": "Lahn (Kesalahan Membaca)",
+    "slug": "lahn",
+    "description": "Mengenal kesalahan fatal (Jali) dan tersembunyi (Khafi) saat tilawah.",
+    "icon": "warning_amber"
+  }
+]

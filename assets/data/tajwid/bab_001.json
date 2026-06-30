@@ -1,0 +1,76 @@
+{
+  "id": 1,
+  "title": "Hukum Nun Mati dan Tanwin",
+  "introduction": "Apabila Nun Sukun (نْ) atau Tanwin ( ً  ٍ  ٌ ) bertemu dengan salah satu huruf Hijaiyah, maka hukum bacanya terbagi menjadi 4 bagian:",
+  "sections": [
+    {
+      "name": "1. Izhar Halqi",
+      "definition": "Izhar artinya jelas/terang. Apabila Nun sukun atau Tanwin bertemu dengan salah satu huruf halqi, maka suaranya harus dibaca jelas tanpa mendengung.",
+      "letters": "ء هـ ع ح غ خ",
+      "example": [
+        {
+          "arabic": "مَنْ آمَنَ",
+          "latin": "Man aamana",
+          "note": "Nun mati bertemu Alif"
+        },
+        {
+          "arabic": "عَذَابٌ أَلِيمٌ",
+          "latin": "'Adzabun aliim",
+          "note": "Tanwin bertemu Alif"
+        }
+      ]
+    },
+    {
+      "name": "2. Idgham",
+      "definition": "Idgham artinya memasukkan atau meleburkan. Terbagi menjadi dua:",
+      "sub_sections": [
+        {
+          "name": "a. Idgham Bi Ghunnah",
+          "definition": "Dibaca masuk dengan mendengung. Hurufnya: ي ن م و",
+          "example": [
+            {
+              "arabic": "مَنْ يَقُوْلُ",
+              "latin": "May yaquulu",
+              "note": "Nun mati bertemu Ya'"
+            }
+          ]
+        },
+        {
+          "name": "b. Idgham Bila Ghunnah",
+          "definition": "Dibaca masuk tanpa mendengung. Hurufnya: ل ر",
+          "example": [
+            {
+              "arabic": "مِنْ رَبِّهِمْ",
+              "latin": "Mir rabbihim",
+              "note": "Nun mati bertemu Ra'"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Iqlab",
+      "definition": "Iqlab artinya mengganti. Merubah bunyi Nun mati atau Tanwin menjadi bunyi Mim (م) disertai dengungan. Hurufnya: ب",
+      "letters": "ب",
+      "example": [
+        {
+          "arabic": "مِنْ بَعْدِ",
+          "latin": "Mim ba'di",
+          "note": "Nun mati bertemu Ba'"
+        }
+      ]
+    },
+    {
+      "name": "4. Ikhfa Haqiqi",
+      "definition": "Ikhfa artinya menyamarkan. Membaca Nun mati atau Tanwin dengan samar antara Izhar dan Idgham disertai dengungan. Hurufnya ada 15 sisanya.",
+      "letters": "ت ث ج د ذ ز س ش ص ض ط ظ ف ق ك",
+      "example": [
+        {
+          "arabic": "مِنْ تَحْتِهَا",
+          "latin": "Min tahtiha",
+          "note": "Nun mati bertemu Ta'"
+        }
+      ]
+    }
+  ]
+}

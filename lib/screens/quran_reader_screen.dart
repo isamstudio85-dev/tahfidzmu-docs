@@ -547,7 +547,6 @@ class _AyahBlock extends StatelessWidget {
                           i,
                         )],
                     onTap: () => onWordTap(i, words[i]),
-                    onDoubleTap: () => onWordDoubleTap(i, words[i]),
                   ),
                 // Verse end ornament
                 Padding(

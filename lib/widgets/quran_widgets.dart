@@ -7,7 +7,7 @@ import '../theme/app_theme.dart';
 /// A single tappable Arabic word in the Quran reader.
 /// Single tap  = Tajwid error (or advance state)
 /// Double tap  = Makhroj error
-class WordWidget extends StatelessWidget {
+class WordWidget extends StatefulWidget {
   const WordWidget({
     super.key,
     required this.word,
@@ -22,33 +22,73 @@ class WordWidget extends StatelessWidget {
   final VoidCallback? onDoubleTap;
 
   @override
+  State<WordWidget> createState() => _WordWidgetState();
+}
+
+class _WordWidgetState extends State<WordWidget> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.92).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void didUpdateWidget(WordWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Play a quick "bounce" if the error mark changed
+    if (widget.errorMark?.errorType != oldWidget.errorMark?.errorType) {
+      _controller.forward().then((_) => _controller.reverse());
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bool hasError = errorMark != null;
-    final Color fgColor = hasError
-        ? errorMark!.errorType.color
-        : Colors.black87;
-    final Color bgColor = hasError
-        ? errorMark!.errorType.bgColor
-        : Colors.transparent;
-    final Border? border = hasError
-        ? Border.all(color: errorMark!.errorType.color, width: 1.5)
-        : null;
+    final bool hasError = widget.errorMark != null;
+    final Color fgColor = hasError ? widget.errorMark!.errorType.color : Colors.black87;
+    final Color bgColor = hasError ? widget.errorMark!.errorType.bgColor : Colors.transparent;
+    final Color borderColor = hasError ? widget.errorMark!.errorType.color : Colors.transparent;
 
     return GestureDetector(
-      onTap: onTap,
-      onDoubleTap: onDoubleTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(6),
-          border: border,
-        ),
-        child: Text(
-          word,
-          style: GoogleFonts.amiri(fontSize: 26, color: fgColor, height: 2.2),
-          textDirection: TextDirection.rtl,
+      onTap: widget.onTap,
+      onDoubleTap: widget.onDoubleTap,
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) => _controller.reverse(),
+      onTapCancel: () => _controller.reverse(),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: borderColor, width: 1.5),
+          ),
+          child: Text(
+            widget.word,
+            style: GoogleFonts.amiri(
+              fontSize: 26,
+              color: fgColor,
+              height: 2.0,
+            ),
+            textDirection: TextDirection.rtl,
+          ),
         ),
       ),
     );

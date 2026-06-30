@@ -17,6 +17,9 @@ class Santri {
   final String? photoPath;
   final String status; // 'aktif' / 'nonaktif'
   final List<SetoranRecord> setoranHistory;
+  
+  /// Juz numbers that the student already memorized before using the app.
+  final List<int> initialMemorizedJuz;
 
   // Backward-compat getters so old references still compile
   String? get nik => nis;
@@ -39,6 +42,7 @@ class Santri {
     this.photoPath,
     this.status = 'aktif',
     this.setoranHistory = const [],
+    this.initialMemorizedJuz = const [],
   });
 
   bool get isAktif => status == 'aktif';
@@ -58,6 +62,7 @@ class Santri {
     String? photoPath,
     String? status,
     List<SetoranRecord>? setoranHistory,
+    List<int>? initialMemorizedJuz,
     // old-name aliases
     String? nik,
     String? namaOrtu,
@@ -79,6 +84,7 @@ class Santri {
       photoPath: photoPath ?? this.photoPath,
       status: status ?? this.status,
       setoranHistory: setoranHistory ?? this.setoranHistory,
+      initialMemorizedJuz: initialMemorizedJuz ?? this.initialMemorizedJuz,
     );
   }
 
@@ -129,12 +135,13 @@ class Santri {
   int get totalMurojaahSessions =>
       setoranHistory.where((s) => s.type == SetoranType.murojaah).length;
 
-  /// Estimated juz memorised from ziyadah (1 juz ≈ 604 ayahs).
-  double get estimatedJuz => totalZiyadahAyahs / 604.0;
+  /// Estimated juz memorised (Initial + Ziyadah).
+  /// (1 juz ≈ 604 ayahs).
+  double get estimatedJuz => initialMemorizedJuz.length + (totalZiyadahAyahs / 604.0);
 
-  /// Sorted list of distinct juz numbers touched by ziyadah sessions.
+  /// Sorted list of distinct juz numbers touched by initial state OR ziyadah sessions.
   List<int> get juzCoveredByZiyadah {
-    final result = <int>{};
+    final result = <int>{...initialMemorizedJuz};
     for (final s in setoranHistory.where(
       (r) => r.type == SetoranType.ziyadah,
     )) {
@@ -152,9 +159,11 @@ class Santri {
       QuranJuzUtils.juzCoveredText(juzCoveredByZiyadah);
 
   /// Composite ranking score.
+  /// Initial Juz carry massive weight (as they are already completed).
   /// Ziyadah (new memorisation) carries 3× weight over muroja'ah (review),
   /// plus average score as a tie-breaker bonus.
   double get rankScore =>
+      (initialMemorizedJuz.length * 604 * 3.0) +
       (totalZiyadahAyahs * 3.0) + (totalMurojaahAyahs * 1.0) + averageScore;
 
   Map<String, dynamic> toJson() => {
@@ -173,6 +182,7 @@ class Santri {
     'photoPath': photoPath,
     'status': status,
     'setoranHistory': setoranHistory.map((s) => s.toJson()).toList(),
+    'initialMemorizedJuz': initialMemorizedJuz,
   };
 
   factory Santri.fromJson(Map<String, dynamic> json) => Santri(
@@ -193,6 +203,10 @@ class Santri {
     setoranHistory:
         (json['setoranHistory'] as List?)
             ?.map((s) => SetoranRecord.fromJson(s as Map<String, dynamic>))
+            .toList() ??
+        [],
+    initialMemorizedJuz: (json['initialMemorizedJuz'] as List?)
+            ?.map((e) => e as int)
             .toList() ??
         [],
   );

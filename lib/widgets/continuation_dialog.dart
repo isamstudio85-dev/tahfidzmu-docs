@@ -3,24 +3,28 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../models/santri.dart';
+import '../models/setoran.dart';
 import '../providers/app_provider.dart';
 import '../screens/quran_reader_screen.dart';
 import '../screens/setoran_form_screen.dart';
+import '../screens/setoran_detail_screen.dart';
 import '../theme/app_theme.dart';
 import 'app_avatar.dart';
 
-/// Shows a bottom sheet with two choices:
+/// Shows a bottom sheet with three choices:
 ///  1. **Lanjut** — directly start from the detected next position
-///  2. **Pilih Manual** — open the form pre-filled (user can adjust)
+///  2. **Pilih Manual** — open the form pre-filled
+///  3. **Lihat Detail** — view the specific record details (optional)
 ///
 /// If the santri has no history (or surah list not loaded), opens the form
 /// directly without a dialog.
-Future<void> showSetoranOptions(BuildContext context, Santri santri) async {
+Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRecord? record}) async {
   final provider = context.read<AppProvider>();
   final continuation = provider.getNextSetoranSuggestion(santri.id);
 
-  // No history or no surah list yet → open form normally
-  if (continuation == null) {
+  // If we have a specific record, we might want to show details.
+  // If no history, just go to form.
+  if (continuation == null && record == null) {
     if (!context.mounted) return;
     Navigator.push(
       context,
@@ -54,7 +58,7 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri) async {
             // Santri name
             Row(
               children: [
-                AppAvatar(name: santri.name, radius: 22),
+                AppAvatar(name: santri.name, radius: 22, imagePath: santri.photoPath),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -68,7 +72,7 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri) async {
                         ),
                       ),
                       Text(
-                        'Lanjutan setoran terdeteksi',
+                        record != null ? 'Pilih aksi untuk setoran ini' : 'Lanjutan setoran terdeteksi',
                         style: TextStyle(
                           color: Colors.grey.shade500,
                           fontSize: 12,
@@ -80,34 +84,55 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri) async {
               ],
             ),
             const SizedBox(height: 20),
-            // Quick continue tile
-            _OptionTile(
-              icon: Icons.play_circle_filled_rounded,
-              color: AppTheme.primaryGreen,
-              title: 'Lanjut Setoran',
-              subtitle: continuation.description,
-              onTap: () {
-                Navigator.pop(ctx);
-                provider.startSetoranSession(
-                  santri: santri,
-                  type: continuation.type,
-                  surah: continuation.surah,
-                  ayahStart: continuation.ayahStart,
-                  ayahEnd: continuation.ayahEnd,
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const QuranReaderScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 10),
-            // Manual selection tile
+            // 1. Quick continue tile (if possible)
+            if (continuation != null)
+              _OptionTile(
+                icon: Icons.play_circle_filled_rounded,
+                color: AppTheme.primaryGreen,
+                title: 'Lanjutkan Hafalan',
+                subtitle: 'Mulai: ${continuation.description}',
+                onTap: () {
+                  Navigator.pop(ctx);
+                  provider.startSetoranSession(
+                    santri: santri,
+                    type: continuation.type,
+                    surah: continuation.surah,
+                    ayahStart: continuation.ayahStart,
+                    ayahEnd: continuation.ayahEnd,
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const QuranReaderScreen()),
+                  );
+                },
+              ),
+            if (continuation != null) const SizedBox(height: 10),
+            
+            // 2. View Detail (if record provided)
+            if (record != null)
+              _OptionTile(
+                icon: Icons.assignment_outlined,
+                color: Colors.purple,
+                title: 'Lihat Detail Setoran',
+                subtitle: 'Lihat skor, tajwid, dan makhroj record ini',
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SetoranDetailScreen(santri: santri, record: record),
+                    ),
+                  );
+                },
+              ),
+            if (record != null) const SizedBox(height: 10),
+
+            // 3. Manual selection tile
             _OptionTile(
               icon: Icons.tune_rounded,
               color: const Color(0xFF1565C0),
-              title: 'Pilih Manual',
-              subtitle: 'Atur surah, ayat, dan jenis setoran sendiri',
+              title: 'Mulai Setoran Baru',
+              subtitle: 'Atur surah, ayat, dan jenis setoran manual',
               onTap: () {
                 Navigator.pop(ctx);
                 Navigator.push(
@@ -115,10 +140,10 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri) async {
                   MaterialPageRoute(
                     builder: (_) => SetoranFormScreen(
                       santri: santri,
-                      initialSurah: continuation.surah,
-                      initialAyahStart: continuation.ayahStart,
-                      initialAyahEnd: continuation.ayahEnd,
-                      initialType: continuation.type,
+                      initialSurah: continuation?.surah,
+                      initialAyahStart: continuation?.ayahStart,
+                      initialAyahEnd: continuation?.ayahEnd,
+                      initialType: continuation?.type ?? SetoranType.ziyadah,
                     ),
                   ),
                 );

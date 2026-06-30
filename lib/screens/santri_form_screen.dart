@@ -24,6 +24,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
   late final TextEditingController _namaCtrl;
   late final TextEditingController _nisCtrl;
   late final TextEditingController _emailCtrl;
+  late final TextEditingController _kelasCtrl;
   late final TextEditingController _namaOrangTuaCtrl;
   late final TextEditingController _nomorHpWaliCtrl;
 
@@ -35,6 +36,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
   String? _photoPath;
   String? _targetJuz;
   String _status = 'aktif';
+  List<int> _initialJuz = [];
   bool _showAccountInfo = false;
 
   bool get _isEdit => widget.existing != null;
@@ -46,6 +48,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     _namaCtrl = TextEditingController(text: s?.name ?? '');
     _nisCtrl = TextEditingController(text: s?.nis ?? '');
     _emailCtrl = TextEditingController(text: s?.email ?? '');
+    _kelasCtrl = TextEditingController(text: s?.kelas ?? '');
     _namaOrangTuaCtrl = TextEditingController(text: s?.namaOrangTua ?? s?.namaAyah ?? s?.namaIbu ?? '');
     _nomorHpWaliCtrl = TextEditingController(text: s?.nomorHpWali ?? '');
 
@@ -56,6 +59,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     _halaqahId = s?.halaqahId;
     _photoPath = s?.photoPath;
     _status = s?.status ?? 'aktif';
+    _initialJuz = s?.initialMemorizedJuz != null ? List.from(s!.initialMemorizedJuz) : [];
 
     if (s?.targetHafalan != null) {
       final raw = s!.targetHafalan!;
@@ -67,10 +71,6 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
           _targetJuz = '${match.group(1)} Juz';
         }
       }
-      if (_targetJuz != null) {
-        final numPart = int.tryParse(_targetJuz!.split(' ')[0]) ?? 0;
-        if (numPart < 1 || numPart > 30) _targetJuz = null;
-      }
     }
   }
 
@@ -79,6 +79,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     _namaCtrl.dispose();
     _nisCtrl.dispose();
     _emailCtrl.dispose();
+    _kelasCtrl.dispose();
     _namaOrangTuaCtrl.dispose();
     _nomorHpWaliCtrl.dispose();
     _usernameCtrl.dispose();
@@ -162,7 +163,49 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     );
   }
 
-  void _showJuzPicker() {
+  void _showKelasPicker() {
+    final provider = context.read<AppProvider>();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: const EdgeInsets.only(top: 12, bottom: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 16),
+            Text('Pilih Kelas', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16)),
+            const Divider(),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  ListTile(
+                    title: const Text('-- Belum ditentukan --'),
+                    onTap: () { setState(() => _kelasCtrl.text = ''); Navigator.pop(context); },
+                    trailing: _kelasCtrl.text.isEmpty ? const Icon(Icons.check, color: AppTheme.primaryGreen) : null,
+                  ),
+                  ...provider.kelasList.map((k) => ListTile(
+                    title: Text(k.nama),
+                    onTap: () { setState(() => _kelasCtrl.text = k.nama); Navigator.pop(context); },
+                    trailing: _kelasCtrl.text == k.nama ? const Icon(Icons.check, color: AppTheme.primaryGreen) : null,
+                  )),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTargetJuzPicker() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -188,10 +231,10 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
                 itemCount: 31,
                 itemBuilder: (context, i) {
                   if (i == 0) {
-                    return _juzChip(null, '--');
+                    return _juzChip(null, '--', isSelected: _targetJuz == null, onTap: () { setState(() => _targetJuz = null); Navigator.pop(context); });
                   }
                   final val = '$i Juz';
-                  return _juzChip(val, i.toString());
+                  return _juzChip(val, i.toString(), isSelected: _targetJuz == val, onTap: () { setState(() => _targetJuz = val); Navigator.pop(context); });
                 },
               ),
             ),
@@ -201,10 +244,68 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     );
   }
 
-  Widget _juzChip(String? value, String label) {
-    final isSelected = _targetJuz == value;
+  void _showInitialHafalanPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setSt) => Container(
+          decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+          padding: const EdgeInsets.only(top: 12, bottom: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+              const SizedBox(height: 16),
+              Text('Hafalan yang Sudah Ada', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16)),
+              Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text('Pilih Juz yang sudah dihafal sepenuhnya sebelum menggunakan aplikasi.', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.grey.shade600))),
+              const Divider(),
+              Flexible(
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5, crossAxisSpacing: 8, mainAxisSpacing: 8),
+                  itemCount: 30,
+                  itemBuilder: (context, i) {
+                    final juz = i + 1;
+                    final isSelected = _initialJuz.contains(juz);
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          if (isSelected) _initialJuz.remove(juz);
+                          else _initialJuz.add(juz);
+                          _initialJuz.sort();
+                        });
+                        setSt(() {}); // Update local bottomsheet state
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade200),
+                        ),
+                        child: Text(juz.toString(), style: TextStyle(color: isSelected ? Colors.white : Colors.black87, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SizedBox(width: double.infinity, child: FilledButton(onPressed: () => Navigator.pop(context), child: const Text('Selesai'))),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _juzChip(String? value, String label, {required bool isSelected, required VoidCallback onTap}) {
     return InkWell(
-      onTap: () { setState(() => _targetJuz = value); Navigator.pop(context); },
+      onTap: onTap,
       child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
@@ -228,11 +329,13 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
         email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
         jenisKelamin: _jenisKelamin,
         halaqahId: _halaqahId,
+        kelas: _kelasCtrl.text.trim().isEmpty ? null : _kelasCtrl.text.trim(),
         namaOrangTua: _namaOrangTuaCtrl.text.trim().isEmpty ? null : _namaOrangTuaCtrl.text.trim(),
         nomorHpWali: _nomorHpWaliCtrl.text.trim().isEmpty ? null : _nomorHpWaliCtrl.text.trim(),
         targetHafalan: _targetJuz,
         photoPath: _photoPath,
         status: _status,
+        initialMemorizedJuz: _initialJuz,
       );
     } else {
       provider.addSantri(
@@ -241,10 +344,12 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
         email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
         jenisKelamin: _jenisKelamin,
         halaqahId: _halaqahId,
+        kelas: _kelasCtrl.text.trim().isEmpty ? null : _kelasCtrl.text.trim(),
         namaOrangTua: _namaOrangTuaCtrl.text.trim().isEmpty ? null : _namaOrangTuaCtrl.text.trim(),
         nomorHpWali: _nomorHpWaliCtrl.text.trim().isEmpty ? null : _nomorHpWaliCtrl.text.trim(),
         targetHafalan: _targetJuz,
         photoPath: _photoPath,
+        initialMemorizedJuz: _initialJuz,
         username: _usernameCtrl.text.trim().isEmpty ? null : _usernameCtrl.text.trim(),
         password: _passwordCtrl.text.trim().isEmpty ? null : _passwordCtrl.text.trim(),
       );
@@ -308,25 +413,40 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: 12),
-            _labelText('Jenis Kelamin'),
-            const SizedBox(height: 8),
             Row(
               children: [
-                _genderChip('L', 'Laki-laki', Icons.male_rounded),
+                Expanded(
+                  child: InkWell(
+                    onTap: _showKelasPicker,
+                    child: IgnorePointer(
+                      child: TextFormField(
+                        controller: _kelasCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Kelas',
+                          prefixIcon: Icon(Icons.meeting_room_rounded),
+                          suffixIcon: Icon(Icons.keyboard_arrow_down_rounded),
+                          hintText: '-- Pilih Kelas --',
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 12),
-                _genderChip('P', 'Perempuan', Icons.female_rounded),
+                Expanded(
+                  child: Row(
+                    children: [
+                      _genderChip('L', 'L', Icons.male_rounded),
+                      const SizedBox(width: 8),
+                      _genderChip('P', 'P', Icons.female_rounded),
+                    ],
+                  ),
+                ),
               ],
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _nisCtrl,
-              decoration: const InputDecoration(labelText: 'NIS (Nomor Induk Santri)', hintText: 'cth. TH-2024-001', prefixIcon: Icon(Icons.badge_rounded)),
             ),
             const SizedBox(height: 12),
             TextFormField(
-              controller: _emailCtrl,
-              decoration: const InputDecoration(labelText: 'Email', hintText: 'santri@example.com', prefixIcon: Icon(Icons.email_rounded)),
-              keyboardType: TextInputType.emailAddress,
+              controller: _nisCtrl,
+              decoration: const InputDecoration(labelText: 'NIS (Nomor Induk Santri)', hintText: 'cth. TH-2024-001', prefixIcon: Icon(Icons.badge_rounded)),
             ),
             const SizedBox(height: 12),
 
@@ -351,15 +471,45 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
 
-            // Custom Juz Picker
+            _section('Progress Hafalan'),
+            const SizedBox(height: 12),
+            // Initial Hafalan (Juz selection)
             InkWell(
-              onTap: _showJuzPicker,
+              onTap: _showInitialHafalanPicker,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)),
+                child: Row(
+                  children: [
+                    Icon(Icons.history_edu_rounded, color: _initialJuz.isEmpty ? Colors.grey : AppTheme.primaryGreen),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Hafalan yang Sudah Ada', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                          Text(
+                            _initialJuz.isEmpty ? 'Belum ada hafalan tercatat' : 'Sudah hafal ${_initialJuz.length} Juz (${_initialJuz.join(', ')})',
+                            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.add_circle_outline_rounded, color: AppTheme.primaryGreen, size: 20),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Custom Target Juz Picker
+            InkWell(
+              onTap: _showTargetJuzPicker,
               child: IgnorePointer(
                 child: TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Target Hafalan',
+                    labelText: 'Target Hafalan Akhir',
                     prefixIcon: const Icon(Icons.flag_rounded),
                     suffixIcon: const Icon(Icons.keyboard_arrow_down_rounded),
                     hintText: _targetJuz ?? '-- Pilih Target (Juz) --',
@@ -370,10 +520,12 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
               ),
             ),
 
+            const SizedBox(height: 24),
+            _section('Kontak & Orang Tua'),
             const SizedBox(height: 12),
             TextFormField(
               controller: _namaOrangTuaCtrl,
-              decoration: const InputDecoration(labelText: 'Nama Orang Tua', prefixIcon: Icon(Icons.family_restroom_rounded)),
+              decoration: const InputDecoration(labelText: 'Nama Orang Tua / Wali', prefixIcon: Icon(Icons.family_restroom_rounded)),
               textCapitalization: TextCapitalization.words,
             ),
             const SizedBox(height: 12),
@@ -381,6 +533,12 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
               controller: _nomorHpWaliCtrl,
               decoration: const InputDecoration(labelText: 'No. HP Wali', hintText: 'cth. 081234567890', prefixIcon: Icon(Icons.phone_rounded)),
               keyboardType: TextInputType.phone,
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _emailCtrl,
+              decoration: const InputDecoration(labelText: 'Email', hintText: 'santri@example.com', prefixIcon: Icon(Icons.email_rounded)),
+              keyboardType: TextInputType.emailAddress,
             ),
 
             const SizedBox(height: 24),
@@ -390,7 +548,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   children: [
-                    Text('Info Akun', style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w600)),
+                    Text('Pengaturan Akun', style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w600)),
                     const Spacer(),
                     Icon(_showAccountInfo ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded, color: Colors.grey.shade600),
                   ],
@@ -437,7 +595,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
                 label: Text(_isEdit ? 'Simpan Perubahan' : 'Tambah Santri'),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -447,12 +605,12 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
   Widget _section(String title) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(title, style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14, color: AppTheme.primaryGreen)),
+      Text(title, style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 13, color: AppTheme.primaryGreen, letterSpacing: 0.5)),
       const Divider(),
     ],
   );
 
-  Widget _labelText(String t) => Text(t, style: TextStyle(color: Colors.grey.shade700, fontSize: 13, fontWeight: FontWeight.w500));
+  Widget _labelText(String t) => Text(t, style: TextStyle(color: Colors.grey.shade700, fontSize: 12, fontWeight: FontWeight.w500));
 
   Widget _genderChip(String value, String label, IconData icon) {
     final selected = _jenisKelamin == value;
@@ -461,17 +619,18 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
         onTap: () => setState(() => _jenisKelamin = value),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             color: selected ? AppTheme.primaryGreen.withValues(alpha: 0.1) : Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(color: selected ? AppTheme.primaryGreen : Colors.grey.shade300, width: selected ? 2 : 1),
           ),
-          child: Column(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: selected ? AppTheme.primaryGreen : Colors.grey.shade500),
-              const SizedBox(height: 4),
-              Text(label, style: TextStyle(color: selected ? AppTheme.primaryGreen : Colors.grey.shade600, fontWeight: selected ? FontWeight.w600 : FontWeight.normal, fontSize: 13)),
+              Icon(icon, size: 16, color: selected ? AppTheme.primaryGreen : Colors.grey.shade500),
+              const SizedBox(width: 6),
+              Text(label, style: TextStyle(color: selected ? AppTheme.primaryGreen : Colors.grey.shade600, fontWeight: selected ? FontWeight.w600 : FontWeight.normal, fontSize: 12)),
             ],
           ),
         ),
@@ -486,13 +645,13 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
         onTap: () => setState(() => _status = value),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: selected ? color.withValues(alpha: 0.1) : Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(color: selected ? color : Colors.grey.shade300, width: selected ? 2 : 1),
           ),
-          child: Center(child: Text(label, style: TextStyle(color: selected ? color : Colors.grey.shade600, fontWeight: selected ? FontWeight.w600 : FontWeight.normal))),
+          child: Center(child: Text(label, style: TextStyle(color: selected ? color : Colors.grey.shade600, fontWeight: selected ? FontWeight.w600 : FontWeight.normal, fontSize: 13))),
         ),
       ),
     );

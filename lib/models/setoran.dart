@@ -54,6 +54,9 @@ class SetoranRecord {
 
   String get ayahRange => 'Ayat $ayahStart–$ayahEnd';
 
+  /// The first juz number this setoran starts in.
+  int get juz => QuranJuzUtils.juzOf(surahNumber, ayahStart);
+
   /// Juz range this setoran covers, e.g. "Juz 2" or "Juz 2–3".
   String get juzLabel =>
       QuranJuzUtils.juzLabel(surahNumber, ayahStart, ayahEnd);

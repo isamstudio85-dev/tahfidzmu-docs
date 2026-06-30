@@ -182,9 +182,10 @@ class _MusyrifCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.only(bottom: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: InkWell(
+        borderRadius: BorderRadius.circular(20),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => MusyrifDetailScreen(musyrifId: musyrif.id))),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -196,8 +197,8 @@ class _MusyrifCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(musyrif.nama, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                    Text('${musyrif.jabatan} • ${musyrif.nip ?? '-'}', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
+                    Text(musyrif.nama, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    Text('${musyrif.jabatan} • ${musyrif.nip ?? '-'}', style: TextStyle(color: Colors.grey.shade600, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 4),
                     Row(
                       children: [

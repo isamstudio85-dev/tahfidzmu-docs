@@ -13,8 +13,9 @@ import 'santri_detail_screen.dart';
 import 'santri_form_screen.dart';
 
 class SantriListScreen extends StatefulWidget {
-  const SantriListScreen({super.key, this.hideAppBar = false});
+  const SantriListScreen({super.key, this.hideAppBar = false, this.showOnlyMine});
   final bool hideAppBar;
+  final bool? showOnlyMine;
 
   @override
   State<SantriListScreen> createState() => _SantriListScreenState();
@@ -24,7 +25,6 @@ class _SantriListScreenState extends State<SantriListScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
   String? _selectedHalaqahId;
-  bool _showOnlyMine = true;
 
   @override
   void dispose() {
@@ -43,7 +43,9 @@ class _SantriListScreenState extends State<SantriListScreen> {
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {
           List<Santri> list;
-          if (provider.isMusyrif && _showOnlyMine && provider.linkedMusyrif != null) {
+          bool effectiveOnlyMine = widget.showOnlyMine ?? false;
+
+          if (provider.isMusyrif && effectiveOnlyMine && provider.linkedMusyrif != null) {
             list = provider.getSantriByMusyrif(provider.linkedMusyrif!.id);
           } else {
             list = provider.santriList;
@@ -53,6 +55,7 @@ class _SantriListScreenState extends State<SantriListScreen> {
 
           return Column(
             children: [
+              // Search Bar
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                 child: Row(
@@ -62,7 +65,7 @@ class _SantriListScreenState extends State<SantriListScreen> {
                         controller: _searchController,
                         onChanged: (value) => setState(() => _query = value),
                         decoration: InputDecoration(
-                          hintText: 'Cari nama, NIS...',
+                          hintText: 'Cari nama, NIS, kelas...',
                           prefixIcon: const Icon(Icons.search_rounded, size: 20),
                           filled: true,
                           fillColor: Colors.grey.shade50,
@@ -78,43 +81,26 @@ class _SantriListScreenState extends State<SantriListScreen> {
                 ),
               ),
 
-              if (_selectedHalaqahId != null || _selectedHalaqahId == "" || (provider.isMusyrif))
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+              // Active Halaqah Filter Chip
+              if (_selectedHalaqahId != null || _selectedHalaqahId == "")
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   child: Row(
                     children: [
-                      if (provider.isMusyrif)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: FilterChip(
-                            label: Text(_showOnlyMine ? 'Santri Saya' : 'Semua Santri', style: const TextStyle(fontSize: 11)),
-                            selected: _showOnlyMine,
-                            onSelected: (val) => setState(() => _showOnlyMine = val),
-                            backgroundColor: Colors.white,
-                            selectedColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                            checkmarkColor: AppTheme.primaryGreen,
-                            labelStyle: TextStyle(color: _showOnlyMine ? AppTheme.primaryGreen : Colors.grey),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            side: BorderSide(color: _showOnlyMine ? AppTheme.primaryGreen : Colors.grey.shade300),
-                            visualDensity: VisualDensity.compact,
-                          ),
+                      Chip(
+                        label: Text(
+                          _selectedHalaqahId == ""
+                            ? 'Tanpa Halaqah'
+                            : 'Halaqah: ${provider.getHalaqahById(_selectedHalaqahId)?.nama ?? ''}',
+                          style: const TextStyle(fontSize: 11, color: AppTheme.primaryGreen),
                         ),
-                      if (_selectedHalaqahId != null || _selectedHalaqahId == "")
-                        Chip(
-                          label: Text(
-                            _selectedHalaqahId == ""
-                              ? 'Tanpa Halaqah'
-                              : 'Halaqah: ${provider.getHalaqahById(_selectedHalaqahId)?.nama ?? ''}',
-                            style: const TextStyle(fontSize: 11, color: AppTheme.primaryGreen),
-                          ),
-                          backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                          deleteIcon: const Icon(Icons.close, size: 14, color: AppTheme.primaryGreen),
-                          onDeleted: () => setState(() => _selectedHalaqahId = null),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          side: BorderSide.none,
-                          visualDensity: VisualDensity.compact,
-                        ),
+                        backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                        deleteIcon: const Icon(Icons.close, size: 14, color: AppTheme.primaryGreen),
+                        onDeleted: () => setState(() => _selectedHalaqahId = null),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        side: BorderSide.none,
+                        visualDensity: VisualDensity.compact,
+                      ),
                     ],
                   ),
                 ),
@@ -137,7 +123,7 @@ class _SantriListScreenState extends State<SantriListScreen> {
       ),
       floatingActionButton: canManage
           ? FloatingActionButton.extended(
-              heroTag: 'fab_santri_add',
+              heroTag: 'fab_santri_add_${widget.showOnlyMine}',
               onPressed: () => _showAddSantriDialog(context),
               icon: const Icon(Icons.person_add_alt_1_rounded),
               label: const Text('Tambah Santri'),
@@ -184,7 +170,9 @@ class _SantriListScreenState extends State<SantriListScreen> {
 
   List<Santri> _filterSantri(List<Santri> list) {
     return list.where((s) {
-      final matchesQuery = s.name.toLowerCase().contains(_query.toLowerCase()) || (s.nis?.contains(_query) ?? false);
+      final matchesQuery = s.name.toLowerCase().contains(_query.toLowerCase()) || 
+                           (s.nis?.contains(_query) ?? false) ||
+                           (s.kelas?.toLowerCase().contains(_query.toLowerCase()) ?? false);
       bool matchesHalaqah = true;
       if (_selectedHalaqahId == "") {
         matchesHalaqah = s.halaqahId == null;
@@ -211,10 +199,10 @@ class _SantriCard extends StatelessWidget {
     final halaqah = provider.getHalaqahById(santri.halaqahId);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.only(bottom: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santri.id))),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -233,10 +221,12 @@ class _SantriCard extends StatelessWidget {
                     Text(santri.name, style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
                     Row(
                       children: [
-                        Text(santri.nis ?? '-', style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
-                        const SizedBox(width: 6),
-                        Text('•', style: TextStyle(color: Colors.grey.shade300, fontSize: 11)),
-                        const SizedBox(width: 6),
+                        if (santri.kelas != null && santri.kelas!.isNotEmpty) ...[
+                          Text(santri.kelas!, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 11)),
+                          const SizedBox(width: 6),
+                          Text('•', style: TextStyle(color: Colors.grey.shade300, fontSize: 11)),
+                          const SizedBox(width: 6),
+                        ],
                         Expanded(child: Text(halaqah?.nama ?? 'Tanpa Halaqah', style: const TextStyle(color: AppTheme.primaryGreen, fontSize: 11, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis)),
                       ],
                     ),

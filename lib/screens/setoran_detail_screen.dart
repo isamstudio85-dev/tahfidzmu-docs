@@ -111,7 +111,7 @@ class _SummaryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      record.finalScore.toStringAsFixed(1),
+                      record.finalScore.toStringAsFixed(0),
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.bold,
                         fontSize: 24,
@@ -194,7 +194,7 @@ class _AssessmentTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Nilai akhir: ${record.finalScore.toStringAsFixed(1)}',
+              'Nilai akhir: ${record.finalScore.toStringAsFixed(0)}',
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w700,
                 fontSize: 14,

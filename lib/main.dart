@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +10,10 @@ import 'screens/main_shell.dart';
 import 'theme/app_theme.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // Menahan splash screen agar tidak hilang sebelum aplikasi siap
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -24,8 +28,32 @@ void main() {
   );
 }
 
-class TahfidzApp extends StatelessWidget {
+class TahfidzApp extends StatefulWidget {
   const TahfidzApp({super.key});
+
+  @override
+  State<TahfidzApp> createState() => _TahfidzAppState();
+}
+
+class _TahfidzAppState extends State<TahfidzApp> {
+  @override
+  void initState() {
+    super.initState();
+    _initApp();
+  }
+
+  Future<void> _initApp() async {
+    try {
+      // Menunggu inisialisasi provider selesai
+      final provider = context.read<AppProvider>();
+      await provider.initialize();
+    } catch (e) {
+      debugPrint("Error initializing app: $e");
+    } finally {
+      // Menghapus splash screen setelah data siap (atau jika error)
+      FlutterNativeSplash.remove();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +63,7 @@ class TahfidzApp extends StatelessWidget {
       home: Consumer<AppProvider>(
         builder: (_, provider, __) {
           if (provider.isInitializing) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
+            return const _AppBootstrapLoadingScreen();
           }
           return provider.isLoggedIn ? const MainShell() : const LoginScreen();
         },

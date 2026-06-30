@@ -10,6 +10,7 @@ import 'hadits_screen.dart';
 import 'musyrif_profil_edit_screen.dart';
 import 'ortu_profil_edit_screen.dart';
 import 'quran_tadarus_screen.dart';
+import 'educational_list_screen.dart';
 
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({super.key});
@@ -117,10 +118,7 @@ class _AdminProfilView extends StatelessWidget {
     return ListView(padding: const EdgeInsets.all(16), children: [
       _buildHeader('Administrator', 'Admin Utama', provider.adminPhoto, Colors.blue, onPhotoTap: onPhotoTap),
       const SizedBox(height: 24),
-      _buildSection('FITUR BACAAN', [
-        _buildTile(Icons.menu_book_rounded, 'Al-Quran Digital', Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranTadarusScreen()))),
-        _buildTile(Icons.import_contacts_rounded, 'Hadits Pilihan', Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HaditsScreen()))),
-      ]),
+      _HafalanFiturList(provider: provider),
       const SizedBox(height: 16),
       _buildSection('AKUN & KEAMANAN', [
         _buildTile(Icons.lock_outline_rounded, 'Ganti Password', Colors.blueGrey, () => _showChangePasswordDialog(context)),
@@ -141,10 +139,7 @@ class _MusyrifProfilView extends StatelessWidget {
     return ListView(padding: const EdgeInsets.all(16), children: [
       _buildHeader(linked?.nama ?? provider.musyrif, linked?.jabatan ?? provider.jabatan, linked?.photoPath ?? provider.musyrifPhoto, AppTheme.primaryGreen, onEdit: onEdit, onPhotoTap: onPhotoTap),
       const SizedBox(height: 24),
-      _buildSection('FITUR BACAAN', [
-        _buildTile(Icons.menu_book_rounded, 'Al-Quran Digital', Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranTadarusScreen()))),
-        _buildTile(Icons.import_contacts_rounded, 'Hadits Pilihan', Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HaditsScreen()))),
-      ]),
+      _HafalanFiturList(provider: provider),
       const SizedBox(height: 16),
       _buildSection('PENGATURAN', [
         _buildTile(Icons.lock_outline_rounded, 'Ganti Password', Colors.blueGrey, () => _showChangePasswordDialog(context)),
@@ -165,10 +160,7 @@ class _OrangTuaProfilView extends StatelessWidget {
     return ListView(padding: const EdgeInsets.all(16), children: [
       _buildHeader(santri.name, 'Wali Santri (Orang Tua)', santri.photoPath, Colors.purple, onEdit: onEdit, onPhotoTap: onPhotoTap),
       const SizedBox(height: 24),
-      _buildSection('FITUR BACAAN', [
-        _buildTile(Icons.menu_book_rounded, 'Al-Quran Digital', Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranTadarusScreen()))),
-        _buildTile(Icons.import_contacts_rounded, 'Hadits Pilihan', Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HaditsScreen()))),
-      ]),
+      _HafalanFiturList(provider: provider),
       const SizedBox(height: 16),
       _buildSection('PENGATURAN AKUN', [
         _buildTile(Icons.lock_outline_rounded, 'Ganti Password', Colors.blueGrey, () => _showChangePasswordDialog(context)),
@@ -176,6 +168,24 @@ class _OrangTuaProfilView extends StatelessWidget {
       ]),
       const SizedBox(height: 24),
       const _AboutCard(),
+    ]);
+  }
+}
+
+class _HafalanFiturList extends StatelessWidget {
+  const _HafalanFiturList({required this.provider});
+  final AppProvider provider;
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildSection('FITUR HAFALAN', [
+      _buildTile(Icons.menu_book_rounded, 'Al-Quran Digital', Colors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranTadarusScreen()))),
+      if (provider.isModuleActive('hadits'))
+        _buildTile(Icons.import_contacts_rounded, 'Hadits Pilihan', Colors.orange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HaditsScreen()))),
+      if (provider.isModuleActive('tajwid'))
+        _buildTile(Icons.auto_stories_rounded, 'Ilmu Tajwid', Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationalListScreen(type: 'tajwid')))),
+      if (provider.isModuleActive('tahsin'))
+        _buildTile(Icons.record_voice_over_rounded, 'Ilmu Tahsin', Colors.deepPurple, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationalListScreen(type: 'tahsin')))),
     ]);
   }
 }

@@ -21,6 +21,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   int _fluency = 3;
   SetoranRecord? _savedRecord;
   bool _saved = false;
+  bool _showErrorDetails = false;
 
   double _previewScore(AppProvider p) {
     return ScoringUtils.calculateScore(
@@ -33,69 +34,66 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
-        final score = _saved
-            ? _savedRecord!.finalScore
-            : _previewScore(provider);
+        final score = _saved ? _savedRecord!.finalScore : _previewScore(provider);
         final stars = ScoringUtils.scoreToStars(score);
         final grade = ScoringUtils.scoreToGrade(score);
-        final tajwid = _saved
-            ? _savedRecord!.tajwidErrorCount
-            : provider.sessionTajwidCount;
-        final makhroj = _saved
-            ? _savedRecord!.makhrojErrorCount
-            : provider.sessionMakhrojCount;
+        final tajwid = _saved ? _savedRecord!.tajwidErrorCount : provider.sessionTajwidCount;
+        final makhroj = _saved ? _savedRecord!.makhrojErrorCount : provider.sessionMakhrojCount;
+        final errors = _saved ? _savedRecord!.errorMarks : provider.sessionErrors.values.toList();
 
         return PopScope(
           canPop: false,
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Penilaian Setoran'),
+              title: const Text('Penilaian Akhir'),
               automaticallyImplyLeading: false,
+              backgroundColor: AppTheme.primaryGreen,
+              foregroundColor: Colors.white,
             ),
             body: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Santri & surah info
-                  _buildInfoCard(provider),
+                  // 1. Compact Score Card (The Hero)
+                  _buildUnifiedScoreCard(provider, score, stars, grade),
                   const SizedBox(height: 20),
-                  // Error summary
-                  _buildErrorSummary(tajwid, makhroj),
+
+                  // 2. Error Stats Row
+                  _buildCompactErrorStats(tajwid, makhroj),
                   const SizedBox(height: 20),
-                  // Fluency rating
-                  if (!_saved) _buildFluencySection(),
-                  if (!_saved) const SizedBox(height: 20),
-                  // Score card
-                  _buildScoreCard(score, stars, grade),
-                  const SizedBox(height: 20),
-                  // Error list (details)
-                  if (!_saved && provider.sessionErrors.isNotEmpty)
-                    _buildErrorList(provider),
-                  if (_saved && _savedRecord!.errorMarks.isNotEmpty)
-                    _buildSavedErrorList(_savedRecord!),
-                  const SizedBox(height: 24),
-                  // Action buttons
+
+                  // 3. Fluency Section (Only before save)
+                  if (!_saved) ...[
+                    _buildCompactFluencySection(),
+                    const SizedBox(height: 20),
+                  ],
+
+                  // 4. Collapsible Error Details (If any)
+                  if (errors.isNotEmpty) ...[
+                    _buildCollapsibleErrorDetails(errors),
+                    const SizedBox(height: 24),
+                  ],
+
+                  // 5. Actions
                   if (!_saved)
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton.icon(
+                      height: 54,
+                      child: FilledButton.icon(
                         icon: const Icon(Icons.save_rounded),
-                        label: const Text('Simpan Penilaian'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
+                        label: const Text('SIMPAN PENILAIAN'),
                         onPressed: () => _saveSetoran(provider),
                       ),
                     )
-                  else ...[
+                  else
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton.icon(
+                      height: 54,
+                      child: OutlinedButton.icon(
                         icon: const Icon(Icons.home_rounded),
-                        label: const Text('Kembali ke Beranda'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        label: const Text('KEMBALI KE BERANDA'),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: AppTheme.primaryGreen, width: 2),
                         ),
                         onPressed: () => Navigator.pushAndRemoveUntil(
                           context,
@@ -104,7 +102,6 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                         ),
                       ),
                     ),
-                  ],
                 ],
               ),
             ),
@@ -114,273 +111,156 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     );
   }
 
-  Widget _buildInfoCard(AppProvider provider) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                AppAvatar(
-                  name: provider.activeSetoranSantri?.name ?? '?',
-                  radius: 22,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        provider.activeSetoranSantri?.name ?? '',
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-                      Text(
-                        provider.activeSetoranType.label,
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const Divider(height: 20),
-            Row(
-              children: [
-                const Icon(
-                  Icons.menu_book_rounded,
-                  color: AppTheme.primaryGreen,
-                  size: 18,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    provider.activeSetoranSurahEnglishName.isNotEmpty
-                        ? '${provider.activeSetoranSurahEnglishName} — Ayat '
-                              '${provider.activeSetoranAyahStart}–${provider.activeSetoranAyahEnd}'
-                        : '',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
-                Text(
-                  provider.activeSetoranSurahName,
-                  style: GoogleFonts.amiri(
-                    fontSize: 20,
-                    color: AppTheme.primaryGreen,
-                  ),
-                  textDirection: TextDirection.rtl,
-                ),
-              ],
-            ),
-          ],
+  Widget _buildUnifiedScoreCard(AppProvider provider, double score, int stars, String grade) {
+    final santri = provider.activeSetoranSantri;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [BoxShadow(color: AppTheme.primaryGreen.withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 5))],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AppAvatar(name: santri?.name ?? '?', radius: 24, backgroundColor: Colors.white24, foregroundColor: Colors.white),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(santri?.name ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    Text('${provider.activeSetoranSurahEnglishName} • Ayat ${provider.activeSetoranAyahStart}-${provider.activeSetoranAyahEnd}',
+                        style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider(color: Colors.white24, height: 1)),
+          Text('SKOR AKHIR', style: GoogleFonts.poppins(color: Colors.white70, fontSize: 11, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
+          Text(score.toStringAsFixed(0), style: GoogleFonts.poppins(color: Colors.white, fontSize: 64, fontWeight: FontWeight.bold, height: 1.1)),
+          const SizedBox(height: 8),
+          StarRatingWidget(rating: stars, size: 28, color: AppTheme.gold),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20)),
+            child: Text(grade.toUpperCase(), style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14, letterSpacing: 1.0)),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildErrorSummary(int tajwid, int makhroj) {
+  Widget _buildCompactErrorStats(int tajwid, int makhroj) {
     return Row(
       children: [
-        _errorBox('Tajwid', tajwid, AppTheme.tajwidColor, Icons.music_note),
+        _miniErrorBox('Tajwid', tajwid, AppTheme.tajwidColor),
         const SizedBox(width: 12),
-        _errorBox(
-          'Makhroj',
-          makhroj,
-          AppTheme.makhrojColor,
-          Icons.record_voice_over,
-        ),
+        _miniErrorBox('Makhroj', makhroj, AppTheme.makhrojColor),
         const SizedBox(width: 12),
-        _errorBox(
-          'Total',
-          tajwid + makhroj,
-          Colors.grey.shade700,
-          Icons.error_outline_rounded,
-        ),
+        _miniErrorBox('Total', tajwid + makhroj, Colors.blueGrey),
       ],
     );
   }
 
-  Widget _errorBox(String label, int count, Color color, IconData icon) {
+  Widget _miniErrorBox(String label, int count, Color color) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.1)),
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 6),
-            Text(
-              '$count',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-            Text(
-              label,
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-            ),
+            Text('$count', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+            Text(label, style: TextStyle(fontSize: 10, color: Colors.grey.shade500, fontWeight: FontWeight.w600)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFluencySection() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            const Text(
-              'Penilaian Kelancaran',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Seberapa lancar bacaan santri secara keseluruhan?',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 14),
-            StarRatingWidget(
-              rating: _fluency,
-              size: 44,
-              onChanged: (v) => setState(() => _fluency = v),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _fluencyLabel(_fluency),
-              style: TextStyle(
-                color: AppTheme.primaryGreen,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 4),
-            _fluencyHint(),
-          ],
-        ),
+  Widget _buildCompactFluencySection() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+      child: Column(
+        children: [
+          const Text('Kelancaran Bacaan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          const SizedBox(height: 12),
+          StarRatingWidget(rating: _fluency, size: 36, onChanged: (v) => setState(() => _fluency = v)),
+          const SizedBox(height: 8),
+          Text(_fluencyLabel(_fluency), style: const TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold, fontSize: 13)),
+        ],
       ),
+    );
+  }
+
+  Widget _buildCollapsibleErrorDetails(List errors) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () => setState(() => _showErrorDetails = !_showErrorDetails),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Row(
+              children: [
+                const Icon(Icons.list_alt_rounded, size: 18, color: Colors.grey),
+                const SizedBox(width: 8),
+                const Text('Detail Kesalahan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey)),
+                const Spacer(),
+                Icon(_showErrorDetails ? Icons.expand_less : Icons.expand_more, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+        if (_showErrorDetails)
+          ...errors.map((e) {
+            final type = e.errorType;
+            return Container(
+              margin: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(color: type.bgColor.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(12)),
+              child: Row(
+                children: [
+                  Expanded(child: Text(e.word, style: GoogleFonts.amiri(fontSize: 20, color: type.color), textDirection: TextDirection.rtl)),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text('Ayat ${e.ayahNumber}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                      Text(type.label, style: TextStyle(fontSize: 10, color: type.color, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }),
+      ],
     );
   }
 
   String _fluencyLabel(int f) {
     switch (f) {
-      case 1:
-        return 'Sangat Perlu Bimbingan';
-      case 2:
-        return 'Perlu Perbaikan';
-      case 3:
-        return 'Cukup Lancar';
-      case 4:
-        return 'Lancar';
-      case 5:
-        return 'Sangat Lancar';
-      default:
-        return '';
+      case 1: return 'Sangat Kurang';
+      case 2: return 'Perlu Perbaikan';
+      case 3: return 'Cukup Lancar';
+      case 4: return 'Lancar';
+      case 5: return 'Sangat Lancar';
+      default: return '';
     }
-  }
-
-  Widget _fluencyHint() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
-        Text(
-          'Tidak Lancar',
-          style: TextStyle(fontSize: 10, color: Colors.grey),
-        ),
-        Text(
-          'Sangat Lancar',
-          style: TextStyle(fontSize: 10, color: Colors.grey),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildScoreCard(double score, int stars, String grade) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryGreen.withValues(alpha: 0.4),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Skor Akhir',
-            style: GoogleFonts.poppins(color: Colors.white70, fontSize: 14),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            score.toStringAsFixed(1),
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontSize: 56,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            '/ 100',
-            style: const TextStyle(color: Colors.white60, fontSize: 16),
-          ),
-          const SizedBox(height: 12),
-          StarRatingWidget(rating: stars, size: 36, color: AppTheme.gold),
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              grade,
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Akurasi 60% + Kelancaran 40%',
-            style: const TextStyle(color: Colors.white60, fontSize: 11),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorList(AppProvider provider) {
-    final errors = provider.sessionErrors.values.toList();
-    return _ErrorDetailSection(errors: errors);
-  }
-
-  Widget _buildSavedErrorList(SetoranRecord record) {
-    return _ErrorDetailSection(errors: record.errorMarks);
   }
 
   void _saveSetoran(AppProvider provider) {
@@ -391,86 +271,17 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Setoran berhasil disimpan!'),
-        backgroundColor: AppTheme.primaryGreen,
-      ),
-    );
-  }
-}
-
-class _ErrorDetailSection extends StatelessWidget {
-  const _ErrorDetailSection({required this.errors});
-  final List errors; // List<ErrorMark>
-
-  @override
-  Widget build(BuildContext context) {
-    if (errors.isEmpty) return const SizedBox.shrink();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Detail Kesalahan',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 15),
+        content: Row(
+          children: [
+            Icon(Icons.check_circle_outline, color: Colors.white),
+            SizedBox(width: 12),
+            Text('Setoran Berhasil Disimpan!', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
         ),
-        const SizedBox(height: 8),
-        ...errors.map((e) {
-          final type = e.errorType as dynamic;
-          return Container(
-            margin: const EdgeInsets.only(bottom: 6),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: type.bgColor,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: (type.color as Color).withValues(alpha: 0.4),
-              ),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  type.icon as IconData,
-                  color: type.color as Color,
-                  size: 18,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    e.word as String,
-                    style: GoogleFonts.amiri(
-                      fontSize: 22,
-                      color: type.color as Color,
-                    ),
-                    textDirection: TextDirection.rtl,
-                  ),
-                ),
-                Text(
-                  'Ayat ${e.ayahNumber}',
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: (type.color as Color).withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    type.label as String,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: type.color as Color,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
-      ],
+        backgroundColor: Color(0xFF1565C0), // Distinct Blue color
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 3),
+      ),
     );
   }
 }

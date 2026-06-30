@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "title": "Hukum Nun Mati dan Tanwin",
+    "slug": "nun-mati-tanwin",
+    "description": "Aturan membaca ketika Nun sukun (نْ) atau Tanwin ( ً  ٍ  ٌ ) bertemu huruf hijaiyah.",
+    "icon": "auto_stories"
+  },
+  {
+    "id": 2,
+    "title": "Hukum Mim Mati",
+    "slug": "mim-mati",
+    "description": "Aturan membaca ketika Mim sukun (مْ) bertemu huruf hijaiyah.",
+    "icon": "menu_book"
+  },
+  {
+    "id": 3,
+    "title": "Alif Lam Qamariyah & Syamsiyah",
+    "slug": "alif-lam",
+    "description": "Perbedaan cara membaca Alif Lam saat bertemu huruf Syamsiyah dan Qamariyah.",
+    "icon": "import_contacts"
+  },
+  {
+    "id": 4,
+    "title": "Hukum Mad (Panjang)",
+    "slug": "mad",
+    "description": "Aturan memanjangkan suara pada huruf-huruf Mad.",
+    "icon": "straighten"
+  },
+  {
+    "id": 5,
+    "title": "Qalqalah",
+    "slug": "qalqalah",
+    "description": "Aturan memantulkan suara pada huruf-huruf tertentu saat mati/sukun.",
+    "icon": "vibration"
+  }
+]

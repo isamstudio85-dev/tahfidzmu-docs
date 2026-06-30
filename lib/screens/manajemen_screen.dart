@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import 'halaqah_list_screen.dart';
+import 'kelas_list_screen.dart';
 import 'pesantren_screen.dart';
 
 class ManajemenScreen extends StatelessWidget {
@@ -33,6 +34,17 @@ class ManajemenScreen extends StatelessWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const HalaqahListScreen()),
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildTile(
+                icon: Icons.meeting_room_rounded,
+                title: 'Kelola Kelas',
+                subtitle: 'Daftar kelas santri (cth: 7A, 8B, dsb)',
+                color: Colors.blue,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const KelasListScreen()),
                 ),
               ),
               const SizedBox(height: 12),
