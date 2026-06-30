@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../database/db_helper.dart';
-import '../models/santri.dart';
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/database/db_helper.dart';
+import 'package:tahfidz_app/models/santri.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/continuation_dialog.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
-import 'santri_detail_screen.dart';
-import 'santri_form_screen.dart';
+import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
+import 'package:tahfidz_app/features/management/screens/santri_form_screen.dart';
 
 class SantriListScreen extends StatefulWidget {
   const SantriListScreen({super.key, this.hideAppBar = false, this.showOnlyMine});

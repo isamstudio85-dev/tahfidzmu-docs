@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'santri_list_screen.dart';
-import 'musyrif_list_screen.dart';
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/features/management/screens/santri_list_screen.dart';
+import 'package:tahfidz_app/features/management/screens/musyrif_list_screen.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 class UserManagementScreen extends StatelessWidget {

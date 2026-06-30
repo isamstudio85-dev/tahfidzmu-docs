@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
-import 'musyrif_form_screen.dart';
+import 'package:tahfidz_app/features/management/screens/musyrif_form_screen.dart';
 
 class MusyrifDetailScreen extends StatelessWidget {
   const MusyrifDetailScreen({super.key, required this.musyrifId});

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../models/surah_model.dart';
-import '../services/quran_service.dart';
+import 'package:tahfidz_app/models/surah_model.dart';
+import 'package:tahfidz_app/services/quran_service.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 // ── Entry: surah list ──────────────────────────────────────────────────────────

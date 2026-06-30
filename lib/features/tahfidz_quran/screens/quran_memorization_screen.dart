@@ -6,8 +6,8 @@ import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_history_list.da
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_ranking_list.dart';
 import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
-import 'package:tahfidz_app/screens/laporan_screen.dart';
-import 'package:tahfidz_app/screens/setoran_form_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/laporan_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_form_screen.dart';
 
 class QuranMemorizationScreen extends StatefulWidget {
   const QuranMemorizationScreen({super.key});

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../models/ayah_model_ext.dart';
-import '../models/error_mark.dart';
-import '../models/surah_model.dart';
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/models/ayah_model_ext.dart';
+import 'package:tahfidz_app/models/error_mark.dart';
+import 'package:tahfidz_app/models/surah_model.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
-import 'assessment_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/assessment_screen.dart';
 
 class QuranReaderScreen extends StatefulWidget {
   const QuranReaderScreen({super.key, this.isReadOnly = false});

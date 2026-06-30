@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../models/halaqah_data.dart';
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/models/halaqah_data.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
-import 'santri_detail_screen.dart';
-import 'halaqah_form_screen.dart';
+import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
+import 'package:tahfidz_app/features/management/screens/halaqah_form_screen.dart';
 
 class HalaqahListScreen extends StatelessWidget {
   const HalaqahListScreen({super.key});

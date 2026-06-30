@@ -13,10 +13,10 @@ import 'package:tahfidz_app/models/surah_model.dart';
 import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/models/user_role.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
-import 'package:tahfidz_app/screens/assessment_screen.dart';
-import 'package:tahfidz_app/screens/laporan_screen.dart';
-import 'package:tahfidz_app/screens/santri_list_screen.dart';
-import 'package:tahfidz_app/screens/santri_detail_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/assessment_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/laporan_screen.dart';
+import 'package:tahfidz_app/features/management/screens/santri_list_screen.dart';
+import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 
 void main() {
   testWidgets('App smoke test', (WidgetTester tester) async {

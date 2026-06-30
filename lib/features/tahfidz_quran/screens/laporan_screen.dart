@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../models/error_mark.dart';
-import '../models/setoran.dart';
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/models/error_mark.dart';
+import 'package:tahfidz_app/models/setoran.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_memorization_screen.dart';
 

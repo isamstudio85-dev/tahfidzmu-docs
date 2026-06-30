@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_memorization_screen.dart';
-import '../models/user_role.dart';
-import '../providers/app_provider.dart';
-import '../core/theme/app_theme.dart';
-import 'home_screen.dart';
-import 'user_management_screen.dart';
-import 'profil_screen.dart';
-import 'manajemen_screen.dart';
+import 'package:tahfidz_app/models/user_role.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/features/dashboard/screens/home_screen.dart';
+import 'package:tahfidz_app/features/management/screens/user_management_screen.dart';
+import 'package:tahfidz_app/features/management/screens/manajemen_screen.dart';
+import 'package:tahfidz_app/features/profile/screens/profil_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});

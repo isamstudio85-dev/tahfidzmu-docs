@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../models/setoran.dart';
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/models/setoran.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
-import 'main_shell.dart';
+import 'package:tahfidz_app/features/dashboard/screens/main_shell.dart';
 
 class AssessmentScreen extends StatefulWidget {
   const AssessmentScreen({super.key});

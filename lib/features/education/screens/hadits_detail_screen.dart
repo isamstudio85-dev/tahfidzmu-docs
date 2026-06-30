@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../models/hadith.dart';
+import 'package:tahfidz_app/models/hadith.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 class HaditsDetailScreen extends StatelessWidget {

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../models/santri.dart';
-import '../models/setoran.dart';
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/models/santri.dart';
+import 'package:tahfidz_app/models/setoran.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/continuation_dialog.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
-import 'santri_form_screen.dart';
-import 'setoran_detail_screen.dart';
+import 'package:tahfidz_app/features/management/screens/santri_form_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 
 class SantriDetailScreen extends StatelessWidget {
   const SantriDetailScreen({super.key, required this.santriId});

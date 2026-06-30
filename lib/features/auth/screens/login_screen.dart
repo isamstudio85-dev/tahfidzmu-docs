@@ -1,9 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/user_role.dart';
-import '../providers/app_provider.dart';
-import '../services/login_preferences_service.dart';
+import 'package:tahfidz_app/models/user_role.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
+import 'package:tahfidz_app/services/login_preferences_service.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {

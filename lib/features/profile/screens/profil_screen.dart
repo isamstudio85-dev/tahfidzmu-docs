@@ -3,14 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
-import 'hadits_screen.dart';
-import 'musyrif_profil_edit_screen.dart';
-import 'ortu_profil_edit_screen.dart';
-import 'quran_tadarus_screen.dart';
-import 'educational_list_screen.dart';
+import 'package:tahfidz_app/features/education/screens/hadits_screen.dart';
+import 'package:tahfidz_app/features/profile/screens/musyrif_profil_edit_screen.dart';
+import 'package:tahfidz_app/features/profile/screens/ortu_profil_edit_screen.dart';
+import 'package:tahfidz_app/features/education/screens/quran_tadarus_screen.dart';
+import 'package:tahfidz_app/features/education/screens/educational_list_screen.dart';
 
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({super.key});

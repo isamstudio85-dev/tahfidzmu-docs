@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../database/db_helper.dart';
-import '../models/musyrif_data.dart';
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/database/db_helper.dart';
+import 'package:tahfidz_app/models/musyrif_data.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
-import 'musyrif_form_screen.dart';
-import 'musyrif_detail_screen.dart';
+import 'package:tahfidz_app/features/management/screens/musyrif_form_screen.dart';
+import 'package:tahfidz_app/features/management/screens/musyrif_detail_screen.dart';
 
 class MusyrifListScreen extends StatefulWidget {
   const MusyrifListScreen({super.key, this.hideAppBar = false});

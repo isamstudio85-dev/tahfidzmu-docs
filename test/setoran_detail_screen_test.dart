@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tahfidz_app/models/error_mark.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/models/setoran.dart';
-import 'package:tahfidz_app/screens/setoran_detail_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 
 void main() {
   testWidgets('read-only setoran detail shows summary and error details', (

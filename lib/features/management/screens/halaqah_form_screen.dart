@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../models/halaqah_data.dart';
-import '../providers/app_provider.dart';
+import 'package:tahfidz_app/models/halaqah_data.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 class HalaqahFormScreen extends StatefulWidget {

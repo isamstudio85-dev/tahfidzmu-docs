@@ -4,7 +4,7 @@ import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
-import 'package:tahfidz_app/screens/santri_detail_screen.dart';
+import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 
 class QuranRankingList extends StatefulWidget {
   const QuranRankingList({super.key});
