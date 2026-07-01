@@ -89,7 +89,11 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    final role = context.watch<AppProvider>().currentRole!;
+    final role = context.watch<AppProvider>().currentRole;
+
+    if (role == null) {
+      return const SizedBox.shrink();
+    }
 
     if (_lastRole != role) {
       _lastRole = role;

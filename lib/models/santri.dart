@@ -1,4 +1,5 @@
 import 'setoran.dart';
+import 'tasmi_record.dart';
 import 'package:tahfidz_app/core/utils/quran_juz_utils.dart';
 
 class Santri {
@@ -17,6 +18,7 @@ class Santri {
   final String? photoPath;
   final String status; // 'aktif' / 'nonaktif'
   final List<SetoranRecord> setoranHistory;
+  final List<TasmiRecord> tasmiHistory;
   
   /// Juz numbers that the student already memorized before using the app.
   final List<int> initialMemorizedJuz;
@@ -42,6 +44,7 @@ class Santri {
     this.photoPath,
     this.status = 'aktif',
     this.setoranHistory = const [],
+    this.tasmiHistory = const [],
     this.initialMemorizedJuz = const [],
   });
 
@@ -62,6 +65,7 @@ class Santri {
     String? photoPath,
     String? status,
     List<SetoranRecord>? setoranHistory,
+    List<TasmiRecord>? tasmiHistory,
     List<int>? initialMemorizedJuz,
     // old-name aliases
     String? nik,
@@ -84,6 +88,7 @@ class Santri {
       photoPath: photoPath ?? this.photoPath,
       status: status ?? this.status,
       setoranHistory: setoranHistory ?? this.setoranHistory,
+      tasmiHistory: tasmiHistory ?? this.tasmiHistory,
       initialMemorizedJuz: initialMemorizedJuz ?? this.initialMemorizedJuz,
     );
   }
@@ -182,6 +187,7 @@ class Santri {
     'photoPath': photoPath,
     'status': status,
     'setoranHistory': setoranHistory.map((s) => s.toJson()).toList(),
+    'tasmiHistory': tasmiHistory.map((t) => t.toJson()).toList(),
     'initialMemorizedJuz': initialMemorizedJuz,
   };
 
@@ -203,6 +209,11 @@ class Santri {
     setoranHistory:
         (json['setoranHistory'] as List?)
             ?.map((s) => SetoranRecord.fromJson(s as Map<String, dynamic>))
+            .toList() ??
+        [],
+    tasmiHistory:
+        (json['tasmiHistory'] as List?)
+            ?.map((t) => TasmiRecord.fromJson(t as Map<String, dynamic>))
             .toList() ??
         [],
     initialMemorizedJuz: (json['initialMemorizedJuz'] as List?)

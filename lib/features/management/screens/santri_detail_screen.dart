@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/models/setoran.dart';
+import 'package:tahfidz_app/models/tasmi_record.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
@@ -107,9 +108,18 @@ class SantriDetailScreen extends StatelessWidget {
                 ]),
 
                 const SizedBox(height: 24),
+                _sectionHeader('Ujian Tasmi\' / Wisuda'),
+                if (santri.tasmiHistory.isEmpty)
+                  _emptyHistory('Belum ada riwayat ujian Tasmi\'')
+                else
+                  ...santri.tasmiHistory.reversed.map(
+                    (t) => _TasmiHistoryTile(record: t),
+                  ),
+
+                const SizedBox(height: 24),
                 _sectionHeader('Riwayat Setoran'),
                 if (santri.setoranHistory.isEmpty)
-                  _emptyHistory()
+                  _emptyHistory('Belum ada riwayat setoran')
                 else
                   ...santri.setoranHistory.reversed.map(
                     (r) => _SetoranHistoryTile(record: r, santri: santri),
@@ -182,11 +192,52 @@ class SantriDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _emptyHistory() {
+  Widget _emptyHistory(String msg) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 32),
-        child: Text('Belum ada riwayat setoran', style: TextStyle(color: Colors.grey.shade400)),
+        child: Text(msg, style: TextStyle(color: Colors.grey.shade400)),
+      ),
+    );
+  }
+}
+
+class _TasmiHistoryTile extends StatelessWidget {
+  const _TasmiHistoryTile({required this.record});
+  final TasmiRecord record;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.grey.shade100)),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: record.isPass ? Colors.blue.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            record.isPass ? Icons.verified_rounded : Icons.cancel_rounded,
+            color: record.isPass ? Colors.blue : Colors.red,
+            size: 20,
+          ),
+        ),
+        title: Text('Ujian Juz ${record.juzNumbers.join(", ")}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        subtitle: Text('Tahun ${record.year} • Skor: ${record.finalScore.toStringAsFixed(0)}'),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: record.isPass ? Colors.blue : Colors.grey.shade300,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            record.isPass ? 'LULUS' : 'GAGAL',
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+          ),
+        ),
       ),
     );
   }

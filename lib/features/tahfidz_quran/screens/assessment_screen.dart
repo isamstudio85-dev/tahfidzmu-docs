@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'package:tahfidz_app/models/error_mark.dart';
 import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
@@ -9,6 +10,8 @@ import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'package:tahfidz_app/features/dashboard/screens/main_shell.dart';
+
+import 'package:tahfidz_app/models/tasmi_record.dart';
 
 class AssessmentScreen extends StatefulWidget {
   const AssessmentScreen({super.key});
@@ -19,7 +22,8 @@ class AssessmentScreen extends StatefulWidget {
 
 class _AssessmentScreenState extends State<AssessmentScreen> {
   int _fluency = 3;
-  SetoranRecord? _savedRecord;
+  String _tasmiStatus = 'lulus'; // 'lulus', 'tidak_lulus', 'tinjau_ulang'
+  dynamic _savedRecord;
   bool _saved = false;
   bool _showErrorDetails = false;
 
@@ -34,12 +38,13 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
-        final score = _saved ? _savedRecord!.finalScore : _previewScore(provider);
+        final isTasmi = provider.isTasmiSession;
+        final score = _saved ? _savedRecord.finalScore : _previewScore(provider);
         final stars = ScoringUtils.scoreToStars(score);
         final grade = ScoringUtils.scoreToGrade(score);
-        final tajwid = _saved ? _savedRecord!.tajwidErrorCount : provider.sessionTajwidCount;
-        final makhroj = _saved ? _savedRecord!.makhrojErrorCount : provider.sessionMakhrojCount;
-        final errors = _saved ? _savedRecord!.errorMarks : provider.sessionErrors.values.toList();
+        final tajwid = _saved ? _savedRecord.errorMarks.where((e) => e.errorType == ErrorType.tajwid).length : provider.sessionTajwidCount;
+        final makhroj = _saved ? _savedRecord.errorMarks.where((e) => e.errorType == ErrorType.makhroj).length : provider.sessionMakhrojCount;
+        final errors = _saved ? _savedRecord.errorMarks : provider.sessionErrors.values.toList();
 
         return PopScope(
           canPop: false,
@@ -66,6 +71,10 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                   if (!_saved) ...[
                     _buildCompactFluencySection(),
                     const SizedBox(height: 20),
+                    if (provider.isTasmiSession) ...[
+                      _buildTasmiDecisionSection(),
+                      const SizedBox(height: 20),
+                    ],
                   ],
 
                   // 4. Collapsible Error Details (If any)
@@ -113,17 +122,25 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
 
   Widget _buildUnifiedScoreCard(AppProvider provider, double score, int stars, String grade) {
     final santri = provider.activeSetoranSantri;
+    final isTasmi = provider.isTasmiSession;
+    
+    String subTitle = isTasmi 
+      ? 'Ujian Tasmi Juz ${provider.activeTasmiJuz.join(", ")}'
+      : '${provider.activeSetoranSurahEnglishName} • Ayat ${provider.activeSetoranAyahStart}-${provider.activeSetoranAyahEnd}';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
+        gradient: LinearGradient(
+          colors: isTasmi 
+            ? [const Color(0xFF4527A0), const Color(0xFF7B1FA2)] // Purple gradient for Tasmi
+            : [AppTheme.darkGreen, AppTheme.primaryGreen],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: AppTheme.primaryGreen.withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 5))],
+        boxShadow: [BoxShadow(color: (isTasmi ? Colors.purple : AppTheme.primaryGreen).withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 5))],
       ),
       child: Column(
         children: [
@@ -137,15 +154,14 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(santri?.name ?? '', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16), maxLines: 1, overflow: TextOverflow.ellipsis),
-                    Text('${provider.activeSetoranSurahEnglishName} • Ayat ${provider.activeSetoranAyahStart}-${provider.activeSetoranAyahEnd}',
-                        style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text(subTitle, style: const TextStyle(color: Colors.white70, fontSize: 12)),
                   ],
                 ),
               ),
             ],
           ),
           const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider(color: Colors.white24, height: 1)),
-          Text('SKOR AKHIR', style: GoogleFonts.poppins(color: Colors.white70, fontSize: 11, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
+          Text(isTasmi ? 'SKOR UJIAN TASMI' : 'SKOR AKHIR', style: GoogleFonts.poppins(color: Colors.white70, fontSize: 11, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
           Text(score.toStringAsFixed(0), style: GoogleFonts.poppins(color: Colors.white, fontSize: 64, fontWeight: FontWeight.bold, height: 1.1)),
           const SizedBox(height: 8),
           StarRatingWidget(rating: stars, size: 28, color: AppTheme.gold),
@@ -208,6 +224,53 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     );
   }
 
+  Widget _buildTasmiDecisionSection() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.purple.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Keputusan Ujian Tasmi\'', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          const SizedBox(height: 16),
+          _statusOption('LULUS WISUDA', 'lulus', Colors.green, Icons.check_circle_rounded),
+          const SizedBox(height: 10),
+          _statusOption('TINJAU ULANG / BERTAHAP', 'tinjau_ulang', Colors.orange, Icons.history_edu_rounded),
+          const SizedBox(height: 10),
+          _statusOption('TIDAK LULUS', 'tidak_lulus', Colors.red, Icons.cancel_rounded),
+        ],
+      ),
+    );
+  }
+
+  Widget _statusOption(String label, String value, Color color, IconData icon) {
+    final isSelected = _tasmiStatus == value;
+    return InkWell(
+      onTap: () => setState(() => _tasmiStatus = value),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withValues(alpha: 0.1) : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: isSelected ? color : Colors.grey.shade200, width: 2),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: isSelected ? color : Colors.grey),
+            const SizedBox(width: 16),
+            Expanded(child: Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: isSelected ? color : Colors.black54))),
+            if (isSelected) Icon(Icons.check_rounded, color: color, size: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildCollapsibleErrorDetails(List errors) {
     return Column(
       children: [
@@ -264,24 +327,63 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   }
 
   void _saveSetoran(AppProvider provider) {
-    final record = provider.completeSetoran(_fluency);
-    setState(() {
-      _savedRecord = record;
-      _saved = true;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.check_circle_outline, color: Colors.white),
-            SizedBox(width: 12),
-            Text('Setoran Berhasil Disimpan!', style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
+    if (provider.isTasmiSession) {
+      final record = provider.completeTasmi(
+        juzNumbers: provider.activeTasmiJuz,
+        fluencyRating: _fluency,
+        year: provider.activeTasmiYear,
+        status: _tasmiStatus,
+      );
+      if (record == null) return;
+      setState(() {
+        _savedRecord = record;
+        _saved = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.school_rounded, color: Colors.white),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  'Hasil: ${_tasmiStatus.toUpperCase()} Berhasil Disimpan!',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  overflow: TextOverflow.visible,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: _tasmiStatus == 'lulus' ? Colors.green : (_tasmiStatus == 'tinjau_ulang' ? Colors.orange : Colors.red),
+          behavior: SnackBarBehavior.floating,
         ),
-        backgroundColor: Color(0xFF1565C0), // Distinct Blue color
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 3),
-      ),
-    );
+      );
+    } else {
+      final record = provider.completeSetoran(_fluency);
+      if (record == null) return;
+      setState(() {
+        _savedRecord = record;
+        _saved = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle_outline, color: Colors.white),
+              SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  'Hafalan Berhasil Disimpan!',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Color(0xFF1565C0),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
   }
 }

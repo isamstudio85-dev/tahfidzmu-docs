@@ -20,6 +20,8 @@ class QuranReaderScreen extends StatefulWidget {
 }
 
 class _QuranReaderScreenState extends State<QuranReaderScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +29,21 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
       final p = context.read<AppProvider>();
       p.loadSurahForReader(p.activeSetoranSurahNumber);
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _nextSurah(AppProvider p) async {
+    if (p.activeSetoranSurahNumber < 114) {
+      await p.loadSurahForReader(p.activeSetoranSurahNumber + 1);
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+      }
+    }
   }
 
   @override
@@ -135,45 +152,61 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
 
   Widget _buildReader(AppProvider provider) {
     final surah = provider.currentSurah!;
-    final start = provider.activeSetoranAyahStart;
-    final end = provider.activeSetoranAyahEnd;
+    final isTasmi = provider.isTasmiSession;
+    
+    final start = isTasmi ? 1 : provider.activeSetoranAyahStart;
+    final end = isTasmi ? surah.ayahs.length : provider.activeSetoranAyahEnd;
 
     final ayahs = surah.ayahs
         .where((a) => a.numberInSurah >= start && a.numberInSurah <= end)
         .toList();
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Bismillah header
-          if (surah.number != 1 && surah.number != 9 && start == 1)
-            _buildBismillah(),
-          // Legend
-          if (!widget.isReadOnly) _buildLegend(),
-          const SizedBox(height: 8),
-          // Santri info banner
-          _buildSantriInfo(provider),
-          const SizedBox(height: 16),
-          // Ayahs
-          ...ayahs.map(
-            (ayah) => _AyahBlock(
-              ayah: ayah,
-              surahNumber: surah.number,
-              sessionErrors: provider.sessionErrors,
-              onWordTap: widget.isReadOnly ? (idx, word) {} : (wordIndex, word) => _onWordTap(
-                context,
-                provider,
-                surah.number,
-                ayah.numberInSurah,
-                wordIndex,
-                word,
-              ),
+    return ListView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+      itemCount: ayahs.length + (surah.number != 1 && surah.number != 9 && start == 1 ? 2 : 1),
+      itemBuilder: (context, index) {
+        // Bismillah Header
+        if (surah.number != 1 && surah.number != 9 && start == 1 && index == 0) {
+          return _buildBismillah();
+        }
+        
+        // Legend Header (only for non-read only)
+        int legendIndex = (surah.number != 1 && surah.number != 9 && start == 1) ? 1 : 0;
+        if (!widget.isReadOnly && index == legendIndex) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              children: [
+                _buildLegend(),
+                const SizedBox(height: 8),
+                _buildSantriInfo(provider),
+              ],
             ),
+          );
+        }
+
+        // Adjust index for Ayah blocks
+        int actualAyahIndex = index - (legendIndex + 1);
+        if (surah.number != 1 && surah.number != 9 && start == 1) actualAyahIndex--;
+        
+        if (actualAyahIndex < 0 || actualAyahIndex >= ayahs.length) return const SizedBox.shrink();
+
+        final ayah = ayahs[actualAyahIndex];
+        return _AyahBlock(
+          ayah: ayah,
+          surahNumber: surah.number,
+          sessionErrors: provider.sessionErrors,
+          onWordTap: widget.isReadOnly ? (idx, word) {} : (wordIndex, word) => _onWordTap(
+            context,
+            provider,
+            surah.number,
+            ayah.numberInSurah,
+            wordIndex,
+            word,
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -291,51 +324,80 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
         ),
       );
     }
+    
+    final isTasmi = provider.isTasmiSession;
+
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
       child: SafeArea(
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Error summary
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Total Kesalahan: '
-                  '${provider.sessionTajwidCount + provider.sessionMakhrojCount}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+            if (isTasmi) ...[
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: provider.activeSetoranSurahNumber < 114 
+                    ? () => _nextSurah(provider)
+                    : null,
+                  icon: const Icon(Icons.skip_next_rounded),
+                  label: const Text('LANJUT SURAH BERIKUTNYA', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.purple.shade700,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 ),
-                Row(
+              ),
+              const SizedBox(height: 12),
+              const Divider(height: 1),
+              const SizedBox(height: 12),
+            ],
+            Row(
+              children: [
+                // Error summary
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Tajwid: ${provider.sessionTajwidCount}',
+                      'Total Kesalahan: '
+                      '${provider.sessionTajwidCount + provider.sessionMakhrojCount}',
                       style: const TextStyle(
-                        fontSize: 11,
-                        color: AppTheme.tajwidColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Makhroj: ${provider.sessionMakhrojCount}',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: AppTheme.makhrojColor,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          'Tajwid: ${provider.sessionTajwidCount}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppTheme.tajwidColor,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Makhroj: ${provider.sessionMakhrojCount}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppTheme.makhrojColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
+                const Spacer(),
+                ElevatedButton.icon(
+                  onPressed: () => _confirmFinish(context, provider),
+                  icon: const Icon(Icons.check_circle_outline_rounded),
+                  label: const Text('Selesai'),
+                ),
               ],
-            ),
-            const Spacer(),
-            ElevatedButton.icon(
-              onPressed: () => _confirmFinish(context, provider),
-              icon: const Icon(Icons.check_circle_outline_rounded),
-              label: const Text('Selesai'),
             ),
           ],
         ),

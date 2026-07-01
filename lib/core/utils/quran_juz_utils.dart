@@ -107,4 +107,20 @@ class QuranJuzUtils {
 
     return 'Juz ${parts.join(', ')}';
   }
+
+  /// Returns the starting surah and ayah for a given juz (1-30).
+  static ({int startSurah, int startAyah}) getJuzRange(int juz) {
+    if (juz < 1 || juz > 30) return (startSurah: 1, startAyah: 1);
+    final targetGlobal = _juzStart[juz - 1];
+    
+    // Find surah
+    for (int i = 113; i >= 0; i--) {
+      if (targetGlobal >= _surahStart[i]) {
+        final surahNumber = i + 1;
+        final startAyah = targetGlobal - _surahStart[i] + 1;
+        return (startSurah: surahNumber, startAyah: startAyah);
+      }
+    }
+    return (startSurah: 1, startAyah: 1);
+  }
 }

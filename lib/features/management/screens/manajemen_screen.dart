@@ -7,6 +7,7 @@ import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/management/screens/halaqah_list_screen.dart';
 import 'package:tahfidz_app/features/management/screens/kelas_list_screen.dart';
 import 'package:tahfidz_app/features/management/screens/pesantren_screen.dart';
+import 'package:tahfidz_app/features/management/screens/graduation_event_list_screen.dart';
 
 class ManajemenScreen extends StatelessWidget {
   const ManajemenScreen({super.key});
@@ -25,6 +26,17 @@ class ManajemenScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             children: [
               _sectionHeader('PENGATURAN TAHFIDZ'),
+              const SizedBox(height: 12),
+              _buildTile(
+                icon: Icons.school_rounded,
+                title: 'Manajemen Wisuda',
+                subtitle: 'Atur agenda Haflah Takharruj & Ujian',
+                color: Colors.purple,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GraduationEventListScreen()),
+                ),
+              ),
               const SizedBox(height: 12),
               _buildTile(
                 icon: Icons.groups_rounded,
@@ -63,7 +75,7 @@ class ManajemenScreen extends StatelessWidget {
               _sectionHeader('INFORMASI LEMBAGA'),
               const SizedBox(height: 12),
               _buildTile(
-                icon: Icons.school_rounded,
+                icon: Icons.business_rounded,
                 title: 'Profil Pesantren',
                 subtitle: 'Nama, alamat, dan logo lembaga',
                 color: AppTheme.primaryGreen,

@@ -16,6 +16,10 @@ import '../models/pesantren_info.dart';
 import '../services/quran_service.dart';
 import '../services/demo_data_service.dart';
 import '../services/login_preferences_service.dart';
+import '../models/graduation_event.dart';
+import '../models/graduation_registration.dart';
+import '../models/tasmi_record.dart';
+import 'package:tahfidz_app/core/utils/quran_juz_utils.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 
 class AppProvider extends ChangeNotifier {
@@ -133,6 +137,78 @@ class AppProvider extends ChangeNotifier {
   List<KelasData> _kelasList = [];
   List<KelasData> get kelasList => List.unmodifiable(_kelasList);
 
+  // ── Graduation Events ───────────────────────────────────────────────
+  List<GraduationEvent> _graduationEvents = [];
+  List<GraduationEvent> get graduationEvents => List.unmodifiable(_graduationEvents);
+
+  void addGraduationEvent(GraduationEvent event) {
+    _graduationEvents = [..._graduationEvents, event];
+    _saveGraduationEvents();
+    notifyListeners();
+  }
+
+  void updateGraduationEvent(String id, GraduationEvent updated) {
+    _graduationEvents = _graduationEvents.map((e) => e.id == id ? updated : e).toList();
+    _saveGraduationEvents();
+    notifyListeners();
+  }
+
+  void removeGraduationEvent(String id) {
+    _graduationEvents = _graduationEvents.where((e) => e.id != id).toList();
+    _saveGraduationEvents();
+    notifyListeners();
+  }
+
+  Future<void> _saveGraduationEvents() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        'graduation_events',
+        jsonEncode(_graduationEvents.map((e) => e.toJson()).toList()),
+      );
+    } catch (_) {}
+  }
+
+  // ── Graduation Registrations ─────────────────────────────────────────
+  List<GraduationRegistration> _graduationRegistrations = [];
+  List<GraduationRegistration> get graduationRegistrations => List.unmodifiable(_graduationRegistrations);
+
+  void addGraduationRegistration(GraduationRegistration reg) {
+    _graduationRegistrations = [..._graduationRegistrations, reg];
+    _saveGraduationRegistrations();
+    notifyListeners();
+  }
+
+  void updateGraduationRegistration(String id, GraduationRegistration updated) {
+    _graduationRegistrations = _graduationRegistrations.map((r) => r.id == id ? updated : r).toList();
+    _saveGraduationRegistrations();
+    notifyListeners();
+  }
+
+  void removeGraduationRegistration(String id) {
+    _graduationRegistrations = _graduationRegistrations.where((r) => r.id != id).toList();
+    _saveGraduationRegistrations();
+    notifyListeners();
+  }
+
+  Future<void> _saveGraduationRegistrations() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        'graduation_registrations',
+        jsonEncode(_graduationRegistrations.map((r) => r.toJson()).toList()),
+      );
+    } catch (_) {}
+  }
+
+  GraduationRegistration? getRegistration(String eventId, String santriId) {
+    try {
+      return _graduationRegistrations.firstWhere((r) => r.eventId == eventId && r.santriId == santriId);
+    } catch (_) {
+      return null;
+    }
+  }
+
   void addKelas(KelasData k) {
     _kelasList = [..._kelasList, k];
     _saveKelasList();
@@ -175,6 +251,11 @@ class AppProvider extends ChangeNotifier {
   String activeSetoranSurahEnglishName = '';
   int activeSetoranAyahStart = 1;
   int activeSetoranAyahEnd = 7;
+
+  // -- Tasmi session data --
+  bool isTasmiSession = false;
+  List<int> activeTasmiJuz = [];
+  String activeTasmiYear = '';
 
   final Map<String, ErrorMark> _sessionErrors = {};
   Map<String, ErrorMark> get sessionErrors => Map.unmodifiable(_sessionErrors);
@@ -436,6 +517,7 @@ class AppProvider extends ChangeNotifier {
     _saveMusyrifList();
     _saveHalaqahList();
     _saveKelasList();
+    _saveGraduationRegistrations();
     DbHelper.clearAllNonAdminUsers();
     notifyListeners();
   }
@@ -605,6 +687,38 @@ class AppProvider extends ChangeNotifier {
     activeSetoranSurahEnglishName = surah.englishName;
     activeSetoranAyahStart = ayahStart;
     activeSetoranAyahEnd = ayahEnd;
+    isTasmiSession = false;
+    _sessionErrors.clear();
+    notifyListeners();
+  }
+
+  void startTasmiSession({
+    required Santri santri,
+    required List<int> juzNumbers,
+    required String year,
+  }) {
+    activeSetoranSantri = santri;
+    activeSetoranType = SetoranType.ziyadah; // Defaulting to ziyadah for scoring
+    isTasmiSession = true;
+    activeTasmiJuz = juzNumbers;
+    activeTasmiYear = year;
+
+    // For the reader, we default to the first surah and first ayah of the first selected juz
+    // For simplicity, we can just load surah 1 or use a specific juz start surah
+    final firstJuz = juzNumbers.isEmpty ? 1 : juzNumbers.reduce((a, b) => a < b ? a : b);
+    final juzRange = QuranJuzUtils.getJuzRange(firstJuz);
+    
+    activeSetoranSurahNumber = juzRange.startSurah;
+    activeSetoranAyahStart = juzRange.startAyah;
+    // We'll set the end to the last surah/ayah of the same surah for initial load
+    // The Musyrif can navigate if needed, but usually Tasmi is done by the reader
+    activeSetoranAyahEnd = juzRange.startAyah + 20; 
+
+    // Find surah info
+    final surah = _surahList.firstWhere((s) => s.number == activeSetoranSurahNumber, orElse: () => _surahList.first);
+    activeSetoranSurahName = surah.name;
+    activeSetoranSurahEnglishName = surah.englishName;
+
     _sessionErrors.clear();
     notifyListeners();
   }
@@ -652,7 +766,9 @@ class AppProvider extends ChangeNotifier {
       .length;
 
   /// Finalises the session, saves the record, and returns it.
-  SetoranRecord completeSetoran(int fluencyRating) {
+  SetoranRecord? completeSetoran(int fluencyRating) {
+    if (activeSetoranSantri == null) return null;
+
     final errors = _sessionErrors.values.toList();
     final score = ScoringUtils.calculateScore(
       errorMarks: errors,
@@ -688,6 +804,63 @@ class AppProvider extends ChangeNotifier {
     return record;
   }
 
+  /// Special completion for Tasmi' (Graduation Test)
+  TasmiRecord? completeTasmi({
+    required List<int> juzNumbers,
+    required int fluencyRating,
+    required String year,
+    String status = 'lulus',
+    String? note,
+  }) {
+    if (activeSetoranSantri == null) return null;
+
+    final errors = _sessionErrors.values.toList();
+    final score = ScoringUtils.calculateScore(
+      errorMarks: errors,
+      fluencyRating: fluencyRating,
+    );
+
+    final record = TasmiRecord(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      santriId: activeSetoranSantri!.id,
+      juzNumbers: juzNumbers,
+      finalScore: score,
+      fluencyRating: fluencyRating,
+      errorMarks: errors,
+      date: DateTime.now(),
+      status: status,
+      year: year,
+      note: note,
+    );
+
+    final idx = _santriList.indexWhere((s) => s.id == activeSetoranSantri!.id);
+    if (idx != -1) {
+      final s = _santriList[idx];
+      _santriList[idx] = s.copyWith(
+        tasmiHistory: [...s.tasmiHistory, record],
+      );
+    }
+
+    _sessionErrors.clear();
+    _save();
+    notifyListeners();
+    return record;
+  }
+
+  void updateTasmiStatus(String santriId, String recordId, String newStatus) {
+    final idx = _santriList.indexWhere((s) => s.id == santriId);
+    if (idx != -1) {
+      final santri = _santriList[idx];
+      final List<TasmiRecord> history = santri.tasmiHistory.map((t) {
+        if (t.id == recordId) return t.copyWith(status: newStatus);
+        return t;
+      }).toList();
+      _santriList[idx] = santri.copyWith(tasmiHistory: history);
+      _save();
+      notifyListeners();
+    }
+  }
+
   // ── Quran API ──────────────────────────────────────────────────────────
 
   Future<void> _fetchSurahList() async {
@@ -708,6 +881,12 @@ class AppProvider extends ChangeNotifier {
   Future<void> refreshSurahList() => _fetchSurahList();
 
   Future<void> loadSurahForReader(int surahNumber) async {
+    activeSetoranSurahNumber = surahNumber;
+    // Update names
+    final surah = _surahList.firstWhere((s) => s.number == surahNumber, orElse: () => _surahList.first);
+    activeSetoranSurahName = surah.name;
+    activeSetoranSurahEnglishName = surah.englishName;
+
     isSurahLoading = true;
     surahLoadError = null;
     notifyListeners();
@@ -789,6 +968,22 @@ class AppProvider extends ChangeNotifier {
             .map((k) => KelasData.fromJson(k as Map<String, dynamic>))
             .toList();
       }
+      // Load graduation events
+      final rawEvents = prefs.getString('graduation_events');
+      if (rawEvents != null) {
+        final list = jsonDecode(rawEvents) as List;
+        _graduationEvents = list
+            .map((e) => GraduationEvent.fromJson(e as Map<String, dynamic>))
+            .toList();
+      }
+      // Load graduation registrations
+      final rawRegs = prefs.getString('graduation_registrations');
+      if (rawRegs != null) {
+        final list = jsonDecode(rawRegs) as List;
+        _graduationRegistrations = list
+            .map((r) => GraduationRegistration.fromJson(r as Map<String, dynamic>))
+            .toList();
+      }
       // Load santri list
       final raw = prefs.getString('santri_list');
       if (raw != null) {
@@ -814,15 +1009,21 @@ class AppProvider extends ChangeNotifier {
       _musyrifList = bundle.musyrifList;
       _halaqahList = bundle.halaqahList;
       _santriList = bundle.santriList;
+      _graduationEvents = bundle.graduationEvents;
+      _graduationRegistrations = bundle.graduationRegistrations;
       await _save();
       await _saveMusyrifList();
       await _saveHalaqahList();
+      await _saveGraduationEvents();
+      await _saveGraduationRegistrations();
       await _seedUserAccounts();
       notifyListeners();
     } catch (_) {
       _musyrifList = [];
       _halaqahList = [];
       _santriList = [];
+      _graduationEvents = [];
+      _graduationRegistrations = [];
       notifyListeners();
     }
   }
