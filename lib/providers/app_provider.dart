@@ -1,8 +1,10 @@
-﻿import 'dart:convert';
+﻿import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../database/db_helper.dart';
 import '../models/santri.dart';
 import '../models/setoran.dart';
 import '../models/error_mark.dart';
@@ -14,8 +16,8 @@ import '../models/halaqah_data.dart';
 import '../models/kelas_data.dart';
 import '../models/pesantren_info.dart';
 import '../services/quran_service.dart';
+import '../services/firebase_service.dart';
 import '../services/demo_data_service.dart';
-import '../services/login_preferences_service.dart';
 import '../models/graduation_event.dart';
 import '../models/graduation_registration.dart';
 import '../models/tasmi_record.dart';
@@ -23,227 +25,111 @@ import 'package:tahfidz_app/core/utils/quran_juz_utils.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 
 class AppProvider extends ChangeNotifier {
-  // ── Santri ──────────────────────────────────────────────────────────
+  final FirebaseService _firebase = FirebaseService();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
+  StreamSubscription? _santriSub;
+  StreamSubscription? _musyrifSub;
+  StreamSubscription? _halaqahSub;
+  StreamSubscription? _kelasSub;
+  StreamSubscription? _eventSub;
+  StreamSubscription? _regSub;
+
   List<Santri> _santriList = [];
-  List<Santri> get santriList => List.unmodifiable(_santriList);
-  // ── Musyrif list ──────────────────────────────────────────────────────
+  List<Santri> get santriList => _santriList;
+  
   List<MusyrifData> _musyrifList = [];
-  List<MusyrifData> get musyrifList => List.unmodifiable(_musyrifList);
+  List<MusyrifData> get musyrifList => _musyrifList;
 
   MusyrifData? getMusyrifById(String? id) {
     if (id == null) return null;
-    try {
-      return _musyrifList.firstWhere((m) => m.id == id);
-    } catch (_) {
-      return null;
+    try { return _musyrifList.firstWhere((m) => m.id == id); } catch (_) { return null; }
+  }
+
+  Future<void> seedDemoDataToCloud() async {
+    final bundle = await DemoDataService.loadDemoData();
+    for (var m in bundle.musyrifList) {
+      await _firestore.collection('musyrif').doc(m.id).set(m.toJson());
+      final userKey = m.nip?.replaceAll(RegExp(r'\D+'), '') ?? m.id;
+      await _firestore.collection('user_mappings').doc(userKey).set({'linkedId': m.id, 'role': 'musyrif', 'defaultPassword': userKey});
     }
-  }
-
-  void addMusyrif(MusyrifData m, {String? username, String? password}) {
-    _musyrifList = [..._musyrifList, m];
-    _saveMusyrifList();
-    notifyListeners();
-    final resolvedUsername = (username?.trim().isNotEmpty ?? false)
-        ? username!.trim()
-        : DbHelper.makeUsername(m.nip, m.nama);
-    final resolvedPassword = (password?.trim().isNotEmpty ?? false)
-        ? password!.trim()
-        : DbHelper.buildDemoCredentialValue(m.nip, m.nama);
-    DbHelper.upsertUser(
-      id: 'musyrif_${m.id}',
-      username: resolvedUsername,
-      password: resolvedPassword,
-      role: 'musyrif',
-      linkedId: m.id,
-    );
-  }
-
-  void updateMusyrifData(String id, MusyrifData updated) {
-    _musyrifList = _musyrifList.map((m) => m.id == id ? updated : m).toList();
-    _saveMusyrifList();
+    for (var h in bundle.halaqahList) { await _firestore.collection('halaqah').doc(h.id).set(h.toJson()); }
+    for (var s in bundle.santriList) {
+      await _firestore.collection('santri').doc(s.id).set(s.toJson());
+      if (s.nis != null) {
+        final userKey = s.nis!.replaceAll(RegExp(r'\D+'), '');
+        await _firestore.collection('user_mappings').doc(userKey).set({'linkedId': s.id, 'role': 'orangTua', 'defaultPassword': userKey});
+      }
+    }
+    for (var e in bundle.graduationEvents) { await _firestore.collection('graduation_events').doc(e.id).set(e.toJson()); }
+    await updatePesantrenInfo(_pesantrenInfo);
     notifyListeners();
   }
 
-  void removeMusyrif(String id) {
-    _musyrifList = _musyrifList.where((m) => m.id != id).toList();
-    _saveMusyrifList();
-    notifyListeners();
-    DbHelper.deleteUserByLinkedId(id);
+  Future<void> addMusyrif(MusyrifData m, {String? username, String? password}) async {
+    String? cloudPhotoUrl;
+    if (m.photoPath != null && m.photoPath!.isNotEmpty && !m.photoPath!.startsWith('http')) {
+      try { cloudPhotoUrl = await _firebase.uploadPhoto(localPath: m.photoPath!, folder: 'musyrif_photos', fileName: m.id); } catch (e) { debugPrint("Musyrif Photo Upload Failed: $e"); }
+    }
+    final updatedM = m.copyWith(photoPath: cloudPhotoUrl ?? m.photoPath);
+    await _firestore.collection('musyrif').doc(m.id).set(updatedM.toJson());
+    final userKey = (username?.isNotEmpty ?? false) ? username! : m.nip?.replaceAll(RegExp(r'\D+'), '') ?? m.id;
+    await _firestore.collection('user_mappings').doc(userKey).set({'linkedId': m.id, 'role': 'musyrif', 'defaultPassword': password ?? userKey});
   }
 
-  Future<void> _saveMusyrifList() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        'musyrif_list',
-        jsonEncode(_musyrifList.map((m) => m.toJson()).toList()),
-      );
-    } catch (_) {}
+  Future<void> updateMusyrifData(String id, MusyrifData updated) async {
+    String? finalPhotoPath = updated.photoPath;
+    if (finalPhotoPath != null && finalPhotoPath.isNotEmpty && !finalPhotoPath.startsWith('http')) {
+      try { finalPhotoPath = await _firebase.uploadPhoto(localPath: finalPhotoPath, folder: 'musyrif_photos', fileName: id); } catch (e) { debugPrint("Musyrif Photo Upload Failed: $e"); }
+    }
+    final docModel = updated.copyWith(photoPath: finalPhotoPath);
+    await _firestore.collection('musyrif').doc(id).set(docModel.toJson(), SetOptions(merge: true));
   }
 
-  // ── Halaqah list ──────────────────────────────────────────────────────
+  Future<void> removeMusyrif(String id) async => await _firestore.collection('musyrif').doc(id).delete();
+
   List<HalaqahData> _halaqahList = [];
-  List<HalaqahData> get halaqahList => List.unmodifiable(_halaqahList);
-
+  List<HalaqahData> get halaqahList => _halaqahList;
   HalaqahData? getHalaqahById(String? id) {
     if (id == null) return null;
-    try {
-      return _halaqahList.firstWhere((h) => h.id == id);
-    } catch (_) {
-      return null;
-    }
+    try { return _halaqahList.firstWhere((h) => h.id == id); } catch (_) { return null; }
   }
-
-  List<Santri> getSantriByHalaqah(String halaqahId) =>
-      _santriList.where((s) => s.halaqahId == halaqahId).toList();
-
+  List<Santri> getSantriByHalaqah(String halaqahId) => _santriList.where((s) => s.halaqahId == halaqahId).toList();
   List<Santri> getSantriByMusyrif(String musyrifId) {
-    final halaqahIds = _halaqahList
-        .where((h) => h.musyrifId == musyrifId)
-        .map((h) => h.id)
-        .toSet();
+    final halaqahIds = _halaqahList.where((h) => h.musyrifId == musyrifId).map((h) => h.id).toSet();
     return _santriList.where((s) => halaqahIds.contains(s.halaqahId)).toList();
   }
+  Future<void> addHalaqah(HalaqahData h) async => await _firestore.collection('halaqah').doc(h.id).set(h.toJson());
+  Future<void> updateHalaqah(String id, HalaqahData updated) async => await _firestore.collection('halaqah').doc(id).update(updated.toJson());
+  Future<void> removeHalaqah(String id) async => await _firestore.collection('halaqah').doc(id).delete();
 
-  void addHalaqah(HalaqahData h) {
-    _halaqahList = [..._halaqahList, h];
-    _saveHalaqahList();
-    notifyListeners();
-  }
-
-  void updateHalaqah(String id, HalaqahData updated) {
-    _halaqahList = _halaqahList.map((h) => h.id == id ? updated : h).toList();
-    _saveHalaqahList();
-    notifyListeners();
-  }
-
-  void removeHalaqah(String id) {
-    _halaqahList = _halaqahList.where((h) => h.id != id).toList();
-    _saveHalaqahList();
-    notifyListeners();
-  }
-
-  Future<void> _saveHalaqahList() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        'halaqah_list',
-        jsonEncode(_halaqahList.map((h) => h.toJson()).toList()),
-      );
-    } catch (_) {}
-  }
-
-  // ── Kelas list ────────────────────────────────────────────────────────
   List<KelasData> _kelasList = [];
-  List<KelasData> get kelasList => List.unmodifiable(_kelasList);
+  List<KelasData> get kelasList => _kelasList;
+  Future<void> addKelas(KelasData k) async => await _firestore.collection('kelas').doc(k.id).set(k.toJson());
+  Future<void> updateKelas(String id, KelasData updated) async => await _firestore.collection('kelas').doc(id).update(updated.toJson());
+  Future<void> removeKelas(String id) async => await _firestore.collection('kelas').doc(id).delete();
 
-  // ── Graduation Events ───────────────────────────────────────────────
   List<GraduationEvent> _graduationEvents = [];
-  List<GraduationEvent> get graduationEvents => List.unmodifiable(_graduationEvents);
+  List<GraduationEvent> get graduationEvents => _graduationEvents;
+  Future<void> addGraduationEvent(GraduationEvent event) async => await _firestore.collection('graduation_events').doc(event.id).set(event.toJson());
+  Future<void> updateGraduationEvent(String id, GraduationEvent updated) async => await _firestore.collection('graduation_events').doc(id).update(updated.toJson());
+  Future<void> removeGraduationEvent(String id) async => await _firestore.collection('graduation_events').doc(id).delete();
 
-  void addGraduationEvent(GraduationEvent event) {
-    _graduationEvents = [..._graduationEvents, event];
-    _saveGraduationEvents();
-    notifyListeners();
-  }
-
-  void updateGraduationEvent(String id, GraduationEvent updated) {
-    _graduationEvents = _graduationEvents.map((e) => e.id == id ? updated : e).toList();
-    _saveGraduationEvents();
-    notifyListeners();
-  }
-
-  void removeGraduationEvent(String id) {
-    _graduationEvents = _graduationEvents.where((e) => e.id != id).toList();
-    _saveGraduationEvents();
-    notifyListeners();
-  }
-
-  Future<void> _saveGraduationEvents() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        'graduation_events',
-        jsonEncode(_graduationEvents.map((e) => e.toJson()).toList()),
-      );
-    } catch (_) {}
-  }
-
-  // ── Graduation Registrations ─────────────────────────────────────────
   List<GraduationRegistration> _graduationRegistrations = [];
-  List<GraduationRegistration> get graduationRegistrations => List.unmodifiable(_graduationRegistrations);
-
-  void addGraduationRegistration(GraduationRegistration reg) {
-    _graduationRegistrations = [..._graduationRegistrations, reg];
-    _saveGraduationRegistrations();
-    notifyListeners();
-  }
-
-  void updateGraduationRegistration(String id, GraduationRegistration updated) {
-    _graduationRegistrations = _graduationRegistrations.map((r) => r.id == id ? updated : r).toList();
-    _saveGraduationRegistrations();
-    notifyListeners();
-  }
-
-  void removeGraduationRegistration(String id) {
-    _graduationRegistrations = _graduationRegistrations.where((r) => r.id != id).toList();
-    _saveGraduationRegistrations();
-    notifyListeners();
-  }
-
-  Future<void> _saveGraduationRegistrations() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        'graduation_registrations',
-        jsonEncode(_graduationRegistrations.map((r) => r.toJson()).toList()),
-      );
-    } catch (_) {}
-  }
+  List<GraduationRegistration> get graduationRegistrations => _graduationRegistrations;
+  Future<void> addGraduationRegistration(GraduationRegistration reg) async => await _firestore.collection('graduation_registrations').doc(reg.id).set(reg.toJson());
+  Future<void> updateGraduationRegistration(String id, GraduationRegistration updated) async => await _firestore.collection('graduation_registrations').doc(id).update(updated.toJson());
+  Future<void> removeGraduationRegistration(String id) async => await _firestore.collection('graduation_registrations').doc(id).delete();
 
   GraduationRegistration? getRegistration(String eventId, String santriId) {
-    try {
-      return _graduationRegistrations.firstWhere((r) => r.eventId == eventId && r.santriId == santriId);
-    } catch (_) {
-      return null;
-    }
+    try { return _graduationRegistrations.firstWhere((r) => r.eventId == eventId && r.santriId == santriId); } catch (_) { return null; }
   }
 
-  void addKelas(KelasData k) {
-    _kelasList = [..._kelasList, k];
-    _saveKelasList();
-    notifyListeners();
-  }
-
-  void updateKelas(String id, KelasData updated) {
-    _kelasList = _kelasList.map((k) => k.id == id ? updated : k).toList();
-    _saveKelasList();
-    notifyListeners();
-  }
-
-  void removeKelas(String id) {
-    _kelasList = _kelasList.where((k) => k.id != id).toList();
-    _saveKelasList();
-    notifyListeners();
-  }
-
-  Future<void> _saveKelasList() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        'kelas_list',
-        jsonEncode(_kelasList.map((k) => k.toJson()).toList()),
-      );
-    } catch (_) {}
-  }
-
-  // ── Surah list (for pickers) ──────────────────────────────────────────
   List<SurahInfo> _surahList = [];
   List<SurahInfo> get surahList => List.unmodifiable(_surahList);
   bool isSurahListLoading = false;
   String? surahListError;
 
-  // ── Active session ─────────────────────────────────────────────────────
   Santri? activeSetoranSantri;
   SetoranType activeSetoranType = SetoranType.ziyadah;
   int activeSetoranSurahNumber = 1;
@@ -251,862 +137,242 @@ class AppProvider extends ChangeNotifier {
   String activeSetoranSurahEnglishName = '';
   int activeSetoranAyahStart = 1;
   int activeSetoranAyahEnd = 7;
-
-  // -- Tasmi session data --
   bool isTasmiSession = false;
   List<int> activeTasmiJuz = [];
   String activeTasmiYear = '';
-
   final Map<String, ErrorMark> _sessionErrors = {};
   Map<String, ErrorMark> get sessionErrors => Map.unmodifiable(_sessionErrors);
 
-  // ── Auth / Session ─────────────────────────────────────────────────────
   UserRole? _currentRole;
   String? _linkedSantriId;
   String? _linkedMusyrifId;
-  String? _currentUserId; // DB user id for password management
+  String? _currentUserId;
   UserRole? get currentRole => _currentRole;
   String? get linkedSantriId => _linkedSantriId;
   String? get linkedMusyrifId => _linkedMusyrifId;
   String? get currentUserId => _currentUserId;
-  Santri? get linkedSantri =>
-      _linkedSantriId != null ? getSantriById(_linkedSantriId!) : null;
+  Santri? get linkedSantri => _linkedSantriId != null ? getSantriById(_linkedSantriId!) : null;
   MusyrifData? get linkedMusyrif => getMusyrifById(_linkedMusyrifId);
   bool get isLoggedIn => _currentRole != null;
   bool get isAdmin => _currentRole == UserRole.admin;
   bool get isMusyrif => _currentRole == UserRole.musyrif;
   bool get isOrangTua => _currentRole == UserRole.orangTua;
-
   bool _isInitializing = false;
   bool get isInitializing => _isInitializing;
 
   void login(UserRole role, {String? linkedSantriId, String? linkedMusyrifId}) {
-    _currentRole = role;
-    _linkedSantriId = linkedSantriId;
-    _linkedMusyrifId = linkedMusyrifId;
-    _saveRole();
-    notifyListeners();
+    _currentRole = role; _linkedSantriId = linkedSantriId; _linkedMusyrifId = linkedMusyrifId; notifyListeners();
   }
 
-  /// Real authentication — returns true if credentials are valid.
   Future<bool> loginWithCredentials(String username, String password) async {
-    final user = await DbHelper.authenticate(username, password);
-    if (user == null) return false;
-    final role = _roleFromString(user['role'] as String);
-    if (role == null) return false;
-    _currentUserId = user['id'] as String?;
-    _currentRole = role;
-    _linkedSantriId = role == UserRole.orangTua ? user['linked_id'] as String? : null;
-    _linkedMusyrifId = role == UserRole.musyrif ? user['linked_id'] as String? : null;
-    await LoginPreferencesService.saveLastCredentials(username, password);
-    _saveRole();
-
-    // If Admin logs in, ensure all user accounts are synced to the latest format
-    if (role == UserRole.admin) {
-      _seedUserAccounts();
-    }
-
-    notifyListeners();
-    return true;
+    try {
+      String email = username; if (!username.contains('@')) email = '$username@tahfidzmu.com';
+      final mappingDoc = await _firestore.collection('user_mappings').doc(username.replaceAll(RegExp(r'\D+'), '')).get();
+      UserCredential? cred;
+      try { cred = await _firebase.signIn(email, password); } catch (e) {
+        if (e is FirebaseAuthException && (e.code == 'user-not-found' || e.code == 'invalid-credential') && mappingDoc.exists) {
+          cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+          await _firebase.setUserData(cred.user!.uid, {'role': mappingDoc.data()?['role'], 'linkedId': mappingDoc.data()?['linkedId'], 'username': username});
+        } else { rethrow; }
+      }
+      if (cred?.user == null) return false;
+      if (cred!.user!.email == 'dasamsamsudin87@gmail.com') {
+         await _firebase.setUserData(cred.user!.uid, {'role': 'admin', 'username': 'admin', 'linkedId': null});
+      }
+      final userData = await _firebase.getUserData(cred.user!.uid);
+      if (userData == null) return false;
+      _currentUserId = cred.user!.uid; _currentRole = _roleFromString(userData['role'] as String);
+      _linkedSantriId = userData['linkedId'] as String?; _linkedMusyrifId = userData['linkedId'] as String?;
+      if (_currentRole == UserRole.admin) { _adminPhoto = userData['photoPath'] ?? ''; }
+      _setupFirestoreListeners(); notifyListeners(); return true;
+    } catch (e) { return false; }
   }
 
   static UserRole? _roleFromString(String role) {
-    switch (role) {
-      case 'admin':
-        return UserRole.admin;
-      case 'musyrif':
-        return UserRole.musyrif;
-      case 'orangTua':
-        return UserRole.orangTua;
-      default:
-        return null;
-    }
+    switch (role) { case 'admin': return UserRole.admin; case 'musyrif': return UserRole.musyrif; case 'orangTua': return UserRole.orangTua; default: return null; }
   }
 
-  /// Change own password — requires old password verification.
   Future<bool> changeOwnPassword(String oldPassword, String newPassword) async {
-    if (_currentUserId == null) return false;
-    final user = await DbHelper.getUserById(_currentUserId!);
-    if (user == null) return false;
-    return DbHelper.changeOwnPassword(
-      user['username'] as String,
-      oldPassword,
-      newPassword,
-    );
+    try {
+      final user = FirebaseAuth.instance.currentUser; if (user == null || user.email == null) return false;
+      AuthCredential credential = EmailAuthProvider.credential(email: user.email!, password: oldPassword);
+      await user.reauthenticateWithCredential(credential); await user.updatePassword(newPassword); return true;
+    } catch (e) { return false; }
   }
 
-  /// Admin resets a user's password to [newPassword].
-  Future<bool> resetUserPassword(String userId, String newPassword) async {
-    return DbHelper.resetPassword(userId, newPassword);
-  }
-
-  Future<bool> resetPasswordForLinkedId(
-    String linkedId,
-    String newPassword,
-  ) async {
-    final user = await DbHelper.getUserByLinkedId(linkedId);
-    if (user == null) return false;
-    return resetUserPassword(user['id'] as String, newPassword);
-  }
+  Future<void> resetPasswordForLinkedId(String linkedId, String newPassword) async { debugPrint("Reset password remote requested"); }
 
   Future<void> logout() async {
-    _currentRole = null;
-    _currentUserId = null;
-    await _saveRole();
-    // Do not clear saved credentials here, so they can stay in the login fields
+    await _firebase.signOut(); _currentRole = null; _currentUserId = null; _linkedSantriId = null; _linkedMusyrifId = null;
+    _santriSub?.cancel(); _musyrifSub?.cancel(); _halaqahSub?.cancel(); _kelasSub?.cancel(); _eventSub?.cancel(); _regSub?.cancel();
     notifyListeners();
   }
 
-  Future<void> _saveRole() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      if (_currentRole != null) {
-        await prefs.setString('current_role', _currentRole!.storedKey);
-      } else {
-        await prefs.remove('current_role');
-      }
-      if (_linkedSantriId != null) {
-        await prefs.setString('linked_santri_id', _linkedSantriId!);
-      } else {
-        await prefs.remove('linked_santri_id');
-      }
-      if (_linkedMusyrifId != null) {
-        await prefs.setString('linked_musyrif_id', _linkedMusyrifId!);
-      } else {
-        await prefs.remove('linked_musyrif_id');
-      }
-    } catch (_) {}
-  }
+  SurahDetail? currentSurah; bool isSurahLoading = false; String? surahLoadError;
+  PesantrenInfo _pesantrenInfo = const PesantrenInfo(nama: 'Al-Furqon MBS Cibiuk', alamat: 'Jl. Pulobaru Desa Cibiuk Kaler Kec Cibiuk Garut', noTelp: '081289607738', email: 'info.alfurqonmbscibiuk@gmail.com');
+  PesantrenInfo get pesantrenInfo => _pesantrenInfo; String get pesantrenName => _pesantrenInfo.nama;
+  Future<void> updatePesantrenInfo(PesantrenInfo info) async { _pesantrenInfo = info; await _firestore.collection('settings').doc('pesantren_info').set(info.toJson()); notifyListeners(); }
 
-  // ── Current surah for reader ──────────────────────────────────────────
-  SurahDetail? currentSurah;
-  bool isSurahLoading = false;
-  String? surahLoadError;
-
-  // ── App info ─────────────────────────────────────────────────────
-  PesantrenInfo _pesantrenInfo = const PesantrenInfo(
-    nama: 'Al-Furqon MBS Cibiuk',
-    alamat: 'Jl. Pulobaru Desa Cibiuk Kaler Kec Cibiuk Garut',
-    noTelp: '081289607738',
-    email: 'info.alfurqonmbscibiuk@gmail.com',
-  );
-  PesantrenInfo get pesantrenInfo => _pesantrenInfo;
-  // Backward-compat getter
-  String get pesantrenName => _pesantrenInfo.nama;
-
-  void updatePesantrenInfo(PesantrenInfo info) {
-    _pesantrenInfo = info;
-    _savePesantrenInfo();
-    notifyListeners();
-  }
-
-  /// Backward-compat — only updates the name field.
-  void updatePesantrenName(String name) {
-    updatePesantrenInfo(_pesantrenInfo.copyWith(nama: name));
-  }
-
-  Future<void> _savePesantrenInfo() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-        'pesantren_info',
-        jsonEncode(_pesantrenInfo.toJson()),
-      );
-    } catch (_) {}
-  }
-
-  // ── Active hafalan modules ───────────────────────────────────────
   final Set<String> _activeModules = {'quran', 'hadits', 'tajwid', 'tahsin'};
   Set<String> get activeModules => Set.unmodifiable(_activeModules);
-
   bool isModuleActive(String key) => _activeModules.contains(key);
+  void toggleModule(String key) { if (key == 'quran') return; if (_activeModules.contains(key)) { _activeModules.remove(key); } else { _activeModules.add(key); } notifyListeners(); }
 
-  void toggleModule(String key) {
-    if (key == 'quran') return; // Al-Quran cannot be disabled
-    if (_activeModules.contains(key)) {
-      _activeModules.remove(key);
-    } else {
-      _activeModules.add(key);
-    }
-    _saveActiveModules();
-    notifyListeners();
-  }
-
-  Future<void> _saveActiveModules() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList('active_modules', _activeModules.toList());
-    } catch (_) {}
-  }
-
-  // -- Admin/Global profile ---------------------------------------------
   String _adminPhoto = '';
+  String get musyrif => linkedMusyrif?.nama ?? 'Musyrif';
+  String get lembaga => linkedMusyrif?.lembaga ?? 'Halaqah Tahfidz';
+  String get jabatan => linkedMusyrif?.jabatan ?? 'Musyrif Al-Quran';
+  String get nomorHp => linkedMusyrif?.nomorHp ?? '';
+  String get musyrifPhoto => linkedMusyrif?.photoPath ?? '';
   String get adminPhoto => _adminPhoto;
 
-  void updateAdminPhoto(String path) {
-    _adminPhoto = path;
-    _saveAdminPhoto();
-    notifyListeners();
+  Future<void> updateAdminPhoto(String path) async {
+    if (_currentUserId == null) return;
+    final cloudUrl = await _firebase.uploadPhoto(localPath: path, folder: 'admin_photos', fileName: _currentUserId!);
+    _adminPhoto = cloudUrl; await _firebase.setUserData(_currentUserId!, {'photoPath': cloudUrl}); notifyListeners();
   }
 
-  Future<void> _saveAdminPhoto() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('admin_photo', _adminPhoto);
-    } catch (_) {}
+  Future<void> updateMusyrifInfo(String name, String lembaga, {String jabatan = '', String nomorHp = ''}) async {
+    if (_linkedMusyrifId == null) return;
+    final m = linkedMusyrif?.copyWith(nama: name, lembaga: lembaga, jabatan: jabatan, nomorHp: nomorHp);
+    if (m != null) await updateMusyrifData(_linkedMusyrifId!, m);
   }
 
-  // -- Musyrif profile ---------------------------------------------------
-  String _musyrif = '';
-  String _lembaga = '';
-  String _jabatan = '';
-  String _nomorHp = '';
-  String _musyrifPhoto = '';
-  String get musyrif => _musyrif.isEmpty ? 'Musyrif' : _musyrif;
-  String get lembaga => _lembaga.isEmpty ? 'Halaqah Tahfidz' : _lembaga;
-  String get jabatan => _jabatan.isEmpty ? 'Musyrif Al-Quran' : _jabatan;
-  String get nomorHp => _nomorHp;
-  String get musyrifPhoto => _musyrifPhoto;
-
-  void updateMusyrifInfo(
-    String name,
-    String lembagaName, {
-    String jabatan = '',
-    String nomorHp = '',
-  }) {
-    _musyrif = name;
-    _lembaga = lembagaName;
-    _jabatan = jabatan;
-    _nomorHp = nomorHp;
-    _saveMusyrif();
-    notifyListeners();
+  Future<void> updateMusyrifPhoto(String path) async {
+    if (_linkedMusyrifId == null) return;
+    final cloudUrl = await _firebase.uploadPhoto(localPath: path, folder: 'musyrif_photos', fileName: _linkedMusyrifId!);
+    await _firestore.collection('musyrif').doc(_linkedMusyrifId!).update({'photoPath': cloudUrl});
   }
 
-  void updateMusyrifPhoto(String path) {
-    _musyrifPhoto = path;
-    _saveMusyrif();
-    notifyListeners();
+  Future<void> updateSantriPhoto(String santriId, String path) async {
+    final cloudUrl = await _firebase.uploadPhoto(localPath: path, folder: 'santri_photos', fileName: santriId);
+    await _firestore.collection('santri').doc(santriId).update({'photoPath': cloudUrl});
   }
 
-  void updateSantriPhoto(String santriId, String path) {
-    _santriList = _santriList.map((s) {
-      if (s.id == santriId) return s.copyWith(photoPath: path);
-      return s;
-    }).toList();
-    _save();
-    notifyListeners();
+  void resetAllData() async {
+    final collections = ['santri', 'musyrif', 'halaqah', 'kelas', 'graduation_events', 'graduation_registrations', 'users', 'user_mappings'];
+    for (var col in collections) {
+      final snapshot = await _firestore.collection(col).get();
+      for (var doc in snapshot.docs) { await doc.reference.delete(); }
+    }
   }
 
-  Future<void> _saveMusyrif() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('musyrif_name', _musyrif);
-      await prefs.setString('musyrif_lembaga', _lembaga);
-      await prefs.setString('musyrif_jabatan', _jabatan);
-      await prefs.setString('musyrif_nomorhp', _nomorHp);
-      await prefs.setString('musyrif_photo', _musyrifPhoto);
-    } catch (_) {}
-  }
-
-  void resetAllData() {
-    _santriList = [];
-    _musyrifList = [];
-    _halaqahList = [];
-    _kelasList = [];
-    _save();
-    _saveMusyrifList();
-    _saveHalaqahList();
-    _saveKelasList();
-    _saveGraduationRegistrations();
-    DbHelper.clearAllNonAdminUsers();
-    notifyListeners();
-  }
-
-  AppProvider() {
-    initialize();
-  }
-
+  AppProvider() { initialize(); }
   Future<void> initialize() async {
-    if (_isInitializing) {
-      return;
-    }
-
-    _isInitializing = true;
-    notifyListeners();
-
+    if (_isInitializing) return; _isInitializing = true; notifyListeners();
     try {
-      await Future.wait<void>([_loadFromStorage(), _fetchSurahList()]);
-    } finally {
-      _isInitializing = false;
-      notifyListeners();
+      await _fetchSurahList(); final user = _firebase.currentUser;
+      if (user != null) {
+        _currentUserId = user.uid;
+        if (user.email == 'dasamsamsudin87@gmail.com') { await _firebase.setUserData(user.uid, {'role': 'admin', 'username': 'admin', 'linkedId': null}); }
+        final userData = await _firebase.getUserData(user.uid);
+        if (userData != null) {
+          _currentRole = _roleFromString(userData['role'] as String); _linkedSantriId = userData['linkedId'] as String?; _linkedMusyrifId = userData['linkedId'] as String?;
+          if (_currentRole == UserRole.admin) { _adminPhoto = userData['photoPath'] ?? ''; }
+          _setupFirestoreListeners();
+        } else { await _firebase.signOut(); }
+      }
+    } finally { _isInitializing = false; notifyListeners(); }
+  }
+
+  void _setupFirestoreListeners() {
+    _santriSub?.cancel(); _santriSub = _firestore.collection('santri').snapshots().listen((snap) { _santriList = snap.docs.map((doc) => Santri.fromJson(doc.data())).toList(); notifyListeners(); });
+    _musyrifSub?.cancel(); _musyrifSub = _firestore.collection('musyrif').snapshots().listen((snap) { _musyrifList = snap.docs.map((doc) => MusyrifData.fromJson(doc.data())).toList(); notifyListeners(); });
+    _halaqahSub?.cancel(); _halaqahSub = _firestore.collection('halaqah').snapshots().listen((snap) { _halaqahList = snap.docs.map((doc) => HalaqahData.fromJson(doc.data())).toList(); notifyListeners(); });
+    _kelasSub?.cancel(); _kelasSub = _firestore.collection('kelas').snapshots().listen((snap) { _kelasList = snap.docs.map((doc) => KelasData.fromJson(doc.data())).toList(); notifyListeners(); });
+    _eventSub?.cancel(); _eventSub = _firestore.collection('graduation_events').snapshots().listen((snap) { _graduationEvents = snap.docs.map((doc) => GraduationEvent.fromJson(doc.data())).toList(); notifyListeners(); });
+    _regSub?.cancel(); _regSub = _firestore.collection('graduation_registrations').snapshots().listen((snap) { _graduationRegistrations = snap.docs.map((doc) => GraduationRegistration.fromJson(doc.data())).toList(); notifyListeners(); });
+    _firestore.collection('settings').doc('pesantren_info').get().then((doc) { if (doc.exists) { _pesantrenInfo = PesantrenInfo.fromJson(doc.data()!); notifyListeners(); } });
+  }
+
+  Future<void> addSantri(String name, {String? halaqahId, String? kelas, String? nis, String? email, String? jenisKelamin, String? namaOrangTua, String? namaAyah, String? namaIbu, String? nomorHpWali, String? targetHafalan, String? photoPath, List<int>? initialMemorizedJuz, String? username, String? password}) async {
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    String? cloudPhotoUrl;
+    if (photoPath != null && photoPath.isNotEmpty && !photoPath.startsWith('http')) {
+      try { cloudPhotoUrl = await _firebase.uploadPhoto(localPath: photoPath, folder: 'santri_photos', fileName: id); } catch (e) { debugPrint("Photo Upload Failed: $e"); }
     }
+    final santri = Santri(id: id, name: name, nis: nis, email: email, jenisKelamin: jenisKelamin, kelas: kelas, halaqahId: halaqahId, namaOrangTua: namaOrangTua, namaAyah: namaAyah, namaIbu: namaIbu, nomorHpWali: nomorHpWali, targetHafalan: targetHafalan, photoPath: cloudPhotoUrl ?? photoPath, initialMemorizedJuz: initialMemorizedJuz ?? []);
+    await _firestore.collection('santri').doc(id).set(santri.toJson());
+    final userKey = (username?.isNotEmpty ?? false) ? username! : nis?.replaceAll(RegExp(r'\D+'), '') ?? id;
+    await _firestore.collection('user_mappings').doc(userKey).set({'linkedId': id, 'role': 'orangTua', 'defaultPassword': password ?? userKey});
   }
 
-  // ── Santri Management ─────────────────────────────────────────────────
-
-  void addSantri(
-    String name, {
-    String? halaqahId,
-    String? kelas,
-    String? nis,
-    String? email,
-    String? jenisKelamin,
-    String? namaOrangTua,
-    String? namaAyah,
-    String? namaIbu,
-    String? nomorHpWali,
-    String? targetHafalan,
-    String? photoPath,
-    List<int>? initialMemorizedJuz,
-    String? username,
-    String? password,
-    // old-name aliases
-    String? nik,
-    String? namaOrtu,
-    String? nomorOrtu,
-  }) {
-    _santriList = [
-      ..._santriList,
-      Santri(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: name,
-        nis: (nis ?? nik)?.isEmpty ?? true ? null : (nis ?? nik),
-        email: email,
-        jenisKelamin: jenisKelamin,
-        kelas: kelas,
-        halaqahId: halaqahId,
-        namaOrangTua: (namaOrangTua ?? namaOrtu)?.isEmpty ?? true
-            ? null
-            : (namaOrangTua ?? namaOrtu),
-        namaAyah: (namaAyah ?? namaOrtu)?.isEmpty ?? true
-            ? null
-            : (namaAyah ?? namaOrtu),
-        namaIbu: namaIbu?.isEmpty ?? true ? null : namaIbu,
-        nomorHpWali: (nomorHpWali ?? nomorOrtu)?.isEmpty ?? true
-            ? null
-            : (nomorHpWali ?? nomorOrtu),
-        targetHafalan: targetHafalan?.isEmpty ?? true ? null : targetHafalan,
-        photoPath: photoPath,
-        initialMemorizedJuz: initialMemorizedJuz ?? [],
-      ),
-    ];
-    // Create orang tua login account when NIS is provided
-    final resolvedNis = (nis ?? nik)?.isEmpty ?? true ? null : (nis ?? nik);
-    final newSantri = _santriList.last;
-    if (resolvedNis != null) {
-      final resolvedUsername = (username?.trim().isNotEmpty ?? false)
-          ? username!.trim()
-          : DbHelper.onlyDigits(resolvedNis);
-      final resolvedPassword = (password?.trim().isNotEmpty ?? false)
-          ? password!.trim()
-          : DbHelper.onlyDigits(resolvedNis);
-      DbHelper.upsertUser(
-        id: 'santri_${newSantri.id}',
-        username: resolvedUsername,
-        password: resolvedPassword,
-        role: 'orangTua',
-        linkedId: newSantri.id,
-      );
+  Future<void> updateSantriInfo(String santriId, {String? name, String? nis, String? email, String? jenisKelamin, String? halaqahId, String? kelas, String? namaOrangTua, String? namaAyah, String? namaIbu, String? nomorHpWali, String? targetHafalan, String? photoPath, String? status, List<int>? initialMemorizedJuz}) async {
+    final doc = _firestore.collection('santri').doc(santriId);
+    final existing = await doc.get(); if (!existing.exists) return;
+    final s = Santri.fromJson(existing.data()!);
+    String? finalPhotoPath = photoPath;
+    if (photoPath != null && photoPath.isNotEmpty && !photoPath.startsWith('http')) {
+      try { finalPhotoPath = await _firebase.uploadPhoto(localPath: photoPath, folder: 'santri_photos', fileName: santriId); } catch (e) { debugPrint("Photo Upload Failed: $e"); }
     }
-    _save();
-    notifyListeners();
+    final updated = s.copyWith(name: name, nis: nis, email: email, jenisKelamin: jenisKelamin, kelas: kelas, halaqahId: halaqahId, namaOrangTua: namaOrangTua, namaAyah: namaAyah, namaIbu: namaIbu, nomorHpWali: nomorHpWali, targetHafalan: targetHafalan, photoPath: finalPhotoPath, status: status, initialMemorizedJuz: initialMemorizedJuz);
+    await doc.update(updated.toJson());
   }
 
-  void updateSantriInfo(
-    String santriId, {
-    String? name,
-    String? nis,
-    String? email,
-    String? jenisKelamin,
-    String? halaqahId,
-    String? kelas,
-    String? namaOrangTua,
-    String? namaAyah,
-    String? namaIbu,
-    String? nomorHpWali,
-    String? targetHafalan,
-    String? photoPath,
-    String? status,
-    List<int>? initialMemorizedJuz,
-    // old-name aliases
-    String? nik,
-    String? namaOrtu,
-    String? nomorOrtu,
-  }) {
-    _santriList = _santriList.map((s) {
-      if (s.id != santriId) return s;
-      return s.copyWith(
-        name: name,
-        nis: nis ?? nik,
-        email: email,
-        jenisKelamin: jenisKelamin,
-        kelas: kelas,
-        halaqahId: halaqahId,
-        namaOrangTua: namaOrangTua ?? namaOrtu,
-        namaAyah: namaAyah ?? namaOrtu,
-        namaIbu: namaIbu,
-        nomorHpWali: nomorHpWali ?? nomorOrtu,
-        targetHafalan: targetHafalan,
-        photoPath: photoPath,
-        status: status,
-        initialMemorizedJuz: initialMemorizedJuz,
-      );
-    }).toList();
-    _save();
-    notifyListeners();
+  Future<void> removeSantri(String santriId) async => await _firestore.collection('santri').doc(santriId).delete();
+  Santri? getSantriById(String id) { try { return _santriList.firstWhere((s) => s.id == id); } catch (_) { return null; } }
+  void startSetoranSession({required Santri santri, required SetoranType type, required SurahInfo surah, required int ayahStart, required int ayahEnd}) {
+    activeSetoranSantri = santri; activeSetoranType = type; activeSetoranSurahNumber = surah.number; activeSetoranSurahName = surah.name; activeSetoranSurahEnglishName = surah.englishName; activeSetoranAyahStart = ayahStart; activeSetoranAyahEnd = ayahEnd; isTasmiSession = false; _sessionErrors.clear(); notifyListeners();
   }
-
-  void removeSantri(String santriId) {
-    _santriList = _santriList.where((s) => s.id != santriId).toList();
-    _save();
-    notifyListeners();
-    DbHelper.deleteUserByLinkedId(santriId);
-  }
-
-  Santri? getSantriById(String id) {
-    try {
-      return _santriList.firstWhere((s) => s.id == id);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  // ── Setoran Session ──────────────────────────────────────────────────
-
-  void startSetoranSession({
-    required Santri santri,
-    required SetoranType type,
-    required SurahInfo surah,
-    required int ayahStart,
-    required int ayahEnd,
-  }) {
-    activeSetoranSantri = santri;
-    activeSetoranType = type;
-    activeSetoranSurahNumber = surah.number;
-    activeSetoranSurahName = surah.name;
-    activeSetoranSurahEnglishName = surah.englishName;
-    activeSetoranAyahStart = ayahStart;
-    activeSetoranAyahEnd = ayahEnd;
-    isTasmiSession = false;
-    _sessionErrors.clear();
-    notifyListeners();
-  }
-
-  void startTasmiSession({
-    required Santri santri,
-    required List<int> juzNumbers,
-    required String year,
-  }) {
-    activeSetoranSantri = santri;
-    activeSetoranType = SetoranType.ziyadah; // Defaulting to ziyadah for scoring
-    isTasmiSession = true;
-    activeTasmiJuz = juzNumbers;
-    activeTasmiYear = year;
-
-    // For the reader, we default to the first surah and first ayah of the first selected juz
-    // For simplicity, we can just load surah 1 or use a specific juz start surah
+  void startTasmiSession({required Santri santri, required List<int> juzNumbers, required String year}) {
+    activeSetoranSantri = santri; activeSetoranType = SetoranType.ziyadah; isTasmiSession = true; activeTasmiJuz = juzNumbers; activeTasmiYear = year;
     final firstJuz = juzNumbers.isEmpty ? 1 : juzNumbers.reduce((a, b) => a < b ? a : b);
     final juzRange = QuranJuzUtils.getJuzRange(firstJuz);
-    
-    activeSetoranSurahNumber = juzRange.startSurah;
-    activeSetoranAyahStart = juzRange.startAyah;
-    // We'll set the end to the last surah/ayah of the same surah for initial load
-    // The Musyrif can navigate if needed, but usually Tasmi is done by the reader
-    activeSetoranAyahEnd = juzRange.startAyah + 20; 
-
-    // Find surah info
+    activeSetoranSurahNumber = juzRange.startSurah; activeSetoranAyahStart = juzRange.startAyah; activeSetoranAyahEnd = juzRange.startAyah + 20; 
     final surah = _surahList.firstWhere((s) => s.number == activeSetoranSurahNumber, orElse: () => _surahList.first);
-    activeSetoranSurahName = surah.name;
-    activeSetoranSurahEnglishName = surah.englishName;
-
-    _sessionErrors.clear();
-    notifyListeners();
+    activeSetoranSurahName = surah.name; activeSetoranSurahEnglishName = surah.englishName; _sessionErrors.clear(); notifyListeners();
   }
-
-  void toggleError({
-    required int surahNumber,
-    required int ayahNumber,
-    required int wordIndex,
-    required String word,
-    required ErrorType errorType,
-  }) {
+  void toggleError({required int surahNumber, required int ayahNumber, required int wordIndex, required String word, required ErrorType errorType}) {
     final key = ErrorMark.generateKey(surahNumber, ayahNumber, wordIndex);
-    if (_sessionErrors.containsKey(key) &&
-        _sessionErrors[key]!.errorType == errorType) {
-      _sessionErrors.remove(key);
-    } else {
-      _sessionErrors[key] = ErrorMark(
-        wordKey: key,
-        errorType: errorType,
-        surahNumber: surahNumber,
-        ayahNumber: ayahNumber,
-        wordIndex: wordIndex,
-        word: word,
-      );
-    }
+    if (_sessionErrors.containsKey(key) && _sessionErrors[key]!.errorType == errorType) { _sessionErrors.remove(key); } else { _sessionErrors[key] = ErrorMark(wordKey: key, errorType: errorType, surahNumber: surahNumber, ayahNumber: ayahNumber, wordIndex: wordIndex, word: word); }
     notifyListeners();
   }
-
-  void removeError(String wordKey) {
-    _sessionErrors.remove(wordKey);
-    notifyListeners();
-  }
-
-  void clearErrors() {
-    _sessionErrors.clear();
-    notifyListeners();
-  }
-
-  int get sessionTajwidCount => _sessionErrors.values
-      .where((e) => e.errorType == ErrorType.tajwid)
-      .length;
-
-  int get sessionMakhrojCount => _sessionErrors.values
-      .where((e) => e.errorType == ErrorType.makhroj)
-      .length;
-
-  /// Finalises the session, saves the record, and returns it.
-  SetoranRecord? completeSetoran(int fluencyRating) {
+  void removeError(String wordKey) { _sessionErrors.remove(wordKey); notifyListeners(); }
+  void clearErrors() { _sessionErrors.clear(); notifyListeners(); }
+  int get sessionTajwidCount => _sessionErrors.values.where((e) => e.errorType == ErrorType.tajwid).length;
+  int get sessionMakhrojCount => _sessionErrors.values.where((e) => e.errorType == ErrorType.makhroj).length;
+  Future<SetoranRecord?> completeSetoran(int fluencyRating) async {
     if (activeSetoranSantri == null) return null;
-
     final errors = _sessionErrors.values.toList();
-    final score = ScoringUtils.calculateScore(
-      errorMarks: errors,
-      fluencyRating: fluencyRating,
-    );
-
-    final record = SetoranRecord(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      santriId: activeSetoranSantri!.id,
-      type: activeSetoranType,
-      surahNumber: activeSetoranSurahNumber,
-      surahName: activeSetoranSurahName,
-      surahEnglishName: activeSetoranSurahEnglishName,
-      ayahStart: activeSetoranAyahStart,
-      ayahEnd: activeSetoranAyahEnd,
-      errorMarks: errors,
-      fluencyRating: fluencyRating,
-      date: DateTime.now(),
-      finalScore: score,
-    );
-
-    final idx = _santriList.indexWhere((s) => s.id == activeSetoranSantri!.id);
-    if (idx != -1) {
-      final s = _santriList[idx];
-      _santriList[idx] = s.copyWith(
-        setoranHistory: [...s.setoranHistory, record],
-      );
-    }
-
-    _sessionErrors.clear();
-    _save();
-    notifyListeners();
-    return record;
+    final score = ScoringUtils.calculateScore(errorMarks: errors, fluencyRating: fluencyRating);
+    final record = SetoranRecord(id: DateTime.now().millisecondsSinceEpoch.toString(), santriId: activeSetoranSantri!.id, type: activeSetoranType, surahNumber: activeSetoranSurahNumber, surahName: activeSetoranSurahName, surahEnglishName: activeSetoranSurahEnglishName, ayahStart: activeSetoranAyahStart, ayahEnd: activeSetoranAyahEnd, errorMarks: errors, fluencyRating: fluencyRating, date: DateTime.now(), finalScore: score);
+    await _firestore.collection('santri').doc(activeSetoranSantri!.id).update({'setoranHistory': FieldValue.arrayUnion([record.toJson()])});
+    _sessionErrors.clear(); notifyListeners(); return record;
   }
-
-  /// Special completion for Tasmi' (Graduation Test)
-  TasmiRecord? completeTasmi({
-    required List<int> juzNumbers,
-    required int fluencyRating,
-    required String year,
-    String status = 'lulus',
-    String? note,
-  }) {
+  Future<TasmiRecord?> completeTasmi({required List<int> juzNumbers, required int fluencyRating, required String year, String status = 'lulus', String? note}) async {
     if (activeSetoranSantri == null) return null;
-
     final errors = _sessionErrors.values.toList();
-    final score = ScoringUtils.calculateScore(
-      errorMarks: errors,
-      fluencyRating: fluencyRating,
-    );
-
-    final record = TasmiRecord(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      santriId: activeSetoranSantri!.id,
-      juzNumbers: juzNumbers,
-      finalScore: score,
-      fluencyRating: fluencyRating,
-      errorMarks: errors,
-      date: DateTime.now(),
-      status: status,
-      year: year,
-      note: note,
-    );
-
-    final idx = _santriList.indexWhere((s) => s.id == activeSetoranSantri!.id);
-    if (idx != -1) {
-      final s = _santriList[idx];
-      _santriList[idx] = s.copyWith(
-        tasmiHistory: [...s.tasmiHistory, record],
-      );
-    }
-
-    _sessionErrors.clear();
-    _save();
-    notifyListeners();
-    return record;
+    final score = ScoringUtils.calculateScore(errorMarks: errors, fluencyRating: fluencyRating);
+    final record = TasmiRecord(id: DateTime.now().millisecondsSinceEpoch.toString(), santriId: activeSetoranSantri!.id, juzNumbers: juzNumbers, finalScore: score, fluencyRating: fluencyRating, errorMarks: errors, date: DateTime.now(), status: status, year: year, note: note);
+    await _firestore.collection('santri').doc(activeSetoranSantri!.id).update({'tasmiHistory': FieldValue.arrayUnion([record.toJson()])});
+    _sessionErrors.clear(); notifyListeners(); return record;
   }
-
-  void updateTasmiStatus(String santriId, String recordId, String newStatus) {
-    final idx = _santriList.indexWhere((s) => s.id == santriId);
-    if (idx != -1) {
-      final santri = _santriList[idx];
-      final List<TasmiRecord> history = santri.tasmiHistory.map((t) {
-        if (t.id == recordId) return t.copyWith(status: newStatus);
-        return t;
-      }).toList();
-      _santriList[idx] = santri.copyWith(tasmiHistory: history);
-      _save();
-      notifyListeners();
-    }
+  Future<void> updateTasmiStatus(String santriId, String recordId, String newStatus) async {
+    final santriDoc = _firestore.collection('santri').doc(santriId);
+    final snap = await santriDoc.get(); if (!snap.exists) return;
+    final s = Santri.fromJson(snap.data()!);
+    final List<TasmiRecord> history = s.tasmiHistory.map((t) { if (t.id == recordId) return t.copyWith(status: newStatus); return t; }).toList();
+    await santriDoc.update({'tasmiHistory': history.map((t) => t.toJson()).toList()});
   }
-
-  // ── Quran API ──────────────────────────────────────────────────────────
-
-  Future<void> _fetchSurahList() async {
-    if (_surahList.isNotEmpty) return;
-    isSurahListLoading = true;
-    surahListError = null;
-    notifyListeners();
-    try {
-      _surahList = await QuranService.getSurahList();
-    } catch (e) {
-      surahListError = e.toString();
-    } finally {
-      isSurahListLoading = false;
-      notifyListeners();
-    }
-  }
-
+  Future<void> _fetchSurahList() async { if (_surahList.isNotEmpty) return; isSurahListLoading = true; notifyListeners(); try { _surahList = await QuranService.getSurahList(); } catch (e) { surahListError = e.toString(); } finally { isSurahListLoading = false; notifyListeners(); } }
   Future<void> refreshSurahList() => _fetchSurahList();
-
   Future<void> loadSurahForReader(int surahNumber) async {
     activeSetoranSurahNumber = surahNumber;
-    // Update names
     final surah = _surahList.firstWhere((s) => s.number == surahNumber, orElse: () => _surahList.first);
-    activeSetoranSurahName = surah.name;
-    activeSetoranSurahEnglishName = surah.englishName;
-
-    isSurahLoading = true;
-    surahLoadError = null;
-    notifyListeners();
-    try {
-      currentSurah = await QuranService.getSurah(surahNumber);
-    } catch (e) {
-      surahLoadError = e.toString();
-    } finally {
-      isSurahLoading = false;
-      notifyListeners();
-    }
+    activeSetoranSurahName = surah.name; activeSetoranSurahEnglishName = surah.englishName; isSurahLoading = true; notifyListeners();
+    try { currentSurah = await QuranService.getSurah(surahNumber); } catch (e) { surahLoadError = e.toString(); } finally { isSurahLoading = false; notifyListeners(); }
   }
-
-  // ── Persistence ─────────────────────────────────────────────────────────
-
-  Future<void> _save() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final encoded = jsonEncode(_santriList.map((s) => s.toJson()).toList());
-      await prefs.setString('santri_list', encoded);
-    } catch (_) {}
-  }
-
-  Future<void> _loadFromStorage() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      // Load musyrif profile (legacy single)
-      // Load pesantren info (new JSON format, fall back to legacy name string)
-      final rawPesantren = prefs.getString('pesantren_info');
-      if (rawPesantren != null) {
-        _pesantrenInfo = PesantrenInfo.fromJson(
-          jsonDecode(rawPesantren) as Map<String, dynamic>,
-        );
-      } else {
-        // Migrate from old single-string key
-        final legacyName = prefs.getString('pesantren_name') ?? '';
-        if (legacyName.isNotEmpty) {
-          _pesantrenInfo = PesantrenInfo(nama: legacyName);
-        }
-      }
-      // Load active modules
-      final rawModules = prefs.getStringList('active_modules');
-      if (rawModules != null) {
-        _activeModules.clear();
-        _activeModules.addAll(rawModules);
-        _activeModules.add('quran'); // always active
-      }
-      _musyrif = prefs.getString('musyrif_name') ?? '';
-      _lembaga = prefs.getString('musyrif_lembaga') ?? '';
-      _jabatan = prefs.getString('musyrif_jabatan') ?? '';
-      _nomorHp = prefs.getString('musyrif_nomorhp') ?? '';
-      _musyrifPhoto = prefs.getString('musyrif_photo') ?? '';
-      _adminPhoto = prefs.getString('admin_photo') ?? '';
-      // Restore last login role
-      _currentRole = UserRole.fromKey(prefs.getString('current_role'));
-      _linkedSantriId = prefs.getString('linked_santri_id');
-      _linkedMusyrifId = prefs.getString('linked_musyrif_id');
-      // Load musyrif list
-      final rawMusyrif = prefs.getString('musyrif_list');
-      if (rawMusyrif != null) {
-        final list = jsonDecode(rawMusyrif) as List;
-        _musyrifList = list
-            .map((m) => MusyrifData.fromJson(m as Map<String, dynamic>))
-            .toList();
-      }
-      // Load halaqah list
-      final rawHalaqah = prefs.getString('halaqah_list');
-      if (rawHalaqah != null) {
-        final list = jsonDecode(rawHalaqah) as List;
-        _halaqahList = list
-            .map((h) => HalaqahData.fromJson(h as Map<String, dynamic>))
-            .toList();
-      }
-      // Load kelas list
-      final rawKelas = prefs.getString('kelas_list');
-      if (rawKelas != null) {
-        final list = jsonDecode(rawKelas) as List;
-        _kelasList = list
-            .map((k) => KelasData.fromJson(k as Map<String, dynamic>))
-            .toList();
-      }
-      // Load graduation events
-      final rawEvents = prefs.getString('graduation_events');
-      if (rawEvents != null) {
-        final list = jsonDecode(rawEvents) as List;
-        _graduationEvents = list
-            .map((e) => GraduationEvent.fromJson(e as Map<String, dynamic>))
-            .toList();
-      }
-      // Load graduation registrations
-      final rawRegs = prefs.getString('graduation_registrations');
-      if (rawRegs != null) {
-        final list = jsonDecode(rawRegs) as List;
-        _graduationRegistrations = list
-            .map((r) => GraduationRegistration.fromJson(r as Map<String, dynamic>))
-            .toList();
-      }
-      // Load santri list
-      final raw = prefs.getString('santri_list');
-      if (raw != null) {
-        final list = jsonDecode(raw) as List;
-        _santriList = list
-            .map((s) => Santri.fromJson(s as Map<String, dynamic>))
-            .toList();
-      } else {
-        // First run — seed demo data
-        await _seedSampleData();
-      }
-      notifyListeners();
-    } catch (_) {
-      await _seedSampleData();
-      notifyListeners();
-    }
-  }
-
-  /// Seeds realistic demo data so the app is immediately usable.
-  Future<void> _seedSampleData() async {
-    try {
-      final bundle = await DemoDataService.loadDemoData();
-      _musyrifList = bundle.musyrifList;
-      _halaqahList = bundle.halaqahList;
-      _santriList = bundle.santriList;
-      _graduationEvents = bundle.graduationEvents;
-      _graduationRegistrations = bundle.graduationRegistrations;
-      await _save();
-      await _saveMusyrifList();
-      await _saveHalaqahList();
-      await _saveGraduationEvents();
-      await _saveGraduationRegistrations();
-      await _seedUserAccounts();
-      notifyListeners();
-    } catch (_) {
-      _musyrifList = [];
-      _halaqahList = [];
-      _santriList = [];
-      _graduationEvents = [];
-      _graduationRegistrations = [];
-      notifyListeners();
-    }
-  }
-
-  Future<void> _seedUserAccounts() async {
-    // Musyrif accounts
-    for (final m in _musyrifList) {
-      final username = DbHelper.makeUsername(m.nip, m.nama);
-      final password = DbHelper.buildDemoCredentialValue(m.nip, m.nama);
-      await DbHelper.upsertUser(
-        id: 'musyrif_${m.id}',
-        username: username,
-        password: password,
-        role: 'musyrif',
-        linkedId: m.id,
-      );
-    }
-    // OrangTua accounts (santri with NIS)
-    for (final s in _santriList) {
-      if (s.nis != null && s.nis!.isNotEmpty) {
-        final username = DbHelper.onlyDigits(s.nis);
-        final password = DbHelper.onlyDigits(s.nis);
-        await DbHelper.upsertUser(
-          id: 'santri_${s.id}',
-          username: username,
-          password: password,
-          role: 'orangTua',
-          linkedId: s.id,
-        );
-      }
-    }
-  }
-  // ── Continuation Logic ─────────────────────────────────────────────────
-
-  /// Returns the suggested next setoran position for a santri,
-  /// or null if the santri has no history or the surah list is not loaded yet.
   SetoranContinuation? getNextSetoranSuggestion(String santriId) {
-    final santri = getSantriById(santriId);
-    if (santri == null || santri.setoranHistory.isEmpty || _surahList.isEmpty) {
-      return null;
-    }
-    final last = santri.setoranHistory.last;
-
-    SurahInfo? lastSurah;
-    try {
-      lastSurah = _surahList.firstWhere((s) => s.number == last.surahNumber);
-    } catch (_) {
-      return null;
-    }
-
-    int nextSurahNumber;
-    int nextAyahStart;
-    SurahInfo nextSurah;
-
+    final santri = getSantriById(santriId); if (santri == null || santri.setoranHistory.isEmpty || _surahList.isEmpty) return null;
+    final last = santri.setoranHistory.last; SurahInfo? lastSurah; try { lastSurah = _surahList.firstWhere((s) => s.number == last.surahNumber); } catch (_) { return null; }
+    int nextSurahNumber; int nextAyahStart; SurahInfo nextSurah;
     if (last.ayahEnd >= lastSurah.numberOfAyahs) {
-      // Finished the surah — move to next
-      nextSurahNumber = last.surahNumber + 1;
-      if (nextSurahNumber > 114) return null;
-      try {
-        nextSurah = _surahList.firstWhere((s) => s.number == nextSurahNumber);
-      } catch (_) {
-        return null;
-      }
+      nextSurahNumber = last.surahNumber + 1; if (nextSurahNumber > 114) return null;
+      try { nextSurah = _surahList.firstWhere((s) => s.number == nextSurahNumber); } catch (_) { return null; }
       nextAyahStart = 1;
-    } else {
-      // Continue in the same surah
-      nextSurahNumber = last.surahNumber;
-      nextSurah = lastSurah;
-      nextAyahStart = last.ayahEnd + 1;
-    }
-
-    // Suggest the same range length as the last setoran
+    } else { nextSurahNumber = last.surahNumber; nextSurah = lastSurah; nextAyahStart = last.ayahEnd + 1; }
     final rangeLen = last.ayahEnd - last.ayahStart + 1;
-    final nextAyahEnd = (nextAyahStart + rangeLen - 1).clamp(
-      nextAyahStart,
-      nextSurah.numberOfAyahs,
-    );
-
-    return SetoranContinuation(
-      surah: nextSurah,
-      ayahStart: nextAyahStart,
-      ayahEnd: nextAyahEnd,
-      type: last.type,
-    );
+    final nextAyahEnd = (nextAyahStart + rangeLen - 1).clamp(nextAyahStart, nextSurah.numberOfAyahs);
+    return SetoranContinuation(surah: nextSurah, ayahStart: nextAyahStart, ayahEnd: nextAyahEnd, type: last.type);
   }
 }

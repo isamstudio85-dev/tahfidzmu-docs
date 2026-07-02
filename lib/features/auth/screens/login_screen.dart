@@ -1,7 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:tahfidz_app/models/user_role.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/services/login_preferences_service.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
@@ -88,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildHeader() {
     return Image.asset(
-      'assets/images/TahfidzMU-logo.png',
+      'assets/icons/logo-tahfidzmu.png',
       width: 180,
       height: 180,
       fit: BoxFit.contain,
@@ -184,6 +183,10 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 58,
             child: FilledButton(
               onPressed: _canLogin ? _login : null,
+              style: FilledButton.styleFrom(
+                disabledBackgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.3),
+                disabledForegroundColor: Colors.white,
+              ),
               child: _isLoading
                   ? const SizedBox(
                       width: 24,
@@ -213,82 +216,22 @@ class _LoginScreenState extends State<LoginScreen> {
       constraints: const BoxConstraints(maxWidth: 450),
       child: Column(
         children: [
-          Text(
-            'AKSES CEPAT (DEMO)',
+          const Text(
+            'BELUM PUNYA AKUN?',
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,
-              color: Colors.grey.shade400,
+              color: Colors.grey,
               letterSpacing: 2.0,
             ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _quickBtn(
-                'Admin',
-                Icons.admin_panel_settings_rounded,
-                Colors.blue,
-                () => context.read<AppProvider>().login(UserRole.admin),
-              ),
-              const SizedBox(width: 12),
-              _quickBtn(
-                'Musyrif',
-                Icons.school_rounded,
-                Colors.orange,
-                () {
-                  final p = context.read<AppProvider>();
-                  if (p.musyrifList.isNotEmpty) {
-                    p.login(UserRole.musyrif, linkedMusyrifId: p.musyrifList.first.id);
-                  }
-                },
-              ),
-              const SizedBox(width: 12),
-              _quickBtn(
-                'Wali',
-                Icons.family_restroom_rounded,
-                Colors.purple,
-                () {
-                  final p = context.read<AppProvider>();
-                  if (p.santriList.isNotEmpty) {
-                    p.login(UserRole.orangTua, linkedSantriId: p.santriList.first.id);
-                  }
-                },
-              ),
-            ],
+          const SizedBox(height: 8),
+          const Text(
+            'Silahkan hubungi Admin atau Ustadz di Pesantren Anda untuk mendapatkan NIS/NIP terdaftar.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 11, color: Colors.grey),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _quickBtn(String label, IconData icon, Color color, VoidCallback onTap) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: color.withValues(alpha: 0.1)),
-          ),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 24),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

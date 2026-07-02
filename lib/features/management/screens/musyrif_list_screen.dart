@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:tahfidz_app/database/db_helper.dart';
 import 'package:tahfidz_app/models/musyrif_data.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
@@ -154,7 +153,7 @@ class _MusyrifListScreenState extends State<MusyrifListScreen> {
   }
 
   void _showResetPasswordDialog(BuildContext context, AppProvider provider, MusyrifData musyrif) {
-    final passwordCtrl = TextEditingController(text: DbHelper.onlyDigits(musyrif.nip));
+    final passwordCtrl = TextEditingController(text: musyrif.nip?.replaceAll(RegExp(r'\D+'), '') ?? '');
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(

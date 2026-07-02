@@ -37,6 +37,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
   String _status = 'aktif';
   List<int> _initialJuz = [];
   bool _showAccountInfo = false;
+  bool _isSaving = false;
 
   bool get _isEdit => widget.existing != null;
 
@@ -317,43 +318,53 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     );
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    
+    setState(() => _isSaving = true); // Need to add this state
     final provider = context.read<AppProvider>();
-    if (_isEdit) {
-      provider.updateSantriInfo(
-        widget.existing!.id,
-        name: _namaCtrl.text.trim(),
-        nis: _nisCtrl.text.trim().isEmpty ? null : _nisCtrl.text.trim(),
-        email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
-        jenisKelamin: _jenisKelamin,
-        halaqahId: _halaqahId,
-        kelas: _kelasCtrl.text.trim().isEmpty ? null : _kelasCtrl.text.trim(),
-        namaOrangTua: _namaOrangTuaCtrl.text.trim().isEmpty ? null : _namaOrangTuaCtrl.text.trim(),
-        nomorHpWali: _nomorHpWaliCtrl.text.trim().isEmpty ? null : _nomorHpWaliCtrl.text.trim(),
-        targetHafalan: _targetJuz,
-        photoPath: _photoPath,
-        status: _status,
-        initialMemorizedJuz: _initialJuz,
-      );
-    } else {
-      provider.addSantri(
-        _namaCtrl.text.trim(),
-        nis: _nisCtrl.text.trim().isEmpty ? null : _nisCtrl.text.trim(),
-        email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
-        jenisKelamin: _jenisKelamin,
-        halaqahId: _halaqahId,
-        kelas: _kelasCtrl.text.trim().isEmpty ? null : _kelasCtrl.text.trim(),
-        namaOrangTua: _namaOrangTuaCtrl.text.trim().isEmpty ? null : _namaOrangTuaCtrl.text.trim(),
-        nomorHpWali: _nomorHpWaliCtrl.text.trim().isEmpty ? null : _nomorHpWaliCtrl.text.trim(),
-        targetHafalan: _targetJuz,
-        photoPath: _photoPath,
-        initialMemorizedJuz: _initialJuz,
-        username: _usernameCtrl.text.trim().isEmpty ? null : _usernameCtrl.text.trim(),
-        password: _passwordCtrl.text.trim().isEmpty ? null : _passwordCtrl.text.trim(),
-      );
+    
+    try {
+      if (_isEdit) {
+        await provider.updateSantriInfo(
+          widget.existing!.id,
+          name: _namaCtrl.text.trim(),
+          nis: _nisCtrl.text.trim().isEmpty ? null : _nisCtrl.text.trim(),
+          email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
+          jenisKelamin: _jenisKelamin,
+          halaqahId: _halaqahId,
+          kelas: _kelasCtrl.text.trim().isEmpty ? null : _kelasCtrl.text.trim(),
+          namaOrangTua: _namaOrangTuaCtrl.text.trim().isEmpty ? null : _namaOrangTuaCtrl.text.trim(),
+          nomorHpWali: _nomorHpWaliCtrl.text.trim().isEmpty ? null : _nomorHpWaliCtrl.text.trim(),
+          targetHafalan: _targetJuz,
+          photoPath: _photoPath,
+          status: _status,
+          initialMemorizedJuz: _initialJuz,
+        );
+      } else {
+        await provider.addSantri(
+          _namaCtrl.text.trim(),
+          nis: _nisCtrl.text.trim().isEmpty ? null : _nisCtrl.text.trim(),
+          email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
+          jenisKelamin: _jenisKelamin,
+          halaqahId: _halaqahId,
+          kelas: _kelasCtrl.text.trim().isEmpty ? null : _kelasCtrl.text.trim(),
+          namaOrangTua: _namaOrangTuaCtrl.text.trim().isEmpty ? null : _namaOrangTuaCtrl.text.trim(),
+          nomorHpWali: _nomorHpWaliCtrl.text.trim().isEmpty ? null : _nomorHpWaliCtrl.text.trim(),
+          targetHafalan: _targetJuz,
+          photoPath: _photoPath,
+          initialMemorizedJuz: _initialJuz,
+          username: _usernameCtrl.text.trim().isEmpty ? null : _usernameCtrl.text.trim(),
+          password: _passwordCtrl.text.trim().isEmpty ? null : _passwordCtrl.text.trim(),
+        );
+      }
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal menyimpan: $e')));
+      }
     }
-    Navigator.pop(context);
   }
 
   @override
@@ -589,9 +600,9 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
               width: double.infinity,
               height: 52,
               child: FilledButton.icon(
-                onPressed: _save,
-                icon: Icon(_isEdit ? Icons.save_rounded : Icons.person_add_rounded),
-                label: Text(_isEdit ? 'Simpan Perubahan' : 'Tambah Santri'),
+                onPressed: _isSaving ? null : _save,
+                icon: _isSaving ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : Icon(_isEdit ? Icons.save_rounded : Icons.person_add_rounded),
+                label: Text(_isSaving ? 'Menyimpan...' : (_isEdit ? 'Simpan Perubahan' : 'Tambah Santri')),
               ),
             ),
             const SizedBox(height: 40),

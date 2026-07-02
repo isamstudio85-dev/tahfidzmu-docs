@@ -51,8 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final event = activeEvents.first;
     final candidatesCount = provider.santriList.where((s) => s.tasmiHistory.any((t) => t.year == event.year && t.isPass)).length;
 
+    // The popup appears for all users (Admin, Musyrif, and Parents)
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         contentPadding: EdgeInsets.zero,

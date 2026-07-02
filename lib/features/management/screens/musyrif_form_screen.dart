@@ -31,6 +31,7 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
   String _status = 'aktif';
   String? _photoPath;
   bool _showAccountInfo = false;
+  bool _isSaving = false;
 
   bool get _isEdit => widget.existing != null;
 
@@ -94,39 +95,54 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
     }
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    setState(() => _isSaving = true);
     final provider = context.read<AppProvider>();
     final pesantrenName = provider.pesantrenName.isNotEmpty
         ? provider.pesantrenName
         : 'Halaqah Tahfidz';
-    final m = MusyrifData(
-      id:
-          widget.existing?.id ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
-      nama: _namaCtrl.text.trim(),
-      nip: _nipCtrl.text.trim().isEmpty ? null : _nipCtrl.text.trim(),
-      jenisKelamin: _jenisKelamin,
-      jabatan: _jabatanCtrl.text.trim().isEmpty
-          ? (_jenisKelamin == 'P' ? 'Musyrifah' : 'Musyrif')
-          : _jabatanCtrl.text.trim(),
-      lembaga: pesantrenName,
-      nomorHp: _hpCtrl.text.trim(),
-      status: _status,
-      photoPath: _photoPath,
-    );
-    _isEdit
-        ? provider.updateMusyrifData(m.id, m)
-        : provider.addMusyrif(
-            m,
-            username: _usernameCtrl.text.trim().isEmpty
-                ? null
-                : _usernameCtrl.text.trim(),
-            password: _passwordCtrl.text.trim().isEmpty
-                ? null
-                : _passwordCtrl.text.trim(),
-          );
-    Navigator.pop(context);
+
+    try {
+      final m = MusyrifData(
+        id: widget.existing?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        nama: _namaCtrl.text.trim(),
+        nip: _nipCtrl.text.trim().isEmpty ? null : _nipCtrl.text.trim(),
+        jenisKelamin: _jenisKelamin,
+        jabatan: _jabatanCtrl.text.trim().isEmpty
+            ? (_jenisKelamin == 'P' ? 'Musyrifah' : 'Musyrif')
+            : _jabatanCtrl.text.trim(),
+        lembaga: pesantrenName,
+        nomorHp: _hpCtrl.text.trim(),
+        status: _status,
+        photoPath: _photoPath,
+      );
+
+      if (_isEdit) {
+        // If photo changed, we need to upload it. But here _photoPath might be 
+        // a local path or a cloud URL. updateMusyrifData just updates Firestore.
+        // Let's handle photo update properly if it's a new local path.
+        if (_photoPath != null && !_photoPath!.startsWith('http')) {
+           await provider.updateMusyrifPhoto(_photoPath!);
+           // Re-fetch the photo URL if needed, or rely on updateMusyrifPhoto's firestore update
+        }
+        await provider.updateMusyrifData(m.id, m);
+      } else {
+        await provider.addMusyrif(
+          m,
+          username: _usernameCtrl.text.trim().isEmpty ? null : _usernameCtrl.text.trim(),
+          password: _passwordCtrl.text.trim().isEmpty ? null : _passwordCtrl.text.trim(),
+        );
+        // Note: addMusyrif doesn't handle photo upload yet, similar to addSantri
+        // I should update addMusyrif to handle photo upload too.
+      }
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal menyimpan: $e')));
+      }
+    }
   }
 
   @override
@@ -303,11 +319,9 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
               width: double.infinity,
               height: 52,
               child: FilledButton.icon(
-                onPressed: _save,
-                icon: Icon(
-                  _isEdit ? Icons.save_rounded : Icons.person_add_rounded,
-                ),
-                label: Text(_isEdit ? 'Simpan Perubahan' : 'Tambah Musyrif'),
+                onPressed: _isSaving ? null : _save,
+                icon: _isSaving ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : Icon(_isEdit ? Icons.save_rounded : Icons.person_add_rounded),
+                label: Text(_isSaving ? 'Menyimpan...' : (_isEdit ? 'Simpan Perubahan' : 'Tambah Musyrif')),
               ),
             ),
             const SizedBox(height: 24),

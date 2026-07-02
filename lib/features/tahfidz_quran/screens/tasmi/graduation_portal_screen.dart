@@ -483,6 +483,7 @@ class _ResultTile extends StatelessWidget {
     final provider = context.read<AppProvider>();
     final bool isAdmin = provider.isAdmin;
     final bool isMyResult = provider.isOrangTua && provider.linkedSantriId == santri.id;
+    // Only admin and the student themselves can view the Shahadah (if released)
     final bool canViewShahadah = (isAdmin || isMyResult) && event.isCertificatesReleased;
     final bool canEditResult = isAdmin || (provider.isMusyrif && result.status == 'tinjau_ulang');
 

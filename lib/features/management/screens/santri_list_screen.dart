@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'package:tahfidz_app/database/db_helper.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
@@ -275,7 +274,7 @@ class _SantriCard extends StatelessWidget {
   }
 
   void _showResetPasswordDialog(BuildContext context, AppProvider provider, Santri santri) {
-    final passwordCtrl = TextEditingController(text: DbHelper.onlyDigits(santri.nis));
+    final passwordCtrl = TextEditingController(text: santri.nis?.replaceAll(RegExp(r'\D+'), '') ?? '');
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(

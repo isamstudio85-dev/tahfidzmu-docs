@@ -80,16 +80,11 @@ class ProfilScreen extends StatelessWidget {
   }
 
   static Future<void> _showMusyrifPhotoOptions(BuildContext context, AppProvider provider) async {
-    final linked = provider.linkedMusyrif;
     final source = await _pickImageSource(context);
     if (source != null) {
       final file = await ImagePicker().pickImage(source: source, imageQuality: 80);
       if (file != null) {
-        if (linked != null) {
-          provider.updateMusyrifData(linked.id, linked.copyWith(photoPath: file.path));
-        } else {
-          provider.updateMusyrifPhoto(file.path);
-        }
+        provider.updateMusyrifPhoto(file.path);
       }
     }
   }

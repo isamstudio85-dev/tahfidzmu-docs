@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "487767454043",
-    "project_id": "tahfidzmu-f14ce",
-    "storage_bucket": "tahfidzmu-f14ce.firebasestorage.app"
+    "project_number": "523716467425",
+    "project_id": "tahfidzmu-db5d9",
+    "storage_bucket": "tahfidzmu-db5d9.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:487767454043:android:8088216655708cad986a7e",
+        "mobilesdk_app_id": "1:523716467425:android:6365418f06cc9729bff5a0",
         "android_client_info": {
           "package_name": "com.tahfidz.tahfidz_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDDH25ieZqz05W0aKMhTl2zwhyXvw1iMok"
+          "current_key": "AIzaSyB1McuS1-UNPb5eYcIcQ6Er8vMLuTb5W9k"
         }
       ],
       "services": {

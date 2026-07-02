@@ -76,8 +76,19 @@ class AppAvatar extends StatelessWidget {
       ),
     );
 
-    // Local file path (from image_picker) — highest priority
+    // Handle Image (Cloud URL or Local File)
     if (imagePath != null && imagePath!.isNotEmpty) {
+      final isUrl = imagePath!.startsWith('http');
+      
+      if (isUrl) {
+        return CachedNetworkImage(
+          imageUrl: imagePath!,
+          imageBuilder: (context, imageProvider) => CircleAvatar(radius: radius, backgroundImage: imageProvider),
+          placeholder: (context, url) => CircleAvatar(radius: radius, backgroundColor: bgColor, child: const CircularProgressIndicator(strokeWidth: 2)),
+          errorWidget: (context, url, error) => fallback,
+        );
+      }
+
       return ClipOval(
         child: SizedBox(
           width: radius * 2,
@@ -101,23 +112,12 @@ class AppAvatar extends StatelessWidget {
       );
     }
 
-    // Network avatar from DiceBear
-    return CachedNetworkImage(
-      imageUrl: avatarUrl(name, size: (radius * 2).round()),
-      imageBuilder: (context, imageProvider) =>
-          CircleAvatar(radius: radius, backgroundImage: imageProvider),
-      placeholder: (context, url) => CircleAvatar(
-        radius: radius,
-        backgroundColor: bgColor,
-        child: SizedBox(
-          width: diameter * 0.5,
-          height: diameter * 0.5,
-          child: CircularProgressIndicator(strokeWidth: 2, color: fgColor),
-        ),
-      ),
-      errorWidget: (context, url, error) => fallback,
-      width: diameter,
-      height: diameter,
+    // Default Fallback Asset (Instead of DiceBear AI)
+    return CircleAvatar(
+      radius: radius,
+      backgroundImage: const AssetImage('assets/images/avatar-default.png'),
+      backgroundColor: bgColor,
+      onBackgroundImageError: (_, __) {},
     );
   }
 }

@@ -10,7 +10,6 @@ import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'package:tahfidz_app/features/dashboard/screens/main_shell.dart';
-
 import 'package:tahfidz_app/models/tasmi_record.dart';
 
 class AssessmentScreen extends StatefulWidget {
@@ -22,10 +21,11 @@ class AssessmentScreen extends StatefulWidget {
 
 class _AssessmentScreenState extends State<AssessmentScreen> {
   int _fluency = 3;
-  String _tasmiStatus = 'lulus'; // 'lulus', 'tidak_lulus', 'tinjau_ulang'
+  String _tasmiStatus = 'lulus';
   dynamic _savedRecord;
   bool _saved = false;
   bool _showErrorDetails = false;
+  bool _isSaving = false;
 
   double _previewScore(AppProvider p) {
     return ScoringUtils.calculateScore(
@@ -38,13 +38,16 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
-        final isTasmi = provider.isTasmiSession;
-        final score = _saved ? _savedRecord.finalScore : _previewScore(provider);
+        final score = _saved ? (_savedRecord?.finalScore ?? 0.0) : _previewScore(provider);
         final stars = ScoringUtils.scoreToStars(score);
         final grade = ScoringUtils.scoreToGrade(score);
-        final tajwid = _saved ? _savedRecord.errorMarks.where((e) => e.errorType == ErrorType.tajwid).length : provider.sessionTajwidCount;
-        final makhroj = _saved ? _savedRecord.errorMarks.where((e) => e.errorType == ErrorType.makhroj).length : provider.sessionMakhrojCount;
-        final errors = _saved ? _savedRecord.errorMarks : provider.sessionErrors.values.toList();
+        
+        final List<ErrorMark> errors = _saved 
+            ? (_savedRecord?.errorMarks ?? []) 
+            : provider.sessionErrors.values.toList();
+            
+        final tajwid = errors.where((e) => e.errorType == ErrorType.tajwid).length;
+        final makhroj = errors.where((e) => e.errorType == ErrorType.makhroj).length;
 
         return PopScope(
           canPop: false,
@@ -59,15 +62,10 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
               child: Column(
                 children: [
-                  // 1. Compact Score Card (The Hero)
                   _buildUnifiedScoreCard(provider, score, stars, grade),
                   const SizedBox(height: 20),
-
-                  // 2. Error Stats Row
                   _buildCompactErrorStats(tajwid, makhroj),
                   const SizedBox(height: 20),
-
-                  // 3. Fluency Section (Only before save)
                   if (!_saved) ...[
                     _buildCompactFluencySection(),
                     const SizedBox(height: 20),
@@ -76,22 +74,20 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                       const SizedBox(height: 20),
                     ],
                   ],
-
-                  // 4. Collapsible Error Details (If any)
                   if (errors.isNotEmpty) ...[
                     _buildCollapsibleErrorDetails(errors),
                     const SizedBox(height: 24),
                   ],
-
-                  // 5. Actions
                   if (!_saved)
                     SizedBox(
                       width: double.infinity,
                       height: 54,
                       child: FilledButton.icon(
-                        icon: const Icon(Icons.save_rounded),
-                        label: const Text('SIMPAN PENILAIAN'),
-                        onPressed: () => _saveSetoran(provider),
+                        icon: _isSaving 
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          : const Icon(Icons.save_rounded),
+                        label: Text(_isSaving ? 'MENYIMPAN...' : 'SIMPAN PENILAIAN'),
+                        onPressed: _isSaving ? null : () => _saveSetoran(provider),
                       ),
                     )
                   else
@@ -123,7 +119,6 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   Widget _buildUnifiedScoreCard(AppProvider provider, double score, int stars, String grade) {
     final santri = provider.activeSetoranSantri;
     final isTasmi = provider.isTasmiSession;
-    
     String subTitle = isTasmi 
       ? 'Ujian Tasmi Juz ${provider.activeTasmiJuz.join(", ")}'
       : '${provider.activeSetoranSurahEnglishName} • Ayat ${provider.activeSetoranAyahStart}-${provider.activeSetoranAyahEnd}';
@@ -133,21 +128,18 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: isTasmi 
-            ? [const Color(0xFF4527A0), const Color(0xFF7B1FA2)] // Purple gradient for Tasmi
-            : [AppTheme.darkGreen, AppTheme.primaryGreen],
+          colors: isTasmi ? [const Color(0xFF4527A0), const Color(0xFF7B1FA2)] : [AppTheme.darkGreen, AppTheme.primaryGreen],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: (isTasmi ? Colors.purple : AppTheme.primaryGreen).withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 5))],
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AppAvatar(name: santri?.name ?? '?', radius: 24, backgroundColor: Colors.white24, foregroundColor: Colors.white),
+              AppAvatar(name: santri?.name ?? '?', radius: 24, backgroundColor: Colors.white24, foregroundColor: Colors.white, imagePath: santri?.photoPath),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -192,17 +184,8 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withValues(alpha: 0.1)),
-        ),
-        child: Column(
-          children: [
-            Text('$count', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-            Text(label, style: TextStyle(fontSize: 10, color: Colors.grey.shade500, fontWeight: FontWeight.w600)),
-          ],
-        ),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: color.withValues(alpha: 0.1))),
+        child: Column(children: [Text('$count', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)), Text(label, style: TextStyle(fontSize: 10, color: Colors.grey.shade500, fontWeight: FontWeight.w600))]),
       ),
     );
   }
@@ -228,11 +211,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.purple.withValues(alpha: 0.1)),
-      ),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(24), border: Border.all(color: Colors.purple.withValues(alpha: 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -271,7 +250,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     );
   }
 
-  Widget _buildCollapsibleErrorDetails(List errors) {
+  Widget _buildCollapsibleErrorDetails(List<ErrorMark> errors) {
     return Column(
       children: [
         InkWell(
@@ -326,64 +305,29 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     }
   }
 
-  void _saveSetoran(AppProvider provider) {
-    if (provider.isTasmiSession) {
-      final record = provider.completeTasmi(
-        juzNumbers: provider.activeTasmiJuz,
-        fluencyRating: _fluency,
-        year: provider.activeTasmiYear,
-        status: _tasmiStatus,
-      );
-      if (record == null) return;
-      setState(() {
-        _savedRecord = record;
-        _saved = true;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.school_rounded, color: Colors.white),
-              const SizedBox(width: 12),
-              Flexible(
-                child: Text(
-                  'Hasil: ${_tasmiStatus.toUpperCase()} Berhasil Disimpan!',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                  overflow: TextOverflow.visible,
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: _tasmiStatus == 'lulus' ? Colors.green : (_tasmiStatus == 'tinjau_ulang' ? Colors.orange : Colors.red),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } else {
-      final record = provider.completeSetoran(_fluency);
-      if (record == null) return;
-      setState(() {
-        _savedRecord = record;
-        _saved = true;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle_outline, color: Colors.white),
-              SizedBox(width: 12),
-              Flexible(
-                child: Text(
-                  'Hafalan Berhasil Disimpan!',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: Color(0xFF1565C0),
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 3),
-        ),
-      );
+  Future<void> _saveSetoran(AppProvider provider) async {
+    setState(() => _isSaving = true);
+    try {
+      if (provider.isTasmiSession) {
+        final record = await provider.completeTasmi(
+          juzNumbers: provider.activeTasmiJuz,
+          fluencyRating: _fluency,
+          year: provider.activeTasmiYear,
+          status: _tasmiStatus,
+        );
+        if (record != null) {
+          setState(() { _savedRecord = record; _saved = true; });
+        }
+      } else {
+        final record = await provider.completeSetoran(_fluency);
+        if (record != null) {
+          setState(() { _savedRecord = record; _saved = true; });
+        }
+      }
+    } catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 }

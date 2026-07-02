@@ -1,5 +1,10 @@
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icons/tahfidzmu.jpg"
+  image_path: "assets/icons/Icon-TahfidzMU.png"
+  
+  # Adaptive icons with the new focused icon
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icons/Icon-TahfidzMU.png"
+
   remove_alpha_ios: true
