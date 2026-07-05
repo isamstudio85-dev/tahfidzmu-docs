@@ -233,7 +233,11 @@ void _showChangePasswordDialog(BuildContext context) {
       FilledButton(onPressed: () async {
         if (newCtrl.text != confirmCtrl.text) { setSt(() => error = 'Konfirmasi tidak cocok'); return; }
         final ok = await context.read<AppProvider>().changeOwnPassword(oldCtrl.text, newCtrl.text);
-        if (ok) { Navigator.pop(ctx); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password berhasil diubah'))); }
+        if (!ctx.mounted) return;
+        if (ok) {
+          Navigator.pop(ctx);
+          ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Password berhasil diubah')));
+        }
         else { setSt(() => error = 'Password lama salah'); }
       }, child: const Text('Simpan')),
     ],

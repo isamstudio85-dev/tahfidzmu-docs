@@ -16,13 +16,11 @@ class SetoranFormScreen extends StatefulWidget {
     this.santri,
     this.initialSurah,
     this.initialAyahStart,
-    this.initialAyahEnd,
     this.initialType,
   });
   final Santri? santri;
   final SurahInfo? initialSurah;
   final int? initialAyahStart;
-  final int? initialAyahEnd;
   final SetoranType? initialType;
 
   @override
@@ -34,10 +32,6 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
   SetoranType _type = SetoranType.ziyadah;
   SurahInfo? _selectedSurah;
   int _ayahStart = 1;
-  int _ayahEnd = 7;
-
-  final _ayahStartCtrl = TextEditingController(text: '1');
-  final _ayahEndCtrl = TextEditingController(text: '7');
 
   @override
   void initState() {
@@ -47,9 +41,6 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
       _selectedSurah = widget.initialSurah;
       _type = widget.initialType ?? SetoranType.ziyadah;
       _ayahStart = widget.initialAyahStart ?? 1;
-      _ayahEnd = widget.initialAyahEnd ?? widget.initialSurah!.numberOfAyahs.clamp(1, 10);
-      _ayahStartCtrl.text = _ayahStart.toString();
-      _ayahEndCtrl.text = _ayahEnd.toString();
     } else if (widget.santri != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -57,13 +48,6 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
         _applyContinuation(provider, widget.santri!);
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _ayahStartCtrl.dispose();
-    _ayahEndCtrl.dispose();
-    super.dispose();
   }
 
   void _showSantriPicker() {
@@ -93,7 +77,6 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
                 itemBuilder: (ctx, i) => ListTile(
                   leading: CircleAvatar(backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1), child: Text(list[i].name[0], style: const TextStyle(color: AppTheme.primaryGreen))),
                   title: Text(list[i].name),
-                  subtitle: Text(provider.getHalaqahById(list[i].halaqahId)?.nama ?? 'Tanpa Halaqah'),
                   onTap: () {
                     setState(() => _selectedSantri = list[i]);
                     _applyContinuation(provider, list[i]);
@@ -127,9 +110,6 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
       _selectedSurah = s.surah;
       _type = s.type;
       _ayahStart = s.ayahStart;
-      _ayahEnd = s.ayahEnd;
-      _ayahStartCtrl.text = s.ayahStart.toString();
-      _ayahEndCtrl.text = s.ayahEnd.toString();
     });
   }
 
@@ -138,140 +118,127 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
     final provider = context.watch<AppProvider>();
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF1F8E9),
       appBar: AppBar(title: const Text('Mulai Setoran Baru')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sectionTitle('1. Pilih Santri'),
-            const SizedBox(height: 8),
-            InkWell(
-              onTap: _showSantriPicker,
-              child: IgnorePointer(
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.person_outline),
-                    suffixIcon: const Icon(Icons.keyboard_arrow_down_rounded),
-                    hintText: _selectedSantri?.name ?? '-- Pilih Santri --',
-                    floatingLabelBehavior: _selectedSantri != null ? FloatingLabelBehavior.always : null,
-                  ),
-                  controller: TextEditingController(text: _selectedSantri?.name),
-                ),
-              ),
-            ),
+            const SizedBox(height: 10),
+            _buildSantriSelector(),
 
-            if (_selectedSantri != null && _selectedSurah != null && _selectedSantri!.setoranHistory.isNotEmpty)
-              _buildContinuationHint(),
-
-            const SizedBox(height: 24),
-            _sectionTitle('2. Jenis Setoran'),
+            const SizedBox(height: 32),
+            _sectionTitle('2. Atur Sesi Simak'),
             const SizedBox(height: 12),
             _buildTypePicker(),
-
-            const SizedBox(height: 24),
-            _sectionTitle('3. Pilih Surah'),
             const SizedBox(height: 12),
-            _buildSurahPicker(provider),
-
-            const SizedBox(height: 24),
-            _sectionTitle('4. Rentang Ayat'),
+            _buildSurahSelector(provider),
             const SizedBox(height: 12),
-            _buildAyahRange(),
+            _buildAyahStartInfo(),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 60),
             SizedBox(
               width: double.infinity,
-              height: 56,
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.mic_rounded, size: 22),
-                label: const Text('Mulai Setoran Sekarang'),
+              height: 64,
+              child: FilledButton.icon(
+                icon: const Icon(Icons.play_arrow_rounded, size: 28),
+                label: const Text('MULAI SIMAK SEKARANG', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, letterSpacing: 1.0)),
                 onPressed: _canStart() ? _startSetoran : null,
               ),
             ),
+            const SizedBox(height: 16),
+            const Center(child: Text('Musyrif hanya perlu menandai ayat yang lulus/gagal.', style: TextStyle(color: Colors.grey, fontSize: 11, fontStyle: FontStyle.italic))),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildContinuationHint() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
+  Widget _buildSantriSelector() {
+    return InkWell(
+      onTap: _showSantriPicker,
       child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(12), border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.2))),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade200), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 4))]),
         child: Row(
           children: [
-            const Icon(Icons.auto_awesome_rounded, size: 18, color: AppTheme.primaryGreen),
-            const SizedBox(width: 10),
-            Expanded(child: Text('Lanjutan: ${_selectedSurah!.englishName} Ayat $_ayahStart–$_ayahEnd', style: const TextStyle(fontSize: 12, color: AppTheme.primaryGreen, fontWeight: FontWeight.w600))),
-            IconButton(icon: const Icon(Icons.close, size: 16), onPressed: () => setState(() => _selectedSurah = null), color: AppTheme.primaryGreen, visualDensity: VisualDensity.compact),
+            Icon(Icons.person_outline_rounded, color: _selectedSantri != null ? AppTheme.primaryGreen : Colors.grey),
+            const SizedBox(width: 16),
+            Expanded(child: Text(_selectedSantri?.name ?? 'Pilih Santri...', style: TextStyle(fontSize: 16, fontWeight: _selectedSantri != null ? FontWeight.bold : FontWeight.normal, color: _selectedSantri != null ? Colors.black87 : Colors.grey))),
+            const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey),
           ],
         ),
       ),
     );
   }
-
-  Widget _sectionTitle(String title) => Text(title, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87));
 
   Widget _buildTypePicker() {
     return Row(
-      children: SetoranType.values.map((t) => Expanded(
-        child: Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: _TypeChip(
-            label: t.label,
-            icon: t == SetoranType.ziyadah ? Icons.trending_up_rounded : Icons.history_rounded,
-            selected: _type == t,
+      children: SetoranType.values.map((t) {
+        final isSelected = _type == t;
+        return Expanded(
+          child: GestureDetector(
             onTap: () => setState(() => _type = t),
+            child: Container(
+              margin: EdgeInsets.only(right: t == SetoranType.ziyadah ? 10 : 0),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(color: isSelected ? AppTheme.primaryGreen : Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade200)),
+              child: Center(child: Text(t.label, style: TextStyle(color: isSelected ? Colors.white : Colors.black87, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))),
+            ),
           ),
-        ),
-      )).toList(),
+        );
+      }).toList(),
     );
   }
 
-  Widget _buildSurahPicker(AppProvider provider) {
+  Widget _buildSurahSelector(AppProvider provider) {
     return InkWell(
       onTap: () => _openSurahSearch(provider),
       child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFEEEEEE))),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade200)),
         child: Row(
           children: [
             const Icon(Icons.menu_book_rounded, color: AppTheme.primaryGreen, size: 22),
             const SizedBox(width: 16),
             Expanded(
               child: _selectedSurah == null
-                  ? Text('Pilih surah...', style: TextStyle(color: Colors.grey.shade400))
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('${_selectedSurah!.number}. ${_selectedSurah!.englishName}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                        Text(_selectedSurah!.name, style: GoogleFonts.amiri(fontSize: 18, color: AppTheme.primaryGreen), textDirection: TextDirection.rtl),
-                      ],
-                    ),
+                  ? const Text('Pilih Surah...', style: TextStyle(color: Colors.grey))
+                  : Text('${_selectedSurah!.number}. ${_selectedSurah!.englishName}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             ),
-            if (provider.isSurahListLoading) const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-            else const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey),
+            if (_selectedSurah != null) Text(_selectedSurah!.name, style: GoogleFonts.amiri(fontSize: 18, color: AppTheme.primaryGreen), textDirection: TextDirection.rtl),
+            const SizedBox(width: 12),
+            const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.grey),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAyahRange() {
-    final max = _selectedSurah?.numberOfAyahs ?? 999;
-    return Row(
-      children: [
-        Expanded(child: TextFormField(controller: _ayahStartCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Dari Ayat', suffixText: 'max $max'),
-            onChanged: (v) => setState(() => _ayahStart = (int.tryParse(v) ?? 1).clamp(1, max)))),
-        const SizedBox(width: 16),
-        Expanded(child: TextFormField(controller: _ayahEndCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Sampai Ayat', suffixText: 'max $max'),
-            onChanged: (v) => setState(() => _ayahEnd = (int.tryParse(v) ?? 1).clamp(1, max)))),
-      ],
+  Widget _buildAyahStartInfo() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(16), border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.1))),
+      child: Row(
+        children: [
+          const Icon(Icons.history_edu_rounded, color: AppTheme.primaryGreen, size: 20),
+          const SizedBox(width: 16),
+          const Text('Ayat Mulai:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          const Spacer(),
+          _circleBtn(Icons.remove, () => setState(() => _ayahStart = (_ayahStart - 1).clamp(1, 999))),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text('$_ayahStart', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AppTheme.primaryGreen)),
+          ),
+          _circleBtn(Icons.add, () => setState(() => _ayahStart = (_ayahStart + 1).clamp(1, _selectedSurah?.numberOfAyahs ?? 999))),
+        ],
+      ),
     );
   }
+
+  Widget _circleBtn(IconData icon, VoidCallback onTap) => InkWell(onTap: onTap, child: Container(padding: const EdgeInsets.all(6), decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.2))), child: Icon(icon, size: 18, color: AppTheme.primaryGreen)));
 
   Future<void> _openSurahSearch(AppProvider provider) async {
     if (provider.isSurahListLoading) return;
@@ -283,35 +250,25 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
     );
     if (result != null) {
       setState(() {
-        _selectedSurah = result; _ayahStart = 1; _ayahEnd = result.numberOfAyahs.clamp(1, 10);
-        _ayahStartCtrl.text = '1'; _ayahEndCtrl.text = _ayahEnd.toString();
+        _selectedSurah = result; _ayahStart = 1;
       });
     }
   }
 
-  bool _canStart() => _selectedSantri != null && _selectedSurah != null && _ayahStart >= 1 && _ayahEnd >= _ayahStart;
+  bool _canStart() => _selectedSantri != null && _selectedSurah != null;
 
   void _startSetoran() {
-    context.read<AppProvider>().startSetoranSession(santri: _selectedSantri!, type: _type, surah: _selectedSurah!, ayahStart: _ayahStart, ayahEnd: _ayahEnd);
+    context.read<AppProvider>().startSetoranSession(
+      santri: _selectedSantri!, 
+      type: _type, 
+      surah: _selectedSurah!, 
+      ayahStart: _ayahStart, 
+      ayahEnd: _ayahStart + 10 // Dummy initial end, will be adjusted on save
+    );
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const QuranReaderScreen()));
   }
-}
 
-class _TypeChip extends StatelessWidget {
-  const _TypeChip({required this.label, required this.icon, required this.selected, required this.onTap});
-  final String label; final IconData icon; final bool selected; final VoidCallback onTap;
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(color: selected ? AppTheme.primaryGreen : Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: selected ? AppTheme.primaryGreen : Colors.grey.shade200, width: 1.5)),
-        child: Column(children: [Icon(icon, color: selected ? Colors.white : Colors.grey, size: 20), const SizedBox(height: 4), Text(label, style: TextStyle(color: selected ? Colors.white : Colors.grey.shade700, fontSize: 12, fontWeight: selected ? FontWeight.bold : FontWeight.normal))]),
-      ),
-    );
-  }
+  Widget _sectionTitle(String title) => Text(title, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey.shade800, letterSpacing: 0.5));
 }
 
 class _SurahSearchSheet extends StatefulWidget {

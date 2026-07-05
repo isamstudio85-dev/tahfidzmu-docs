@@ -273,8 +273,11 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
                     return InkWell(
                       onTap: () {
                         setState(() {
-                          if (isSelected) _initialJuz.remove(juz);
-                          else _initialJuz.add(juz);
+                          if (isSelected) {
+                            _initialJuz.remove(juz);
+                          } else {
+                            _initialJuz.add(juz);
+                          }
                           _initialJuz.sort();
                         });
                         setSt(() {}); // Update local bottomsheet state

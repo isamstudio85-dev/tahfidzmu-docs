@@ -61,7 +61,6 @@ class AppAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bgColor = backgroundColor ?? AppTheme.lightGreen;
     final fgColor = foregroundColor ?? AppTheme.darkGreen;
-    final diameter = radius * 2;
 
     Widget fallback = CircleAvatar(
       radius: radius,

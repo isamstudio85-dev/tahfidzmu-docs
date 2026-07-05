@@ -24,6 +24,8 @@ class SetoranRecord {
   final String surahEnglishName;
   final int ayahStart;
   final int ayahEnd;
+  final List<int> passedAyahs;
+  final List<int> failedAyahs;
   final List<ErrorMark> errorMarks;
   final int fluencyRating; // 1–5
   final DateTime date;
@@ -38,6 +40,8 @@ class SetoranRecord {
     required this.surahEnglishName,
     required this.ayahStart,
     required this.ayahEnd,
+    this.passedAyahs = const [],
+    this.failedAyahs = const [],
     required this.errorMarks,
     required this.fluencyRating,
     required this.date,
@@ -87,6 +91,8 @@ class SetoranRecord {
     'surahEnglishName': surahEnglishName,
     'ayahStart': ayahStart,
     'ayahEnd': ayahEnd,
+    'passedAyahs': passedAyahs,
+    'failedAyahs': failedAyahs,
     'errorMarks': errorMarks.map((e) => e.toJson()).toList(),
     'fluencyRating': fluencyRating,
     'date': date.toIso8601String(),
@@ -102,6 +108,8 @@ class SetoranRecord {
     surahEnglishName: json['surahEnglishName'] as String,
     ayahStart: json['ayahStart'] as int,
     ayahEnd: json['ayahEnd'] as int,
+    passedAyahs: List<int>.from(json['passedAyahs'] ?? []),
+    failedAyahs: List<int>.from(json['failedAyahs'] ?? []),
     errorMarks: (json['errorMarks'] as List)
         .map((e) => ErrorMark.fromJson(e as Map<String, dynamic>))
         .toList(),

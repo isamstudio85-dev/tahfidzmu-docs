@@ -83,11 +83,17 @@ class SantriDetailScreen extends StatelessWidget {
                 // 2. Unified Stats Row
                 Row(
                   children: [
-                    _statItem('Setoran', '${santri.totalSetoranCount}', Icons.list_alt_rounded, AppTheme.primaryGreen),
-                    const SizedBox(width: 12),
                     _statItem('Rata-rata', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
                     const SizedBox(width: 12),
                     _statItem('Hafalan', '${santri.estimatedJuz.toStringAsFixed(1)} Juz', Icons.menu_book_rounded, Colors.purple),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    _statItem('Ayat Lulus', '${santri.totalZiyadahAyahs + santri.totalMurojaahAyahs}', Icons.check_circle_outline_rounded, Colors.green),
+                    const SizedBox(width: 12),
+                    _statItem('Ayat Gagal', '${santri.totalFailedAyahs}', Icons.cancel_outlined, Colors.red),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -306,7 +312,19 @@ class _SetoranHistoryTile extends StatelessWidget {
           MaterialPageRoute(builder: (_) => SetoranDetailScreen(record: record, santri: santri)),
         ),
         title: Text('${record.surahEnglishName} (${record.surahName})', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-        subtitle: Text('Ayat ${record.ayahStart}-${record.ayahEnd} • ${record.type.label}', style: const TextStyle(fontSize: 12)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Ayat ${record.ayahStart}-${record.ayahEnd} • ${record.type.label}', style: const TextStyle(fontSize: 11)),
+            Row(
+              children: [
+                Text('Lulus: ${record.passedAyahs.length}', style: const TextStyle(fontSize: 10, color: Colors.green, fontWeight: FontWeight.bold)),
+                const SizedBox(width: 8),
+                Text('Gagal: ${record.failedAyahs.length}', style: const TextStyle(fontSize: 10, color: Colors.red, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ],
+        ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,

@@ -3,14 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tahfidz_app/models/error_mark.dart';
-import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'package:tahfidz_app/features/dashboard/screens/main_shell.dart';
-import 'package:tahfidz_app/models/tasmi_record.dart';
 
 class AssessmentScreen extends StatefulWidget {
   const AssessmentScreen({super.key});

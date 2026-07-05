@@ -52,6 +52,16 @@ class LaporanScreenBody extends StatelessWidget {
           _buildDistributionCards(ziyadah, murojaah),
           const SizedBox(height: 24),
 
+          _buildSectionHeader('STATISTIK AYAT'),
+          const SizedBox(height: 12),
+          _buildAyahStatCards(setorans),
+          const SizedBox(height: 24),
+
+          _buildSectionHeader('PENCAPAIAN TARGET'),
+          const SizedBox(height: 12),
+          _buildTargetAchievementCard(),
+          const SizedBox(height: 24),
+
           // 3. Error Heatmap (Bubble style - Diversity in Shapes)
           _buildSectionHeader('ANALISIS KESALAHAN'),
           const SizedBox(height: 12),
@@ -153,6 +163,71 @@ class LaporanScreenBody extends StatelessWidget {
             Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 11, fontWeight: FontWeight.w600)),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildAyahStatCards(List<SetoranRecord> records) {
+    final passed = records.fold(0, (sum, r) => sum + r.passedAyahs.length);
+    final failed = records.fold(0, (sum, r) => sum + r.failedAyahs.length);
+    
+    return Row(
+      children: [
+        _distCard('Total Ayat Lulus', passed, Icons.done_all_rounded, Colors.green),
+        const SizedBox(width: 12),
+        _distCard('Total Ayat Gagal', failed, Icons.error_outline_rounded, Colors.red),
+      ],
+    );
+  }
+
+  Widget _buildTargetAchievementCard() {
+    final isSingleSantri = provider.isOrangTua && provider.linkedSantriId != null;
+    if (!isSingleSantri) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+        child: const Text('Statistik target individual tersedia di akun Santri/Orang Tua.', style: TextStyle(fontSize: 12, color: Colors.grey)),
+      );
+    }
+
+    final santri = provider.getSantriById(provider.linkedSantriId!);
+    if (santri == null) return const SizedBox.shrink();
+
+    // Simplify: Default yearly target 1 Juz (604 Ayahs)
+    const targetAyahs = 604;
+    final currentAyahs = santri.totalZiyadahAyahs;
+    final progress = (currentAyahs / targetAyahs).clamp(0.0, 1.0);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Target Tahunan (1 Juz)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              Text('${(progress * 100).toStringAsFixed(1)}%', style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.blue)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              backgroundColor: Colors.blue.withValues(alpha: 0.05),
+              color: Colors.blue,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text('$currentAyahs dari $targetAyahs Ayat berhasil dihafal tahun ini.', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+        ],
       ),
     );
   }

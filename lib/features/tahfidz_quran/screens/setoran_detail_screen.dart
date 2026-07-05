@@ -84,6 +84,11 @@ class SetoranDetailScreen extends StatelessWidget {
                   '${record.ayahRange} • ${record.juzLabel} • ${record.type.label}',
             ),
             const SizedBox(height: 20),
+            _sectionTitle('Hasil Simak Ayat'),
+            const SizedBox(height: 10),
+            _AyahStatusCard(passed: record.passedAyahs, failed: record.failedAyahs),
+            const SizedBox(height: 20),
+
             _sectionTitle('Analisis Penilaian'),
             const SizedBox(height: 10),
             _AssessmentTile(record: record),
@@ -304,6 +309,55 @@ class _EmptyState extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
       child: Text(message, style: TextStyle(color: Colors.grey.shade600, fontSize: 12), textAlign: TextAlign.center),
+    );
+  }
+}
+
+class _AyahStatusCard extends StatelessWidget {
+  const _AyahStatusCard({required this.passed, required this.failed});
+  final List<int> passed;
+  final List<int> failed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _row('Ayat Lulus', passed.length.toString(), Colors.green, passed),
+            if (failed.isNotEmpty) ...[
+              const Divider(height: 24),
+              _row('Ayat Gagal', failed.length.toString(), Colors.red, failed),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _row(String label, String count, Color color, List<int> list) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+          child: Icon(label.contains('Lulus') ? Icons.check_circle_rounded : Icons.cancel_rounded, color: color, size: 20),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Text(list.isEmpty ? 'Tidak ada' : 'Ayat: ${list.join(", ")}', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+            ],
+          ),
+        ),
+        Text(count, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+      ],
     );
   }
 }

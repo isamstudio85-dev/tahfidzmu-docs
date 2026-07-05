@@ -50,11 +50,11 @@ class DemoDataService {
       ),
       GraduationRegistration(
         id: 'reg2', eventId: 'e1', santriId: 's2', registrationDate: DateTime.now().subtract(const Duration(days: 15)),
-        status: RegistrationStatus.diterima, registrationPaymentStatus: PaymentStatus.lunas, graduationPaymentStatus: PaymentStatus.belum_bayar, registeredBy: 'parent'
+        status: RegistrationStatus.diterima, registrationPaymentStatus: PaymentStatus.lunas, graduationPaymentStatus: PaymentStatus.belumBayar, registeredBy: 'parent'
       ),
       GraduationRegistration(
         id: 'reg3', eventId: 'e1', santriId: 's3', registrationDate: DateTime.now().subtract(const Duration(days: 5)),
-        status: RegistrationStatus.menunggu, registrationPaymentStatus: PaymentStatus.belum_bayar, graduationPaymentStatus: PaymentStatus.belum_bayar, registeredBy: 'parent'
+        status: RegistrationStatus.menunggu, registrationPaymentStatus: PaymentStatus.belumBayar, graduationPaymentStatus: PaymentStatus.belumBayar, registeredBy: 'parent'
       ),
     ];
 

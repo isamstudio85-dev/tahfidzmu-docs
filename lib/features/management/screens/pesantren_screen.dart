@@ -68,7 +68,7 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
 
     if (source != null) {
       final file = await picker.pickImage(source: source, imageQuality: 85);
-      if (file != null) {
+      if (file != null && mounted) {
         context.read<AppProvider>().updatePesantrenInfo(
           context.read<AppProvider>().pesantrenInfo.copyWith(logoPath: file.path),
         );

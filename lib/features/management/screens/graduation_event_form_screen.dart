@@ -204,7 +204,7 @@ class _GraduationEventFormScreenState extends State<GraduationEventFormScreen> {
           ),
           Switch(
             value: _isPublished,
-            activeColor: AppTheme.primaryGreen,
+            activeThumbColor: AppTheme.primaryGreen,
             onChanged: (v) => setState(() => _isPublished = v),
           ),
         ],
@@ -235,7 +235,7 @@ class _GraduationEventFormScreenState extends State<GraduationEventFormScreen> {
           ),
           Switch(
             value: _isCertificatesReleased,
-            activeColor: Colors.blue,
+            activeThumbColor: Colors.blue,
             onChanged: (v) => setState(() => _isCertificatesReleased = v),
           ),
         ],

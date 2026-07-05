@@ -142,7 +142,6 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
                       santri: santri,
                       initialSurah: continuation?.surah,
                       initialAyahStart: continuation?.ayahStart,
-                      initialAyahEnd: continuation?.ayahEnd,
                       initialType: continuation?.type ?? SetoranType.ziyadah,
                     ),
                   ),

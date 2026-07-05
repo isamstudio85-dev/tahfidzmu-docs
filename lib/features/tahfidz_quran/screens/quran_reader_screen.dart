@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'package:tahfidz_app/models/ayah_model_ext.dart';
 import 'package:tahfidz_app/models/error_mark.dart';
-import 'package:tahfidz_app/models/surah_model.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
-import 'package:tahfidz_app/core/utils/scoring_utils.dart';
-import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_reader_widgets.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/assessment_screen.dart';
 
 class QuranReaderScreen extends StatefulWidget {
@@ -37,367 +34,232 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
     super.dispose();
   }
 
-  void _nextSurah(AppProvider p) async {
-    if (p.activeSetoranSurahNumber < 114) {
-      await p.loadSurahForReader(p.activeSetoranSurahNumber + 1);
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
         return Scaffold(
           backgroundColor: const Color(0xFFFFFDE7),
-          appBar: AppBar(
-            title: Column(
-              children: [
-                Text(
-                  provider.activeSetoranSurahName.isNotEmpty
-                      ? provider.activeSetoranSurahName
-                      : 'Al-Quran',
-                  style: GoogleFonts.amiri(fontSize: 20, color: Colors.white),
-                  textDirection: TextDirection.rtl,
-                ),
-                Text(
-                  '${provider.activeSetoranSurahEnglishName}  ·  '
-                  'Ayat ${provider.activeSetoranAyahStart}–${provider.activeSetoranAyahEnd}  ·  '
-                  '${provider.activeSetoranType.label}',
-                  style: const TextStyle(fontSize: 11, color: Colors.white70),
-                ),
-              ],
-            ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                if (widget.isReadOnly) {
-                  provider.clearErrors();
-                  Navigator.pop(context);
-                } else {
-                  _confirmExit(context, provider);
-                }
-              },
-            ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Center(
-                  child: Row(
-                    children: [
-                      _errorBadge(
-                        provider.sessionTajwidCount,
-                        AppTheme.tajwidColor,
-                        Icons.music_note,
-                      ),
-                      const SizedBox(width: 6),
-                      _errorBadge(
-                        provider.sessionMakhrojCount,
-                        AppTheme.makhrojColor,
-                        Icons.record_voice_over,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+          appBar: _buildAppBar(provider),
           body: provider.isSurahLoading
               ? const Center(child: CircularProgressIndicator())
               : provider.surahLoadError != null
-              ? _buildError(provider)
-              : provider.currentSurah == null
-              ? const Center(child: CircularProgressIndicator())
-              : _buildReader(provider),
+                  ? _buildErrorState(provider)
+                  : provider.currentSurah == null
+                      ? const Center(child: CircularProgressIndicator())
+                      : Column(
+                          children: [
+                            if (!widget.isReadOnly) _buildLiveDashboard(provider),
+                            Expanded(child: _buildReaderContent(provider)),
+                          ],
+                        ),
           bottomNavigationBar: _buildBottomBar(context, provider),
         );
       },
     );
   }
 
-  Widget _buildError(AppProvider provider) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.wifi_off_rounded, size: 56, color: Colors.grey.shade400),
-            const SizedBox(height: 12),
-            Text(
-              'Gagal memuat Al-Quran',
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+  Widget _buildLiveDashboard(AppProvider provider) {
+    final passed = provider.sessionPassedAyahs.length;
+    final failed = provider.sessionFailedAyahs.length;
+    final santri = provider.activeSetoranSantri;
+    
+    // Yearly Target Progress
+    final totalMemorized = santri?.totalZiyadahAyahs ?? 0;
+    final yearlyTargetDoc = santri != null ? provider.getYearlyTarget(santri.id) : null;
+    final yearlyTarget = yearlyTargetDoc?.ayahCount ?? 604;
+    final yearlyProgress = (totalMemorized / yearlyTarget).clamp(0.0, 1.0);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 10, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        children: [
+          // 1. Santri Info & Yearly Goal
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(santri?.name ?? 'Santri', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
+                      const SizedBox(height: 2),
+                      Text('Target Tahunan: ${(yearlyProgress * 100).toStringAsFixed(0)}% Selesai', style: TextStyle(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+                _statusCircle('Lulus', passed, Colors.green),
+                const SizedBox(width: 8),
+                _statusCircle('Gagal', failed, Colors.red),
+              ],
             ),
-            const SizedBox(height: 6),
-            Text(
-              provider.surahLoadError ?? '',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+          ),
+          
+          // 2. Error Counters (More prominent)
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(10)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _errorItem('KESALAHAN TAJWID', provider.sessionTajwidCount, AppTheme.tajwidColor),
+                Container(width: 1, height: 20, color: Colors.grey.shade300),
+                _errorItem('KESALAHAN MAKHROJ', provider.sessionMakhrojCount, AppTheme.makhrojColor),
+              ],
             ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Coba Lagi'),
-              onPressed: () => provider.loadSurahForReader(
-                provider.activeSetoranSurahNumber,
-              ),
-            ),
-          ],
-        ),
+          ),
+          
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }
 
-  Widget _buildReader(AppProvider provider) {
-    final surah = provider.currentSurah!;
-    final isTasmi = provider.isTasmiSession;
-    
-    final start = isTasmi ? 1 : provider.activeSetoranAyahStart;
-    final end = isTasmi ? surah.ayahs.length : provider.activeSetoranAyahEnd;
+  Widget _statusCircle(String label, int val, Color color) {
+    return Column(
+      children: [
+        Container(
+          width: 32, height: 32,
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle, border: Border.all(color: color.withValues(alpha: 0.3))),
+          child: Center(child: Text('$val', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14))),
+        ),
+        const SizedBox(height: 2),
+        Text(label, style: TextStyle(fontSize: 8, color: color, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
 
-    final ayahs = surah.ayahs
-        .where((a) => a.numberInSurah >= start && a.numberInSurah <= end)
-        .toList();
+  Widget _errorItem(String label, int count, Color color) {
+    return Row(
+      children: [
+        Text('$count', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: color)),
+        const SizedBox(width: 8),
+        Text(label, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5)),
+      ],
+    );
+  }
+
+  AppBar _buildAppBar(AppProvider provider) {
+    return AppBar(
+      title: Column(
+        children: [
+          Text(
+            provider.activeSetoranSurahName.isNotEmpty ? provider.activeSetoranSurahName : 'Al-Quran',
+            style: GoogleFonts.amiri(fontSize: 22, color: Colors.white),
+            textDirection: TextDirection.rtl,
+          ),
+          Text(
+            '${provider.activeSetoranSurahEnglishName}  ·  ${provider.activeSetoranType.label}',
+            style: const TextStyle(fontSize: 11, color: Colors.white70, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          if (widget.isReadOnly) {
+            provider.clearErrors();
+            Navigator.pop(context);
+          } else {
+            _confirmExit(context, provider);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildErrorState(AppProvider provider) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.error_outline_rounded, size: 64, color: Colors.grey),
+          const SizedBox(height: 16),
+          const Text('Gagal memuat Al-Quran'),
+          const SizedBox(height: 16),
+          FilledButton(onPressed: () => provider.loadSurahForReader(provider.activeSetoranSurahNumber), child: const Text('Coba Lagi')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReaderContent(AppProvider provider) {
+    final surah = provider.currentSurah!;
+    final ayahs = surah.ayahs.where((a) => a.numberInSurah >= provider.activeSetoranAyahStart).toList();
 
     return ListView.builder(
       controller: _scrollController,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
-      itemCount: ayahs.length + (surah.number != 1 && surah.number != 9 && start == 1 ? 2 : 1),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+      itemCount: ayahs.length + (surah.number != 1 && surah.number != 9 && provider.activeSetoranAyahStart == 1 ? 2 : 1),
       itemBuilder: (context, index) {
-        // Bismillah Header
-        if (surah.number != 1 && surah.number != 9 && start == 1 && index == 0) {
-          return _buildBismillah();
-        }
-        
-        // Legend Header (only for non-read only)
-        int legendIndex = (surah.number != 1 && surah.number != 9 && start == 1) ? 1 : 0;
-        if (!widget.isReadOnly && index == legendIndex) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Column(
-              children: [
-                _buildLegend(),
-                const SizedBox(height: 8),
-                _buildSantriInfo(provider),
-              ],
-            ),
-          );
+        if (surah.number != 1 && surah.number != 9 && provider.activeSetoranAyahStart == 1 && index == 0) {
+          return const BismillahHeader();
         }
 
-        // Adjust index for Ayah blocks
+        int legendIndex = (surah.number != 1 && surah.number != 9 && provider.activeSetoranAyahStart == 1) ? 1 : 0;
+        if (!widget.isReadOnly && index == legendIndex) {
+          return const Padding(padding: EdgeInsets.only(bottom: 20), child: ReaderLegend());
+        }
+
         int actualAyahIndex = index - (legendIndex + 1);
-        if (surah.number != 1 && surah.number != 9 && start == 1) actualAyahIndex--;
-        
+        if (surah.number != 1 && surah.number != 9 && provider.activeSetoranAyahStart == 1) actualAyahIndex--;
+
         if (actualAyahIndex < 0 || actualAyahIndex >= ayahs.length) return const SizedBox.shrink();
 
         final ayah = ayahs[actualAyahIndex];
-        return _AyahBlock(
-          ayah: ayah,
-          surahNumber: surah.number,
-          sessionErrors: provider.sessionErrors,
-          onWordTap: widget.isReadOnly ? (idx, word) {} : (wordIndex, word) => _onWordTap(
-            context,
-            provider,
-            surah.number,
-            ayah.numberInSurah,
-            wordIndex,
-            word,
+        return RepaintBoundary(
+          child: AyahBlock(
+            key: ValueKey('${surah.number}_${ayah.numberInSurah}'),
+            ayah: ayah,
+            surahNumber: surah.number,
+            sessionErrors: provider.sessionErrors,
+            isPassed: provider.sessionPassedAyahs.contains(ayah.numberInSurah),
+            isFailed: provider.sessionFailedAyahs.contains(ayah.numberInSurah),
+            isReadOnly: widget.isReadOnly,
+            onTogglePassed: () => provider.toggleAyahPassed(ayah.numberInSurah),
+            onToggleFailed: () => provider.toggleAyahFailed(ayah.numberInSurah),
+            onWordTap: (wordIndex, word) => _onWordTap(context, provider, surah.number, ayah.numberInSurah, wordIndex, word),
           ),
         );
       },
     );
   }
 
-  Widget _buildBismillah() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryGreen.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.primaryGreen.withValues(alpha: 0.25),
-          width: 1,
-        ),
-      ),
-      child: Center(
-        child: Text(
-          'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-          style: GoogleFonts.amiri(
-            fontSize: 28,
-            color: AppTheme.darkGreen,
-            height: 2,
-          ),
-          textDirection: TextDirection.rtl,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLegend() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _legendItem(
-            AppTheme.tajwidColor,
-            '1× Tajwid',
-            Icons.touch_app_rounded,
-          ),
-          const SizedBox(width: 14),
-          _legendItem(
-            AppTheme.makhrojColor,
-            '2× Makhroj',
-            Icons.touch_app_rounded,
-          ),
-          const SizedBox(width: 14),
-          _legendItem(Colors.grey, '3× Hapus', Icons.clear_rounded),
-        ],
-      ),
-    );
-  }
-
-  Widget _legendItem(Color color, String label, IconData icon) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 14, color: color),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            color: color,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSantriInfo(AppProvider provider) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryGreen,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.person_outline, color: Colors.white, size: 18),
-          const SizedBox(width: 8),
-          Text(
-            provider.activeSetoranSantri?.name ?? '',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            provider.activeSetoranType.label,
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBottomBar(BuildContext context, AppProvider provider) {
-    if (widget.isReadOnly) {
-      return Container(
-        color: Colors.white,
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-        child: const Text(
-          'Mode Baca Saja • Menampilkan riwayat kesalahan setoran.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
-        ),
-      );
-    }
-    
-    final isTasmi = provider.isTasmiSession;
+    if (widget.isReadOnly) return const SizedBox.shrink();
+
+    final totalMarked = provider.sessionPassedAyahs.length + provider.sessionFailedAyahs.length;
 
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, -4))],
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
       child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           children: [
-            if (isTasmi) ...[
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: provider.activeSetoranSurahNumber < 114 
-                    ? () => _nextSurah(provider)
-                    : null,
-                  icon: const Icon(Icons.skip_next_rounded),
-                  label: const Text('LANJUT SURAH BERIKUTNYA', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Colors.purple.shade700,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
+            Expanded(
+              child: Text(
+                totalMarked == 0 ? 'Tandai ayat untuk menyimpan' : 'Ayat terakhir ditandai: ${[...provider.sessionPassedAyahs, ...provider.sessionFailedAyahs].reduce((a, b) => a > b ? a : b)}',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
               ),
-              const SizedBox(height: 12),
-              const Divider(height: 1),
-              const SizedBox(height: 12),
-            ],
-            Row(
-              children: [
-                // Error summary
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Total Kesalahan: '
-                      '${provider.sessionTajwidCount + provider.sessionMakhrojCount}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          'Tajwid: ${provider.sessionTajwidCount}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppTheme.tajwidColor,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Makhroj: ${provider.sessionMakhrojCount}',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppTheme.makhrojColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+            ),
+            SizedBox(
+              height: 52,
+              child: FilledButton(
+                onPressed: totalMarked > 0 ? () => _confirmFinish(context, provider) : null,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
-                const Spacer(),
-                ElevatedButton.icon(
-                  onPressed: () => _confirmFinish(context, provider),
-                  icon: const Icon(Icons.check_circle_outline_rounded),
-                  label: const Text('Selesai'),
-                ),
-              ],
+                child: const Text('SELESAI', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+              ),
             ),
           ],
         ),
@@ -405,87 +267,49 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
     );
   }
 
-  Widget _errorBadge(int count, Color color, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: Colors.white, size: 14),
-          const SizedBox(width: 4),
-          Text(
-            '$count',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _onWordTap(
-    BuildContext context,
-    AppProvider provider,
-    int surahNumber,
-    int ayahNumber,
-    int wordIndex,
-    String word,
-  ) {
+  void _onWordTap(BuildContext context, AppProvider provider, int surahNumber, int ayahNumber, int wordIndex, String word) {
     final key = ErrorMark.generateKey(surahNumber, ayahNumber, wordIndex);
     final current = provider.sessionErrors[key];
     if (current == null) {
-      provider.toggleError(
-        surahNumber: surahNumber,
-        ayahNumber: ayahNumber,
-        wordIndex: wordIndex,
-        word: word,
-        errorType: ErrorType.tajwid,
-      );
+      provider.toggleError(surahNumber: surahNumber, ayahNumber: ayahNumber, wordIndex: wordIndex, word: word, errorType: ErrorType.tajwid);
     } else if (current.errorType == ErrorType.tajwid) {
-      provider.toggleError(
-        surahNumber: surahNumber,
-        ayahNumber: ayahNumber,
-        wordIndex: wordIndex,
-        word: word,
-        errorType: ErrorType.makhroj,
-      );
+      provider.toggleError(surahNumber: surahNumber, ayahNumber: ayahNumber, wordIndex: wordIndex, word: word, errorType: ErrorType.makhroj);
     } else {
       provider.removeError(key);
     }
   }
 
   void _confirmFinish(BuildContext context, AppProvider provider) {
+    final sessionAyahsWithErrors = provider.sessionErrors.values.map((e) => e.ayahNumber).toSet();
+    final neglectedAyahs = sessionAyahsWithErrors.where((n) => !provider.sessionFailedAyahs.contains(n) && !provider.sessionPassedAyahs.contains(n)).toList();
+
+    if (neglectedAyahs.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Row(children: [const Icon(Icons.warning_amber_rounded, color: Colors.orange), const SizedBox(width: 10), const Text('Belum Selesai')]),
+          content: Text('Ayat ke-${neglectedAyahs.join(", ")} memiliki kesalahan kata tapi belum Anda beri status (Lulus/Gagal).\n\nPastikan semua ayat ditandai agar tidak terbuang.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('KEMBALI')),
+            FilledButton(onPressed: () { Navigator.pop(ctx); _proceedToAssessment(context, provider); }, child: const Text('TETAP SIMPAN')),
+          ],
+        ),
+      );
+      return;
+    }
+
+    _proceedToAssessment(context, provider);
+  }
+
+  void _proceedToAssessment(BuildContext context, AppProvider provider) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Selesai Setoran?'),
-        content: Text(
-          'Total kesalahan: ${provider.sessionTajwidCount + provider.sessionMakhrojCount}\n'
-          '(Tajwid: ${provider.sessionTajwidCount}, Makhroj: ${provider.sessionMakhrojCount})\n\n'
-          'Lanjut ke penilaian akhir?',
-        ),
+        title: const Text('Simpan Hafalan?'),
+        content: Text('Sesi ini akan berakhir pada ayat terakhir yang Anda tandai Lulus.\n\nTotal: ${provider.sessionPassedAyahs.length} ayat lancar.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Kembali'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const AssessmentScreen()),
-              );
-            },
-            child: const Text('Lanjut Penilaian'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+          FilledButton(onPressed: () { Navigator.pop(ctx); Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AssessmentScreen())); }, child: const Text('Simpan')),
         ],
       ),
     );
@@ -495,123 +319,11 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Keluar Setoran?'),
-        content: const Text('Semua tanda kesalahan akan hilang. Yakin keluar?'),
+        title: const Text('Batalkan?'),
+        content: const Text('Seluruh tanda di layar akan hilang.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Batal'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red.shade600,
-            ),
-            onPressed: () {
-              provider.clearErrors();
-              Navigator.pop(ctx);
-              Navigator.pop(context);
-            },
-            child: const Text('Keluar'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AyahBlock extends StatelessWidget {
-  const _AyahBlock({
-    required this.ayah,
-    required this.surahNumber,
-    required this.sessionErrors,
-    required this.onWordTap,
-  });
-
-  final AyahModel ayah;
-  final int surahNumber;
-  final Map<String, ErrorMark> sessionErrors;
-  final void Function(int wordIndex, String word) onWordTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final words = ayah.words;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: AppTheme.primaryGreen.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Text(
-                  'Ayat ${ayah.numberInSurah}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.primaryGreen,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Directionality(
-            textDirection: TextDirection.rtl,
-            child: Wrap(
-              spacing: 4,
-              runSpacing: 4,
-              alignment: WrapAlignment.start,
-              children: [
-                for (int i = 0; i < words.length; i++)
-                  WordWidget(
-                    word: words[i],
-                    errorMark:
-                        sessionErrors[ErrorMark.generateKey(
-                          surahNumber,
-                          ayah.numberInSurah,
-                          i,
-                        )],
-                    onTap: () => onWordTap(i, words[i]),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(
-                    '﴿${toArabicNumeral(ayah.numberInSurah)}﴾',
-                    style: GoogleFonts.amiri(
-                      fontSize: 22,
-                      color: AppTheme.primaryGreen.withValues(alpha: 0.8),
-                      height: 2.2,
-                    ),
-                    textDirection: TextDirection.rtl,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Kembali')),
+          TextButton(onPressed: () { provider.clearErrors(); Navigator.pop(ctx); Navigator.pop(context); }, child: const Text('Ya, Batal', style: TextStyle(color: Colors.red))),
         ],
       ),
     );

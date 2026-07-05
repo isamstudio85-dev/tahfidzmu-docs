@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/models/santri.dart';
-import 'package:tahfidz_app/models/surah_model.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_reader_screen.dart';
 

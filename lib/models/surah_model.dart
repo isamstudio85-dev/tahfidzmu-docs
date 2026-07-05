@@ -14,12 +14,12 @@ class SurahInfo {
   });
 
   factory SurahInfo.fromJson(Map<String, dynamic> json) => SurahInfo(
-    number: json['number'] as int,
-    name: json['name'] as String,
-    englishName: json['englishName'] as String,
-    numberOfAyahs: json['numberOfAyahs'] as int,
-    revelationType: json['revelationType'] as String,
-  );
+        number: json['number'] as int,
+        name: json['name'] as String,
+        englishName: json['englishName'] as String,
+        numberOfAyahs: json['numberOfAyahs'] as int,
+        revelationType: json['revelationType'] as String,
+      );
 
   @override
   String toString() => '$number. $englishName ($name)';
@@ -67,15 +67,8 @@ class AyahModel {
     return false;
   }
 
-  factory AyahModel.fromJson(Map<String, dynamic> json) => AyahModel(
-    number: json['number'] as int,
-    numberInSurah: json['numberInSurah'] as int,
-    text: json['text'] as String,
-  );
-
-  /// Constructs from a local asset JSON where arabic & translation
-  /// are stored as separate keys (not the AlQuran Cloud API format).
-  factory AyahModel.fromLocalJson(Map<String, dynamic> json, int globalN) =>
+  /// Constructs from a local asset JSON.
+  factory AyahModel.fromJson(Map<String, dynamic> json, int globalN) =>
       AyahModel(
         number: globalN,
         numberInSurah: json['numberInSurah'] as int,
@@ -97,17 +90,8 @@ class SurahDetail {
     required this.ayahs,
   });
 
-  factory SurahDetail.fromJson(Map<String, dynamic> json) => SurahDetail(
-    number: json['number'] as int,
-    name: json['name'] as String,
-    englishName: json['englishName'] as String,
-    ayahs: (json['ayahs'] as List)
-        .map((a) => AyahModel.fromJson(a as Map<String, dynamic>))
-        .toList(),
-  );
-
   /// Constructs from local asset format (surah_NNN.json).
-  factory SurahDetail.fromLocalJson(Map<String, dynamic> json) {
+  factory SurahDetail.fromJson(Map<String, dynamic> json) {
     int n = 0;
     return SurahDetail(
       number: json['number'] as int,
@@ -115,7 +99,7 @@ class SurahDetail {
       englishName: json['englishName'] as String,
       ayahs: (json['ayahs'] as List).map((a) {
         n++;
-        return AyahModel.fromLocalJson(a as Map<String, dynamic>, n);
+        return AyahModel.fromJson(a as Map<String, dynamic>, n);
       }).toList(),
     );
   }

@@ -125,12 +125,16 @@ class Santri {
   /// Total ayahs covered in ziyadah (new memorisation) sessions.
   int get totalZiyadahAyahs => setoranHistory
       .where((s) => s.type == SetoranType.ziyadah)
-      .fold(0, (sum, s) => sum + (s.ayahEnd - s.ayahStart + 1));
+      .fold(0, (sum, s) => sum + s.passedAyahs.length);
 
   /// Total ayahs covered in muroja'ah (review) sessions.
   int get totalMurojaahAyahs => setoranHistory
       .where((s) => s.type == SetoranType.murojaah)
-      .fold(0, (sum, s) => sum + (s.ayahEnd - s.ayahStart + 1));
+      .fold(0, (sum, s) => sum + s.passedAyahs.length);
+
+  /// Total failed ayahs (needs attention).
+  int get totalFailedAyahs => setoranHistory
+      .fold(0, (sum, s) => sum + s.failedAyahs.length);
 
   /// Number of ziyadah sessions.
   int get totalZiyadahSessions =>

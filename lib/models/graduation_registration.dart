@@ -1,5 +1,5 @@
 enum RegistrationStatus { menunggu, diterima, ditolak }
-enum PaymentStatus { belum_bayar, lunas }
+enum PaymentStatus { belumBayar, lunas }
 
 class GraduationRegistration {
   final String id;
@@ -18,8 +18,8 @@ class GraduationRegistration {
     required this.santriId,
     required this.registrationDate,
     this.status = RegistrationStatus.menunggu,
-    this.registrationPaymentStatus = PaymentStatus.belum_bayar,
-    this.graduationPaymentStatus = PaymentStatus.belum_bayar,
+    this.registrationPaymentStatus = PaymentStatus.belumBayar,
+    this.graduationPaymentStatus = PaymentStatus.belumBayar,
     this.notes,
     required this.registeredBy,
   });
@@ -42,8 +42,8 @@ class GraduationRegistration {
     santriId: json['santriId'] as String,
     registrationDate: DateTime.parse(json['registrationDate'] as String),
     status: RegistrationStatus.values.byName(json['status'] as String? ?? 'menunggu'),
-    registrationPaymentStatus: PaymentStatus.values.byName(json['registrationPaymentStatus'] as String? ?? 'belum_bayar'),
-    graduationPaymentStatus: PaymentStatus.values.byName(json['graduationPaymentStatus'] as String? ?? 'belum_bayar'),
+    registrationPaymentStatus: PaymentStatus.values.byName(json['registrationPaymentStatus'] as String? ?? 'belumBayar'),
+    graduationPaymentStatus: PaymentStatus.values.byName(json['graduationPaymentStatus'] as String? ?? 'belumBayar'),
     notes: json['notes'] as String?,
     registeredBy: json['registeredBy'] as String? ?? 'unknown',
   );
