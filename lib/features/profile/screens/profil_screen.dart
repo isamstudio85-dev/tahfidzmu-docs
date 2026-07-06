@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -151,9 +151,11 @@ class _OrangTuaProfilView extends StatelessWidget {
   final AppProvider provider; final VoidCallback onEdit; final VoidCallback onPhotoTap; final VoidCallback onLogout;
   @override
   Widget build(BuildContext context) {
-    final santri = provider.linkedSantri!;
+    final santri = provider.linkedSantri;
+    final name = santri?.name ?? 'Wali Santri';
+    final photo = santri?.photoPath;
     return ListView(padding: const EdgeInsets.all(16), children: [
-      _buildHeader(santri.name, 'Wali Santri (Orang Tua)', santri.photoPath, Colors.purple, onEdit: onEdit, onPhotoTap: onPhotoTap),
+      _buildHeader(name, 'Wali Santri (Orang Tua)', photo, Colors.purple, onEdit: onEdit, onPhotoTap: onPhotoTap),
       const SizedBox(height: 24),
       _HafalanFiturList(provider: provider),
       const SizedBox(height: 16),
