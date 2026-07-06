@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/models/setoran.dart';
@@ -57,100 +58,162 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
         final halaqah = provider.getHalaqahById(santri.halaqahId);
         final isAdmin = provider.isAdmin;
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('Detail Santri'),
-            actions: [
-              if (isAdmin)
-                IconButton(
-                  icon: const Icon(Icons.edit_outlined),
-                  tooltip: 'Edit Profil',
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
+        return DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Detail Santri'),
+              actions: [
+                if (isAdmin)
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined),
+                    tooltip: 'Edit Profil',
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
+                    ),
+                  ),
+              ],
+            ),
+            floatingActionButton: provider.isMusyrif
+                ? FloatingActionButton.extended(
+                    heroTag: 'fab_detail_setoran',
+                    onPressed: () => showSetoranOptions(context, santri),
+                    icon: const Icon(Icons.qr_code_scanner_rounded),
+                    label: const Text('Mulai Setoran'),
+                  )
+                : null,
+            body: Column(
+              children: [
+                // 1. Unified Profile Header (Compact)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                  child: _ProfileHeader(
+                    name: santri.name,
+                    subtitle: '${santri.kelas ?? 'Tanpa Kelas'} • ${halaqah?.nama ?? 'Tanpa Halaqah'}',
+                    photoPath: santri.photoPath,
+                    extra: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        StarRatingWidget(rating: stars, size: 16),
+                        const SizedBox(width: 8),
+                        GradeBadgeWidget(gradeName: grade, stars: stars),
+                      ],
+                    ),
                   ),
                 ),
-            ],
-          ),
-          floatingActionButton: provider.isMusyrif
-              ? FloatingActionButton.extended(
-                  heroTag: 'fab_detail_setoran',
-                  onPressed: () => showSetoranOptions(context, santri),
-                  icon: const Icon(Icons.mic_rounded),
-                  label: const Text('Mulai Setoran'),
-                )
-              : null,
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 1. Unified Profile Header
-                _ProfileHeader(
-                  name: santri.name,
-                  subtitle: '${santri.kelas ?? 'Tanpa Kelas'} • ${halaqah?.nama ?? 'Tanpa Halaqah'}',
-                  photoPath: santri.photoPath,
-                  extra: Column(
+
+                // 2. TabBar
+                TabBar(
+                  tabs: [
+                    Tab(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.menu_book_rounded, size: 18),
+                          const SizedBox(width: 8),
+                          Text('Hafalan & Progress', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                    Tab(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.person_rounded, size: 18),
+                          const SizedBox(width: 8),
+                          Text('Profil & Kartu QR', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ],
+                  labelColor: AppTheme.primaryGreen,
+                  unselectedLabelColor: Colors.grey.shade600,
+                  indicatorColor: AppTheme.primaryGreen,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                ),
+
+                // 3. TabBarView
+                Expanded(
+                  child: TabBarView(
                     children: [
-                      const SizedBox(height: 8),
-                      StarRatingWidget(rating: stars, size: 20),
-                      const SizedBox(height: 6),
-                      GradeBadgeWidget(gradeName: grade, stars: stars),
+                      // TAB 1: PERKEMBANGAN HAFALAN (Hafalan-Oriented)
+                      ListView(
+                        padding: const EdgeInsets.all(16),
+                        children: [
+                          // Unified Stats Row
+                          Row(
+                            children: [
+                              _statItem('Rata-rata Nilai', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
+                              const SizedBox(width: 12),
+                              _statItem('Total Hafalan', '${santri.estimatedJuz.toStringAsFixed(1)} Juz', Icons.library_books_rounded, Colors.purple.shade600),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              _statItem('Ayat Lulus', '${santri.totalZiyadahAyahs + santri.totalMurojaahAyahs}', Icons.check_circle_outline_rounded, Colors.green),
+                              const SizedBox(width: 12),
+                              _statItem('Ayat Gagal', '${santri.totalFailedAyahs}', Icons.cancel_outlined, Colors.red),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+
+                          // PETA PROGRESS 30 JUZ
+                          _PetaProgressJuz(santri: santri),
+                          const SizedBox(height: 24),
+
+                          // Ujian Tasmi'
+                          _sectionHeader('Ujian Tasmi\' / Wisuda'),
+                          if (santri.tasmiHistory.isEmpty)
+                            _emptyHistory('Belum ada riwayat ujian Tasmi\'')
+                          else
+                            ...santri.tasmiHistory.reversed.map(
+                              (t) => _TasmiHistoryTile(record: t),
+                            ),
+                          const SizedBox(height: 24),
+
+                          // Riwayat Setoran
+                          _sectionHeader('Riwayat Setoran'),
+                          if (santri.setoranHistory.isEmpty)
+                            _emptyHistory('Belum ada riwayat setoran')
+                          else
+                            ...santri.setoranHistory.reversed.map(
+                              (r) => _SetoranHistoryTile(record: r, santri: santri),
+                            ),
+                          const SizedBox(height: 80), // Space for FAB
+                        ],
+                      ),
+
+                      // TAB 2: PROFIL & KARTU QR (Personal-Oriented)
+                      ListView(
+                        padding: const EdgeInsets.all(16),
+                        children: [
+                          // MINI DIGITAL CARD with QR code
+                          _MiniDigitalCard(santri: santri),
+                          const SizedBox(height: 20),
+
+                          // Informasi Personal
+                          _sectionHeader('Informasi Personal'),
+                          _infoCard([
+                            _infoRow(Icons.meeting_room_rounded, 'Kelas', santri.kelas ?? '-'),
+                            _infoRow(Icons.badge_outlined, 'NIS', santri.nis ?? '-'),
+                            _infoRow(Icons.cake_rounded, 'Tanggal Lahir', santri.tanggalLahir ?? '-'),
+                            _infoRow(Icons.male_rounded, 'Jenis Kelamin', santri.jenisKelamin == 'P' ? 'Perempuan' : 'Laki-laki'),
+                            _infoRow(Icons.history_edu_rounded, 'Hafalan Awal', santri.initialMemorizedJuz.isEmpty ? 'Mulai dari Nol' : 'Sudah hafal Juz: ${santri.initialMemorizedJuz.join(', ')}'),
+                            _infoRow(Icons.email_outlined, 'Email', santri.email ?? '-'),
+                            _infoRow(Icons.family_restroom_outlined, 'Orang Tua', santri.namaOrangTua ?? '-'),
+                            _infoRow(Icons.phone_outlined, 'No. HP Wali', santri.nomorHpWali ?? '-'),
+                            _infoRow(Icons.flag_outlined, 'Target Hafalan', santri.targetHafalan ?? '-'),
+                            _infoRow(Icons.info_outline, 'Status Akun', santri.isAktif ? 'Aktif' : 'Non-aktif',
+                                valueColor: santri.isAktif ? AppTheme.primaryGreen : Colors.grey),
+                          ]),
+                          const SizedBox(height: 80),
+                        ],
+                      ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
-
-                // 2. Unified Stats Row
-                Row(
-                  children: [
-                    _statItem('Rata-rata', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
-                    const SizedBox(width: 12),
-                    _statItem('Hafalan', '${santri.estimatedJuz.toStringAsFixed(1)} Juz', Icons.menu_book_rounded, Colors.purple),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    _statItem('Ayat Lulus', '${santri.totalZiyadahAyahs + santri.totalMurojaahAyahs}', Icons.check_circle_outline_rounded, Colors.green),
-                    const SizedBox(width: 12),
-                    _statItem('Ayat Gagal', '${santri.totalFailedAyahs}', Icons.cancel_outlined, Colors.red),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // 3. Unified Info Section
-                _sectionHeader('Informasi Personal'),
-                _infoCard([
-                  _infoRow(Icons.meeting_room_rounded, 'Kelas', santri.kelas ?? '-'),
-                  _infoRow(Icons.badge_outlined, 'NIS', santri.nis ?? '-'),
-                  _infoRow(Icons.male_rounded, 'Jenis Kelamin', santri.jenisKelamin == 'P' ? 'Perempuan' : 'Laki-laki'),
-                  _infoRow(Icons.history_edu_rounded, 'Hafalan Awal', santri.initialMemorizedJuz.isEmpty ? 'Mulai dari Nol' : 'Sudah hafal Juz: ${santri.initialMemorizedJuz.join(', ')}'),
-                  _infoRow(Icons.email_outlined, 'Email', santri.email ?? '-'),
-                  _infoRow(Icons.family_restroom_outlined, 'Orang Tua', santri.namaOrangTua ?? '-'),
-                  _infoRow(Icons.phone_outlined, 'No. HP Wali', santri.nomorHpWali ?? '-'),
-                  _infoRow(Icons.flag_outlined, 'Target Hafalan', santri.targetHafalan ?? '-'),
-                  _infoRow(Icons.info_outline, 'Status', santri.isAktif ? 'Aktif' : 'Non-aktif',
-                      valueColor: santri.isAktif ? AppTheme.primaryGreen : Colors.grey),
-                ]),
-
-                const SizedBox(height: 24),
-                _sectionHeader('Ujian Tasmi\' / Wisuda'),
-                if (santri.tasmiHistory.isEmpty)
-                  _emptyHistory('Belum ada riwayat ujian Tasmi\'')
-                else
-                  ...santri.tasmiHistory.reversed.map(
-                    (t) => _TasmiHistoryTile(record: t),
-                  ),
-
-                const SizedBox(height: 24),
-                _sectionHeader('Riwayat Setoran'),
-                if (santri.setoranHistory.isEmpty)
-                  _emptyHistory('Belum ada riwayat setoran')
-                else
-                  ...santri.setoranHistory.reversed.map(
-                    (r) => _SetoranHistoryTile(record: r, santri: santri),
-                  ),
               ],
             ),
           ),
@@ -161,10 +224,10 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
 
   Widget _sectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      padding: const EdgeInsets.only(left: 4, bottom: 10),
       child: Text(
         title,
-        style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.grey.shade800),
+        style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey.shade800),
       ),
     );
   }
@@ -205,14 +268,32 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
   Widget _statItem(String label, String value, IconData icon, Color color) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-        child: Column(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.01), blurRadius: 4, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Row(
           children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(height: 4),
-            Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-            Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 10)),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.08), shape: BoxShape.circle),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
+                  Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 10)),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -222,8 +303,8 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
   Widget _emptyHistory(String msg) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 32),
-        child: Text(msg, style: TextStyle(color: Colors.grey.shade400)),
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Text(msg, style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
       ),
     );
   }
@@ -281,35 +362,45 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
-      child: Column(
+      child: Row(
         children: [
           AppAvatar(
             name: name,
-            radius: 48,
+            radius: 32,
             imagePath: photoPath,
             backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
             foregroundColor: AppTheme.primaryGreen,
           ),
-          const SizedBox(height: 16),
-          Text(
-            name,
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18),
-            textAlign: TextAlign.center,
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+                if (extra != null) ...[
+                  const SizedBox(height: 4),
+                  extra!,
+                ],
+              ],
+            ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: const TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.w600, fontSize: 14),
-          ),
-          if (extra != null) extra!,
         ],
       ),
     );
@@ -353,6 +444,260 @@ class _SetoranHistoryTile extends StatelessWidget {
             Text(record.finalScore.toStringAsFixed(0), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primaryGreen)),
             StarRatingWidget(rating: record.starCount, size: 12),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PetaProgressJuz extends StatelessWidget {
+  final Santri santri;
+  const _PetaProgressJuz({required this.santri});
+
+  @override
+  Widget build(BuildContext context) {
+    final memorized = santri.juzCoveredByZiyadah;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Peta Progress Hafalan (30 Juz)',
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Kotak hijau menandakan juz yang sudah pernah disetorkan.',
+            style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+          ),
+          const SizedBox(height: 16),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 30,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 6,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              childAspectRatio: 1.1,
+            ),
+            itemBuilder: (ctx, i) {
+              final juzNum = i + 1;
+              final isMemorized = memorized.contains(juzNum);
+              return Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isMemorized ? AppTheme.primaryGreen : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isMemorized ? AppTheme.primaryGreen : Colors.grey.shade200,
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  juzNum.toString(),
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: isMemorized ? Colors.white : Colors.grey.shade700,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MiniDigitalCard extends StatelessWidget {
+  final Santri santri;
+  const _MiniDigitalCard({required this.santri});
+
+  void _showQrDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'KARTU SANTRI DIGITAL',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: AppTheme.primaryGreen,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 20),
+              QrImageView(
+                data: santri.nis ?? santri.id,
+                version: QrVersions.auto,
+                size: 180.0,
+                backgroundColor: Colors.white,
+              ),
+              const SizedBox(height: 20),
+              Divider(color: Colors.grey.shade300, height: 1),
+              const SizedBox(height: 16),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: 60,
+                      height: 75,
+                      color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                      child: santri.photoPath != null
+                          ? Image.network(santri.photoPath!, fit: BoxFit.cover)
+                          : Center(
+                              child: Text(
+                                santri.name[0],
+                                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          santri.name,
+                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'NIS/ID: ${santri.nis ?? santri.id}',
+                          style: TextStyle(
+                            fontFamily: 'monospace',
+                            color: Colors.grey.shade600,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  'Tutup',
+                  style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: AppTheme.primaryGreen.withValues(alpha: 0.2), width: 1.5),
+      ),
+      child: InkWell(
+        onTap: () => _showQrDialog(context),
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'KARTU SANTRI DIGITAL',
+                    style: GoogleFonts.poppins(
+                      color: AppTheme.primaryGreen,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const Icon(Icons.qr_code_2_rounded, color: AppTheme.primaryGreen, size: 20),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: 50,
+                      height: 62,
+                      color: AppTheme.primaryGreen.withValues(alpha: 0.05),
+                      child: santri.photoPath != null
+                          ? Image.network(santri.photoPath!, fit: BoxFit.cover)
+                          : Center(
+                              child: Text(
+                                santri.name[0],
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppTheme.primaryGreen),
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          santri.name,
+                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'NIS/ID: ${santri.nis ?? santri.id}',
+                          style: TextStyle(fontFamily: 'monospace', color: Colors.grey.shade600, fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  QrImageView(
+                    data: santri.nis ?? santri.id,
+                    version: QrVersions.auto,
+                    size: 60.0,
+                    backgroundColor: Colors.white,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: Text(
+                  'Ketuk kartu untuk memperbesar QR Code',
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontStyle: FontStyle.italic),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
