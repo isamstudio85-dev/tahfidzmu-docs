@@ -89,7 +89,7 @@ class OrangTuaDashboard extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                                 child: Container(
                                   width: 60,
-                                  height: 75,
+                                  height: 60,
                                   color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                                   child: child.photoPath != null
                                       ? Image.network(child.photoPath!, fit: BoxFit.cover)

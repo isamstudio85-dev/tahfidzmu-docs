@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tahfidz_app/models/santri.dart';
@@ -306,93 +307,122 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     );
 
     if (rawString == null || rawString is! String || rawString.trim().isEmpty) return;
+    _processScannedRaw(rawString);
+  }
+
+  Future<void> _processScannedRaw(String rawString) async {
     final trimmed = rawString.trim();
+
+    String parsedName = '';
+    String parsedId = trimmed; // fallback is raw string
+    String parsedEmail = '';
+    String parsedKelas = '';
+    String parsedOrtu = '';
+    String parsedHp = '';
+    String parsedDob = '';
+    String parsedJk = 'L';
 
     // 1. Coba parse sebagai JSON
     try {
       final data = jsonDecode(trimmed);
       if (data is Map<String, dynamic>) {
-        setState(() {
-          if (data.containsKey('nama')) _namaCtrl.text = data['nama'].toString();
-          if (data.containsKey('name')) _namaCtrl.text = data['name'].toString();
-          
-          if (data.containsKey('nis')) _nisCtrl.text = data['nis'].toString();
-          if (data.containsKey('id')) _nisCtrl.text = data['id'].toString();
-          
-          if (data.containsKey('email')) _emailCtrl.text = data['email'].toString();
-          
-          if (data.containsKey('kelas')) _kelasCtrl.text = data['kelas'].toString();
-          
-          if (data.containsKey('namaOrangTua')) _namaOrangTuaCtrl.text = data['namaOrangTua'].toString();
-          if (data.containsKey('ortu')) _namaOrangTuaCtrl.text = data['ortu'].toString();
-          
-          if (data.containsKey('nomorHpWali')) _nomorHpWaliCtrl.text = data['nomorHpWali'].toString();
-          if (data.containsKey('nomorHp')) _nomorHpWaliCtrl.text = data['nomorHp'].toString();
-          
-          if (data.containsKey('tanggalLahir')) _tanggalLahirCtrl.text = data['tanggalLahir'].toString();
-          if (data.containsKey('tglLahir')) _tanggalLahirCtrl.text = data['tglLahir'].toString();
-          
-          if (data.containsKey('jenisKelamin')) {
-            final gk = data['jenisKelamin'].toString().toUpperCase();
-            if (gk == 'L' || gk == 'P') _jenisKelamin = gk;
-          }
-        });
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Data kartu berhasil disalin ke form!'), backgroundColor: Colors.green),
-          );
+        if (data.containsKey('nama')) parsedName = data['nama'].toString();
+        if (data.containsKey('name')) parsedName = data['name'].toString();
+        
+        if (data.containsKey('nis')) parsedId = data['nis'].toString();
+        if (data.containsKey('id')) parsedId = data['id'].toString();
+        
+        if (data.containsKey('email')) parsedEmail = data['email'].toString();
+        if (data.containsKey('kelas')) parsedKelas = data['kelas'].toString();
+        
+        if (data.containsKey('namaOrangTua')) parsedOrtu = data['namaOrangTua'].toString();
+        if (data.containsKey('ortu')) parsedOrtu = data['ortu'].toString();
+        
+        if (data.containsKey('nomorHpWali')) parsedHp = data['nomorHpWali'].toString();
+        if (data.containsKey('nomorHp')) parsedHp = data['nomorHp'].toString();
+        if (data.containsKey('hp')) parsedHp = data['hp'].toString();
+        
+        if (data.containsKey('tanggalLahir')) parsedDob = data['tanggalLahir'].toString();
+        if (data.containsKey('tglLahir')) parsedDob = data['tglLahir'].toString();
+        if (data.containsKey('dob')) parsedDob = data['dob'].toString();
+        
+        if (data.containsKey('jenisKelamin')) {
+          final gk = data['jenisKelamin'].toString().toUpperCase();
+          if (gk == 'L' || gk == 'P') parsedJk = gk;
         }
-        return;
       }
-    } catch (_) {}
-
-    // 2. Coba parse sebagai URL dengan query parameters
-    try {
-      final uri = Uri.parse(trimmed);
-      if (uri.hasQuery) {
-        setState(() {
+    } catch (_) {
+      // 2. Coba parse sebagai URL dengan query parameters
+      try {
+        final uri = Uri.parse(trimmed);
+        if (uri.hasQuery) {
           final params = uri.queryParameters;
-          if (params.containsKey('nama')) _namaCtrl.text = params['nama']!;
-          if (params.containsKey('name')) _namaCtrl.text = params['name']!;
+          if (params.containsKey('nama')) parsedName = params['nama']!;
+          if (params.containsKey('name')) parsedName = params['name']!;
           
-          if (params.containsKey('nis')) _nisCtrl.text = params['nis']!;
-          if (params.containsKey('id')) _nisCtrl.text = params['id']!;
+          if (params.containsKey('nis')) parsedId = params['nis']!;
+          if (params.containsKey('id')) parsedId = params['id']!;
           
-          if (params.containsKey('email')) _emailCtrl.text = params['email']!;
+          if (params.containsKey('email')) parsedEmail = params['email']!;
+          if (params.containsKey('kelas')) parsedKelas = params['kelas']!;
           
-          if (params.containsKey('kelas')) _kelasCtrl.text = params['kelas']!;
+          if (params.containsKey('namaOrangTua')) parsedOrtu = params['namaOrangTua']!;
+          if (params.containsKey('ortu')) parsedOrtu = params['ortu']!;
           
-          if (params.containsKey('namaOrangTua')) _namaOrangTuaCtrl.text = params['namaOrangTua']!;
-          if (params.containsKey('ortu')) _namaOrangTuaCtrl.text = params['ortu']!;
+          if (params.containsKey('nomorHpWali')) parsedHp = params['nomorHpWali']!;
+          if (params.containsKey('nomorHp')) parsedHp = params['nomorHp']!;
+          if (params.containsKey('hp')) parsedHp = params['hp']!;
           
-          if (params.containsKey('nomorHpWali')) _nomorHpWaliCtrl.text = params['nomorHpWali']!;
-          if (params.containsKey('nomorHp')) _nomorHpWaliCtrl.text = params['nomorHp']!;
-          
-          if (params.containsKey('tanggalLahir')) _tanggalLahirCtrl.text = params['tanggalLahir']!;
-          if (params.containsKey('tglLahir')) _tanggalLahirCtrl.text = params['tglLahir']!;
+          if (params.containsKey('tanggalLahir')) parsedDob = params['tanggalLahir']!;
+          if (params.containsKey('tglLahir')) parsedDob = params['tglLahir']!;
+          if (params.containsKey('dob')) parsedDob = params['dob']!;
           
           if (params.containsKey('jenisKelamin')) {
             final gk = params['jenisKelamin']!.toUpperCase();
-            if (gk == 'L' || gk == 'P') _jenisKelamin = gk;
+            if (gk == 'L' || gk == 'P') parsedJk = gk;
           }
-        });
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Data link kartu berhasil disalin ke form!'), backgroundColor: Colors.green),
-          );
         }
-        return;
-      }
-    } catch (_) {}
+      } catch (_) {}
+    }
 
-    // 3. Fallback: Anggap sebagai raw string NIS/NIP
-    setState(() {
-      _nisCtrl.text = trimmed;
-    });
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kode QR disalin ke kolom NIS: $trimmed'), backgroundColor: Colors.blue),
-      );
+    if (!mounted) return;
+
+    // Tampilkan Dialog Pratinjau
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => _ScanPreviewDialog(
+        initialId: parsedId,
+        name: parsedName,
+        email: parsedEmail,
+        kelas: parsedKelas,
+        hp: parsedHp,
+        tanggalLahir: parsedDob,
+        jabatan: '',
+        isSantri: true,
+      ),
+    );
+
+    if (result == null) return;
+
+    if (result['action'] == 'rescan') {
+      _scanExistingCard();
+    } else if (result['action'] == 'confirm') {
+      setState(() {
+        _nisCtrl.text = result['id'].toString();
+        if (parsedName.isNotEmpty) _namaCtrl.text = parsedName;
+        if (parsedEmail.isNotEmpty) _emailCtrl.text = parsedEmail;
+        if (parsedKelas.isNotEmpty) _kelasCtrl.text = parsedKelas;
+        if (parsedOrtu.isNotEmpty) _namaOrangTuaCtrl.text = parsedOrtu;
+        if (parsedHp.isNotEmpty) _nomorHpWaliCtrl.text = parsedHp;
+        if (parsedDob.isNotEmpty) _tanggalLahirCtrl.text = parsedDob;
+        _jenisKelamin = parsedJk;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Data kartu berhasil disalin ke form!'), backgroundColor: Colors.green),
+        );
+      }
     }
   }
 
@@ -709,6 +739,179 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
           ),
           child: Center(child: Text(label, style: TextStyle(color: selected ? color : Colors.grey.shade600, fontWeight: selected ? FontWeight.w600 : FontWeight.normal, fontSize: 13))),
         ),
+      ),
+    );
+  }
+}
+
+class _ScanPreviewDialog extends StatefulWidget {
+  final String initialId;
+  final String name;
+  final String email;
+  final String kelas;
+  final String hp;
+  final String tanggalLahir;
+  final String jabatan;
+  final bool isSantri;
+
+  const _ScanPreviewDialog({
+    required this.initialId,
+    required this.name,
+    required this.email,
+    required this.kelas,
+    required this.hp,
+    required this.tanggalLahir,
+    required this.jabatan,
+    required this.isSantri,
+  });
+
+  @override
+  State<_ScanPreviewDialog> createState() => _ScanPreviewDialogState();
+}
+
+class _ScanPreviewDialogState extends State<_ScanPreviewDialog> {
+  late final TextEditingController _idCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _idCtrl = TextEditingController(text: widget.initialId);
+  }
+
+  @override
+  void dispose() {
+    _idCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Pratinjau Hasil Pindai',
+              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primaryGreen),
+            ),
+            const SizedBox(height: 16),
+            
+            // Realtime QR code generator based on editable ID
+            ValueListenableBuilder<TextEditingValue>(
+              valueListenable: _idCtrl,
+              builder: (context, val, _) {
+                final currentId = val.text.trim();
+                return currentId.isNotEmpty
+                    ? QrImageView(
+                        data: currentId,
+                        version: QrVersions.auto,
+                        size: 140.0,
+                        backgroundColor: Colors.white,
+                      )
+                    : Container(
+                        height: 140,
+                        width: 140,
+                        color: Colors.grey.shade100,
+                        child: const Icon(Icons.qr_code_2_rounded, size: 48, color: Colors.grey),
+                      );
+              },
+            ),
+            const SizedBox(height: 16),
+            
+            // Editable ID Field
+            TextFormField(
+              controller: _idCtrl,
+              decoration: InputDecoration(
+                labelText: widget.isSantri ? 'ID Kartu (NIS) *' : 'ID Kartu (NIP) *',
+                hintText: 'Edit jika ID tidak sesuai',
+                prefixIcon: const Icon(Icons.badge_outlined),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onChanged: (_) => setState(() {}),
+            ),
+            const SizedBox(height: 12),
+            
+            // Scanned details list
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Column(
+                children: [
+                  _infoRow('Nama', widget.name),
+                  if (widget.email.isNotEmpty) _infoRow('Email', widget.email),
+                  if (widget.isSantri && widget.kelas.isNotEmpty) _infoRow('Kelas', widget.kelas),
+                  if (!widget.isSantri && widget.jabatan.isNotEmpty) _infoRow('Jabatan', widget.jabatan),
+                  if (widget.hp.isNotEmpty) _infoRow('No. HP', widget.hp),
+                  if (widget.tanggalLahir.isNotEmpty) _infoRow('Tgl Lahir', widget.tanggalLahir),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            
+            // Actions
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () => Navigator.pop(context, {'action': 'rescan'}),
+                    icon: const Icon(Icons.replay_rounded, size: 18, color: Colors.orange),
+                    label: const Text('Pindai Ulang', style: TextStyle(color: Colors.orange, fontSize: 12, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryGreen,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context, {
+                        'action': 'confirm',
+                        'id': _idCtrl.text.trim(),
+                      });
+                    },
+                    child: const Text('Simpan ke Form', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Batal', style: TextStyle(color: Colors.grey)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+          ),
+          Expanded(
+            child: Text(
+              value.isEmpty ? '-' : value,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+            ),
+          ),
+        ],
       ),
     );
   }

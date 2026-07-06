@@ -101,7 +101,7 @@ class MusyrifDashboard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(12),
                                   child: Container(
                                     width: 60,
-                                    height: 75,
+                                    height: 60,
                                     color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                                     child: m?.photoPath != null
                                         ? Image.network(m!.photoPath!, fit: BoxFit.cover)

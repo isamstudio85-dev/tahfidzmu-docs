@@ -472,7 +472,7 @@ class _MiniDigitalCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       width: 60,
-                      height: 75,
+                      height: 60,
                       color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                       child: santri.photoPath != null
                           ? Image.network(santri.photoPath!, fit: BoxFit.cover)
@@ -562,7 +562,7 @@ class _MiniDigitalCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
                       width: 50,
-                      height: 62,
+                      height: 50,
                       color: AppTheme.primaryGreen.withValues(alpha: 0.05),
                       child: santri.photoPath != null
                           ? Image.network(santri.photoPath!, fit: BoxFit.cover)
