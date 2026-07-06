@@ -349,7 +349,7 @@ class _GraduationEventFormScreenState extends State<GraduationEventFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     final provider = context.read<AppProvider>();
     final event = GraduationEvent(
-      id: widget.existing?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      id: widget.existing?.id ?? provider.generateId('graduation_events'),
       title: _titleCtrl.text,
       year: _yearCtrl.text,
       examStartDate: _startDate,

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 enum UserRole {
+  superAdmin,
   admin,
   musyrif,
   orangTua;
 
   String get label {
     switch (this) {
+      case UserRole.superAdmin:
+        return 'Super Admin';
       case UserRole.admin:
         return 'Admin';
       case UserRole.musyrif:
@@ -18,6 +21,8 @@ enum UserRole {
 
   String get description {
     switch (this) {
+      case UserRole.superAdmin:
+        return 'Kelola seluruh pesantren platform';
       case UserRole.admin:
         return 'Kelola seluruh data & pengaturan sistem';
       case UserRole.musyrif:
@@ -29,6 +34,8 @@ enum UserRole {
 
   IconData get icon {
     switch (this) {
+      case UserRole.superAdmin:
+        return Icons.business_rounded;
       case UserRole.admin:
         return Icons.admin_panel_settings_rounded;
       case UserRole.musyrif:
@@ -40,6 +47,8 @@ enum UserRole {
 
   Color get color {
     switch (this) {
+      case UserRole.superAdmin:
+        return const Color(0xFFE65100);
       case UserRole.admin:
         return const Color(0xFF1565C0);
       case UserRole.musyrif:
@@ -51,6 +60,8 @@ enum UserRole {
 
   String get storedKey {
     switch (this) {
+      case UserRole.superAdmin:
+        return 'superAdmin';
       case UserRole.admin:
         return 'admin';
       case UserRole.musyrif:
@@ -62,6 +73,8 @@ enum UserRole {
 
   static UserRole? fromKey(String? key) {
     switch (key) {
+      case 'superAdmin':
+        return UserRole.superAdmin;
       case 'admin':
         return UserRole.admin;
       case 'musyrif':

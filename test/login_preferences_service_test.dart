@@ -8,7 +8,7 @@ void main() {
   test('saves and restores last login credentials', () async {
     SharedPreferences.setMockInitialValues({});
 
-    await LoginPreferencesService.saveLastCredentials('NIP-001', 'NIP-001');
+    await LoginPreferencesService.saveLastCredentials(null, 'NIP-001', 'NIP-001');
 
     final restored = await LoginPreferencesService.loadLastCredentials();
 

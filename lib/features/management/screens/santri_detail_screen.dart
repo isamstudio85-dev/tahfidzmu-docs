@@ -14,15 +14,36 @@ import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/management/screens/santri_form_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 
-class SantriDetailScreen extends StatelessWidget {
+class SantriDetailScreen extends StatefulWidget {
   const SantriDetailScreen({super.key, required this.santriId});
   final String santriId;
+
+  @override
+  State<SantriDetailScreen> createState() => _SantriDetailScreenState();
+}
+
+class _SantriDetailScreenState extends State<SantriDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<AppProvider>().listenToActiveSantriHistory(widget.santriId);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    context.read<AppProvider>().stopListeningToActiveSantriHistory(widget.santriId);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
-        final santri = provider.getSantriById(santriId);
+        final santri = provider.getSantriById(widget.santriId);
         if (santri == null) {
           return Scaffold(
             appBar: AppBar(title: const Text('Detail Santri')),

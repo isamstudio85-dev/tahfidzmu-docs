@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
 import 'package:tahfidz_app/features/auth/screens/login_screen.dart';
 import 'package:tahfidz_app/features/dashboard/screens/main_shell.dart';
+import 'package:tahfidz_app/features/dashboard/screens/super_admin_dashboard.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'firebase_options.dart';
 
@@ -78,7 +79,9 @@ class _TahfidzAppState extends State<TahfidzApp> {
           if (provider.isInitializing) {
             return const _AppBootstrapLoadingScreen();
           }
-          return provider.isLoggedIn ? const MainShell() : const LoginScreen();
+          if (!provider.isLoggedIn) return const LoginScreen();
+          if (provider.isSuperAdmin) return SuperAdminDashboard(provider: provider);
+          return const MainShell();
         },
       ),
       debugShowCheckedModeBanner: false,

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
@@ -15,7 +16,20 @@ class AdminDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard Admin')),
+      appBar: AppBar(
+        title: const Text('Dashboard Admin'),
+        actions: [
+          if (provider.firebase.currentUser?.email == 'dasamsamsudin87@gmail.com')
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: TextButton.icon(
+                onPressed: () => provider.switchBackToSuperAdmin(),
+                icon: const Icon(Icons.admin_panel_settings_rounded, color: Colors.green),
+                label: const Text('Super Admin', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 13)),
+              ),
+            ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -26,6 +40,7 @@ class AdminDashboard extends StatelessWidget {
             _buildGraduationBanner(context, provider),
             const SizedBox(height: 24),
             _buildAdminStats(context),
+            _buildSubscriptionWarning(context),
             const SizedBox(height: 24),
             const SectionTitle('Aksi Cepat'),
             const SizedBox(height: 12),
@@ -128,12 +143,66 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
+  Widget _buildSubscriptionWarning(BuildContext context) {
+    final pid = provider.pesantrenId;
+    if (pid == null) return const SizedBox.shrink();
+
+    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      future: provider.firestore.collection('pesantren').doc(pid).get(),
+      builder: (context, snap) {
+        if (!snap.hasData || !snap.data!.exists) return const SizedBox.shrink();
+        final data = snap.data!.data()!;
+        final activeUntilRaw = data['activeUntil'];
+        if (activeUntilRaw == null) return const SizedBox.shrink();
+        final activeUntil = (activeUntilRaw as Timestamp).toDate();
+        final daysLeft = activeUntil.difference(DateTime.now()).inDays;
+        if (daysLeft > 7) return const SizedBox.shrink();
+
+        final isExpired = daysLeft < 0;
+        final color = isExpired ? Colors.red : Colors.orange;
+        final icon = isExpired ? Icons.block_rounded : Icons.warning_amber_rounded;
+        final title = isExpired
+            ? 'Masa Aktif Habis'
+            : 'Langganan Hampir Berakhir';
+        final subtitle = isExpired
+            ? 'Akses Anda telah berakhir. Hubungi Super Admin untuk perpanjang.'
+            : 'Sisa $daysLeft hari. Segera hubungi Super Admin untuk perpanjang.';
+
+        return Container(
+          margin: const EdgeInsets.only(top: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withValues(alpha: 0.4)),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: color, size: 28),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 13)),
+                    const SizedBox(height: 2),
+                    Text(subtitle, style: TextStyle(fontSize: 11, color: color.withValues(alpha: 0.85))),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildAdminStats(BuildContext context) {
     return Row(
       children: [
         _statTile('${provider.santriList.length}', 'Santri', Icons.people_alt_rounded, Colors.blue),
         const SizedBox(width: 12),
-        _statTile('${provider.musyrifList.length}', 'Musyrif', Icons.person_pin_rounded, Colors.orange),
+        _statTile('${provider.musyrifList.length}', 'Musyrif', Icons.person_pin_rounded, Colors.green),
         const SizedBox(width: 12),
         _statTile('${provider.halaqahList.length}', 'Halaqah', Icons.groups_rounded, Colors.purple),
       ],

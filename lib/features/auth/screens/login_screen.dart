@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tahfidz_app/providers/app_provider.dart';
@@ -13,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _pesantrenIdCtrl = TextEditingController();
   final _usernameCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   bool _obscurePassword = true;
@@ -30,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final saved = await LoginPreferencesService.loadLastCredentials();
     if (!mounted || saved == null) return;
     setState(() {
+      _pesantrenIdCtrl.text = saved.pesantrenId ?? '';
       _usernameCtrl.text = saved.username;
       _passwordCtrl.text = saved.password;
     });
@@ -37,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
+    _pesantrenIdCtrl.dispose();
     _usernameCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
@@ -48,16 +51,30 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_canLogin) return;
     setState(() { _isLoading = true; _errorMessage = null; });
 
+    final String? pesantrenId = _pesantrenIdCtrl.text.trim().isEmpty ? null : _pesantrenIdCtrl.text.trim();
+    final String username = _usernameCtrl.text.trim();
+    final String password = _passwordCtrl.text;
+
     final ok = await context.read<AppProvider>().loginWithCredentials(
-      _usernameCtrl.text.trim(),
-      _passwordCtrl.text,
+      pesantrenId,
+      username,
+      password,
     );
 
     if (!mounted) return;
     if (!ok) {
-      setState(() { _isLoading = false; _errorMessage = 'Username atau sandi salah.'; });
-    } else if (!_rememberMe) {
-      await LoginPreferencesService.clearLastCredentials();
+      final err = context.read<AppProvider>().loginError;
+      setState(() { _isLoading = false; _errorMessage = err ?? 'Username atau sandi salah.'; });
+    } else {
+      if (_rememberMe) {
+        await LoginPreferencesService.saveLastCredentials(
+          pesantrenId,
+          username,
+          password,
+        );
+      } else {
+        await LoginPreferencesService.clearLastCredentials();
+      }
     }
   }
 
@@ -119,6 +136,15 @@ class _LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header text removed to save space
+          TextField(
+            controller: _pesantrenIdCtrl,
+            decoration: const InputDecoration(
+              labelText: 'Kode Pondok',
+              hintText: 'Kosongkan jika Super Admin',
+              prefixIcon: Icon(Icons.business_rounded),
+            ),
+          ),
+          const SizedBox(height: 16),
           TextField(
             controller: _usernameCtrl,
             decoration: const InputDecoration(

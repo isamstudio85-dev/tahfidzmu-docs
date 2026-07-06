@@ -102,13 +102,13 @@ class _HalaqahFormScreenState extends State<HalaqahFormScreen> {
 
   void _save() {
     if (!_formKey.currentState!.validate()) return;
+    final provider = context.read<AppProvider>();
     final h = HalaqahData(
-      id: widget.existing?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      id: widget.existing?.id ?? provider.generateId('halaqah'),
       nama: _namaCtrl.text.trim(),
       musyrifId: _musyrifId,
       photoPath: _photoPath,
     );
-    final provider = context.read<AppProvider>();
     _isEdit ? provider.updateHalaqah(h.id, h) : provider.addHalaqah(h);
     Navigator.pop(context);
   }

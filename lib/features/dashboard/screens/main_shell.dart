@@ -23,6 +23,8 @@ class _MainShellState extends State<MainShell> {
 
   static List<Widget> _screensFor(UserRole role) {
     switch (role) {
+      case UserRole.superAdmin:
+        return const [];
       case UserRole.admin:
         return const [
           HomeScreen(),
@@ -89,7 +91,7 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    final role = context.watch<AppProvider>().currentRole;
+    final role = context.select<AppProvider, UserRole?>((p) => p.currentRole);
 
     if (role == null) {
       return const SizedBox.shrink();

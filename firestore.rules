@@ -1,0 +1,155 @@
+﻿rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────
+    // HELPER FUNCTIONS
+    // ─────────────────────────────────────────────────
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isSuperAdmin() {
+      return isAuthenticated()
+        && request.auth.token.email == 'dasamsamsudin87@gmail.com'
+        && getUserData().role == 'superAdmin';
+    }
+
+    function isAdminOf(pesantrenId) {
+      return isAuthenticated()
+        && getUserData().role == 'admin'
+        && getUserData().pesantrenId == pesantrenId;
+    }
+
+    function isMusyrifOf(pesantrenId) {
+      return isAuthenticated()
+        && getUserData().role == 'musyrif'
+        && getUserData().pesantrenId == pesantrenId;
+    }
+
+    function isSantriOf(pesantrenId) {
+      return isAuthenticated()
+        && getUserData().role == 'santri'
+        && getUserData().pesantrenId == pesantrenId;
+    }
+
+    function canReadPesantren(pesantrenId) {
+      return isSuperAdmin()
+        || isAdminOf(pesantrenId)
+        || isMusyrifOf(pesantrenId)
+        || isSantriOf(pesantrenId);
+    }
+
+    function canWritePesantren(pesantrenId) {
+      return isSuperAdmin() || isAdminOf(pesantrenId);
+    }
+
+    // ─────────────────────────────────────────────────
+    // /users/{uid}
+    // ─────────────────────────────────────────────────
+    match /users/{uid} {
+      allow read: if isAuthenticated()
+        && (request.auth.uid == uid || isSuperAdmin());
+      allow write: if isAuthenticated()
+        && (request.auth.uid == uid || isSuperAdmin());
+    }
+
+    // ─────────────────────────────────────────────────
+    // /pesantren/{pesantrenId}
+    // ─────────────────────────────────────────────────
+    match /pesantren/{pesantrenId} {
+      allow read: if isSuperAdmin() || canReadPesantren(pesantrenId);
+      allow create: if isSuperAdmin();
+      allow update: if canWritePesantren(pesantrenId);
+      allow delete: if isSuperAdmin();
+
+      match /settings/{docId} {
+        allow read: if canReadPesantren(pesantrenId);
+        allow write: if canWritePesantren(pesantrenId);
+      }
+
+      match /user_mappings/{docId} {
+        allow read: if canReadPesantren(pesantrenId);
+        allow write: if canWritePesantren(pesantrenId);
+      }
+
+      match /santri/{santriId} {
+        allow read: if canReadPesantren(pesantrenId);
+        allow create, update: if canWritePesantren(pesantrenId);
+        allow delete: if canWritePesantren(pesantrenId);
+
+        match /setoranHistory/{setoranId} {
+          allow read: if canReadPesantren(pesantrenId) || isSantriOf(pesantrenId);
+          allow create: if isMusyrifOf(pesantrenId) || isAdminOf(pesantrenId);
+          allow update, delete: if isAdminOf(pesantrenId) || isSuperAdmin();
+        }
+
+        match /tasmiHistory/{tasmiId} {
+          allow read: if canReadPesantren(pesantrenId) || isSantriOf(pesantrenId);
+          allow create: if isMusyrifOf(pesantrenId) || isAdminOf(pesantrenId);
+          allow update, delete: if isAdminOf(pesantrenId) || isSuperAdmin();
+        }
+      }
+
+      match /musyrif/{musyrifId} {
+        allow read: if canReadPesantren(pesantrenId);
+        allow write: if canWritePesantren(pesantrenId);
+      }
+
+      match /halaqah/{halaqahId} {
+        allow read: if canReadPesantren(pesantrenId);
+        allow write: if canWritePesantren(pesantrenId);
+      }
+
+      match /kelas/{kelasId} {
+        allow read: if canReadPesantren(pesantrenId);
+        allow write: if canWritePesantren(pesantrenId);
+      }
+
+      match /graduation_events/{eventId} {
+        allow read: if canReadPesantren(pesantrenId);
+        allow write: if canWritePesantren(pesantrenId);
+      }
+
+      match /{subcollection}/{docId} {
+        allow read: if canReadPesantren(pesantrenId);
+        allow write: if canWritePesantren(pesantrenId);
+      }
+    }
+
+    // ─────────────────────────────────────────────────
+    // KOLEKSI LAMA (sebelum multi-tenant)
+    // ─────────────────────────────────────────────────
+    match /santri/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+    match /musyrif/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+    match /halaqah/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+    match /kelas/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+    match /settings/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+    match /user_mappings/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+
+    // ─────────────────────────────────────────────────
+    // DEFAULT DENY
+    // ─────────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

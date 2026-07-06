@@ -105,7 +105,7 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
 
     try {
       final m = MusyrifData(
-        id: widget.existing?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        id: widget.existing?.id ?? provider.generateId('musyrif'),
         nama: _namaCtrl.text.trim(),
         nip: _nipCtrl.text.trim().isEmpty ? null : _nipCtrl.text.trim(),
         jenisKelamin: _jenisKelamin,

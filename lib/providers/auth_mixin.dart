@@ -11,22 +11,27 @@ mixin AuthMixin on ChangeNotifier {
   String? linkedSantriId;
   String? linkedMusyrifId;
   String? currentUserId;
+  String? pesantrenId;
+  String? loginError;
 
   bool get isLoggedIn => currentRole != null;
+  bool get isSuperAdmin => currentRole == UserRole.superAdmin;
   bool get isAdmin => currentRole == UserRole.admin;
   bool get isMusyrif => currentRole == UserRole.musyrif;
   bool get isOrangTua => currentRole == UserRole.orangTua;
 
-  void setLoginInfo(UserRole role, {String? linkedSantriId, String? linkedMusyrifId, String? userId}) {
+  void setLoginInfo(UserRole role, {String? linkedSantriId, String? linkedMusyrifId, String? userId, String? pesantrenId}) {
     currentRole = role;
     this.linkedSantriId = linkedSantriId;
     this.linkedMusyrifId = linkedMusyrifId;
     currentUserId = userId;
+    this.pesantrenId = pesantrenId;
     notifyListeners();
   }
 
   UserRole? roleFromString(String role) {
     switch (role) {
+      case 'superAdmin': return UserRole.superAdmin;
       case 'admin': return UserRole.admin;
       case 'musyrif': return UserRole.musyrif;
       case 'orangTua': return UserRole.orangTua;
@@ -40,6 +45,7 @@ mixin AuthMixin on ChangeNotifier {
     currentUserId = null;
     linkedSantriId = null;
     linkedMusyrifId = null;
+    pesantrenId = null;
     notifyListeners();
   }
 }

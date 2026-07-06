@@ -8,6 +8,7 @@ import 'package:tahfidz_app/features/dashboard/widgets/musyrif_dashboard.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/orang_tua_dashboard.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/graduation_portal_screen.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
+import 'package:tahfidz_app/features/dashboard/screens/super_admin_dashboard.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -146,6 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (role == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+
+    if (provider.isSuperAdmin) return SuperAdminDashboard(provider: provider);
 
     if (provider.isOrangTua) {
       final child = provider.linkedSantri;

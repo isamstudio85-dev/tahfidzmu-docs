@@ -381,7 +381,7 @@ class GraduationPortalScreen extends StatelessWidget {
           FilledButton(
             onPressed: () {
               final reg = GraduationRegistration(
-                id: DateTime.now().millisecondsSinceEpoch.toString(),
+                id: provider.generateId('graduation_registrations'),
                 eventId: event.id,
                 santriId: s.id,
                 registrationDate: DateTime.now(),

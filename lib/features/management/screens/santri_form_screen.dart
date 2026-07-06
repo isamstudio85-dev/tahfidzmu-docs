@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
-import 'package:tahfidz_app/core/widgets/app_avatar.dart';
+import 'package:tahfidz_app/features/management/widgets/juz_selector_grid.dart';
+import 'package:tahfidz_app/features/management/widgets/santri_photo_selector.dart';
 
 /// Full-page form for adding or editing a Santri.
 class SantriFormScreen extends StatefulWidget {
@@ -85,40 +85,6 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     _usernameCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Wrap(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('Galeri'),
-              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('Kamera'),
-              onTap: () => Navigator.pop(ctx, ImageSource.camera),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (source != null) {
-      final pickedFile = await picker.pickImage(
-        source: source,
-        maxWidth: 800,
-        imageQuality: 85,
-      );
-      if (pickedFile != null) {
-        setState(() => _photoPath = pickedFile.path);
-      }
-    }
   }
 
   void _showHalaqahPicker() {
@@ -249,59 +215,13 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => StatefulBuilder(
-        builder: (context, setSt) => Container(
-          decoration: const BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-          padding: const EdgeInsets.only(top: 12, bottom: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
-              const SizedBox(height: 16),
-              Text('Hafalan yang Sudah Ada', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16)),
-              Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text('Pilih Juz yang sudah dihafal sepenuhnya sebelum menggunakan aplikasi.', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.grey.shade600))),
-              const Divider(),
-              Flexible(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5, crossAxisSpacing: 8, mainAxisSpacing: 8),
-                  itemCount: 30,
-                  itemBuilder: (context, i) {
-                    final juz = i + 1;
-                    final isSelected = _initialJuz.contains(juz);
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            _initialJuz.remove(juz);
-                          } else {
-                            _initialJuz.add(juz);
-                          }
-                          _initialJuz.sort();
-                        });
-                        setSt(() {}); // Update local bottomsheet state
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade200),
-                        ),
-                        child: Text(juz.toString(), style: TextStyle(color: isSelected ? Colors.white : Colors.black87, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SizedBox(width: double.infinity, child: FilledButton(onPressed: () => Navigator.pop(context), child: const Text('Selesai'))),
-              ),
-            ],
-          ),
-        ),
+      builder: (ctx) => JuzSelectorGrid(
+        initialJuz: _initialJuz,
+        onSelectionChanged: (selectedList) {
+          setState(() {
+            _initialJuz = selectedList;
+          });
+        },
       ),
     );
   }
@@ -388,32 +308,10 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Center(
-              child: Stack(
-                children: [
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: AppAvatar(
-                      name: _namaCtrl.text.isEmpty ? (_isEdit ? widget.existing!.name : '?') : _namaCtrl.text,
-                      radius: 50,
-                      imagePath: _photoPath,
-                      backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                      foregroundColor: AppTheme.primaryGreen,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0, right: 0,
-                    child: GestureDetector(
-                      onTap: _pickImage,
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(color: AppTheme.primaryGreen, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2)),
-                        child: const Icon(Icons.camera_alt_rounded, size: 18, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            SantriPhotoSelector(
+              photoPath: _photoPath,
+              name: _namaCtrl.text.isEmpty ? (_isEdit ? widget.existing!.name : '?') : _namaCtrl.text,
+              onPhotoSelected: (path) => setState(() => _photoPath = path),
             ),
             const SizedBox(height: 24),
             _section('Informasi Utama'),

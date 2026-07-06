@@ -92,14 +92,13 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
     );
   }
 
-  void _applyContinuation(AppProvider provider, Santri santri) {
+  void _applyContinuation(AppProvider provider, Santri santri) async {
+    await provider.fetchSantriHistoryOnce(santri.id);
+    if (!mounted) return;
+
     if (provider.surahList.isEmpty) {
-      provider.refreshSurahList().then((_) {
-        if (!mounted) return;
-        final suggestion = provider.getNextSetoranSuggestion(santri.id);
-        if (suggestion != null) _fillFromSuggestion(suggestion);
-      });
-      return;
+      await provider.refreshSurahList();
+      if (!mounted) return;
     }
     final suggestion = provider.getNextSetoranSuggestion(santri.id);
     if (suggestion != null) _fillFromSuggestion(suggestion);

@@ -23,6 +23,16 @@ class Santri {
   /// Juz numbers that the student already memorized before using the app.
   final List<int> initialMemorizedJuz;
 
+  // Cached aggregate stats for scalability (Firestore subcollection caching)
+  final double? averageScoreField;
+  final int? totalSetoranCountField;
+  final int? totalErrorsField;
+  final int? totalZiyadahAyahsField;
+  final int? totalMurojaahAyahsField;
+  final int? totalFailedAyahsField;
+  final double? estimatedJuzField;
+  final List<int>? juzCoveredByZiyadahField;
+
   // Backward-compat getters so old references still compile
   String? get nik => nis;
   String? get namaOrtu => namaOrangTua ?? namaAyah ?? namaIbu;
@@ -46,6 +56,14 @@ class Santri {
     this.setoranHistory = const [],
     this.tasmiHistory = const [],
     this.initialMemorizedJuz = const [],
+    this.averageScoreField,
+    this.totalSetoranCountField,
+    this.totalErrorsField,
+    this.totalZiyadahAyahsField,
+    this.totalMurojaahAyahsField,
+    this.totalFailedAyahsField,
+    this.estimatedJuzField,
+    this.juzCoveredByZiyadahField,
   });
 
   bool get isAktif => status == 'aktif';
@@ -67,6 +85,14 @@ class Santri {
     List<SetoranRecord>? setoranHistory,
     List<TasmiRecord>? tasmiHistory,
     List<int>? initialMemorizedJuz,
+    double? averageScoreField,
+    int? totalSetoranCountField,
+    int? totalErrorsField,
+    int? totalZiyadahAyahsField,
+    int? totalMurojaahAyahsField,
+    int? totalFailedAyahsField,
+    double? estimatedJuzField,
+    List<int>? juzCoveredByZiyadahField,
     // old-name aliases
     String? nik,
     String? namaOrtu,
@@ -90,10 +116,19 @@ class Santri {
       setoranHistory: setoranHistory ?? this.setoranHistory,
       tasmiHistory: tasmiHistory ?? this.tasmiHistory,
       initialMemorizedJuz: initialMemorizedJuz ?? this.initialMemorizedJuz,
+      averageScoreField: averageScoreField ?? this.averageScoreField,
+      totalSetoranCountField: totalSetoranCountField ?? this.totalSetoranCountField,
+      totalErrorsField: totalErrorsField ?? this.totalErrorsField,
+      totalZiyadahAyahsField: totalZiyadahAyahsField ?? this.totalZiyadahAyahsField,
+      totalMurojaahAyahsField: totalMurojaahAyahsField ?? this.totalMurojaahAyahsField,
+      totalFailedAyahsField: totalFailedAyahsField ?? this.totalFailedAyahsField,
+      estimatedJuzField: estimatedJuzField ?? this.estimatedJuzField,
+      juzCoveredByZiyadahField: juzCoveredByZiyadahField ?? this.juzCoveredByZiyadahField,
     );
   }
 
   double get averageScore {
+    if (averageScoreField != null) return averageScoreField!;
     if (setoranHistory.isEmpty) return 0;
     final total = setoranHistory.fold<double>(
       0.0,
@@ -102,8 +137,12 @@ class Santri {
     return total / setoranHistory.length;
   }
 
-  double get totalAccumulatedScore =>
-      setoranHistory.fold<double>(0.0, (sum, s) => sum + s.finalScore);
+  double get totalAccumulatedScore {
+    if (averageScoreField != null && totalSetoranCountField != null) {
+      return averageScoreField! * totalSetoranCountField!;
+    }
+    return setoranHistory.fold<double>(0.0, (sum, s) => sum + s.finalScore);
+  }
 
   int get overallStarCount {
     final avg = averageScore;
@@ -115,25 +154,24 @@ class Santri {
     return 0;
   }
 
-  int get totalSetoranCount => setoranHistory.length;
+  int get totalSetoranCount => totalSetoranCountField ?? setoranHistory.length;
 
-  int get totalErrors =>
-      setoranHistory.fold<int>(0, (sum, s) => sum + s.totalErrors);
+  int get totalErrors => totalErrorsField ?? setoranHistory.fold<int>(0, (sum, s) => sum + s.totalErrors);
 
   // ── Hafalan accumulation ──────────────────────────────────────────────────
 
   /// Total ayahs covered in ziyadah (new memorisation) sessions.
-  int get totalZiyadahAyahs => setoranHistory
+  int get totalZiyadahAyahs => totalZiyadahAyahsField ?? setoranHistory
       .where((s) => s.type == SetoranType.ziyadah)
       .fold(0, (sum, s) => sum + s.passedAyahs.length);
 
   /// Total ayahs covered in muroja'ah (review) sessions.
-  int get totalMurojaahAyahs => setoranHistory
+  int get totalMurojaahAyahs => totalMurojaahAyahsField ?? setoranHistory
       .where((s) => s.type == SetoranType.murojaah)
       .fold(0, (sum, s) => sum + s.passedAyahs.length);
 
   /// Total failed ayahs (needs attention).
-  int get totalFailedAyahs => setoranHistory
+  int get totalFailedAyahs => totalFailedAyahsField ?? setoranHistory
       .fold(0, (sum, s) => sum + s.failedAyahs.length);
 
   /// Number of ziyadah sessions.
@@ -146,10 +184,11 @@ class Santri {
 
   /// Estimated juz memorised (Initial + Ziyadah).
   /// (1 juz ≈ 604 ayahs).
-  double get estimatedJuz => initialMemorizedJuz.length + (totalZiyadahAyahs / 604.0);
+  double get estimatedJuz => estimatedJuzField ?? (initialMemorizedJuz.length + (totalZiyadahAyahs / 604.0));
 
   /// Sorted list of distinct juz numbers touched by initial state OR ziyadah sessions.
   List<int> get juzCoveredByZiyadah {
+    if (juzCoveredByZiyadahField != null) return juzCoveredByZiyadahField!;
     final result = <int>{...initialMemorizedJuz};
     for (final s in setoranHistory.where(
       (r) => r.type == SetoranType.ziyadah,
@@ -190,9 +229,16 @@ class Santri {
     'targetHafalan': targetHafalan,
     'photoPath': photoPath,
     'status': status,
-    'setoranHistory': setoranHistory.map((s) => s.toJson()).toList(),
-    'tasmiHistory': tasmiHistory.map((t) => t.toJson()).toList(),
     'initialMemorizedJuz': initialMemorizedJuz,
+    // Add cached aggregate stats to json
+    'averageScore': averageScore,
+    'totalSetoranCount': totalSetoranCount,
+    'totalErrors': totalErrors,
+    'totalZiyadahAyahs': totalZiyadahAyahs,
+    'totalMurojaahAyahs': totalMurojaahAyahs,
+    'totalFailedAyahs': totalFailedAyahs,
+    'estimatedJuz': estimatedJuz,
+    'juzCoveredByZiyadah': juzCoveredByZiyadah,
   };
 
   factory Santri.fromJson(Map<String, dynamic> json) => Santri(
@@ -224,5 +270,15 @@ class Santri {
             ?.map((e) => e as int)
             .toList() ??
         [],
+    averageScoreField: (json['averageScore'] as num?)?.toDouble(),
+    totalSetoranCountField: json['totalSetoranCount'] as int?,
+    totalErrorsField: json['totalErrors'] as int?,
+    totalZiyadahAyahsField: json['totalZiyadahAyahs'] as int?,
+    totalMurojaahAyahsField: json['totalMurojaahAyahs'] as int?,
+    totalFailedAyahsField: json['totalFailedAyahs'] as int?,
+    estimatedJuzField: (json['estimatedJuz'] as num?)?.toDouble(),
+    juzCoveredByZiyadahField: (json['juzCoveredByZiyadah'] as List?)
+            ?.map((e) => e as int)
+            .toList(),
   );
 }

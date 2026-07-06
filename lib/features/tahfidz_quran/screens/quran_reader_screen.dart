@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tahfidz_app/models/error_mark.dart';
+import 'package:tahfidz_app/models/santri.dart';
+import 'package:tahfidz_app/models/setoran.dart';
+import 'package:tahfidz_app/models/surah_model.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_reader_widgets.dart';
@@ -36,132 +39,77 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppProvider>(
-      builder: (ctx, provider, _) {
-        return Scaffold(
-          backgroundColor: const Color(0xFFFFFDE7),
-          appBar: _buildAppBar(provider),
-          body: provider.isSurahLoading
-              ? const Center(child: CircularProgressIndicator())
-              : provider.surahLoadError != null
-                  ? _buildErrorState(provider)
-                  : provider.currentSurah == null
-                      ? const Center(child: CircularProgressIndicator())
-                      : Column(
-                          children: [
-                            if (!widget.isReadOnly) _buildLiveDashboard(provider),
-                            Expanded(child: _buildReaderContent(provider)),
-                          ],
-                        ),
-          bottomNavigationBar: _buildBottomBar(context, provider),
-        );
-      },
-    );
-  }
-
-  Widget _buildLiveDashboard(AppProvider provider) {
-    final passed = provider.sessionPassedAyahs.length;
-    final failed = provider.sessionFailedAyahs.length;
-    final santri = provider.activeSetoranSantri;
-    
-    // Yearly Target Progress
-    final totalMemorized = santri?.totalZiyadahAyahs ?? 0;
-    final yearlyTargetDoc = santri != null ? provider.getYearlyTarget(santri.id) : null;
-    final yearlyTarget = yearlyTargetDoc?.ayahCount ?? 604;
-    final yearlyProgress = (totalMemorized / yearlyTarget).clamp(0.0, 1.0);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 10, offset: const Offset(0, 4))],
-      ),
-      child: Column(
-        children: [
-          // 1. Santri Info & Yearly Goal
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFFDE7),
+      appBar: _buildAppBar(context),
+      body: Selector<AppProvider, bool>(
+        selector: (context, p) => p.isSurahLoading,
+        builder: (context, isLoading, child) {
+          if (isLoading) return const Center(child: CircularProgressIndicator());
+          
+          return Selector<AppProvider, String?>(
+            selector: (context, p) => p.surahLoadError,
+            builder: (context, error, child) {
+              if (error != null) return _buildErrorState(context.read<AppProvider>());
+              
+              return Selector<AppProvider, bool>(
+                selector: (context, p) => p.currentSurah == null,
+                builder: (context, isSurahNull, child) {
+                  if (isSurahNull) return const Center(child: CircularProgressIndicator());
+                  
+                  return Column(
                     children: [
-                      Text(santri?.name ?? 'Santri', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
-                      const SizedBox(height: 2),
-                      Text('Target Tahunan: ${(yearlyProgress * 100).toStringAsFixed(0)}% Selesai', style: TextStyle(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.bold)),
+                      if (!widget.isReadOnly) const _LiveDashboardWrapper(),
+                      Expanded(
+                        child: _ReaderContentWrapper(
+                          isReadOnly: widget.isReadOnly,
+                          scrollController: _scrollController,
+                          onWordTap: (surahNum, ayahNum, wordIdx, word) =>
+                              _onWordTap(context, context.read<AppProvider>(), surahNum, ayahNum, wordIdx, word),
+                        ),
+                      ),
                     ],
-                  ),
-                ),
-                _statusCircle('Lulus', passed, Colors.green),
-                const SizedBox(width: 8),
-                _statusCircle('Gagal', failed, Colors.red),
-              ],
-            ),
-          ),
-          
-          // 2. Error Counters (More prominent)
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(10)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _errorItem('KESALAHAN TAJWID', provider.sessionTajwidCount, AppTheme.tajwidColor),
-                Container(width: 1, height: 20, color: Colors.grey.shade300),
-                _errorItem('KESALAHAN MAKHROJ', provider.sessionMakhrojCount, AppTheme.makhrojColor),
-              ],
-            ),
-          ),
-          
-          const SizedBox(height: 8),
-        ],
+                  );
+                },
+              );
+            },
+          );
+        },
       ),
+      bottomNavigationBar: widget.isReadOnly
+          ? null
+          : _BottomBarWrapper(onFinish: () => _confirmFinish(context, context.read<AppProvider>())),
     );
   }
 
-  Widget _statusCircle(String label, int val, Color color) {
-    return Column(
-      children: [
-        Container(
-          width: 32, height: 32,
-          decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle, border: Border.all(color: color.withValues(alpha: 0.3))),
-          child: Center(child: Text('$val', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14))),
-        ),
-        const SizedBox(height: 2),
-        Text(label, style: TextStyle(fontSize: 8, color: color, fontWeight: FontWeight.bold)),
-      ],
-    );
-  }
-
-  Widget _errorItem(String label, int count, Color color) {
-    return Row(
-      children: [
-        Text('$count', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: color)),
-        const SizedBox(width: 8),
-        Text(label, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5)),
-      ],
-    );
-  }
-
-  AppBar _buildAppBar(AppProvider provider) {
+  AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: Column(
-        children: [
-          Text(
-            provider.activeSetoranSurahName.isNotEmpty ? provider.activeSetoranSurahName : 'Al-Quran',
-            style: GoogleFonts.amiri(fontSize: 22, color: Colors.white),
-            textDirection: TextDirection.rtl,
-          ),
-          Text(
-            '${provider.activeSetoranSurahEnglishName}  ·  ${provider.activeSetoranType.label}',
-            style: const TextStyle(fontSize: 11, color: Colors.white70, fontWeight: FontWeight.w500),
-          ),
-        ],
+      title: Selector<AppProvider, ({String name, String englishName, SetoranType type})>(
+        selector: (context, p) => (
+          name: p.activeSetoranSurahName,
+          englishName: p.activeSetoranSurahEnglishName,
+          type: p.activeSetoranType,
+        ),
+        builder: (context, data, child) {
+          return Column(
+            children: [
+              Text(
+                data.name.isNotEmpty ? data.name : 'Al-Quran',
+                style: GoogleFonts.amiri(fontSize: 22, color: Colors.white),
+                textDirection: TextDirection.rtl,
+              ),
+              Text(
+                '${data.englishName}  ·  ${data.type.label}',
+                style: const TextStyle(fontSize: 11, color: Colors.white70, fontWeight: FontWeight.w500),
+              ),
+            ],
+          );
+        },
       ),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
+          final provider = context.read<AppProvider>();
           if (widget.isReadOnly) {
             provider.clearErrors();
             Navigator.pop(context);
@@ -184,85 +132,6 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
           const SizedBox(height: 16),
           FilledButton(onPressed: () => provider.loadSurahForReader(provider.activeSetoranSurahNumber), child: const Text('Coba Lagi')),
         ],
-      ),
-    );
-  }
-
-  Widget _buildReaderContent(AppProvider provider) {
-    final surah = provider.currentSurah!;
-    final ayahs = surah.ayahs.where((a) => a.numberInSurah >= provider.activeSetoranAyahStart).toList();
-
-    return ListView.builder(
-      controller: _scrollController,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
-      itemCount: ayahs.length + (surah.number != 1 && surah.number != 9 && provider.activeSetoranAyahStart == 1 ? 2 : 1),
-      itemBuilder: (context, index) {
-        if (surah.number != 1 && surah.number != 9 && provider.activeSetoranAyahStart == 1 && index == 0) {
-          return const BismillahHeader();
-        }
-
-        int legendIndex = (surah.number != 1 && surah.number != 9 && provider.activeSetoranAyahStart == 1) ? 1 : 0;
-        if (!widget.isReadOnly && index == legendIndex) {
-          return const Padding(padding: EdgeInsets.only(bottom: 20), child: ReaderLegend());
-        }
-
-        int actualAyahIndex = index - (legendIndex + 1);
-        if (surah.number != 1 && surah.number != 9 && provider.activeSetoranAyahStart == 1) actualAyahIndex--;
-
-        if (actualAyahIndex < 0 || actualAyahIndex >= ayahs.length) return const SizedBox.shrink();
-
-        final ayah = ayahs[actualAyahIndex];
-        return RepaintBoundary(
-          child: AyahBlock(
-            key: ValueKey('${surah.number}_${ayah.numberInSurah}'),
-            ayah: ayah,
-            surahNumber: surah.number,
-            sessionErrors: provider.sessionErrors,
-            isPassed: provider.sessionPassedAyahs.contains(ayah.numberInSurah),
-            isFailed: provider.sessionFailedAyahs.contains(ayah.numberInSurah),
-            isReadOnly: widget.isReadOnly,
-            onTogglePassed: () => provider.toggleAyahPassed(ayah.numberInSurah),
-            onToggleFailed: () => provider.toggleAyahFailed(ayah.numberInSurah),
-            onWordTap: (wordIndex, word) => _onWordTap(context, provider, surah.number, ayah.numberInSurah, wordIndex, word),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildBottomBar(BuildContext context, AppProvider provider) {
-    if (widget.isReadOnly) return const SizedBox.shrink();
-
-    final totalMarked = provider.sessionPassedAyahs.length + provider.sessionFailedAyahs.length;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, -4))],
-      ),
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-      child: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                totalMarked == 0 ? 'Tandai ayat untuk menyimpan' : 'Ayat terakhir ditandai: ${[...provider.sessionPassedAyahs, ...provider.sessionFailedAyahs].reduce((a, b) => a > b ? a : b)}',
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
-              ),
-            ),
-            SizedBox(
-              height: 52,
-              child: FilledButton(
-                onPressed: totalMarked > 0 ? () => _confirmFinish(context, provider) : null,
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                ),
-                child: const Text('SELESAI', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.2)),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -328,4 +197,260 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
       ),
     );
   }
+}
+
+class _LiveDashboardWrapper extends StatelessWidget {
+  const _LiveDashboardWrapper();
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<AppProvider, ({int passed, int failed, Santri? santri, int tajwidCount, int makhrojCount})>(
+      selector: (context, p) => (
+        passed: p.sessionPassedAyahs.length,
+        failed: p.sessionFailedAyahs.length,
+        santri: p.activeSetoranSantri,
+        tajwidCount: p.sessionTajwidCount,
+        makhrojCount: p.sessionMakhrojCount,
+      ),
+      builder: (context, data, child) {
+        final provider = context.read<AppProvider>();
+        final passed = data.passed;
+        final failed = data.failed;
+        final santri = data.santri;
+        
+        // Yearly Target Progress
+        final totalMemorized = santri?.totalZiyadahAyahs ?? 0;
+        final yearlyTargetDoc = santri != null ? provider.getYearlyTarget(santri.id) : null;
+        final yearlyTarget = yearlyTargetDoc?.ayahCount ?? 604;
+        final yearlyProgress = (totalMemorized / yearlyTarget).clamp(0.0, 1.0);
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 10, offset: const Offset(0, 4))],
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(santri?.name ?? 'Santri', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
+                          const SizedBox(height: 2),
+                          Text('Target Tahunan: ${(yearlyProgress * 100).toStringAsFixed(0)}% Selesai', style: TextStyle(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                    _statusCircle('Lulus', passed, Colors.green),
+                    const SizedBox(width: 8),
+                    _statusCircle('Gagal', failed, Colors.red),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _errorItem('KESALAHAN TAJWID', data.tajwidCount, AppTheme.tajwidColor),
+                    Container(width: 1, height: 20, color: Colors.grey.shade300),
+                    _errorItem('KESALAHAN MAKHROJ', data.makhrojCount, AppTheme.makhrojColor),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _statusCircle(String label, int val, Color color) {
+    return Column(
+      children: [
+        Container(
+          width: 32, height: 32,
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle, border: Border.all(color: color.withValues(alpha: 0.3))),
+          child: Center(child: Text('$val', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14))),
+        ),
+        const SizedBox(height: 2),
+        Text(label, style: TextStyle(fontSize: 8, color: color, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  Widget _errorItem(String label, int count, Color color) {
+    return Row(
+      children: [
+        Text('$count', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: color)),
+        const SizedBox(width: 8),
+        Text(label, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5)),
+      ],
+    );
+  }
+}
+
+class _BottomBarWrapper extends StatelessWidget {
+  const _BottomBarWrapper({required this.onFinish});
+  final VoidCallback onFinish;
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<AppProvider, ({int totalMarked, int maxMarked})>(
+      selector: (context, p) {
+        final allMarked = [...p.sessionPassedAyahs, ...p.sessionFailedAyahs];
+        return (
+          totalMarked: allMarked.length,
+          maxMarked: allMarked.isEmpty ? 0 : allMarked.reduce((a, b) => a > b ? a : b),
+        );
+      },
+      builder: (context, data, child) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, -4))],
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          child: SafeArea(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    data.totalMarked == 0 
+                        ? 'Tandai ayat untuk menyimpan' 
+                        : 'Ayat terakhir ditandai: ${data.maxMarked}',
+                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+                  ),
+                ),
+                SizedBox(
+                  height: 52,
+                  child: FilledButton(
+                    onPressed: data.totalMarked > 0 ? onFinish : null,
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: const Text('SELESAI', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ReaderContentWrapper extends StatelessWidget {
+  const _ReaderContentWrapper({
+    required this.isReadOnly,
+    required this.scrollController,
+    required this.onWordTap,
+  });
+
+  final bool isReadOnly;
+  final ScrollController scrollController;
+  final void Function(int surahNumber, int ayahNumber, int wordIndex, String word) onWordTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<AppProvider, ({SurahDetail? currentSurah, int startAyah, SetoranType type})>(
+      selector: (context, p) => (
+        currentSurah: p.currentSurah,
+        startAyah: p.activeSetoranAyahStart,
+        type: p.activeSetoranType,
+      ),
+      builder: (context, data, child) {
+        final surah = data.currentSurah!;
+        final ayahs = surah.ayahs.where((a) => a.numberInSurah >= data.startAyah).toList();
+
+        return ListView.builder(
+          controller: scrollController,
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+          itemCount: ayahs.length + (surah.number != 1 && surah.number != 9 && data.startAyah == 1 ? 2 : 1),
+          itemBuilder: (context, index) {
+            if (surah.number != 1 && surah.number != 9 && data.startAyah == 1 && index == 0) {
+              return const BismillahHeader();
+            }
+
+            int legendIndex = (surah.number != 1 && surah.number != 9 && data.startAyah == 1) ? 1 : 0;
+            if (!isReadOnly && index == legendIndex) {
+              return const Padding(padding: EdgeInsets.only(bottom: 20), child: ReaderLegend());
+            }
+
+            int actualAyahIndex = index - (legendIndex + 1);
+            if (surah.number != 1 && surah.number != 9 && data.startAyah == 1) actualAyahIndex--;
+
+            if (actualAyahIndex < 0 || actualAyahIndex >= ayahs.length) return const SizedBox.shrink();
+
+            final ayah = ayahs[actualAyahIndex];
+            
+            return Selector<AppProvider, _AyahState>(
+              selector: (context, p) {
+                final ayahErrors = Map<String, ErrorMark>.fromEntries(
+                  p.sessionErrors.entries.where((e) => e.value.surahNumber == surah.number && e.value.ayahNumber == ayah.numberInSurah)
+                );
+                return _AyahState(
+                  errors: ayahErrors,
+                  isPassed: p.sessionPassedAyahs.contains(ayah.numberInSurah),
+                  isFailed: p.sessionFailedAyahs.contains(ayah.numberInSurah),
+                );
+              },
+              builder: (context, state, child) {
+                return RepaintBoundary(
+                  child: AyahBlock(
+                    key: ValueKey('${surah.number}_${ayah.numberInSurah}'),
+                    ayah: ayah,
+                    surahNumber: surah.number,
+                    sessionErrors: state.errors,
+                    isPassed: state.isPassed,
+                    isFailed: state.isFailed,
+                    isReadOnly: isReadOnly,
+                    onTogglePassed: () => context.read<AppProvider>().toggleAyahPassed(ayah.numberInSurah),
+                    onToggleFailed: () => context.read<AppProvider>().toggleAyahFailed(ayah.numberInSurah),
+                    onWordTap: (wordIndex, word) => onWordTap(surah.number, ayah.numberInSurah, wordIndex, word),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _AyahState {
+  final Map<String, ErrorMark> errors;
+  final bool isPassed;
+  final bool isFailed;
+
+  _AyahState({
+    required this.errors,
+    required this.isPassed,
+    required this.isFailed,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! _AyahState) return false;
+    if (isPassed != other.isPassed || isFailed != other.isFailed) return false;
+    if (errors.length != other.errors.length) return false;
+    for (final key in errors.keys) {
+      if (errors[key]?.errorType != other.errors[key]?.errorType) return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => errors.hashCode ^ isPassed.hashCode ^ isFailed.hashCode;
 }

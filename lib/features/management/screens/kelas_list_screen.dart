@@ -94,7 +94,7 @@ class KelasListScreen extends StatelessWidget {
               if (ctrl.text.trim().isEmpty) return;
               final p = context.read<AppProvider>();
               if (existing == null) {
-                p.addKelas(KelasData(id: DateTime.now().millisecondsSinceEpoch.toString(), nama: ctrl.text.trim()));
+                p.addKelas(KelasData(id: p.generateId('kelas'), nama: ctrl.text.trim()));
               } else {
                 p.updateKelas(existing.id, KelasData(id: existing.id, nama: ctrl.text.trim()));
               }
