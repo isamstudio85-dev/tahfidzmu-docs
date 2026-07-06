@@ -7,6 +7,7 @@ class MusyrifData {
   final String lembaga;
   final String nomorHp;
   final String? photoPath;
+  final String? email;
   final String status; // 'aktif' / 'nonaktif'
   final String? catatan;
 
@@ -19,6 +20,7 @@ class MusyrifData {
     this.lembaga = 'Halaqah Tahfidz',
     this.nomorHp = '',
     this.photoPath,
+    this.email,
     this.status = 'aktif',
     this.catatan,
   });
@@ -33,6 +35,7 @@ class MusyrifData {
     String? lembaga,
     String? nomorHp,
     String? photoPath,
+    String? email,
     String? status,
     String? catatan,
   }) {
@@ -45,6 +48,7 @@ class MusyrifData {
       lembaga: lembaga ?? this.lembaga,
       nomorHp: nomorHp ?? this.nomorHp,
       photoPath: photoPath ?? this.photoPath,
+      email: email ?? this.email,
       status: status ?? this.status,
       catatan: catatan ?? this.catatan,
     );
@@ -59,6 +63,7 @@ class MusyrifData {
     'lembaga': lembaga,
     'nomorHp': nomorHp,
     'photoPath': photoPath,
+    'email': email,
     'status': status,
     'catatan': catatan,
   };
@@ -72,6 +77,7 @@ class MusyrifData {
     lembaga: (json['lembaga'] as String?) ?? 'Halaqah Tahfidz',
     nomorHp: (json['nomorHp'] as String?) ?? '',
     photoPath: json['photoPath'] as String?,
+    email: json['email'] as String?,
     status: (json['status'] as String?) ?? 'aktif',
     catatan: json['catatan'] as String?,
   );

@@ -330,19 +330,19 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
   Future<void> updateGraduationRegistration(String id, GraduationRegistration updated) async => await getCollection('graduation_registrations').doc(id).update(updated.toJson());
   Future<void> removeGraduationRegistration(String id) async => await getCollection('graduation_registrations').doc(id).delete();
 
-  Future<void> addSantri(String name, {String? halaqahId, String? kelas, String? nis, String? email, String? jenisKelamin, String? namaOrangTua, String? namaAyah, String? namaIbu, String? nomorHpWali, String? targetHafalan, String? photoPath, List<int>? initialMemorizedJuz, String? username, String? password}) async {
+  Future<void> addSantri(String name, {String? halaqahId, String? kelas, String? nis, String? email, String? jenisKelamin, String? namaOrangTua, String? namaAyah, String? namaIbu, String? nomorHpWali, String? targetHafalan, String? photoPath, String? tanggalLahir, List<int>? initialMemorizedJuz, String? username, String? password}) async {
     final id = generateId('santri');
     String? cloudPhotoUrl;
     if (photoPath != null && photoPath.isNotEmpty && !photoPath.startsWith('http')) {
       try { cloudPhotoUrl = await firebase.uploadPhoto(localPath: photoPath, folder: 'santri_photos', fileName: id); } catch (_) {}
     }
-    final santri = Santri(id: id, name: name, nis: nis, email: email, jenisKelamin: jenisKelamin, kelas: kelas, halaqahId: halaqahId, namaOrangTua: namaOrangTua, namaAyah: namaAyah, namaIbu: namaIbu, nomorHpWali: nomorHpWali, targetHafalan: targetHafalan, photoPath: cloudPhotoUrl ?? photoPath, initialMemorizedJuz: initialMemorizedJuz ?? []);
+    final santri = Santri(id: id, name: name, nis: nis, email: email, jenisKelamin: jenisKelamin, kelas: kelas, halaqahId: halaqahId, namaOrangTua: namaOrangTua, namaAyah: namaAyah, namaIbu: namaIbu, nomorHpWali: nomorHpWali, targetHafalan: targetHafalan, photoPath: cloudPhotoUrl ?? photoPath, tanggalLahir: tanggalLahir, initialMemorizedJuz: initialMemorizedJuz ?? []);
     await getCollection('santri').doc(id).set(santri.toJson());
     final userKey = (username?.isNotEmpty ?? false) ? username! : nis?.replaceAll(RegExp(r'\D+'), '') ?? id;
     await getCollection('user_mappings').doc(userKey).set({'linkedId': id, 'role': 'orangTua', 'defaultPassword': password ?? userKey});
   }
 
-  Future<void> updateSantriInfo(String santriId, {String? name, String? nis, String? email, String? jenisKelamin, String? halaqahId, String? kelas, String? namaOrangTua, String? namaAyah, String? namaIbu, String? nomorHpWali, String? targetHafalan, String? photoPath, String? status, List<int>? initialMemorizedJuz}) async {
+  Future<void> updateSantriInfo(String santriId, {String? name, String? nis, String? email, String? jenisKelamin, String? halaqahId, String? kelas, String? namaOrangTua, String? namaAyah, String? namaIbu, String? nomorHpWali, String? targetHafalan, String? photoPath, String? tanggalLahir, String? status, List<int>? initialMemorizedJuz}) async {
     final doc = getCollection('santri').doc(santriId);
     final existing = await doc.get(); if (!existing.exists) return;
     final s = Santri.fromJson(existing.data()!);
@@ -350,7 +350,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     if (photoPath != null && photoPath.isNotEmpty && !photoPath.startsWith('http')) {
       try { finalPhotoPath = await firebase.uploadPhoto(localPath: photoPath, folder: 'santri_photos', fileName: santriId); } catch (_) {}
     }
-    await doc.update(s.copyWith(name: name, nis: nis, email: email, jenisKelamin: jenisKelamin, kelas: kelas, halaqahId: halaqahId, namaOrangTua: namaOrangTua, namaAyah: namaAyah, namaIbu: namaIbu, nomorHpWali: nomorHpWali, targetHafalan: targetHafalan, photoPath: finalPhotoPath, status: status, initialMemorizedJuz: initialMemorizedJuz).toJson());
+    await doc.update(s.copyWith(name: name, nis: nis, email: email, jenisKelamin: jenisKelamin, kelas: kelas, halaqahId: halaqahId, namaOrangTua: namaOrangTua, namaAyah: namaAyah, namaIbu: namaIbu, nomorHpWali: nomorHpWali, targetHafalan: targetHafalan, photoPath: finalPhotoPath, tanggalLahir: tanggalLahir, status: status, initialMemorizedJuz: initialMemorizedJuz).toJson());
   }
 
   Future<void> removeSantri(String santriId) async => await getCollection('santri').doc(santriId).delete();

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +8,7 @@ import 'package:tahfidz_app/models/musyrif_data.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
 
 /// Full-page form for adding or editing a MusyrifData.
 class MusyrifFormScreen extends StatefulWidget {
@@ -22,6 +24,7 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
 
   late final TextEditingController _namaCtrl;
   late final TextEditingController _nipCtrl;
+  late final TextEditingController _emailCtrl;
   late final TextEditingController _jabatanCtrl;
   late final TextEditingController _hpCtrl;
   late final TextEditingController _usernameCtrl;
@@ -41,6 +44,7 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
     final m = widget.existing;
     _namaCtrl = TextEditingController(text: m?.nama ?? '');
     _nipCtrl = TextEditingController(text: m?.nip ?? '');
+    _emailCtrl = TextEditingController(text: m?.email ?? '');
     _jabatanCtrl = TextEditingController(text: m?.jabatan ?? '');
     _hpCtrl = TextEditingController(text: m?.nomorHp ?? '');
     _usernameCtrl = TextEditingController();
@@ -54,6 +58,7 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
   void dispose() {
     _namaCtrl.dispose();
     _nipCtrl.dispose();
+    _emailCtrl.dispose();
     _jabatanCtrl.dispose();
     _hpCtrl.dispose();
     _usernameCtrl.dispose();
@@ -116,6 +121,7 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
         nomorHp: _hpCtrl.text.trim(),
         status: _status,
         photoPath: _photoPath,
+        email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
       );
 
       if (_isEdit) {
@@ -142,6 +148,93 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal menyimpan: $e')));
       }
+    }
+  }
+
+  Future<void> _scanExistingCard() async {
+    final rawString = await Navigator.push<dynamic>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const QrScannerScreen(returnRaw: true),
+      ),
+    );
+
+    if (rawString == null || rawString is! String || rawString.trim().isEmpty) return;
+    final trimmed = rawString.trim();
+
+    // 1. Coba parse sebagai JSON
+    try {
+      final data = jsonDecode(trimmed);
+      if (data is Map<String, dynamic>) {
+        setState(() {
+          if (data.containsKey('nama')) _namaCtrl.text = data['nama'].toString();
+          if (data.containsKey('name')) _namaCtrl.text = data['name'].toString();
+          
+          if (data.containsKey('nip')) _nipCtrl.text = data['nip'].toString();
+          if (data.containsKey('id')) _nipCtrl.text = data['id'].toString();
+          
+          if (data.containsKey('email')) _emailCtrl.text = data['email'].toString();
+          
+          if (data.containsKey('nomorHp')) _hpCtrl.text = data['nomorHp'].toString();
+          if (data.containsKey('hp')) _hpCtrl.text = data['hp'].toString();
+          
+          if (data.containsKey('jabatan')) _jabatanCtrl.text = data['jabatan'].toString();
+          
+          if (data.containsKey('jenisKelamin')) {
+            final gk = data['jenisKelamin'].toString().toUpperCase();
+            if (gk == 'L' || gk == 'P') _jenisKelamin = gk;
+          }
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Data kartu berhasil disalin ke form!'), backgroundColor: Colors.green),
+          );
+        }
+        return;
+      }
+    } catch (_) {}
+
+    // 2. Coba parse sebagai URL dengan query parameters
+    try {
+      final uri = Uri.parse(trimmed);
+      if (uri.hasQuery) {
+        setState(() {
+          final params = uri.queryParameters;
+          if (params.containsKey('nama')) _namaCtrl.text = params['nama']!;
+          if (params.containsKey('name')) _namaCtrl.text = params['name']!;
+          
+          if (params.containsKey('nip')) _nipCtrl.text = params['nip']!;
+          if (params.containsKey('id')) _nipCtrl.text = params['id']!;
+          
+          if (params.containsKey('email')) _emailCtrl.text = params['email']!;
+          
+          if (params.containsKey('nomorHp')) _hpCtrl.text = params['nomorHp']!;
+          if (params.containsKey('hp')) _hpCtrl.text = params['hp']!;
+          
+          if (params.containsKey('jabatan')) _jabatanCtrl.text = params['jabatan']!;
+          
+          if (params.containsKey('jenisKelamin')) {
+            final gk = params['jenisKelamin']!.toUpperCase();
+            if (gk == 'L' || gk == 'P') _jenisKelamin = gk;
+          }
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Data link kartu berhasil disalin ke form!'), backgroundColor: Colors.green),
+          );
+        }
+        return;
+      }
+    } catch (_) {}
+
+    // 3. Fallback: Anggap sebagai raw string NIP
+    setState(() {
+      _nipCtrl.text = trimmed;
+    });
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Kode QR disalin ke kolom NIP: $trimmed'), backgroundColor: Colors.blue),
+      );
     }
   }
 
@@ -199,6 +292,21 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppTheme.primaryGreen,
+                  side: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                onPressed: _scanExistingCard,
+                icon: const Icon(Icons.qr_code_scanner_rounded),
+                label: const Text('Scan & Salin Kartu Digital Musyrif', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
             const SizedBox(height: 24),
             _section('Informasi Utama'),
             const SizedBox(height: 12),
@@ -231,6 +339,16 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
                 hintText: 'cth. NIP-001',
                 prefixIcon: Icon(Icons.badge_rounded),
               ),
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _emailCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                hintText: 'musyrif@example.com',
+                prefixIcon: Icon(Icons.email_rounded),
+              ),
+              keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 12),
             TextFormField(

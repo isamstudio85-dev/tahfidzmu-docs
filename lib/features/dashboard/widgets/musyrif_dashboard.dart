@@ -97,13 +97,21 @@ class MusyrifDashboard extends StatelessWidget {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                CircleAvatar(
-                                  radius: 32,
-                                  backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                                  backgroundImage: m?.photoPath != null ? NetworkImage(m!.photoPath!) : null,
-                                  child: m?.photoPath == null
-                                      ? Text(m?.nama[0] ?? 'M', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen))
-                                      : null,
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    width: 60,
+                                    height: 75,
+                                    color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                                    child: m?.photoPath != null
+                                        ? Image.network(m!.photoPath!, fit: BoxFit.cover)
+                                        : Center(
+                                            child: Text(
+                                              m?.nama[0] ?? 'M',
+                                              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
+                                            ),
+                                          ),
+                                  ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(

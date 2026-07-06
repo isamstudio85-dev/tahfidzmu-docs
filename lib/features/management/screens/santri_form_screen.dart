@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/management/widgets/juz_selector_grid.dart';
 import 'package:tahfidz_app/features/management/widgets/santri_photo_selector.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
 
 /// Full-page form for adding or editing a Santri.
 class SantriFormScreen extends StatefulWidget {
@@ -26,6 +28,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
   late final TextEditingController _kelasCtrl;
   late final TextEditingController _namaOrangTuaCtrl;
   late final TextEditingController _nomorHpWaliCtrl;
+  late final TextEditingController _tanggalLahirCtrl;
 
   late final TextEditingController _usernameCtrl;
   late final TextEditingController _passwordCtrl;
@@ -51,6 +54,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     _kelasCtrl = TextEditingController(text: s?.kelas ?? '');
     _namaOrangTuaCtrl = TextEditingController(text: s?.namaOrangTua ?? s?.namaAyah ?? s?.namaIbu ?? '');
     _nomorHpWaliCtrl = TextEditingController(text: s?.nomorHpWali ?? '');
+    _tanggalLahirCtrl = TextEditingController(text: s?.tanggalLahir ?? '');
 
     _usernameCtrl = TextEditingController();
     _passwordCtrl = TextEditingController();
@@ -82,6 +86,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     _kelasCtrl.dispose();
     _namaOrangTuaCtrl.dispose();
     _nomorHpWaliCtrl.dispose();
+    _tanggalLahirCtrl.dispose();
     _usernameCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
@@ -261,6 +266,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
           nomorHpWali: _nomorHpWaliCtrl.text.trim().isEmpty ? null : _nomorHpWaliCtrl.text.trim(),
           targetHafalan: _targetJuz,
           photoPath: _photoPath,
+          tanggalLahir: _tanggalLahirCtrl.text.trim().isEmpty ? null : _tanggalLahirCtrl.text.trim(),
           status: _status,
           initialMemorizedJuz: _initialJuz,
         );
@@ -276,6 +282,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
           nomorHpWali: _nomorHpWaliCtrl.text.trim().isEmpty ? null : _nomorHpWaliCtrl.text.trim(),
           targetHafalan: _targetJuz,
           photoPath: _photoPath,
+          tanggalLahir: _tanggalLahirCtrl.text.trim().isEmpty ? null : _tanggalLahirCtrl.text.trim(),
           initialMemorizedJuz: _initialJuz,
           username: _usernameCtrl.text.trim().isEmpty ? null : _usernameCtrl.text.trim(),
           password: _passwordCtrl.text.trim().isEmpty ? null : _passwordCtrl.text.trim(),
@@ -287,6 +294,105 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal menyimpan: $e')));
       }
+    }
+  }
+
+  Future<void> _scanExistingCard() async {
+    final rawString = await Navigator.push<dynamic>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const QrScannerScreen(returnRaw: true),
+      ),
+    );
+
+    if (rawString == null || rawString is! String || rawString.trim().isEmpty) return;
+    final trimmed = rawString.trim();
+
+    // 1. Coba parse sebagai JSON
+    try {
+      final data = jsonDecode(trimmed);
+      if (data is Map<String, dynamic>) {
+        setState(() {
+          if (data.containsKey('nama')) _namaCtrl.text = data['nama'].toString();
+          if (data.containsKey('name')) _namaCtrl.text = data['name'].toString();
+          
+          if (data.containsKey('nis')) _nisCtrl.text = data['nis'].toString();
+          if (data.containsKey('id')) _nisCtrl.text = data['id'].toString();
+          
+          if (data.containsKey('email')) _emailCtrl.text = data['email'].toString();
+          
+          if (data.containsKey('kelas')) _kelasCtrl.text = data['kelas'].toString();
+          
+          if (data.containsKey('namaOrangTua')) _namaOrangTuaCtrl.text = data['namaOrangTua'].toString();
+          if (data.containsKey('ortu')) _namaOrangTuaCtrl.text = data['ortu'].toString();
+          
+          if (data.containsKey('nomorHpWali')) _nomorHpWaliCtrl.text = data['nomorHpWali'].toString();
+          if (data.containsKey('nomorHp')) _nomorHpWaliCtrl.text = data['nomorHp'].toString();
+          
+          if (data.containsKey('tanggalLahir')) _tanggalLahirCtrl.text = data['tanggalLahir'].toString();
+          if (data.containsKey('tglLahir')) _tanggalLahirCtrl.text = data['tglLahir'].toString();
+          
+          if (data.containsKey('jenisKelamin')) {
+            final gk = data['jenisKelamin'].toString().toUpperCase();
+            if (gk == 'L' || gk == 'P') _jenisKelamin = gk;
+          }
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Data kartu berhasil disalin ke form!'), backgroundColor: Colors.green),
+          );
+        }
+        return;
+      }
+    } catch (_) {}
+
+    // 2. Coba parse sebagai URL dengan query parameters
+    try {
+      final uri = Uri.parse(trimmed);
+      if (uri.hasQuery) {
+        setState(() {
+          final params = uri.queryParameters;
+          if (params.containsKey('nama')) _namaCtrl.text = params['nama']!;
+          if (params.containsKey('name')) _namaCtrl.text = params['name']!;
+          
+          if (params.containsKey('nis')) _nisCtrl.text = params['nis']!;
+          if (params.containsKey('id')) _nisCtrl.text = params['id']!;
+          
+          if (params.containsKey('email')) _emailCtrl.text = params['email']!;
+          
+          if (params.containsKey('kelas')) _kelasCtrl.text = params['kelas']!;
+          
+          if (params.containsKey('namaOrangTua')) _namaOrangTuaCtrl.text = params['namaOrangTua']!;
+          if (params.containsKey('ortu')) _namaOrangTuaCtrl.text = params['ortu']!;
+          
+          if (params.containsKey('nomorHpWali')) _nomorHpWaliCtrl.text = params['nomorHpWali']!;
+          if (params.containsKey('nomorHp')) _nomorHpWaliCtrl.text = params['nomorHp']!;
+          
+          if (params.containsKey('tanggalLahir')) _tanggalLahirCtrl.text = params['tanggalLahir']!;
+          if (params.containsKey('tglLahir')) _tanggalLahirCtrl.text = params['tglLahir']!;
+          
+          if (params.containsKey('jenisKelamin')) {
+            final gk = params['jenisKelamin']!.toUpperCase();
+            if (gk == 'L' || gk == 'P') _jenisKelamin = gk;
+          }
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Data link kartu berhasil disalin ke form!'), backgroundColor: Colors.green),
+          );
+        }
+        return;
+      }
+    } catch (_) {}
+
+    // 3. Fallback: Anggap sebagai raw string NIS/NIP
+    setState(() {
+      _nisCtrl.text = trimmed;
+    });
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Kode QR disalin ke kolom NIS: $trimmed'), backgroundColor: Colors.blue),
+      );
     }
   }
 
@@ -312,6 +418,21 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
               photoPath: _photoPath,
               name: _namaCtrl.text.isEmpty ? (_isEdit ? widget.existing!.name : '?') : _namaCtrl.text,
               onPhotoSelected: (path) => setState(() => _photoPath = path),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppTheme.primaryGreen,
+                  side: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                onPressed: _scanExistingCard,
+                icon: const Icon(Icons.qr_code_scanner_rounded),
+                label: const Text('Scan & Salin Kartu Digital Santri', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
             ),
             const SizedBox(height: 24),
             _section('Informasi Utama'),
@@ -358,6 +479,30 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
             TextFormField(
               controller: _nisCtrl,
               decoration: const InputDecoration(labelText: 'NIS (Nomor Induk Santri)', hintText: 'cth. TH-2024-001', prefixIcon: Icon(Icons.badge_rounded)),
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _tanggalLahirCtrl,
+              readOnly: true,
+              decoration: const InputDecoration(
+                labelText: 'Tanggal Lahir',
+                hintText: 'Pilih tanggal lahir santri',
+                prefixIcon: Icon(Icons.cake_rounded),
+                suffixIcon: Icon(Icons.calendar_today_rounded),
+              ),
+              onTap: () async {
+                final date = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now().subtract(const Duration(days: 365 * 10)),
+                  firstDate: DateTime(1990),
+                  lastDate: DateTime.now(),
+                );
+                if (date != null) {
+                  setState(() {
+                    _tanggalLahirCtrl.text = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+                  });
+                }
+              },
             ),
             const SizedBox(height: 12),
 

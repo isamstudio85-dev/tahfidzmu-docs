@@ -85,13 +85,21 @@ class OrangTuaDashboard extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              CircleAvatar(
-                                radius: 32,
-                                backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                                backgroundImage: child.photoPath != null ? NetworkImage(child.photoPath!) : null,
-                                child: child.photoPath == null
-                                    ? Text(child.name[0], style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen))
-                                    : null,
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  width: 60,
+                                  height: 75,
+                                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                                  child: child.photoPath != null
+                                      ? Image.network(child.photoPath!, fit: BoxFit.cover)
+                                      : Center(
+                                          child: Text(
+                                            child.name[0],
+                                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
+                                          ),
+                                        ),
+                                ),
                               ),
                               const SizedBox(width: 16),
                               Expanded(

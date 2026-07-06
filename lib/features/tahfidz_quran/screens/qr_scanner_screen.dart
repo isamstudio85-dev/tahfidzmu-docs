@@ -8,8 +8,9 @@ import 'package:tahfidz_app/providers/app_provider.dart';
 
 class QrScannerScreen extends StatefulWidget {
   final Santri? expectedSantri;
+  final bool returnRaw;
 
-  const QrScannerScreen({super.key, this.expectedSantri});
+  const QrScannerScreen({super.key, this.expectedSantri, this.returnRaw = false});
 
   @override
   State<QrScannerScreen> createState() => _QrScannerScreenState();
@@ -55,6 +56,11 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
       _isProcessing = true;
       _errorMessage = null;
     });
+
+    if (widget.returnRaw) {
+      _showSuccessAndPop(codeValue);
+      return;
+    }
 
     final provider = context.read<AppProvider>();
     final santriList = provider.santriList;
@@ -103,6 +109,10 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
 
   void _showSuccessAndPop(dynamic result) {
     // Tampilkan feedback visual sukses
+    final message = widget.returnRaw
+        ? "Scan Kartu Berhasil!"
+        : "Verifikasi Berhasil: ${result is Santri ? result.name : 'Santri Cocok'}";
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -110,7 +120,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
             const Icon(Icons.check_circle_rounded, color: Colors.white),
             const SizedBox(width: 12),
             Text(
-              "Verifikasi Berhasil: ${result is Santri ? result.name : 'Santri Cocok'}",
+              message,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -122,7 +132,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
 
     Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted) {
-        Navigator.pop(context, result is Santri ? result : true);
+        Navigator.pop(context, result);
       }
     });
   }

@@ -19,6 +19,7 @@ class Santri {
   final String status; // 'aktif' / 'nonaktif'
   final List<SetoranRecord> setoranHistory;
   final List<TasmiRecord> tasmiHistory;
+  final String? tanggalLahir;
   
   /// Juz numbers that the student already memorized before using the app.
   final List<int> initialMemorizedJuz;
@@ -52,6 +53,7 @@ class Santri {
     this.nomorHpWali,
     this.targetHafalan,
     this.photoPath,
+    this.tanggalLahir,
     this.status = 'aktif',
     this.setoranHistory = const [],
     this.tasmiHistory = const [],
@@ -81,6 +83,7 @@ class Santri {
     String? nomorHpWali,
     String? targetHafalan,
     String? photoPath,
+    String? tanggalLahir,
     String? status,
     List<SetoranRecord>? setoranHistory,
     List<TasmiRecord>? tasmiHistory,
@@ -112,6 +115,7 @@ class Santri {
       nomorHpWali: nomorHpWali ?? nomorOrtu ?? this.nomorHpWali,
       targetHafalan: targetHafalan ?? this.targetHafalan,
       photoPath: photoPath ?? this.photoPath,
+      tanggalLahir: tanggalLahir ?? this.tanggalLahir,
       status: status ?? this.status,
       setoranHistory: setoranHistory ?? this.setoranHistory,
       tasmiHistory: tasmiHistory ?? this.tasmiHistory,
@@ -228,6 +232,7 @@ class Santri {
     'nomorHpWali': nomorHpWali,
     'targetHafalan': targetHafalan,
     'photoPath': photoPath,
+    'tanggalLahir': tanggalLahir,
     'status': status,
     'initialMemorizedJuz': initialMemorizedJuz,
     // Add cached aggregate stats to json
@@ -255,6 +260,7 @@ class Santri {
     nomorHpWali: (json['nomorHpWali'] ?? json['nomorOrtu']) as String?,
     targetHafalan: json['targetHafalan'] as String?,
     photoPath: json['photoPath'] as String?,
+    tanggalLahir: json['tanggalLahir'] as String?,
     status: (json['status'] as String?) ?? 'aktif',
     setoranHistory:
         (json['setoranHistory'] as List?)
