@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -8,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:tahfidz_app/models/musyrif_data.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
-import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
 
 /// Full-page form for adding or editing a MusyrifData.
@@ -99,6 +99,101 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
         setState(() => _photoPath = pickedFile.path);
       }
     }
+  }
+
+  Map<String, String> _parseSmartRawText(String text) {
+    String name = '';
+    String id = '';
+    String email = '';
+    
+    final ignoreSet = {
+      'kartu', 'santri', 'musyrif', 'pesantren', 'halaqah', 'tahfidz', 'app', 'digital', 'pondok', 'wisuda', 'ujian',
+      'id', 'nis', 'nip', 'nama', 'name', 'email', 'kelas', 'class', 'school', 'card', 'member'
+    };
+
+    bool isHeaderOrLabel(String word) {
+      final w = word.toLowerCase().replaceAll(RegExp(r'[^a-z]'), '');
+      return ignoreSet.contains(w);
+    }
+
+    String cleanValue(String val) {
+      var s = val.trim();
+      s = s.replaceFirst(RegExp(r'^[:\-\s|]+'), '');
+      return s.trim();
+    }
+
+    final lines = text.split(RegExp(r'[\r\n]+')).map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+
+    if (lines.length > 1) {
+      for (var line in lines) {
+        final colonIndex = line.indexOf(':');
+        if (colonIndex != -1) {
+          final label = line.substring(0, colonIndex).trim().toLowerCase();
+          final value = cleanValue(line.substring(colonIndex + 1));
+          
+          if (label.contains('nama') || label.contains('name')) {
+            name = value;
+            continue;
+          } else if (label.contains('nip') || label.contains('id') || label.contains('nis') || label.contains('number')) {
+            id = value;
+            continue;
+          } else if (label.contains('email')) {
+            email = value;
+            continue;
+          }
+        }
+        
+        final cleanLine = line.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').trim();
+        final words = cleanLine.split(RegExp(r'\s+'));
+        
+        if (words.every((w) => isHeaderOrLabel(w))) {
+          continue;
+        }
+
+        final digits = line.replaceAll(RegExp(r'[^0-9]'), '');
+        final letters = line.replaceAll(RegExp(r'[^a-zA-Z]'), '');
+        
+        if (digits.length > letters.length && digits.length >= 3) {
+          id = cleanValue(line);
+        } else if (letters.length > digits.length && letters.length >= 3) {
+          if (!isHeaderOrLabel(words.first)) {
+            name = cleanValue(line);
+          }
+        }
+      }
+    } else {
+      final parts = text.split(RegExp(r'[\-|/|,]')).map((p) => p.trim()).where((p) => p.isNotEmpty).toList();
+      if (parts.length >= 2) {
+        for (var part in parts) {
+          final cleanPart = part.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').trim();
+          final words = cleanPart.split(RegExp(r'\s+'));
+          if (words.every((w) => isHeaderOrLabel(w))) continue;
+
+          final digits = part.replaceAll(RegExp(r'[^0-9]'), '');
+          final letters = part.replaceAll(RegExp(r'[^a-zA-Z]'), '');
+
+          if (digits.length > letters.length && digits.length >= 3) {
+            id = cleanValue(part);
+          } else {
+            name = cleanValue(part);
+          }
+        }
+      } else {
+        final digits = text.replaceAll(RegExp(r'[^0-9]'), '');
+        final letters = text.replaceAll(RegExp(r'[^a-zA-Z]'), '');
+        if (digits.length > letters.length) {
+          id = text;
+        } else {
+          name = text;
+        }
+      }
+    }
+
+    return {
+      'name': name.trim(),
+      'id': id.trim(),
+      'email': email.trim(),
+    };
   }
 
   Future<void> _save() async {
@@ -198,6 +293,7 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
       }
     } catch (_) {
       // 2. Coba parse sebagai URL dengan query parameters
+      bool parsedAsUrl = false;
       try {
         final uri = Uri.parse(trimmed);
         if (uri.hasQuery) {
@@ -219,8 +315,17 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
             final gk = params['jenisKelamin']!.toUpperCase();
             if (gk == 'L' || gk == 'P') parsedJk = gk;
           }
+          parsedAsUrl = true;
         }
       } catch (_) {}
+
+      // 3. Fallback: Smart Regex/Word parser if not URL
+      if (!parsedAsUrl) {
+        final smartData = _parseSmartRawText(trimmed);
+        parsedNama = smartData['name'] ?? '';
+        parsedId = smartData['id'] ?? trimmed;
+        parsedEmail = smartData['email'] ?? '';
+      }
     }
 
     if (!mounted) return;
@@ -280,41 +385,74 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Center(
-              child: Stack(
-                children: [
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: AppAvatar(
-                      name: _namaCtrl.text.isEmpty ? '?' : _namaCtrl.text,
-                      radius: 50,
-                      imagePath: _photoPath,
-                      backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                      foregroundColor: AppTheme.primaryGreen,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Box A: QR Code otomatis bawaan aplikasi
+                Expanded(
+                  child: Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.2), width: 1.5),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: _pickImage,
-                      child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryGreen,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const Icon(
-                          Icons.camera_alt_rounded,
-                          size: 18,
-                          color: Colors.white,
-                        ),
+                    child: Center(
+                      child: ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: _nipCtrl,
+                        builder: (context, val, _) {
+                          final currentId = val.text.trim();
+                          return currentId.isNotEmpty
+                              ? QrImageView(
+                                  data: currentId,
+                                  version: QrVersions.auto,
+                                  size: 90.0,
+                                  backgroundColor: Colors.white,
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.qr_code_2_rounded, color: Colors.grey, size: 40),
+                                    const SizedBox(height: 4),
+                                    Text('QR Otomatis', style: TextStyle(color: Colors.grey.shade500, fontSize: 10)),
+                                  ],
+                                );
+                        },
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 16),
+                // Box B: Upload Foto profil identik size
+                Expanded(
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade200, width: 1.5),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: _photoPath != null
+                            ? (_photoPath!.startsWith('http')
+                                ? Image.network(_photoPath!, fit: BoxFit.cover)
+                                : Image.file(File(_photoPath!), fit: BoxFit.cover))
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add_a_photo_rounded, color: AppTheme.primaryGreen.withValues(alpha: 0.6), size: 32),
+                                  const SizedBox(height: 4),
+                                  Text('Unggah Foto', style: TextStyle(color: Colors.grey.shade600, fontSize: 10, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -677,7 +815,13 @@ class _ScanPreviewDialogState extends State<_ScanPreviewDialog> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
+            Text(
+              'Catatan: Edit nama/data lainnya di form utama setelah disimpan.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontStyle: FontStyle.italic),
+            ),
+            const SizedBox(height: 16),
             
             // Actions
             Row(

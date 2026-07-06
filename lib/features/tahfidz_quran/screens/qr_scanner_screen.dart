@@ -228,9 +228,11 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    widget.expectedSantri != null
-                        ? "Pindai QR Code milik:\n${widget.expectedSantri!.name}"
-                        : "Arahkan kamera ke QR Code di kartu santri",
+                    widget.returnRaw
+                        ? "Fokuskan kamera ke QR Code & Nama Santri"
+                        : (widget.expectedSantri != null
+                            ? "Pindai QR Code milik:\n${widget.expectedSantri!.name}"
+                            : "Arahkan kamera ke QR Code di kartu santri"),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       color: Colors.white,
@@ -252,7 +254,9 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                   ] else ...[
                     const SizedBox(height: 6),
                     Text(
-                      "Musyrif wajib memverifikasi kehadiran santri secara fisik.",
+                      widget.returnRaw
+                          ? "Hindari memindai judul header kartu agar data tidak terganggu."
+                          : "Musyrif wajib memverifikasi kehadiran santri secara fisik.",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.grey.shade400,
