@@ -85,41 +85,52 @@ class MusyrifDashboard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            CircleAvatar(
-                              radius: 36,
-                              backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                              backgroundImage: m?.photoPath != null ? NetworkImage(m!.photoPath!) : null,
-                              child: m?.photoPath == null
-                                  ? Text(m?.nama[0] ?? 'M', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen))
-                                  : null,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              m?.nama ?? 'Musyrif',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              m?.jabatan ?? 'Pembimbing',
-                              style: const TextStyle(color: Colors.grey, fontSize: 12),
-                            ),
-                            const SizedBox(height: 24),
                             QrImageView(
                               data: m?.id ?? '',
                               version: QrVersions.auto,
                               size: 180.0,
                               backgroundColor: Colors.white,
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'ID: ${m?.id ?? "-"}',
-                              style: TextStyle(
-                                fontFamily: 'monospace',
-                                color: Colors.grey.shade600,
-                                fontSize: 11,
-                              ),
-                            ),
                             const SizedBox(height: 20),
+                            Divider(color: Colors.grey.shade300, height: 1),
+                            const SizedBox(height: 16),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 32,
+                                  backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                                  backgroundImage: m?.photoPath != null ? NetworkImage(m!.photoPath!) : null,
+                                  child: m?.photoPath == null
+                                      ? Text(m?.nama[0] ?? 'M', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen))
+                                      : null,
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        m?.nama ?? 'Musyrif',
+                                        style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'NIP/ID: ${m?.nip ?? m?.id ?? "-"}',
+                                        style: TextStyle(
+                                          fontFamily: 'monospace',
+                                          color: Colors.grey.shade600,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
                             TextButton(
                               onPressed: () => Navigator.pop(context),
                               child: const Text(
