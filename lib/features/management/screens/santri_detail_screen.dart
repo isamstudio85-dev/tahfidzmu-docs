@@ -85,52 +85,38 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
                 : null,
             body: Column(
               children: [
-                // 1. Unified Profile Header (Compact)
+                // 1. Unified Profile Header (Compact & Centered to prevent right overflow)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                   child: _ProfileHeader(
                     name: santri.name,
                     subtitle: '${santri.kelas ?? 'Tanpa Kelas'} • ${halaqah?.nama ?? 'Tanpa Halaqah'}',
                     photoPath: santri.photoPath,
-                    extra: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    extra: Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        StarRatingWidget(rating: stars, size: 16),
-                        const SizedBox(width: 8),
+                        StarRatingWidget(rating: stars, size: 14),
                         GradeBadgeWidget(gradeName: grade, stars: stars),
                       ],
                     ),
                   ),
                 ),
 
-                // 2. TabBar
+                // 2. TabBar (Shorter text tabs to prevent overflow)
                 TabBar(
-                  tabs: [
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.menu_book_rounded, size: 18),
-                          const SizedBox(width: 8),
-                          Text('Hafalan & Progress', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.person_rounded, size: 18),
-                          const SizedBox(width: 8),
-                          Text('Profil & Kartu QR', style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
+                  tabs: const [
+                    Tab(text: 'Hafalan'),
+                    Tab(text: 'Profil & QR'),
                   ],
                   labelColor: AppTheme.primaryGreen,
                   unselectedLabelColor: Colors.grey.shade600,
                   indicatorColor: AppTheme.primaryGreen,
                   indicatorSize: TabBarIndicatorSize.tab,
+                  labelStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
+                  unselectedLabelStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
                 ),
 
                 // 3. TabBarView
@@ -144,7 +130,7 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
                           // Unified Stats Row
                           Row(
                             children: [
-                              _statItem('Rata-rata Nilai', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
+                              _statItem('Rata-rata', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
                               const SizedBox(width: 12),
                               _statItem('Total Hafalan', '${santri.estimatedJuz.toStringAsFixed(1)} Juz', Icons.library_books_rounded, Colors.purple.shade600),
                             ],
@@ -158,8 +144,6 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
                             ],
                           ),
                           const SizedBox(height: 20),
-
-
 
                           // Ujian Tasmi'
                           _sectionHeader('Ujian Tasmi\' / Wisuda'),
@@ -364,7 +348,7 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -372,37 +356,33 @@ class _ProfileHeader extends StatelessWidget {
           BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           AppAvatar(
             name: name,
-            radius: 32,
+            radius: 36,
             imagePath: photoPath,
             backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
             foregroundColor: AppTheme.primaryGreen,
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-                if (extra != null) ...[
-                  const SizedBox(height: 4),
-                  extra!,
-                ],
-              ],
-            ),
+          const SizedBox(height: 8),
+          Text(
+            name,
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
+          Text(
+            subtitle,
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+          if (extra != null) ...[
+            const SizedBox(height: 6),
+            extra!,
+          ],
         ],
       ),
     );
@@ -451,8 +431,6 @@ class _SetoranHistoryTile extends StatelessWidget {
     );
   }
 }
-
-
 
 class _MiniDigitalCard extends StatelessWidget {
   final Santri santri;
