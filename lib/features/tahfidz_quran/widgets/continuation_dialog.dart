@@ -7,7 +7,7 @@ import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_reader_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_form_screen.dart';
-import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/verification_gate.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
@@ -27,16 +27,14 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
   // If no history, just go to form.
   if (continuation == null && record == null) {
     if (!context.mounted) return;
-    final verified = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(
-        builder: (_) => QrScannerScreen(expectedSantri: santri),
-      ),
+    final verified = await VerificationGate.show(
+      context: context,
+      expectedSantri: santri,
     );
-    if (verified == true && context.mounted) {
+    if (verified != null && context.mounted) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => SetoranFormScreen(santri: santri)),
+        MaterialPageRoute(builder: (_) => SetoranFormScreen(santri: verified)),
       );
     }
     return;
@@ -102,15 +100,13 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
                 subtitle: 'Mulai: ${continuation.description}',
                 onTap: () async {
                   Navigator.pop(ctx);
-                  final verified = await Navigator.push<bool>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => QrScannerScreen(expectedSantri: santri),
-                    ),
+                  final verified = await VerificationGate.show(
+                    context: context,
+                    expectedSantri: santri,
                   );
-                  if (verified == true) {
+                  if (verified != null) {
                     provider.startSetoranSession(
-                      santri: santri,
+                      santri: verified,
                       type: continuation.type,
                       surah: continuation.surah,
                       ayahStart: continuation.ayahStart,
@@ -153,18 +149,16 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
               title: 'Tambah Hafalan Baru',
               onTap: () async {
                 Navigator.pop(ctx);
-                final verified = await Navigator.push<bool>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => QrScannerScreen(expectedSantri: santri),
-                  ),
+                final verified = await VerificationGate.show(
+                  context: context,
+                  expectedSantri: santri,
                 );
-                if (verified == true && context.mounted) {
+                if (verified != null && context.mounted) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => SetoranFormScreen(
-                        santri: santri,
+                        santri: verified,
                         initialSurah: continuation?.surah,
                         initialAyahStart: continuation?.ayahStart,
                         initialType: continuation?.type ?? SetoranType.ziyadah,

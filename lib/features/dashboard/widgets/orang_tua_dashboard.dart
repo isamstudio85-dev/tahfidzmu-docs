@@ -8,6 +8,7 @@ import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dar
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/graduation_portal_screen.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'dashboard_shared_widgets.dart';
 
 class OrangTuaDashboard extends StatelessWidget {
@@ -41,6 +42,117 @@ class OrangTuaDashboard extends StatelessWidget {
               const SizedBox(width: 12),
               _oStat(Icons.emoji_events_rounded, 'Predikat', grade, Colors.purple),
             ],
+          ),
+          const SizedBox(height: 16),
+          // KARTU SANTRI DIGITAL
+          Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: Colors.grey.shade200),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'KARTU SANTRI DIGITAL',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: AppTheme.primaryGreen,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          CircleAvatar(
+                            radius: 36,
+                            backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                            backgroundImage: child.photoPath != null ? NetworkImage(child.photoPath!) : null,
+                            child: child.photoPath == null
+                                ? Text(child.name[0], style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen))
+                                : null,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            child.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            child.kelas != null ? 'Kelas: ${child.kelas}' : 'Santri Tahfidz',
+                            style: const TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                          const SizedBox(height: 24),
+                          QrImageView(
+                            data: child.nis ?? child.id,
+                            version: QrVersions.auto,
+                            size: 180.0,
+                            backgroundColor: Colors.white,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'NIS/ID: ${child.nis ?? child.id}',
+                            style: TextStyle(
+                              fontFamily: 'monospace',
+                              color: Colors.grey.shade600,
+                              fontSize: 11,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text(
+                              'Tutup',
+                              style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    const Icon(Icons.qr_code_2_rounded, color: Colors.black87, size: 28),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'KARTU SANTRI DIGITAL',
+                            style: GoogleFonts.poppins(
+                              color: Colors.green.shade800,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'QR Code untuk akses cepat',
+                            style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.qr_code_rounded, color: Colors.green, size: 20),
+                  ],
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 24),
           const SectionTitle('Riwayat Terbaru'),

@@ -3,13 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_form_screen.dart';
-import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/verification_gate.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/graduation_portal_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/tasmi_form_screen.dart';
 import 'package:tahfidz_app/models/halaqah_data.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'dashboard_shared_widgets.dart';
 
 class MusyrifDashboard extends StatelessWidget {
@@ -34,25 +35,6 @@ class MusyrifDashboard extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Beranda Musyrif')),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'fab_m_setoran',
-        onPressed: () async {
-          final verifiedSantri = await Navigator.push<Santri?>(
-            context,
-            MaterialPageRoute(builder: (_) => const QrScannerScreen()),
-          );
-          if (verifiedSantri != null && context.mounted) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => SetoranFormScreen(santri: verifiedSantri),
-              ),
-            );
-          }
-        },
-        icon: const Icon(Icons.mic_rounded),
-        label: const Text('Input Hafalan'),
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -72,7 +54,149 @@ class MusyrifDashboard extends StatelessWidget {
               _mStatTile('${mySantri.length}', 'Santri', Icons.people_alt_rounded,
                   AppTheme.primaryGreen),
             ]),
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
+            // KARTU MUSYRIF DIGITAL
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: Colors.grey.shade200),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  final m = provider.linkedMusyrif;
+                  showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'KARTU MUSYRIF DIGITAL',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: AppTheme.primaryGreen,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            CircleAvatar(
+                              radius: 36,
+                              backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                              backgroundImage: m?.photoPath != null ? NetworkImage(m!.photoPath!) : null,
+                              child: m?.photoPath == null
+                                  ? Text(m?.nama[0] ?? 'M', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen))
+                                  : null,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              m?.nama ?? 'Musyrif',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              m?.jabatan ?? 'Pembimbing',
+                              style: const TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                            const SizedBox(height: 24),
+                            QrImageView(
+                              data: m?.id ?? '',
+                              version: QrVersions.auto,
+                              size: 180.0,
+                              backgroundColor: Colors.white,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'ID: ${m?.id ?? "-"}',
+                              style: TextStyle(
+                                fontFamily: 'monospace',
+                                color: Colors.grey.shade600,
+                                fontSize: 11,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'Tutup',
+                                style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.qr_code_2_rounded, color: Colors.black87, size: 28),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'KARTU MUSYRIF DIGITAL',
+                              style: GoogleFonts.poppins(
+                                color: Colors.green.shade800,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'QR Code untuk akses cepat',
+                              style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.qr_code_rounded, color: Colors.green, size: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // SCAN QR SANTRI BUTTON
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: FilledButton.icon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppTheme.primaryGreen,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: () async {
+                  final verifiedSantri = await VerificationGate.show(
+                    context: context,
+                  );
+                  if (verifiedSantri != null && context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SetoranFormScreen(santri: verifiedSantri),
+                      ),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 20),
+                label: const Text(
+                  'SCAN QR SANTRI (MULAI SETORAN)',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 0.5),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             if (provider.isModuleActive('graduation')) ...[
               SizedBox(
                 width: double.infinity,
