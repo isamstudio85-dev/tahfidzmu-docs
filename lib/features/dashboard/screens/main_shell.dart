@@ -94,7 +94,11 @@ class _MainShellState extends State<MainShell> {
     final role = context.select<AppProvider, UserRole?>((p) => p.currentRole);
 
     if (role == null) {
-      return const SizedBox.shrink();
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: AppTheme.primaryGreen),
+        ),
+      );
     }
 
     if (_lastRole != role) {

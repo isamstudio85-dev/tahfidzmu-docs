@@ -1,4 +1,4 @@
-﻿rules_version = '2';
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -35,8 +35,18 @@ service cloud.firestore {
 
     function isSantriOf(pesantrenId) {
       return isAuthenticated()
-        && getUserData().role == 'santri'
+        && (getUserData().role == 'santri' || getUserData().role == 'orangTua')
         && getUserData().pesantrenId == pesantrenId;
+    }
+
+    function isSantriSelf(pesantrenId, santriId) {
+      return isSantriOf(pesantrenId)
+        && getUserData().linkedId == santriId;
+    }
+
+    function isMusyrifSelf(pesantrenId, musyrifId) {
+      return isMusyrifOf(pesantrenId)
+        && getUserData().linkedId == musyrifId;
     }
 
     function canReadPesantren(pesantrenId) {
@@ -81,7 +91,10 @@ service cloud.firestore {
 
       match /santri/{santriId} {
         allow read: if canReadPesantren(pesantrenId);
-        allow create, update: if canWritePesantren(pesantrenId);
+        allow create: if canWritePesantren(pesantrenId);
+        allow update: if canWritePesantren(pesantrenId)
+          || isMusyrifOf(pesantrenId)
+          || isSantriSelf(pesantrenId, santriId);
         allow delete: if canWritePesantren(pesantrenId);
 
         match /setoranHistory/{setoranId} {
@@ -99,7 +112,9 @@ service cloud.firestore {
 
       match /musyrif/{musyrifId} {
         allow read: if canReadPesantren(pesantrenId);
-        allow write: if canWritePesantren(pesantrenId);
+        allow create: if canWritePesantren(pesantrenId);
+        allow update: if canWritePesantren(pesantrenId) || isMusyrifSelf(pesantrenId, musyrifId);
+        allow delete: if canWritePesantren(pesantrenId);
       }
 
       match /halaqah/{halaqahId} {

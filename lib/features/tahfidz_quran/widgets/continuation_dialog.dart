@@ -7,6 +7,7 @@ import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_reader_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_form_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
@@ -26,10 +27,18 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
   // If no history, just go to form.
   if (continuation == null && record == null) {
     if (!context.mounted) return;
-    Navigator.push(
+    final verified = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(builder: (_) => SetoranFormScreen(santri: santri)),
+      MaterialPageRoute(
+        builder: (_) => QrScannerScreen(expectedSantri: santri),
+      ),
     );
+    if (verified == true && context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => SetoranFormScreen(santri: santri)),
+      );
+    }
     return;
   }
 
@@ -85,25 +94,35 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
             ),
             const SizedBox(height: 20),
             // 1. Quick continue tile (if possible)
-            if (continuation != null)
+             if (continuation != null)
               _OptionTile(
                 icon: Icons.play_circle_filled_rounded,
                 color: AppTheme.primaryGreen,
                 title: 'Lanjutkan Hafalan',
                 subtitle: 'Mulai: ${continuation.description}',
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(ctx);
-                  provider.startSetoranSession(
-                    santri: santri,
-                    type: continuation.type,
-                    surah: continuation.surah,
-                    ayahStart: continuation.ayahStart,
-                    ayahEnd: continuation.ayahEnd,
-                  );
-                  Navigator.push(
+                  final verified = await Navigator.push<bool>(
                     context,
-                    MaterialPageRoute(builder: (_) => const QuranReaderScreen()),
+                    MaterialPageRoute(
+                      builder: (_) => QrScannerScreen(expectedSantri: santri),
+                    ),
                   );
+                  if (verified == true) {
+                    provider.startSetoranSession(
+                      santri: santri,
+                      type: continuation.type,
+                      surah: continuation.surah,
+                      ayahStart: continuation.ayahStart,
+                      ayahEnd: continuation.ayahEnd,
+                    );
+                    if (context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const QuranReaderScreen()),
+                      );
+                    }
+                  }
                 },
               ),
             if (continuation != null) const SizedBox(height: 10),
@@ -132,21 +151,29 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
               icon: Icons.tune_rounded,
               color: const Color(0xFF1565C0),
               title: 'Tambah Hafalan Baru',
-              subtitle: 'Atur surah, ayat, dan jenis secara manual',
-              onTap: () {
+              onTap: () async {
                 Navigator.pop(ctx);
-                Navigator.push(
+                final verified = await Navigator.push<bool>(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => SetoranFormScreen(
-                      santri: santri,
-                      initialSurah: continuation?.surah,
-                      initialAyahStart: continuation?.ayahStart,
-                      initialType: continuation?.type ?? SetoranType.ziyadah,
-                    ),
+                    builder: (_) => QrScannerScreen(expectedSantri: santri),
                   ),
                 );
+                if (verified == true && context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SetoranFormScreen(
+                        santri: santri,
+                        initialSurah: continuation?.surah,
+                        initialAyahStart: continuation?.ayahStart,
+                        initialType: continuation?.type ?? SetoranType.ziyadah,
+                      ),
+                    ),
+                  );
+                }
               },
+              subtitle: 'Atur surah, ayat, dan jenis secara manual',
             ),
           ],
         ),

@@ -1,4 +1,5 @@
 import 'error_mark.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tahfidz_app/core/utils/quran_juz_utils.dart';
 
 enum SetoranType {
@@ -114,7 +115,14 @@ class SetoranRecord {
         .map((e) => ErrorMark.fromJson(e as Map<String, dynamic>))
         .toList(),
     fluencyRating: json['fluencyRating'] as int,
-    date: DateTime.parse(json['date'] as String),
+    date: _parseDate(json['date']),
     finalScore: (json['finalScore'] as num).toDouble(),
   );
+}
+
+/// Mendukung dua format: String ISO-8601 dan Firestore Timestamp
+DateTime _parseDate(dynamic raw) {
+  if (raw is Timestamp) return raw.toDate();
+  if (raw is String) return DateTime.parse(raw);
+  return DateTime.now();
 }

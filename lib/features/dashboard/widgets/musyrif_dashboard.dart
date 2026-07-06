@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_form_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/graduation_portal_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/tasmi_form_screen.dart';
 import 'package:tahfidz_app/models/halaqah_data.dart';
@@ -35,8 +36,20 @@ class MusyrifDashboard extends StatelessWidget {
       appBar: AppBar(title: const Text('Beranda Musyrif')),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'fab_m_setoran',
-        onPressed: () =>
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const SetoranFormScreen())),
+        onPressed: () async {
+          final verifiedSantri = await Navigator.push<Santri?>(
+            context,
+            MaterialPageRoute(builder: (_) => const QrScannerScreen()),
+          );
+          if (verifiedSantri != null && context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SetoranFormScreen(santri: verifiedSantri),
+              ),
+            );
+          }
+        },
         icon: const Icon(Icons.mic_rounded),
         label: const Text('Input Hafalan'),
       ),
@@ -47,8 +60,10 @@ class MusyrifDashboard extends StatelessWidget {
           children: [
             _buildBanner(),
             const SizedBox(height: 20),
-            _buildGraduationBanner(context, provider),
-            const SizedBox(height: 24),
+            if (provider.isModuleActive('graduation')) ...[
+              _buildGraduationBanner(context, provider),
+              const SizedBox(height: 24),
+            ],
             const SectionTitle('Statistik Saya'),
             const SizedBox(height: 12),
             Row(children: [
@@ -58,18 +73,20 @@ class MusyrifDashboard extends StatelessWidget {
                   AppTheme.primaryGreen),
             ]),
             const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () =>
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const TasmiFormScreen())),
-                icon: const Icon(Icons.school_rounded),
-                label: const Text('Mulai Ujian Tasmi\''),
-                style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.purple, side: const BorderSide(color: Colors.purple)),
+            if (provider.isModuleActive('graduation')) ...[
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () =>
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const TasmiFormScreen())),
+                  icon: const Icon(Icons.school_rounded),
+                  label: const Text('Mulai Ujian Tasmi\''),
+                  style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.purple, side: const BorderSide(color: Colors.purple)),
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
+            ],
             const SectionTitle('Aktivitas Terkini'),
             const SizedBox(height: 12),
             if (recent.isEmpty)

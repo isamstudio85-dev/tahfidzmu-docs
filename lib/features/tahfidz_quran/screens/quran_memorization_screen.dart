@@ -8,6 +8,8 @@ import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/laporan_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_form_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
+import 'package:tahfidz_app/models/santri.dart';
 
 class QuranMemorizationScreen extends StatefulWidget {
   const QuranMemorizationScreen({super.key});
@@ -81,7 +83,20 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
       floatingActionButton: canAddSetoran
           ? FloatingActionButton.extended(
               heroTag: 'fab_setoran_main',
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SetoranFormScreen())),
+              onPressed: () async {
+                final verifiedSantri = await Navigator.push<Santri?>(
+                  context,
+                  MaterialPageRoute(builder: (_) => const QrScannerScreen()),
+                );
+                if (verifiedSantri != null && context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SetoranFormScreen(santri: verifiedSantri),
+                    ),
+                  );
+                }
+              },
               icon: const Icon(Icons.add_circle_outline_rounded, color: Colors.white),
               label: const Text('Input Hafalan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               backgroundColor: AppTheme.primaryGreen,

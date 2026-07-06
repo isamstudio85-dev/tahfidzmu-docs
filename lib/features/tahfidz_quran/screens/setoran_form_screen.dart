@@ -9,6 +9,7 @@ import 'package:tahfidz_app/models/surah_model.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_reader_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
 
 class SetoranFormScreen extends StatefulWidget {
   const SetoranFormScreen({
@@ -77,10 +78,19 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
                 itemBuilder: (ctx, i) => ListTile(
                   leading: CircleAvatar(backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1), child: Text(list[i].name[0], style: const TextStyle(color: AppTheme.primaryGreen))),
                   title: Text(list[i].name),
-                  onTap: () {
-                    setState(() => _selectedSantri = list[i]);
-                    _applyContinuation(provider, list[i]);
-                    Navigator.pop(context);
+                  onTap: () async {
+                    final targetSantri = list[i];
+                    final verified = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => QrScannerScreen(expectedSantri: targetSantri),
+                      ),
+                    );
+                    if (verified == true && context.mounted) {
+                      setState(() => _selectedSantri = targetSantri);
+                      _applyContinuation(provider, targetSantri);
+                      Navigator.pop(context);
+                    }
                   },
                   trailing: _selectedSantri?.id == list[i].id ? const Icon(Icons.check, color: AppTheme.primaryGreen) : null,
                 ),

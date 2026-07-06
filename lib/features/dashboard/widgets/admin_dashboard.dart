@@ -37,8 +37,10 @@ class AdminDashboard extends StatelessWidget {
           children: [
             _buildBanner(context),
             const SizedBox(height: 20),
-            _buildGraduationBanner(context, provider),
-            const SizedBox(height: 24),
+            if (provider.isModuleActive('graduation')) ...[
+              _buildGraduationBanner(context, provider),
+              const SizedBox(height: 24),
+            ],
             _buildAdminStats(context),
             _buildSubscriptionWarning(context),
             const SizedBox(height: 24),
@@ -263,12 +265,13 @@ class AdminDashboard extends StatelessWidget {
               color: const Color(0xFF1565C0),
               onTap: () => Navigator.push(
                   context, MaterialPageRoute(builder: (_) => const SantriListScreen()))),
-          _actionCard(w,
-              icon: Icons.school_rounded,
-              label: 'Ujian Tasmi\'',
-              color: Colors.purple,
-              onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => const TasmiFormScreen()))),
+          if (provider.isModuleActive('graduation'))
+            _actionCard(w,
+                icon: Icons.school_rounded,
+                label: 'Ujian Tasmi\'',
+                color: Colors.purple,
+                onTap: () => Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => const TasmiFormScreen()))),
         ],
       );
     });

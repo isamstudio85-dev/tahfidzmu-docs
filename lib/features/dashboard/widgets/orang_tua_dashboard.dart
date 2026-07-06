@@ -27,8 +27,10 @@ class OrangTuaDashboard extends StatelessWidget {
         children: [
           _buildBanner(),
           const SizedBox(height: 20),
-          _buildGraduationBanner(context, context.read<AppProvider>()),
-          const SizedBox(height: 24),
+          if (context.watch<AppProvider>().isModuleActive('graduation')) ...[
+            _buildGraduationBanner(context, context.read<AppProvider>()),
+            const SizedBox(height: 24),
+          ],
           Row(
             children: [
               _oStat(Icons.list_alt_rounded, 'Total Baris', '${setorans.length}',

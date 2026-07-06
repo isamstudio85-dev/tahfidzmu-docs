@@ -34,7 +34,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
   bool isSurahListLoading = false;
   String? surahListError;
 
-  final Set<String> _activeModules = {'quran', 'hadits', 'tajwid', 'tahsin'};
+  final Set<String> _activeModules = {'quran', 'hadits', 'tajwid', 'tahsin', 'graduation'};
   Set<String> get activeModules => Set.unmodifiable(_activeModules);
   bool isModuleActive(String key) => _activeModules.contains(key);
   
@@ -227,6 +227,13 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
           'username': 'superadmin',
           'linkedId': null,
           'pesantrenId': null,
+        });
+      } else if (mappingDoc != null && mappingDoc.exists) {
+        await firebase.setUserData(cred.user!.uid, {
+          'role': mappingDoc.data()?['role'],
+          'linkedId': mappingDoc.data()?['linkedId'],
+          'username': username,
+          'pesantrenId': targetPesantrenId,
         });
       }
       
@@ -647,8 +654,16 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
 
   Future<void> updateAdminPhoto(String path) async {
     if (currentUserId == null) return;
-    final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'admin_photos', fileName: currentUserId!);
-    _adminPhoto = cloudUrl; await firebase.setUserData(currentUserId!, {'photoPath': cloudUrl}); notifyListeners();
+    _adminPhoto = path;
+    notifyListeners();
+    try {
+      final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'admin_photos', fileName: currentUserId!);
+      _adminPhoto = cloudUrl;
+      await firebase.setUserData(currentUserId!, {'photoPath': cloudUrl});
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Failed to upload admin photo: $e");
+    }
   }
 
   Future<bool> changeOwnPassword(String oldPassword, String newPassword) async {
@@ -671,13 +686,35 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
 
   Future<void> updateMusyrifPhoto(String path) async {
     if (linkedMusyrifId == null) return;
-    final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'musyrif_photos', fileName: linkedMusyrifId!);
-    await getCollection('musyrif').doc(linkedMusyrifId!).update({'photoPath': cloudUrl});
+    musyrifList = musyrifList.map((m) {
+      if (m.id == linkedMusyrifId) {
+        return m.copyWith(photoPath: path);
+      }
+      return m;
+    }).toList();
+    notifyListeners();
+    try {
+      final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'musyrif_photos', fileName: linkedMusyrifId!);
+      await getCollection('musyrif').doc(linkedMusyrifId!).update({'photoPath': cloudUrl});
+    } catch (e) {
+      debugPrint("Failed to upload musyrif photo: $e");
+    }
   }
 
   Future<void> updateSantriPhoto(String santriId, String path) async {
-    final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'santri_photos', fileName: santriId);
-    await getCollection('santri').doc(santriId).update({'photoPath': cloudUrl});
+    santriList = santriList.map((s) {
+      if (s.id == santriId) {
+        return s.copyWith(photoPath: path);
+      }
+      return s;
+    }).toList();
+    notifyListeners();
+    try {
+      final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'santri_photos', fileName: santriId);
+      await getCollection('santri').doc(santriId).update({'photoPath': cloudUrl});
+    } catch (e) {
+      debugPrint("Failed to upload santri photo: $e");
+    }
   }
 
   // TODO: Implement yearly target from Firestore

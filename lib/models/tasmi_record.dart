@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tahfidz_app/models/error_mark.dart';
 
 class TasmiRecord {
@@ -49,7 +50,7 @@ class TasmiRecord {
         errorMarks: (json['errorMarks'] as List)
             .map((e) => ErrorMark.fromJson(e as Map<String, dynamic>))
             .toList(),
-        date: DateTime.parse(json['date'] as String),
+        date: _parseTasmiDate(json['date']),
         status: json['status'] as String,
         year: json['year'] as String,
         note: json['note'] as String?,
@@ -74,4 +75,10 @@ class TasmiRecord {
       note: note ?? this.note,
     );
   }
+}
+
+DateTime _parseTasmiDate(dynamic raw) {
+  if (raw is Timestamp) return raw.toDate();
+  if (raw is String) return DateTime.parse(raw);
+  return DateTime.now();
 }
