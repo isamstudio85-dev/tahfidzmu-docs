@@ -145,61 +145,82 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(
+        title: Text(widget.title),
+        backgroundColor: const Color(0xFF2E5A27), // Deep olive green for classic book header
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _data == null
             ? const Center(child: Text('Gagal memuat materi'))
-            : SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_data['introduction'] != null) ...[
-                      Text(
-                        _data['introduction'],
-                        style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                    ...(_data['sections'] as List).map((section) => _buildSection(section)),
-                    if (_data['reference'] != null) ...[
-                      const SizedBox(height: 16),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryGreen.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.15)),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              Icons.menu_book_rounded,
-                              color: AppTheme.primaryGreen,
-                              size: 20,
+            : SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFDF9F0),
+                      border: Border.all(color: const Color(0xFFD7CCC8), width: 1.5), // Elegant inner frame
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_data['introduction'] != null) ...[
+                          Text(
+                            _data['introduction'],
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              color: const Color(0xFF4E342E), // Soft Espresso
+                              height: 1.6,
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                _data['reference'],
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppTheme.darkGreen,
-                                  height: 1.6,
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                        ...(_data['sections'] as List).map((section) => _buildSection(section)),
+                        if (_data['reference'] != null) ...[
+                          const SizedBox(height: 16),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2E5A27).withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFF2E5A27).withValues(alpha: 0.15)),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(
+                                  Icons.menu_book_rounded,
+                                  color: Color(0xFF2E5A27),
+                                  size: 20,
                                 ),
-                              ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    _data['reference'],
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF2E5A27),
+                                      height: 1.6,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
     );
@@ -211,27 +232,66 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
       children: [
         Text(
           section['name'],
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primaryGreen),
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: const Color(0xFF2E5A27), // Deep classic green
+          ),
         ),
         const SizedBox(height: 8),
         if (section['definition'] != null)
-          Text(section['definition'], style: const TextStyle(fontSize: 13, color: Colors.black54)),
+          Text(
+            section['definition'],
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              color: const Color(0xFF5D4037),
+              height: 1.5,
+            ),
+          ),
         if (section['letters'] != null) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4EAD4), // Classic yellow highlight/letters backing
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE5D5B8)),
+            ),
             child: Row(
               children: [
-                const Text('Huruf: ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                Expanded(child: Text(section['letters'], style: GoogleFonts.amiri(fontSize: 20, color: AppTheme.darkGreen), textDirection: TextDirection.rtl)),
+                const Text(
+                  'Huruf: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: Color(0xFF4E342E),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    section['letters'],
+                    style: GoogleFonts.amiri(
+                      fontSize: 22,
+                      color: const Color(0xFF1B5E20),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textDirection: TextDirection.rtl,
+                  ),
+                ),
               ],
             ),
           ),
         ],
         if (section['example'] != null) ...[
           const SizedBox(height: 12),
-          const Text('Contoh:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey)),
+          const Text(
+            'Contoh:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: Color(0xFF8D6E63),
+            ),
+          ),
           ...(section['example'] as List).map((ex) => _buildExample(ex)),
         ],
         if (section['sub_sections'] != null)
@@ -239,28 +299,64 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
             padding: const EdgeInsets.only(left: 16, top: 12),
             child: _buildSection(sub),
           )),
-        const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider()),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Divider(color: Color(0xFFE5D5B8)),
+        ),
       ],
     );
   }
 
   Widget _buildExample(dynamic ex) {
     return Container(
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade100)),
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFCFBF7), // Warm page card color
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFEDE8DF)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(ex['latin'], style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                if (ex['note'] != null) Text(ex['note'], style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+                Text(
+                  ex['latin'],
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    color: const Color(0xFF4E342E),
+                  ),
+                ),
+                if (ex['note'] != null)
+                  Text(
+                    ex['note'],
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
               ],
             ),
           ),
-          Text(ex['arabic'], style: GoogleFonts.amiri(fontSize: 22, color: Colors.black87), textDirection: TextDirection.rtl),
+          Text(
+            ex['arabic'],
+            style: GoogleFonts.amiri(
+              fontSize: 24,
+              color: const Color(0xFF2E5A27),
+              fontWeight: FontWeight.bold,
+            ),
+            textDirection: TextDirection.rtl,
+          ),
         ],
       ),
     );

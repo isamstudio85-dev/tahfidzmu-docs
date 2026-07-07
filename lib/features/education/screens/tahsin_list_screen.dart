@@ -300,155 +300,165 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Belajar Tahsin'),
-        backgroundColor: AppTheme.primaryGreen,
+        backgroundColor: const Color(0xFF2E5A27), // Deep olive green header
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Category Tag
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                widget.categoryTitle,
-                style: GoogleFonts.poppins(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.primaryGreen,
-                ),
-              ),
+      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFDF9F0),
+              border: Border.all(color: const Color(0xFFD7CCC8), width: 1.5), // Elegant inner page border
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 16),
-            
-            // NAVIGATION HEADER BAR WITH ARROWS
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade100),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.03),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Category Tag
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  // Previous Button
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      color: hasPrev ? AppTheme.primaryGreen : Colors.grey.shade300,
-                      size: 20,
-                    ),
-                    onPressed: hasPrev
-                        ? () {
-                            setState(() {
-                              _currentIndex--;
-                            });
-                          }
-                        : null,
-                  ),
-                  
-                  // Centered Title and Arabic Letter
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            section['name'],
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (section['letters'] != null) ...[
-                          const SizedBox(width: 8),
-                          Text(
-                            section['letters'],
-                            style: GoogleFonts.amiri(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryGreen,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  
-                  // Next Button
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: hasNext ? AppTheme.primaryGreen : Colors.grey.shade300,
-                      size: 20,
-                    ),
-                    onPressed: hasNext
-                        ? () {
-                            setState(() {
-                              _currentIndex++;
-                            });
-                          }
-                        : null,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Only load the player if the YouTube ID exists (Placed above definition)
-            if (section['youtubeId'] != null) ...[
-              LockedYoutubePlayer(key: ValueKey(section['youtubeId']), youtubeId: section['youtubeId']),
-              const SizedBox(height: 20),
-            ],
-
-
-            const SizedBox(height: 24),
-            
-            // Video Credits and Copyright Card
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Column(
-                children: [
-                  const Icon(Icons.copyright_rounded, color: AppTheme.primaryGreen, size: 22),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Sumber Video: YouTube Syeikh Hamdy Habeeb\nHak Cipta & Panduan sepenuhnya milik pemilik saluran video.',
+                  child: Text(
+                    widget.categoryTitle,
                     style: GoogleFonts.poppins(
-                      fontSize: 10,
-                      color: Colors.grey.shade500,
-                      fontWeight: FontWeight.w500,
-                      height: 1.5,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2E5A27),
                     ),
-                    textAlign: TextAlign.center,
                   ),
+                ),
+                const SizedBox(height: 16),
+                
+                // NAVIGATION HEADER BAR WITH ARROWS (Kitab Kuning Styled)
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF4EAD4), // Classic parchment backing
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFE5D5B8)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      // Previous Button
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: hasPrev ? const Color(0xFF2E5A27) : Colors.grey.shade400,
+                          size: 18,
+                        ),
+                        onPressed: hasPrev
+                            ? () {
+                                setState(() {
+                                  _currentIndex--;
+                                });
+                              }
+                            : null,
+                      ),
+                      
+                      // Centered Title and Arabic Letter
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                section['name'],
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF4E342E), // Dark Espresso
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (section['letters'] != null) ...[
+                              const SizedBox(width: 8),
+                              Text(
+                                section['letters'],
+                                style: GoogleFonts.amiri(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF1B5E20), // Dark green
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      
+                      // Next Button
+                      IconButton(
+                        icon: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: hasNext ? const Color(0xFF2E5A27) : Colors.grey.shade400,
+                          size: 18,
+                        ),
+                        onPressed: hasNext
+                            ? () {
+                                setState(() {
+                                  _currentIndex++;
+                                });
+                              }
+                            : null,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+    
+                // Only load the player if the YouTube ID exists
+                if (section['youtubeId'] != null) ...[
+                  LockedYoutubePlayer(key: ValueKey(section['youtubeId']), youtubeId: section['youtubeId']),
+                  const SizedBox(height: 20),
                 ],
-              ),
+    
+                const SizedBox(height: 12),
+                
+                // Video Credits and Copyright Card (Kitab Kuning aligned style)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFAF6EE),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFEDE8DF)),
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.copyright_rounded, color: Color(0xFF2E5A27), size: 20),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Sumber Video: YouTube Syeikh Hamdy Habeeb\nHak Cipta & Panduan sepenuhnya milik pemilik saluran video.',
+                        style: GoogleFonts.poppins(
+                          fontSize: 10,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                          height: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
