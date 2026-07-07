@@ -1,23 +1,18 @@
 [
   {
     "id": 1,
-    "title": "Makharijul Huruf",
+    "title": "Belajar Makhorijul Huruf Hijaiyah",
     "slug": "makharij",
-    "description": "Mengenal tempat-tempat keluarnya huruf Hijaiyah agar pengucapan lebih fasih.",
+    "fileName": "makhorijul_huruf.json",
+    "description": "",
     "icon": "record_voice_over"
   },
   {
     "id": 2,
-    "title": "Sifatul Huruf",
-    "slug": "sifat",
-    "description": "Mengenal karakteristik suara setiap huruf (Hams, Jahr, Isti'la, dll).",
-    "icon": "settings_voice"
-  },
-  {
-    "id": 3,
-    "title": "Lahn (Kesalahan Membaca)",
-    "slug": "lahn",
-    "description": "Mengenal kesalahan fatal (Jali) dan tersembunyi (Khafi) saat tilawah.",
-    "icon": "warning_amber"
+    "title": "Praktik Tilawah",
+    "slug": "praktis",
+    "fileName": "praktik_tilawah.json",
+    "description": "",
+    "icon": "auto_stories"
   }
 ]

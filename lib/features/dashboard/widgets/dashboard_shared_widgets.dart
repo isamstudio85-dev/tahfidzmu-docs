@@ -6,6 +6,7 @@ import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/education/screens/hadits_screen.dart';
 import 'package:tahfidz_app/features/education/screens/quran_tadarus_screen.dart';
 import 'package:tahfidz_app/features/education/screens/educational_list_screen.dart';
+import 'package:tahfidz_app/features/education/screens/tahsin_list_screen.dart';
 import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 import 'package:tahfidz_app/models/santri.dart';
@@ -155,8 +156,8 @@ class HafalanMenuSection extends StatelessWidget {
         ),
       if (provider.isModuleActive('tahsin'))
         (
-          title: 'Ilmu Tahsin',
-          sub: 'Fasih & Makharijul huruf',
+          title: 'Belajar Tahsin',
+          sub: 'Fasih & makharijul huruf',
           icon: Icons.record_voice_over_rounded,
           color: Colors.deepPurple,
           type: 'tahsin'
@@ -179,6 +180,8 @@ class HafalanMenuSection extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranTadarusScreen()));
                   } else if (m.type == 'hadits') {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const HaditsScreen()));
+                  } else if (m.type == 'tahsin') {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const TahsinListScreen()));
                   } else {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => EducationalListScreen(type: m.type)));
                   }

@@ -12,6 +12,7 @@ import 'package:tahfidz_app/features/profile/screens/musyrif_profil_edit_screen.
 import 'package:tahfidz_app/features/profile/screens/ortu_profil_edit_screen.dart';
 import 'package:tahfidz_app/features/education/screens/quran_tadarus_screen.dart';
 import 'package:tahfidz_app/features/education/screens/educational_list_screen.dart';
+import 'package:tahfidz_app/features/education/screens/tahsin_list_screen.dart';
 import 'package:tahfidz_app/core/widgets/account_switcher.dart';
 
 class ProfilScreen extends StatelessWidget {
@@ -201,7 +202,7 @@ class _HafalanFiturList extends StatelessWidget {
       if (provider.isModuleActive('tajwid'))
         _buildTile(Icons.auto_stories_rounded, 'Ilmu Tajwid', Colors.blue, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationalListScreen(type: 'tajwid')))),
       if (provider.isModuleActive('tahsin'))
-        _buildTile(Icons.record_voice_over_rounded, 'Ilmu Tahsin', Colors.deepPurple, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EducationalListScreen(type: 'tahsin')))),
+        _buildTile(Icons.record_voice_over_rounded, 'Belajar Tahsin', Colors.deepPurple, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TahsinListScreen()))),
     ]);
   }
 }

@@ -63,7 +63,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
                         MaterialPageRoute(
                           builder: (_) => EducationalDetailScreen(
                             type: widget.type,
-                            id: item['id'],
+                            fileName: item['fileName'] ?? 'bab_${item['id'].toString().padLeft(3, '0')}.json',
                             title: item['title'],
                           ),
                         ),
@@ -112,9 +112,9 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
 }
 
 class EducationalDetailScreen extends StatefulWidget {
-  const EducationalDetailScreen({super.key, required this.type, required this.id, required this.title});
+  const EducationalDetailScreen({super.key, required this.type, required this.fileName, required this.title});
   final String type;
-  final int id;
+  final String fileName;
   final String title;
 
   @override
@@ -133,8 +133,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
 
   Future<void> _loadDetail() async {
     try {
-      final paddedId = widget.id.toString().padLeft(3, '0');
-      final String response = await rootBundle.loadString('assets/data/${widget.type}/bab_$paddedId.json');
+      final String response = await rootBundle.loadString('assets/data/${widget.type}/${widget.fileName}');
       final data = await json.decode(response);
       setState(() {
         _data = data;
@@ -166,6 +165,40 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
                       const SizedBox(height: 24),
                     ],
                     ...(_data['sections'] as List).map((section) => _buildSection(section)),
+                    if (_data['reference'] != null) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryGreen.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.15)),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.menu_book_rounded,
+                              color: AppTheme.primaryGreen,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                _data['reference'],
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppTheme.darkGreen,
+                                  height: 1.6,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
