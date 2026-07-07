@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/services/login_preferences_service.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,7 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _isLoading = false;
   String? _errorMessage;
-  bool _rememberMe = true;
 
   @override
   void initState() {
@@ -66,15 +66,61 @@ class _LoginScreenState extends State<LoginScreen> {
       final err = context.read<AppProvider>().loginError;
       setState(() { _isLoading = false; _errorMessage = err ?? 'Username atau sandi salah.'; });
     } else {
-      if (_rememberMe) {
-        await LoginPreferencesService.saveLastCredentials(
-          pesantrenId,
+      await LoginPreferencesService.clearLastCredentials();
+    }
+  }
+
+  Future<void> _scanAndLogin() async {
+    final rawString = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const QrScannerScreen(returnRaw: true),
+      ),
+    );
+
+    if (!mounted || rawString == null || rawString.trim().isEmpty) return;
+
+    if (rawString.startsWith('tahfidzmu:login:')) {
+      final parts = rawString.split(':');
+      if (parts.length >= 5) {
+        final pesantrenId = parts[2];
+        final username = parts[3];
+        final password = parts[4];
+
+        setState(() {
+          _pesantrenIdCtrl.text = pesantrenId;
+          _usernameCtrl.text = username;
+          _passwordCtrl.text = password;
+          _isLoading = true;
+          _errorMessage = null;
+        });
+
+        final ok = await context.read<AppProvider>().loginWithCredentials(
+          pesantrenId.isEmpty ? null : pesantrenId,
           username,
           password,
         );
-      } else {
+
+        if (!mounted) return;
+        if (!ok) {
+          final err = context.read<AppProvider>().loginError;
+          setState(() {
+            _isLoading = false;
+            _errorMessage = err ?? 'Gagal masuk menggunakan QR Code.';
+          });
+        } else {
+        // QR login does not save credentials
         await LoginPreferencesService.clearLastCredentials();
+        }
+      } else {
+        setState(() {
+          _errorMessage = 'Format QR Code tidak valid.';
+        });
       }
+    } else {
+      setState(() {
+        _errorMessage = 'QR Code ini bukan kartu login resmi TahfidzMU.';
+      });
     }
   }
 
@@ -170,31 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             onSubmitted: (_) => _login(),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              SizedBox(
-                height: 24,
-                width: 24,
-                child: Checkbox(
-                  value: _rememberMe,
-                  onChanged: (v) => setState(() => _rememberMe = v ?? true),
-                  activeColor: AppTheme.primaryGreen,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              GestureDetector(
-                onTap: () => setState(() => _rememberMe = !_rememberMe),
-                child: Text(
-                  'Simpan login',
-                  style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
-                ),
-              ),
-            ],
-          ),
+
           if (_errorMessage != null)
             Padding(
               padding: const EdgeInsets.only(top: 16),
@@ -204,32 +226,57 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           const SizedBox(height: 32),
-          SizedBox(
-            width: double.infinity,
-            height: 58,
-            child: FilledButton(
-              onPressed: _canLogin ? _login : null,
-              style: FilledButton.styleFrom(
-                disabledBackgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.3),
-                disabledForegroundColor: Colors.white,
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 3,
-                      ),
-                    )
-                  : const Text(
-                      'Masuk Sekarang',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 54,
+                  child: FilledButton(
+                    onPressed: _canLogin ? _login : null,
+                    style: FilledButton.styleFrom(
+                      disabledBackgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.3),
+                      disabledForegroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-            ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 3,
+                            ),
+                          )
+                        : const Text(
+                            'Masuk',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              SizedBox(
+                height: 54,
+                width: 54,
+                child: OutlinedButton(
+                  onPressed: _isLoading ? null : _scanAndLogin,
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    side: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
+                    foregroundColor: AppTheme.primaryGreen,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Icon(Icons.qr_code_scanner_rounded, size: 24),
+                ),
+              ),
+            ],
           ),
         ],
       ),

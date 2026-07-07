@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tahfidz_app/providers/app_provider.dart';
+import 'package:tahfidz_app/models/pengawas_data.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/education/screens/hadits_screen.dart';
@@ -11,6 +12,7 @@ import 'package:tahfidz_app/features/profile/screens/musyrif_profil_edit_screen.
 import 'package:tahfidz_app/features/profile/screens/ortu_profil_edit_screen.dart';
 import 'package:tahfidz_app/features/education/screens/quran_tadarus_screen.dart';
 import 'package:tahfidz_app/features/education/screens/educational_list_screen.dart';
+import 'package:tahfidz_app/core/widgets/account_switcher.dart';
 
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({super.key});
@@ -32,6 +34,12 @@ class ProfilScreen extends StatelessWidget {
               provider: provider,
               onEdit: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OrangTuaProfilEditScreen())),
               onPhotoTap: () => _showSantriPhotoOptions(context, provider),
+              onLogout: () => _showLogoutConfirm(context, provider),
+            );
+          } else if (provider.isPengawas) {
+            return _PengawasProfilView(
+              provider: provider,
+              onPhotoTap: () => _showPengawasPhotoOptions(context, provider),
               onLogout: () => _showLogoutConfirm(context, provider),
             );
           } else {
@@ -85,6 +93,16 @@ class ProfilScreen extends StatelessWidget {
       final file = await ImagePicker().pickImage(source: source, imageQuality: 80);
       if (file != null) {
         provider.updateMusyrifPhoto(file.path);
+      }
+    }
+  }
+
+  static Future<void> _showPengawasPhotoOptions(BuildContext context, AppProvider provider) async {
+    final source = await _pickImageSource(context);
+    if (source != null) {
+      final file = await ImagePicker().pickImage(source: source, imageQuality: 80);
+      if (file != null) {
+        provider.updatePengawasPhoto(file.path);
       }
     }
   }
@@ -160,6 +178,7 @@ class _OrangTuaProfilView extends StatelessWidget {
       _HafalanFiturList(provider: provider),
       const SizedBox(height: 16),
       _buildSection('PENGATURAN AKUN', [
+        _buildTile(Icons.swap_horiz_rounded, 'Hubungkan Anak', Colors.purple, () => AccountSwitcher.show(context)),
         _buildTile(Icons.lock_outline_rounded, 'Ganti Password', Colors.blueGrey, () => _showChangePasswordDialog(context)),
         _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
       ]),
@@ -257,8 +276,35 @@ class _AboutCard extends StatelessWidget {
           const Text('TahfidzMU', style: TextStyle(fontWeight: FontWeight.bold)), Text('Versi 1.0.0', style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
         ])]),
         const SizedBox(height: 12),
-        const Text('Tahfidz Mudah (TahfidzMU) adalah aplikasi manajemen halaqah dan hafalan santri yang modern, praktis, dan terintegrasi.', style: TextStyle(fontSize: 12, color: Colors.grey)),
+        const Text(
+          'TahfidzMU adalah aplikasi manajemen Tahfidz mudah dan praktis.\nDibuat oleh Dasam Samsudin.',
+          style: TextStyle(fontSize: 12, color: Colors.grey, height: 1.5),
+        ),
       ]),
     );
+  }
+}
+
+class _PengawasProfilView extends StatelessWidget {
+  const _PengawasProfilView({required this.provider, required this.onPhotoTap, required this.onLogout});
+  final AppProvider provider; final VoidCallback onPhotoTap; final VoidCallback onLogout;
+  @override
+  Widget build(BuildContext context) {
+    final PengawasData? linked = provider.linkedPengawas;
+    final name = linked?.nama ?? 'Pengawas';
+    final title = linked?.jabatan ?? 'Pengawas';
+    final photo = linked?.photoPath;
+    return ListView(padding: const EdgeInsets.all(16), children: [
+      _buildHeader(name, title, photo, AppTheme.primaryGreen, onPhotoTap: onPhotoTap),
+      const SizedBox(height: 24),
+      _HafalanFiturList(provider: provider),
+      const SizedBox(height: 16),
+      _buildSection('PENGATURAN', [
+        _buildTile(Icons.lock_outline_rounded, 'Ganti Password', Colors.blueGrey, () => _showChangePasswordDialog(context)),
+        _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
+      ]),
+      const SizedBox(height: 24),
+      const _AboutCard(),
+    ]);
   }
 }

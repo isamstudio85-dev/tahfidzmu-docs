@@ -4,7 +4,8 @@ enum UserRole {
   superAdmin,
   admin,
   musyrif,
-  orangTua;
+  orangTua,
+  pengawas;
 
   String get label {
     switch (this) {
@@ -16,6 +17,8 @@ enum UserRole {
         return 'Musyrif';
       case UserRole.orangTua:
         return 'Orang Tua';
+      case UserRole.pengawas:
+        return 'Pengawas';
     }
   }
 
@@ -29,6 +32,8 @@ enum UserRole {
         return 'Kelola hafalan santri binaan';
       case UserRole.orangTua:
         return 'Pantau perkembangan hafalan anak';
+      case UserRole.pengawas:
+        return 'Pantau statistik & aktivitas halaqah (Read-only)';
     }
   }
 
@@ -42,6 +47,8 @@ enum UserRole {
         return Icons.menu_book_rounded;
       case UserRole.orangTua:
         return Icons.family_restroom_rounded;
+      case UserRole.pengawas:
+        return Icons.visibility_rounded;
     }
   }
 
@@ -55,6 +62,8 @@ enum UserRole {
         return const Color(0xFF2E7D32);
       case UserRole.orangTua:
         return const Color(0xFF7B1FA2);
+      case UserRole.pengawas:
+        return const Color(0xFF00897B);
     }
   }
 
@@ -68,6 +77,8 @@ enum UserRole {
         return 'musyrif';
       case UserRole.orangTua:
         return 'orangTua';
+      case UserRole.pengawas:
+        return 'pengawas';
     }
   }
 
@@ -81,6 +92,8 @@ enum UserRole {
         return UserRole.musyrif;
       case 'orangTua':
         return UserRole.orangTua;
+      case 'pengawas':
+        return UserRole.pengawas;
       default:
         return null;
     }

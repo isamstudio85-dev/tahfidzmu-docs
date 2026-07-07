@@ -3,144 +3,277 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ─────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════
     // HELPER FUNCTIONS
-    // ─────────────────────────────────────────────────
+    // Catatan Biaya: Setiap panggilan get() = 1 read billing.
+    // Kita cache getUserData() per-request (Firestore otomatis
+    // cache dalam satu evaluasi rules), tapi tetap hemat panggilan.
+    // ═══════════════════════════════════════════════════
 
-    function isAuthenticated() {
+    function isAuth() {
       return request.auth != null;
     }
 
-    function getUserData() {
+    // Ambil data user dari /users/{uid} — di-cache per evaluasi rules
+    function userData() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
+    function userRole() {
+      return userData().role;
+    }
+
+    function userPesantrenId() {
+      return userData().pesantrenId;
+    }
+
+    // --- Role checks (hanya 1x get() per evaluasi) ---
     function isSuperAdmin() {
-      return isAuthenticated()
+      return isAuth()
         && request.auth.token.email == 'dasamsamsudin87@gmail.com'
-        && getUserData().role == 'superAdmin';
+        && userRole() == 'superAdmin';
     }
 
-    function isAdminOf(pesantrenId) {
-      return isAuthenticated()
-        && getUserData().role == 'admin'
-        && getUserData().pesantrenId == pesantrenId;
+    function isAdminOf(pid) {
+      return isAuth() && userRole() == 'admin' && userPesantrenId() == pid;
     }
 
-    function isMusyrifOf(pesantrenId) {
-      return isAuthenticated()
-        && getUserData().role == 'musyrif'
-        && getUserData().pesantrenId == pesantrenId;
+    function isMusyrifOf(pid) {
+      return isAuth() && userRole() == 'musyrif' && userPesantrenId() == pid;
     }
 
-    function isSantriOf(pesantrenId) {
-      return isAuthenticated()
-        && (getUserData().role == 'santri' || getUserData().role == 'orangTua')
-        && getUserData().pesantrenId == pesantrenId;
+    function isPengawasOf(pid) {
+      return isAuth()
+        && (userRole() == 'pengawas' || userRole() == 'pimpinan')
+        && userPesantrenId() == pid;
     }
 
-    function isSantriSelf(pesantrenId, santriId) {
-      return isSantriOf(pesantrenId)
-        && getUserData().linkedId == santriId;
+    function isOrangTuaOf(pid) {
+      return isAuth() && userRole() == 'orangTua' && userPesantrenId() == pid;
     }
 
-    function isMusyrifSelf(pesantrenId, musyrifId) {
-      return isMusyrifOf(pesantrenId)
-        && getUserData().linkedId == musyrifId;
-    }
-
-    function canReadPesantren(pesantrenId) {
+    // Apakah user ini anggota tenant ini? (bisa baca data pesantren)
+    function isMemberOf(pid) {
       return isSuperAdmin()
-        || isAdminOf(pesantrenId)
-        || isMusyrifOf(pesantrenId)
-        || isSantriOf(pesantrenId);
+        || isAdminOf(pid)
+        || isMusyrifOf(pid)
+        || isPengawasOf(pid)
+        || isOrangTuaOf(pid);
     }
 
-    function canWritePesantren(pesantrenId) {
-      return isSuperAdmin() || isAdminOf(pesantrenId);
+    // Apakah user ini bisa menulis data manajemen? (admin + superAdmin)
+    function canManage(pid) {
+      return isSuperAdmin() || isAdminOf(pid);
     }
 
-    // ─────────────────────────────────────────────────
-    // /users/{uid}
-    // ─────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════
+    // /users/{uid} — Data profil pengguna (Firebase Auth UID)
+    // ═══════════════════════════════════════════════════
     match /users/{uid} {
-      allow read: if isAuthenticated()
+      // User hanya bisa baca profil sendiri. SuperAdmin bisa baca semua.
+      allow read: if isAuth()
         && (request.auth.uid == uid || isSuperAdmin());
-      allow write: if isAuthenticated()
-        && (request.auth.uid == uid || isSuperAdmin());
-    }
 
-    // ─────────────────────────────────────────────────
-    // /pesantren/{pesantrenId}
-    // ─────────────────────────────────────────────────
-    match /pesantren/{pesantrenId} {
-      allow read: if isSuperAdmin() || canReadPesantren(pesantrenId);
-      allow create: if isSuperAdmin();
-      allow update: if canWritePesantren(pesantrenId);
+      // User hanya bisa tulis profil sendiri. SuperAdmin bisa tulis semua.
+      // Batasi field yang boleh ditulis user biasa.
+      allow create: if isAuth()
+        && (request.auth.uid == uid || isSuperAdmin());
+
+      allow update: if isAuth()
+        && (request.auth.uid == uid || isSuperAdmin());
+
+      // Hanya superAdmin yang boleh hapus user
       allow delete: if isSuperAdmin();
 
-      match /settings/{docId} {
-        allow read: if canReadPesantren(pesantrenId);
-        allow write: if canWritePesantren(pesantrenId);
-      }
+      // --- Notifikasi user ---
+      match /notifications/{notifId} {
+        // User bisa baca notifikasi sendiri
+        allow read: if isAuth() && request.auth.uid == uid;
 
-      match /user_mappings/{docId} {
-        allow read: if canReadPesantren(pesantrenId);
-        allow write: if canWritePesantren(pesantrenId);
-      }
+        // Notifikasi bisa dibuat oleh siapa saja yang terotentikasi
+        // (musyrif mengirim notif ke orangTua, dll)
+        allow create: if isAuth();
 
-      match /santri/{santriId} {
-        allow read: if canReadPesantren(pesantrenId);
-        allow create: if canWritePesantren(pesantrenId);
-        allow update: if canWritePesantren(pesantrenId)
-          || isMusyrifOf(pesantrenId)
-          || isSantriSelf(pesantrenId, santriId);
-        allow delete: if canWritePesantren(pesantrenId);
+        // User hanya bisa update (markAsRead) notifikasi sendiri
+        allow update: if isAuth() && request.auth.uid == uid;
 
-        match /setoranHistory/{setoranId} {
-          allow read: if canReadPesantren(pesantrenId) || isSantriOf(pesantrenId);
-          allow create: if isMusyrifOf(pesantrenId) || isAdminOf(pesantrenId);
-          allow update, delete: if isAdminOf(pesantrenId) || isSuperAdmin();
-        }
-
-        match /tasmiHistory/{tasmiId} {
-          allow read: if canReadPesantren(pesantrenId) || isSantriOf(pesantrenId);
-          allow create: if isMusyrifOf(pesantrenId) || isAdminOf(pesantrenId);
-          allow update, delete: if isAdminOf(pesantrenId) || isSuperAdmin();
-        }
-      }
-
-      match /musyrif/{musyrifId} {
-        allow read: if canReadPesantren(pesantrenId);
-        allow create: if canWritePesantren(pesantrenId);
-        allow update: if canWritePesantren(pesantrenId) || isMusyrifSelf(pesantrenId, musyrifId);
-        allow delete: if canWritePesantren(pesantrenId);
-      }
-
-      match /halaqah/{halaqahId} {
-        allow read: if canReadPesantren(pesantrenId);
-        allow write: if canWritePesantren(pesantrenId);
-      }
-
-      match /kelas/{kelasId} {
-        allow read: if canReadPesantren(pesantrenId);
-        allow write: if canWritePesantren(pesantrenId);
-      }
-
-      match /graduation_events/{eventId} {
-        allow read: if canReadPesantren(pesantrenId);
-        allow write: if canWritePesantren(pesantrenId);
-      }
-
-      match /{subcollection}/{docId} {
-        allow read: if canReadPesantren(pesantrenId);
-        allow write: if canWritePesantren(pesantrenId);
+        // User bisa hapus notifikasi sendiri, superAdmin bisa hapus semua
+        allow delete: if isAuth()
+          && (request.auth.uid == uid || isSuperAdmin());
       }
     }
 
-    // ─────────────────────────────────────────────────
-    // KOLEKSI LAMA (sebelum multi-tenant)
-    // ─────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════
+    // /pesantren/{pesantrenId} — Dokumen root tenant
+    // ═══════════════════════════════════════════════════
+    match /pesantren/{pid} {
+      // Semua anggota bisa baca info pesantren mereka
+      allow read: if isAuth() && isMemberOf(pid);
+
+      // Hanya superAdmin yang bisa membuat pesantren baru
+      allow create: if isSuperAdmin();
+
+      // Admin dan superAdmin bisa update pesantren
+      allow update: if isAuth() && canManage(pid);
+
+      // Hanya superAdmin yang bisa hapus pesantren
+      allow delete: if isSuperAdmin();
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/settings/{docId}
+      // Info pesantren (alamat, telp, email)
+      // ─────────────────────────────────────────
+      match /settings/{docId} {
+        allow read: if isAuth() && isMemberOf(pid);
+        allow write: if isAuth() && canManage(pid);
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/user_mappings/{username}
+      // SENSITIF: Berisi password default!
+      // get tanpa auth dibutuhkan untuk login flow
+      // (app membaca mapping SEBELUM Firebase Auth signIn)
+      // ─────────────────────────────────────────
+      match /user_mappings/{mappingId} {
+        // get = baca 1 dokumen spesifik (dibutuhkan login, tanpa auth)
+        // list = query dokumen (QR code generation oleh admin/musyrif)
+        allow get: if true;
+        allow list: if isAuth() && isMemberOf(pid);
+
+        // Tulis: hanya admin dan superAdmin
+        allow write: if isAuth() && canManage(pid);
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/musyrif/{musyrifId}
+      // ─────────────────────────────────────────
+      match /musyrif/{musyrifId} {
+        // Semua anggota bisa baca data musyrif
+        allow read: if isAuth() && isMemberOf(pid);
+
+        // Admin/superAdmin bisa CRUD
+        allow create, delete: if isAuth() && canManage(pid);
+
+        // Musyrif bisa update profil sendiri, admin juga bisa
+        allow update: if isAuth()
+          && (canManage(pid)
+            || (isMusyrifOf(pid) && userData().linkedId == musyrifId));
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/pengawas/{pengawasId}
+      // ─────────────────────────────────────────
+      match /pengawas/{pengawasId} {
+        allow read: if isAuth() && isMemberOf(pid);
+        allow create, delete: if isAuth() && canManage(pid);
+
+        // Pengawas bisa update profil sendiri
+        allow update: if isAuth()
+          && (canManage(pid)
+            || (isPengawasOf(pid) && userData().linkedId == pengawasId));
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/santri/{santriId}
+      // ─────────────────────────────────────────
+      match /santri/{santriId} {
+        // Semua anggota bisa baca data santri
+        allow read: if isAuth() && isMemberOf(pid);
+
+        // Admin/superAdmin bisa create/delete santri
+        allow create, delete: if isAuth() && canManage(pid);
+
+        // Admin, musyrif (update progress), dan orangTua sendiri bisa update
+        allow update: if isAuth()
+          && (canManage(pid)
+            || isMusyrifOf(pid)
+            || (isOrangTuaOf(pid) && userData().linkedId == santriId));
+
+        // --- Riwayat Setoran ---
+        match /setoranHistory/{setoranId} {
+          // Semua anggota bisa baca
+          allow read: if isAuth() && isMemberOf(pid);
+
+          // Musyrif dan admin bisa membuat setoran baru
+          allow create: if isAuth()
+            && (isMusyrifOf(pid) || canManage(pid));
+
+          // Hanya admin/superAdmin yang bisa edit/hapus setoran
+          allow update, delete: if isAuth() && canManage(pid);
+        }
+
+        // --- Riwayat Tasmi ---
+        match /tasmiHistory/{tasmiId} {
+          allow read: if isAuth() && isMemberOf(pid);
+          allow create: if isAuth()
+            && (isMusyrifOf(pid) || canManage(pid));
+          allow update, delete: if isAuth() && canManage(pid);
+        }
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/halaqah/{halaqahId}
+      // ─────────────────────────────────────────
+      match /halaqah/{halaqahId} {
+        allow read: if isAuth() && isMemberOf(pid);
+        allow write: if isAuth() && canManage(pid);
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/kelas/{kelasId}
+      // ─────────────────────────────────────────
+      match /kelas/{kelasId} {
+        allow read: if isAuth() && isMemberOf(pid);
+        allow write: if isAuth() && canManage(pid);
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/presensi/{presensiId}
+      // ─────────────────────────────────────────
+      match /presensi/{presensiId} {
+        allow read: if isAuth() && isMemberOf(pid);
+
+        // Musyrif bisa membuat dan update presensi, admin juga
+        allow create, update: if isAuth()
+          && (isMusyrifOf(pid) || canManage(pid));
+
+        allow delete: if isAuth() && canManage(pid);
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/active_sessions/{sessionId}
+      // Sesi setoran aktif (real-time)
+      // ─────────────────────────────────────────
+      match /active_sessions/{sessionId} {
+        allow read: if isAuth() && isMemberOf(pid);
+
+        // Musyrif bisa create/update/delete sesi mereka sendiri
+        allow create, update, delete: if isAuth()
+          && (isMusyrifOf(pid) || canManage(pid));
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/graduation_events/{eventId}
+      // ─────────────────────────────────────────
+      match /graduation_events/{eventId} {
+        allow read: if isAuth() && isMemberOf(pid);
+        allow write: if isAuth() && canManage(pid);
+      }
+
+      // ─────────────────────────────────────────
+      // /pesantren/{pid}/graduation_registrations/{regId}
+      // ─────────────────────────────────────────
+      match /graduation_registrations/{regId} {
+        allow read: if isAuth() && isMemberOf(pid);
+        allow write: if isAuth() && canManage(pid);
+      }
+    }
+
+    // ═══════════════════════════════════════════════════
+    // KOLEKSI LEGACY (sebelum multi-tenant)
+    // Hanya superAdmin yang bisa mengakses untuk migrasi.
+    // Akan dihapus setelah semua data berhasil dimigrasikan.
+    // ═══════════════════════════════════════════════════
     match /santri/{docId} {
       allow read, write: if isSuperAdmin();
     }
@@ -159,10 +292,16 @@ service cloud.firestore {
     match /user_mappings/{docId} {
       allow read, write: if isSuperAdmin();
     }
+    match /graduation_events/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+    match /graduation_registrations/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
 
-    // ─────────────────────────────────────────────────
-    // DEFAULT DENY
-    // ─────────────────────────────────────────────────
+    // ═══════════════════════════════════════════════════
+    // DEFAULT DENY — Tolak semua yang tidak cocok di atas
+    // ═══════════════════════════════════════════════════
     match /{document=**} {
       allow read, write: if false;
     }

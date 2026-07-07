@@ -30,7 +30,7 @@ class _MusyrifListScreenState extends State<MusyrifListScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final isAdmin = provider.isAdmin;
-    final showAppBar = !widget.hideAppBar && !isAdmin && !provider.isMusyrif;
+    final showAppBar = !widget.hideAppBar;
 
     return Scaffold(
       appBar: showAppBar ? AppBar(title: const Text('Daftar Musyrif')) : null,

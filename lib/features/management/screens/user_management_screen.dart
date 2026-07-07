@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tahfidz_app/features/management/screens/santri_list_screen.dart';
 import 'package:tahfidz_app/features/management/screens/musyrif_list_screen.dart';
+import 'package:tahfidz_app/features/management/screens/pengawas_list_screen.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 
@@ -44,7 +45,7 @@ class UserManagementScreen extends StatelessWidget {
       ));
       views.add(const SantriListScreen(hideAppBar: true, showOnlyMine: false));
     } else {
-      // Admin only sees 2 standard tabs
+      // Admin only sees standard tabs
       tabs.add(const Tab(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -71,6 +72,21 @@ class UserManagementScreen extends StatelessWidget {
     ));
     views.add(const MusyrifListScreen(hideAppBar: true));
 
+    // Admin sees Pengawas tab as well
+    if (isAdmin) {
+      tabs.add(const Tab(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.visibility_rounded, size: 18),
+            SizedBox(width: 8),
+            Text('Pengawas', style: TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ));
+      views.add(const PengawasListScreen(hideAppBar: true));
+    }
+
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
@@ -83,7 +99,7 @@ class UserManagementScreen extends StatelessWidget {
             indicatorWeight: 3,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
-            isScrollable: isMusyrif, // Allow scrolling if 3 tabs
+            isScrollable: isMusyrif || isAdmin, // Allow scrolling if 3 tabs
             tabs: tabs,
           ),
         ),

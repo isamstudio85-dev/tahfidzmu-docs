@@ -33,8 +33,8 @@ class _SantriListScreenState extends State<SantriListScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
-    final canManage = provider.isAdmin || provider.isMusyrif;
-    final showAppBar = !widget.hideAppBar && !provider.isAdmin && !provider.isMusyrif;
+    final canManage = provider.isAdmin;
+    final showAppBar = !widget.hideAppBar;
 
     return Scaffold(
       appBar: showAppBar ? AppBar(title: const Text('Daftar Santri')) : null,
@@ -192,9 +192,10 @@ class _SantriCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.read<AppProvider>();
-    final canManage = provider.isAdmin || provider.isMusyrif;
+    final provider = context.watch<AppProvider>();
+    final canManage = provider.isAdmin;
     final halaqah = provider.getHalaqahById(santri.halaqahId);
+    final todayStatus = provider.getTodaySantriStatus(santri.id);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -216,7 +217,17 @@ class _SantriCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(santri.name, style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(santri.name, style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        ),
+                        if (todayStatus != null) ...[
+                          const SizedBox(width: 8),
+                          _buildStatusBadge(todayStatus),
+                        ],
+                      ],
+                    ),
                     Row(
                       children: [
                         if (santri.kelas != null && santri.kelas!.isNotEmpty) ...[
@@ -286,6 +297,66 @@ class _SantriCard extends StatelessWidget {
             await provider.resetPasswordForLinkedId(santri.id, passwordCtrl.text.trim());
             if (context.mounted) Navigator.pop(context);
           }, child: const Text('Reset')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String status) {
+    Color color;
+    String label;
+    IconData icon;
+
+    switch (status) {
+      case 'setoran':
+        color = Colors.green;
+        label = 'Setoran';
+        icon = Icons.check_circle_outline_rounded;
+        break;
+      case 'ditunda':
+        color = Colors.grey;
+        label = 'Ditunda';
+        icon = Icons.schedule_rounded;
+        break;
+      case 'sakit':
+        color = Colors.orange;
+        label = 'Sakit';
+        icon = Icons.local_hospital_rounded;
+        break;
+      case 'izin':
+        color = Colors.blue;
+        label = 'Izin';
+        icon = Icons.assignment_ind_rounded;
+        break;
+      case 'alfa':
+        color = Colors.red;
+        label = 'Alfa';
+        icon = Icons.cancel_rounded;
+        break;
+      default:
+        return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 10, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: 9,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
         ],
       ),
     );

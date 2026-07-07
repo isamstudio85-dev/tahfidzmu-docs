@@ -2,35 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
-import 'package:tahfidz_app/models/musyrif_data.dart';
+import 'package:tahfidz_app/models/pengawas_data.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
-import 'package:tahfidz_app/features/management/screens/musyrif_form_screen.dart';
+import 'package:tahfidz_app/features/management/screens/pengawas_form_screen.dart';
 
-class MusyrifDetailScreen extends StatelessWidget {
-  const MusyrifDetailScreen({super.key, required this.musyrifId});
-  final String musyrifId;
+class PengawasDetailScreen extends StatelessWidget {
+  const PengawasDetailScreen({super.key, required this.pengawasId});
+  final String pengawasId;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
-        final musyrif = provider.getMusyrifById(musyrifId);
-        if (musyrif == null) {
+        final list = provider.pengawasList.where((p) => p.id == pengawasId).toList();
+        final pengawas = list.isNotEmpty ? list.first : null;
+        if (pengawas == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Detail Musyrif')),
-            body: const Center(child: Text('Musyrif tidak ditemukan')),
+            appBar: AppBar(title: const Text('Detail Pengawas')),
+            body: const Center(child: Text('Pengawas tidak ditemukan')),
           );
         }
 
         final isAdmin = provider.isAdmin;
-        final halaqahCount = provider.halaqahList.where((h) => h.musyrifId == musyrif.id).length;
-        final santriCount = provider.getSantriByMusyrif(musyrif.id).length;
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Detail Musyrif'),
+            title: const Text('Detail Pengawas'),
             actions: [
               if (isAdmin)
                 IconButton(
@@ -38,7 +36,7 @@ class MusyrifDetailScreen extends StatelessWidget {
                   tooltip: 'Edit Profil',
                   onPressed: () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => MusyrifFormScreen(existing: musyrif)),
+                    MaterialPageRoute(builder: (_) => PengawasFormScreen(existing: pengawas)),
                   ),
                 ),
             ],
@@ -46,35 +44,24 @@ class MusyrifDetailScreen extends StatelessWidget {
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // 1. MINI DIGITAL CARD with QR code
-              _MiniMusyrifDigitalCard(musyrif: musyrif),
-              const SizedBox(height: 20),
-
-              // 2. Unified Stats Row
-              Row(
-                children: [
-                  _statItem('Halaqah', '$halaqahCount', Icons.groups_rounded, AppTheme.primaryGreen),
-                  const SizedBox(width: 12),
-                  _statItem('Santri', '$santriCount', Icons.people_alt_rounded, const Color(0xFF1565C0)),
-                ],
-              ),
+              // 1. DIGITAL CARD & QR CODE
+              _PengawasDigitalCard(pengawas: pengawas),
               const SizedBox(height: 24),
 
-              // 3. Informasi Personal
-              _sectionHeader('Informasi Personal'),
+              // 2. Informasi Akun
+              _sectionHeader('Informasi Akun'),
               _infoCard([
-                _infoRow(Icons.badge_outlined, 'NIP', musyrif.nip ?? '-'),
-                _infoRow(Icons.email_outlined, 'Email', musyrif.email ?? '-'),
-                _infoRow(Icons.male_rounded, 'Jenis Kelamin', musyrif.jenisKelamin == 'P' ? 'Perempuan' : 'Laki-laki'),
-                _infoRow(Icons.phone_outlined, 'No. HP / WA', musyrif.nomorHp.isNotEmpty ? musyrif.nomorHp : '-'),
-                _infoRow(Icons.business_outlined, 'Lembaga', musyrif.lembaga),
-                _infoRow(Icons.info_outline, 'Status', musyrif.isAktif ? 'Aktif' : 'Non-aktif',
-                    valueColor: musyrif.isAktif ? AppTheme.primaryGreen : Colors.grey),
+                _infoRow(Icons.person_pin_rounded, 'Nama Pengawas', pengawas.nama),
+                _infoRow(Icons.alternate_email_rounded, 'Username Login', '@${pengawas.username}'),
+                _infoRow(Icons.work_outline_rounded, 'Jabatan', pengawas.jabatan),
+                _infoRow(Icons.phone_rounded, 'WhatsApp', pengawas.nomorHp.isNotEmpty ? pengawas.nomorHp : '-'),
+                _infoRow(Icons.info_outline_rounded, 'Status Keaktifan', pengawas.isAktif ? 'Aktif' : 'Non-aktif',
+                    valueColor: pengawas.isAktif ? AppTheme.primaryGreen : Colors.grey),
               ]),
               const SizedBox(height: 24),
 
-              // 4. Catatan
-              if (musyrif.catatan?.isNotEmpty ?? false) ...[
+              // 3. Catatan
+              if (pengawas.catatan?.isNotEmpty ?? false) ...[
                 _sectionHeader('Catatan'),
                 Container(
                   width: double.infinity,
@@ -82,11 +69,12 @@ class MusyrifDetailScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(color: Colors.black.withValues(alpha: 0.01), blurRadius: 4, offset: const Offset(0, 2)),
-                    ],
+                    border: Border.all(color: Colors.grey.shade100),
                   ),
-                  child: Text(musyrif.catatan!, style: const TextStyle(fontSize: 14, height: 1.5)),
+                  child: Text(
+                    pengawas.catatan!,
+                    style: const TextStyle(color: Colors.black87, fontSize: 13),
+                  ),
                 ),
               ],
             ],
@@ -138,76 +126,32 @@ class MusyrifDetailScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _statItem(String label, String value, IconData icon, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.01), blurRadius: 4, offset: const Offset(0, 2)),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.08), shape: BoxShape.circle),
-              child: Icon(icon, color: color, size: 20),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 10),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
-class _MiniMusyrifDigitalCard extends StatelessWidget {
-  final MusyrifData musyrif;
-  const _MiniMusyrifDigitalCard({required this.musyrif});
+class _PengawasDigitalCard extends StatelessWidget {
+  const _PengawasDigitalCard({required this.pengawas});
+  final PengawasData pengawas;
 
   void _showQrDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'KARTU MUSYRIF DIGITAL',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: AppTheme.primaryGreen,
-                  letterSpacing: 0.5,
-                ),
+                'QR CODE PENGAWAS',
+                style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.primaryGreen),
               ),
               const SizedBox(height: 20),
               FutureBuilder<String>(
-                future: context.read<AppProvider>().getLoginQrData(musyrif.id),
+                future: context.read<AppProvider>().getLoginQrData(pengawas.id),
                 builder: (context, snapshot) {
                   return QrImageView(
-                    data: snapshot.data ?? (musyrif.nip ?? musyrif.id),
+                    data: snapshot.data ?? pengawas.username,
                     version: QrVersions.auto,
                     size: 180.0,
                     backgroundColor: Colors.white,
@@ -226,11 +170,11 @@ class _MiniMusyrifDigitalCard extends StatelessWidget {
                       width: 60,
                       height: 60,
                       color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                      child: musyrif.photoPath != null
-                          ? Image.network(musyrif.photoPath!, fit: BoxFit.cover)
+                      child: pengawas.photoPath != null
+                          ? Image.network(pengawas.photoPath!, fit: BoxFit.cover)
                           : Center(
                               child: Text(
-                                musyrif.nama[0],
+                                pengawas.nama[0],
                                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
                               ),
                             ),
@@ -242,14 +186,14 @@ class _MiniMusyrifDigitalCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          musyrif.nama,
+                          pengawas.nama,
                           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'NIP/ID: ${musyrif.nip ?? musyrif.id}',
+                          'Username: @${pengawas.username}',
                           style: TextStyle(
                             fontFamily: 'monospace',
                             color: Colors.grey.shade600,
@@ -296,7 +240,7 @@ class _MiniMusyrifDigitalCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'KARTU MUSYRIF DIGITAL',
+                    'KARTU PENGAWAS DIGITAL',
                     style: GoogleFonts.poppins(
                       color: AppTheme.primaryGreen,
                       fontWeight: FontWeight.bold,
@@ -316,11 +260,11 @@ class _MiniMusyrifDigitalCard extends StatelessWidget {
                       width: 50,
                       height: 50,
                       color: AppTheme.primaryGreen.withValues(alpha: 0.05),
-                      child: musyrif.photoPath != null
-                          ? Image.network(musyrif.photoPath!, fit: BoxFit.cover)
+                      child: pengawas.photoPath != null
+                          ? Image.network(pengawas.photoPath!, fit: BoxFit.cover)
                           : Center(
                               child: Text(
-                                musyrif.nama[0],
+                                pengawas.nama[0],
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppTheme.primaryGreen),
                               ),
                             ),
@@ -332,14 +276,14 @@ class _MiniMusyrifDigitalCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          musyrif.nama,
+                          pengawas.nama,
                           style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'NIP/ID: ${musyrif.nip ?? musyrif.id}',
+                          'Username: @${pengawas.username}',
                           style: TextStyle(fontFamily: 'monospace', color: Colors.grey.shade600, fontSize: 10),
                         ),
                       ],
@@ -347,10 +291,10 @@ class _MiniMusyrifDigitalCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   FutureBuilder<String>(
-                    future: context.read<AppProvider>().getLoginQrData(musyrif.id),
+                    future: context.read<AppProvider>().getLoginQrData(pengawas.id),
                     builder: (context, snapshot) {
                       return QrImageView(
-                        data: snapshot.data ?? (musyrif.nip ?? musyrif.id),
+                        data: snapshot.data ?? pengawas.username,
                         version: QrVersions.auto,
                         size: 60.0,
                         backgroundColor: Colors.white,

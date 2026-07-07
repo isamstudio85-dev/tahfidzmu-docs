@@ -192,7 +192,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
         content: const Text('Seluruh tanda di layar akan hilang.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Kembali')),
-          TextButton(onPressed: () { provider.clearErrors(); Navigator.pop(ctx); Navigator.pop(context); }, child: const Text('Ya, Batal', style: TextStyle(color: Colors.red))),
+          TextButton(onPressed: () { provider.endSetoranSession(); Navigator.pop(ctx); Navigator.pop(context); }, child: const Text('Ya, Batal', style: TextStyle(color: Colors.red))),
         ],
       ),
     );

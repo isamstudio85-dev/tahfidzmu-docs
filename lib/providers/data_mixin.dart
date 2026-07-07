@@ -10,6 +10,9 @@ import '../models/graduation_registration.dart';
 import '../models/pesantren_info.dart';
 import '../models/setoran.dart';
 import '../models/tasmi_record.dart';
+import '../models/pengawas_data.dart';
+import '../models/presensi_halaqah.dart';
+import '../models/app_notification.dart';
 import 'auth_mixin.dart';
 
 mixin DataMixin on ChangeNotifier, AuthMixin {
@@ -23,6 +26,9 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
   StreamSubscription? eventSub;
   StreamSubscription? regSub;
   StreamSubscription? recentSetoransSub;
+  StreamSubscription? pengawasSub;
+  StreamSubscription? presensiSub;
+  StreamSubscription? notificationSub;
 
   final Map<String, StreamSubscription> _setoranSubs = {};
   final Map<String, StreamSubscription> _tasmiSubs = {};
@@ -33,6 +39,9 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
   List<KelasData> kelasList = [];
   List<GraduationEvent> graduationEvents = [];
   List<GraduationRegistration> graduationRegistrations = [];
+  List<PengawasData> pengawasList = [];
+  List<PresensiHalaqah> presensiList = [];
+  List<AppNotification> notificationList = [];
   
   PesantrenInfo pesantrenInfo = const PesantrenInfo(
     nama: 'Al-Furqon MBS Cibiuk',
@@ -50,8 +59,17 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     return firestore.collection(name);
   }
 
-  void setupFirestoreListeners() {
+  Future<void> setupFirestoreListeners() async {
     cancelSubscriptions();
+
+    final completers = <Completer>[];
+    
+    final santriCompleter = Completer();
+    final halaqahCompleter = Completer();
+    final musyrifCompleter = Completer();
+    final kelasCompleter = Completer();
+    
+    completers.addAll([santriCompleter, halaqahCompleter, musyrifCompleter, kelasCompleter]);
 
     // ── 1. Role-based Santri & Halaqah Subscription ─────────────────────────
     if (isOrangTua) {
@@ -65,12 +83,16 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
           } else {
             santriList = [];
           }
+          if (!santriCompleter.isCompleted) santriCompleter.complete();
           notifyListeners();
+        }, onError: (e) {
+          if (!santriCompleter.isCompleted) santriCompleter.complete();
         });
+      } else {
+        if (!santriCompleter.isCompleted) santriCompleter.complete();
       }
 
       // Orang tua only listens to their child's specific halaqah
-      // First get the child once, then listen to their halaqah
       getCollection('santri').doc(linkedSantriId).get().then((doc) {
         if (doc.exists) {
           final s = Santri.fromJson(doc.data()!);
@@ -81,10 +103,19 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
               } else {
                 halaqahList = [];
               }
+              if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
               notifyListeners();
+            }, onError: (e) {
+              if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
             });
+          } else {
+            if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
           }
+        } else {
+          if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
         }
+      }).catchError((e) {
+        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
       });
 
     } else if (isMusyrif) {
@@ -94,31 +125,61 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
         notifyListeners();
         
         final halaqahIds = halaqahList.map((h) => h.id).toList();
+        
+        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
+
         if (halaqahIds.isNotEmpty) {
           santriSub?.cancel();
           santriSub = getCollection('santri').where('halaqahId', whereIn: halaqahIds).snapshots().listen((santriSnap) {
             final baseSantriList = santriSnap.docs.map((doc) => Santri.fromJson(doc.data())).toList();
             _listenToMultipleSantriSubcollections(baseSantriList);
+            if (!santriCompleter.isCompleted) santriCompleter.complete();
+          }, onError: (e) {
+            if (!santriCompleter.isCompleted) santriCompleter.complete();
+          });
+
+          // Listen to the 20 most recent setoran records across all students in their halaqahs
+          // This replaces loop streams for all individual students, saving massive Firestore reads.
+          recentSetoransSub?.cancel();
+          recentSetoransSub = firestore.collectionGroup('setoranHistory')
+              .where('halaqahId', whereIn: halaqahIds)
+              .orderBy('date', descending: true)
+              .limit(20)
+              .snapshots().listen((snap) {
+            for (var doc in snap.docs) {
+              final record = SetoranRecord.fromJson(doc.data());
+              _addSetoranToSantriInMemory(record);
+            }
           });
         } else {
           santriSub?.cancel();
+          recentSetoransSub?.cancel();
           santriList = [];
           cancelAllSubcollectionSubscriptions();
+          if (!santriCompleter.isCompleted) santriCompleter.complete();
           notifyListeners();
         }
+      }, onError: (e) {
+        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
+        if (!santriCompleter.isCompleted) santriCompleter.complete();
       });
 
     } else {
-      // Admin: listen to all santri, but we don't start live listeners for all subcollections to prevent read explosion.
-      // Subcollections for Admin will be loaded on-demand via detail page or testing session.
+      // Admin: listen to all santri
       santriSub = getCollection('santri').snapshots().listen((snap) {
         santriList = snap.docs.map((doc) => Santri.fromJson(doc.data())).toList();
+        if (!santriCompleter.isCompleted) santriCompleter.complete();
         notifyListeners();
+      }, onError: (e) {
+        if (!santriCompleter.isCompleted) santriCompleter.complete();
       });
 
       halaqahSub = getCollection('halaqah').snapshots().listen((snap) {
         halaqahList = snap.docs.map((doc) => HalaqahData.fromJson(doc.data())).toList();
+        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
         notifyListeners();
+      }, onError: (e) {
+        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
       });
 
       recentSetoransSub?.cancel();
@@ -137,15 +198,21 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
       });
     }
 
-    // ── 2. Other Global Subscriptions (Filtered or limited if appropriate) ──
+    // ── 2. Other Global Subscriptions ─────────────────────────────────────────
     musyrifSub = getCollection('musyrif').snapshots().listen((snap) {
       musyrifList = snap.docs.map((doc) => MusyrifData.fromJson(doc.data())).toList();
+      if (!musyrifCompleter.isCompleted) musyrifCompleter.complete();
       notifyListeners();
+    }, onError: (e) {
+      if (!musyrifCompleter.isCompleted) musyrifCompleter.complete();
     });
 
     kelasSub = getCollection('kelas').snapshots().listen((snap) {
       kelasList = snap.docs.map((doc) => KelasData.fromJson(doc.data())).toList();
+      if (!kelasCompleter.isCompleted) kelasCompleter.complete();
       notifyListeners();
+    }, onError: (e) {
+      if (!kelasCompleter.isCompleted) kelasCompleter.complete();
     });
 
     eventSub = getCollection('graduation_events').snapshots().listen((snap) {
@@ -157,6 +224,41 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
       graduationRegistrations = snap.docs.map((doc) => GraduationRegistration.fromJson(doc.data())).toList();
       notifyListeners();
     });
+
+    if (isAdmin) {
+      pengawasSub = getCollection('pengawas').snapshots().listen((snap) {
+        pengawasList = snap.docs.map((doc) => PengawasData.fromJson(doc.data())).toList();
+        notifyListeners();
+      }, onError: (e) {
+        debugPrint("Error listening to pengawas: $e");
+      });
+    }
+
+    final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
+    presensiSub = getCollection('presensi')
+        .where('tanggal', isGreaterThanOrEqualTo: Timestamp.fromDate(thirtyDaysAgo))
+        .snapshots()
+        .listen((snap) {
+      presensiList = snap.docs.map((doc) => PresensiHalaqah.fromJson(doc.data())).toList();
+      notifyListeners();
+    }, onError: (e) {
+      debugPrint("Error listening to presensi: $e");
+    });
+
+    if (currentUserId != null) {
+      notificationSub = firestore
+          .collection('users')
+          .doc(currentUserId)
+          .collection('notifications')
+          .orderBy('timestamp', descending: true)
+          .snapshots()
+          .listen((snap) {
+        notificationList = snap.docs.map((doc) => AppNotification.fromJson(doc.id, doc.data())).toList();
+        notifyListeners();
+      }, onError: (e) {
+        debugPrint("Error listening to notifications: $e");
+      });
+    }
     
     getCollection('settings').doc('pesantren_info').get().then((doc) {
       if (doc.exists) {
@@ -164,6 +266,14 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
         notifyListeners();
       }
     });
+
+    // Wait for initial essential data streams to yield at least one event before proceeding
+    // Capped with a timeout to prevent bootstrapping hangs if there is no cached data and no network
+    try {
+      await Future.wait(completers.map((c) => c.future)).timeout(const Duration(milliseconds: 3000));
+    } catch (e) {
+      debugPrint("setupFirestoreListeners wait initial data timed out: $e");
+    }
   }
 
   void _listenToSingleSantriSubcollections(String sId) {
@@ -201,17 +311,14 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     });
 
     santriList = baseList.map((s) {
-      final existingSetorans = _setoranSubs.containsKey(s.id) ? s.setoranHistory : const <SetoranRecord>[];
-      final existingTasmis = _tasmiSubs.containsKey(s.id) ? s.tasmiHistory : const <TasmiRecord>[];
+      // Retain the existing in-memory history (e.g. recent setoran records loaded for dashboard)
+      // if we are not actively streaming their deep history via a detail screen.
+      final existingSantri = santriList.firstWhere((x) => x.id == s.id, orElse: () => s);
+      final existingSetorans = _setoranSubs.containsKey(s.id) ? s.setoranHistory : existingSantri.setoranHistory;
+      final existingTasmis = _tasmiSubs.containsKey(s.id) ? s.tasmiHistory : existingSantri.tasmiHistory;
       return s.copyWith(setoranHistory: existingSetorans, tasmiHistory: existingTasmis);
     }).toList();
     notifyListeners();
-
-    for (var s in baseList) {
-      if (!_setoranSubs.containsKey(s.id)) {
-        _listenToSingleSantriSubcollections(s.id);
-      }
-    }
   }
 
   void _updateSantriHistoryInMemory(String sId, {List<SetoranRecord>? history, List<TasmiRecord>? tasmi}) {
@@ -254,7 +361,6 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
 
   void stopListeningToActiveSantriHistory(String santriId) {
     if (isOrangTua && santriId == linkedSantriId) return; // Keep parent child listener active
-    if (isMusyrif && halaqahList.any((h) => getSantriByHalaqah(h.id).any((s) => s.id == santriId))) return; // Keep musyrif student listener active
     
     _setoranSubs[santriId]?.cancel();
     _setoranSubs.remove(santriId);
@@ -270,6 +376,9 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     eventSub?.cancel();
     regSub?.cancel();
     recentSetoransSub?.cancel();
+    pengawasSub?.cancel();
+    presensiSub?.cancel();
+    notificationSub?.cancel();
     cancelAllSubcollectionSubscriptions();
   }
 

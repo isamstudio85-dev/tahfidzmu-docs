@@ -146,14 +146,16 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
                           const SizedBox(height: 20),
 
                           // Ujian Tasmi'
-                          _sectionHeader('Ujian Tasmi\' / Wisuda'),
-                          if (santri.tasmiHistory.isEmpty)
-                            _emptyHistory('Belum ada riwayat ujian Tasmi\'')
-                          else
-                            ...santri.tasmiHistory.reversed.map(
-                              (t) => _TasmiHistoryTile(record: t),
-                            ),
-                          const SizedBox(height: 24),
+                          if (provider.isModuleActive('graduation')) ...[
+                            _sectionHeader('Ujian Tasmi\' / Wisuda'),
+                            if (santri.tasmiHistory.isEmpty)
+                              _emptyHistory('Belum ada riwayat ujian Tasmi\'')
+                            else
+                              ...santri.tasmiHistory.reversed.map(
+                                (t) => _TasmiHistoryTile(record: t),
+                              ),
+                            const SizedBox(height: 24),
+                          ],
 
                           // Riwayat Setoran
                           _sectionHeader('Riwayat Setoran'),
@@ -456,11 +458,16 @@ class _MiniDigitalCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              QrImageView(
-                data: santri.nis ?? santri.id,
-                version: QrVersions.auto,
-                size: 180.0,
-                backgroundColor: Colors.white,
+              FutureBuilder<String>(
+                future: context.read<AppProvider>().getLoginQrData(santri.id),
+                builder: (context, snapshot) {
+                  return QrImageView(
+                    data: snapshot.data ?? (santri.nis ?? santri.id),
+                    version: QrVersions.auto,
+                    size: 180.0,
+                    backgroundColor: Colors.white,
+                  );
+                },
               ),
               const SizedBox(height: 20),
               Divider(color: Colors.grey.shade300, height: 1),

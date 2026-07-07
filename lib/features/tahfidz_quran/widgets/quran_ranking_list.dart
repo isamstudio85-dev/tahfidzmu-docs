@@ -7,7 +7,8 @@ import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 
 class QuranRankingList extends StatefulWidget {
-  const QuranRankingList({super.key});
+  const QuranRankingList({super.key, this.initialIndex = 0});
+  final int initialIndex;
 
   @override
   State<QuranRankingList> createState() => _QuranRankingListState();
@@ -19,7 +20,7 @@ class _QuranRankingListState extends State<QuranRankingList> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    _innerTab = TabController(length: 2, vsync: this);
+    _innerTab = TabController(length: 2, vsync: this, initialIndex: widget.initialIndex);
   }
 
   @override

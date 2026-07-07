@@ -15,9 +15,13 @@ import '../models/pesantren_info.dart';
 import '../models/graduation_event.dart';
 import '../models/graduation_registration.dart';
 import '../models/tasmi_record.dart';
+import '../models/pengawas_data.dart';
+import '../models/presensi_halaqah.dart';
+import '../models/app_notification.dart';
 import '../services/quran_service.dart';
-import '../services/demo_data_service.dart';
+
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
+import '../services/login_preferences_service.dart';
 
 import 'auth_mixin.dart';
 import 'data_mixin.dart';
@@ -57,6 +61,13 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
 
   Santri? get linkedSantri => linkedSantriId != null ? getSantriById(linkedSantriId!) : null;
   MusyrifData? get linkedMusyrif => getMusyrifById(linkedMusyrifId);
+  
+  PengawasData? getPengawasById(String id) {
+    final list = pengawasList.where((p) => p.id == id).toList();
+    return list.isNotEmpty ? list.first : null;
+  }
+  
+  PengawasData? get linkedPengawas => linkedMusyrifId != null ? getPengawasById(linkedMusyrifId!) : null;
 
   String get musyrif => linkedMusyrif?.nama ?? 'Musyrif';
   String get lembaga => linkedMusyrif?.lembaga ?? 'Halaqah Tahfidz';
@@ -76,6 +87,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
       await _fetchSurahList();
       final user = firebase.currentUser;
       if (user != null) {
+        // Auto-assign superAdmin role for the owner
         if (user.email == 'dasamsamsudin87@gmail.com') {
           await firebase.setUserData(user.uid, {
             'role': 'superAdmin',
@@ -83,39 +95,6 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
             'linkedId': null,
             'pesantrenId': null,
           });
-        }
-        if (user.email == 'admin@tahfidzmu.com') {
-          await firebase.setUserData(user.uid, {
-            'role': 'admin',
-            'username': 'admin',
-            'pesantrenId': 'demo',
-          });
-        }
-        
-        final demoPesantrenDoc = await firestore.collection('pesantren').doc('demo').get();
-        if (!demoPesantrenDoc.exists) {
-          await firestore.collection('pesantren').doc('demo').set({
-            'id': 'demo',
-            'nama': 'Pesantren Demo TahfidzMU',
-            'createdAt': FieldValue.serverTimestamp(),
-            'status': 'active',
-          });
-          await firestore.collection('pesantren').doc('demo').collection('settings').doc('pesantren_info').set({
-            'nama': 'Pesantren Demo TahfidzMU',
-            'alamat': 'Jl. Pulobaru Desa Cibiuk Kaler Kec Cibiuk Garut',
-            'noTelp': '081289607738',
-            'email': 'admin@tahfidzmu.com',
-          });
-          await firestore.collection('pesantren').doc('demo').collection('user_mappings').doc('admin').set({
-            'linkedId': null,
-            'role': 'admin',
-            'defaultPassword': 'demo123',
-          });
-        }
-        await _migrateGlobalDataToDemo();
-        final pesantrenList = await firestore.collection('pesantren').get();
-        for (var doc in pesantrenList.docs) {
-          await seedDemoDataForTenant(doc.id);
         }
         final userData = await firebase.getUserData(user.uid);
         if (userData != null) {
@@ -129,7 +108,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
           if (isAdmin) {
             _adminPhoto = userData['photoPath'] ?? '';
           }
-          setupFirestoreListeners();
+          await setupFirestoreListeners();
         } else {
           await firebase.signOut();
         }
@@ -275,7 +254,34 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
       if (isAdmin) {
         _adminPhoto = userData['photoPath'] ?? '';
       }
-      setupFirestoreListeners();
+      await setupFirestoreListeners();
+
+      // Save account credentials for the account switcher
+      final displayName = isOrangTua
+          ? (linkedSantri?.name ?? username)
+          : (isMusyrif 
+              ? (linkedMusyrif?.nama ?? username) 
+              : (isPengawas ? (linkedPengawas?.nama ?? username) : 'Admin'));
+      final photoPath = isOrangTua
+          ? linkedSantri?.photoPath
+          : (isMusyrif 
+              ? linkedMusyrif?.photoPath 
+              : (isPengawas ? linkedPengawas?.photoPath : null));
+
+      try {
+        await LoginPreferencesService.saveAccount(SavedAccount(
+          username: username,
+          password: password,
+          pesantrenId: targetPesantrenId,
+          displayName: displayName,
+          photoPath: photoPath,
+          role: userData['role'] as String,
+          linkedId: userData['linkedId'] as String?,
+        ));
+      } catch (e) {
+        debugPrint("Error saving account to switcher: $e");
+      }
+
       return true;
     } catch (e, stack) {
       debugPrint("LOGIN_ERROR: $e");
@@ -285,9 +291,167 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     }
   }
 
+  Future<bool> switchAccount(SavedAccount account) async {
+    _isInitializing = true;
+    notifyListeners();
+    try {
+      await firebase.signOut();
+      final success = await loginWithCredentials(
+        account.pesantrenId,
+        account.username,
+        account.password,
+      );
+      return success;
+    } catch (e) {
+      debugPrint("Error switching account: $e");
+      return false;
+    } finally {
+      _isInitializing = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateSetoranRecord(String santriId, SetoranRecord record) async {
+    // 1. Save record to Firestore
+    final setoranJson = record.toJson();
+    if (pesantrenId != null) {
+      setoranJson['pesantrenId'] = pesantrenId;
+    }
+    await getCollection('santri').doc(santriId).collection('setoranHistory').doc(record.id).set(setoranJson);
+
+    final now = DateTime.now();
+    if (record.date.year == now.year && record.date.month == now.month && record.date.day == now.day) {
+      await setSantriKehadiranStatus(santriId, 'setoran');
+    }
+    
+    // Trigger setoran notification to parent
+    await triggerSetoranNotification(santriId, record);
+
+    // 2. Fetch all records to recalculate aggregates
+    final historySnap = await getCollection('santri').doc(santriId).collection('setoranHistory').get();
+    final allRecords = historySnap.docs.map((doc) => SetoranRecord.fromJson(doc.data())).toList();
+
+    final targetSantri = getSantriById(santriId);
+    if (targetSantri != null) {
+      final tempSantri = targetSantri.copyWith(setoranHistory: allRecords);
+      await getCollection('santri').doc(santriId).update({
+        'averageScore': tempSantri.averageScore,
+        'totalSetoranCount': tempSantri.totalSetoranCount,
+        'totalErrors': tempSantri.totalErrors,
+        'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs,
+        'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs,
+        'totalFailedAyahs': tempSantri.totalFailedAyahs,
+        'estimatedJuz': tempSantri.estimatedJuz,
+        'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
+      });
+    }
+    notifyListeners();
+  }
+
+  Future<void> deleteSetoranRecord(String santriId, String recordId) async {
+    // 1. Delete record from Firestore
+    await getCollection('santri').doc(santriId).collection('setoranHistory').doc(recordId).delete();
+
+    // 2. Fetch remaining records to recalculate aggregates
+    final historySnap = await getCollection('santri').doc(santriId).collection('setoranHistory').get();
+    final allRecords = historySnap.docs.map((doc) => SetoranRecord.fromJson(doc.data())).toList();
+
+    final targetSantri = getSantriById(santriId);
+    if (targetSantri != null) {
+      final tempSantri = targetSantri.copyWith(setoranHistory: allRecords);
+      await getCollection('santri').doc(santriId).update({
+        'averageScore': tempSantri.averageScore,
+        'totalSetoranCount': tempSantri.totalSetoranCount,
+        'totalErrors': tempSantri.totalErrors,
+        'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs,
+        'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs,
+        'totalFailedAyahs': tempSantri.totalFailedAyahs,
+        'estimatedJuz': tempSantri.estimatedJuz,
+        'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
+      });
+    }
+    notifyListeners();
+  }
+
   Future<void> logout() async {
     await performLogout();
     cancelSubscriptions();
+  }
+
+  @override
+  void startSetoranSession({
+    required Santri santri,
+    required SetoranType type,
+    required SurahInfo surah,
+    required int ayahStart,
+    required int ayahEnd,
+  }) {
+    super.startSetoranSession(
+      santri: santri,
+      type: type,
+      surah: surah,
+      ayahStart: ayahStart,
+      ayahEnd: ayahEnd,
+    );
+    _writeActiveSessionToFirestore(
+      santriName: santri.name,
+      detail: '${type.label}: ${surah.englishName} $ayahStart-$ayahEnd',
+    );
+  }
+
+  @override
+  void startTasmiSession({
+    required Santri santri,
+    required List<int> juzNumbers,
+    required String year,
+  }) {
+    super.startTasmiSession(
+      santri: santri,
+      juzNumbers: juzNumbers,
+      year: year,
+    );
+    final juzStr = juzNumbers.join(', ');
+    _writeActiveSessionToFirestore(
+      santriName: santri.name,
+      detail: 'Tasmi\' Juz [$juzStr]',
+    );
+  }
+
+  Future<void> _writeActiveSessionToFirestore({
+    required String santriName,
+    required String detail,
+  }) async {
+    final mId = linkedMusyrifId;
+    if (mId == null) return;
+    final mName = linkedMusyrif?.nama ?? 'Musyrif';
+    try {
+      final sessionJson = {
+        'id': mId,
+        'musyrifId': mId,
+        'musyrifName': mName,
+        'santriName': santriName,
+        'detail': detail,
+        'startedAt': FieldValue.serverTimestamp(),
+      };
+      if (pesantrenId != null) {
+        sessionJson['pesantrenId'] = pesantrenId!;
+      }
+      await getCollection('active_sessions').doc(mId).set(sessionJson);
+    } catch (e) {
+      debugPrint("Error writing active session: $e");
+    }
+  }
+
+  Future<void> endSetoranSession() async {
+    if (linkedMusyrifId != null && activeSetoranSantri != null) {
+      try {
+        await getCollection('active_sessions').doc(linkedMusyrifId!).delete();
+      } catch (e) {
+        debugPrint("Error clearing active session: $e");
+      }
+    }
+    activeSetoranSantri = null;
+    clearErrors();
   }
 
   Future<void> updatePesantrenInfo(PesantrenInfo info) async {
@@ -300,7 +464,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
   Future<void> addMusyrif(MusyrifData m, {String? username, String? password}) async {
     String? cloudPhotoUrl;
     if (m.photoPath != null && m.photoPath!.isNotEmpty && !m.photoPath!.startsWith('http')) {
-      try { cloudPhotoUrl = await firebase.uploadPhoto(localPath: m.photoPath!, folder: 'musyrif_photos', fileName: m.id); } catch (_) {}
+      try { cloudPhotoUrl = await firebase.uploadPhoto(localPath: m.photoPath!, folder: 'musyrif_photos', fileName: m.id); } catch (e) { debugPrint('Failed to upload musyrif photo: $e'); }
     }
     final updatedM = m.copyWith(photoPath: cloudPhotoUrl ?? m.photoPath);
     await getCollection('musyrif').doc(m.id).set(updatedM.toJson());
@@ -311,12 +475,208 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
   Future<void> updateMusyrifData(String id, MusyrifData updated) async {
     String? finalPhotoPath = updated.photoPath;
     if (finalPhotoPath != null && finalPhotoPath.isNotEmpty && !finalPhotoPath.startsWith('http')) {
-      try { finalPhotoPath = await firebase.uploadPhoto(localPath: finalPhotoPath, folder: 'musyrif_photos', fileName: id); } catch (_) {}
+      try { finalPhotoPath = await firebase.uploadPhoto(localPath: finalPhotoPath, folder: 'musyrif_photos', fileName: id); } catch (e) { debugPrint('Failed to update musyrif photo: $e'); }
     }
     await getCollection('musyrif').doc(id).set(updated.copyWith(photoPath: finalPhotoPath).toJson(), SetOptions(merge: true));
   }
 
   Future<void> removeMusyrif(String id) async => await getCollection('musyrif').doc(id).delete();
+
+  Future<void> addPengawas(PengawasData p, {required String username, required String password}) async {
+    String? cloudPhotoUrl;
+    if (p.photoPath != null && p.photoPath!.isNotEmpty && !p.photoPath!.startsWith('http')) {
+      try { cloudPhotoUrl = await firebase.uploadPhoto(localPath: p.photoPath!, folder: 'pengawas_photos', fileName: p.id); } catch (e) { debugPrint('Failed to upload pengawas photo: $e'); }
+    }
+    final updatedP = p.copyWith(photoPath: cloudPhotoUrl ?? p.photoPath);
+    await getCollection('pengawas').doc(p.id).set(updatedP.toJson());
+    await getCollection('user_mappings').doc(username).set({
+      'linkedId': p.id,
+      'role': 'pengawas',
+      'defaultPassword': password,
+    });
+  }
+
+  Future<void> updatePengawasData(String id, PengawasData updated) async {
+    String? finalPhotoPath = updated.photoPath;
+    if (finalPhotoPath != null && finalPhotoPath.isNotEmpty && !finalPhotoPath.startsWith('http')) {
+      try { finalPhotoPath = await firebase.uploadPhoto(localPath: finalPhotoPath, folder: 'pengawas_photos', fileName: id); } catch (e) { debugPrint('Failed to update pengawas photo: $e'); }
+    }
+    await getCollection('pengawas').doc(id).set(updated.copyWith(photoPath: finalPhotoPath).toJson(), SetOptions(merge: true));
+  }
+
+  Future<void> removePengawas(String id, String username) async {
+    await getCollection('pengawas').doc(id).delete();
+    await getCollection('user_mappings').doc(username).delete();
+  }
+
+  String? getTodaySantriStatus(String santriId) {
+    final now = DateTime.now();
+    for (final p in presensiList) {
+      if (p.tanggal.year == now.year &&
+          p.tanggal.month == now.month &&
+          p.tanggal.day == now.day) {
+        if (p.daftarHadir.containsKey(santriId)) {
+          return p.daftarHadir[santriId];
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<String> getLoginQrData(String userId) async {
+    final snap = await getCollection('user_mappings').where('linkedId', isEqualTo: userId).limit(1).get();
+    if (snap.docs.isNotEmpty) {
+      final doc = snap.docs.first;
+      final username = doc.id;
+      final pwd = doc.data()['defaultPassword'] ?? username;
+      return 'tahfidzmu:login:$pesantrenId:$username:$pwd';
+    }
+    final doc = await getCollection('user_mappings').doc(userId).get();
+    final pwd = doc.data()?['defaultPassword'] ?? userId;
+    return 'tahfidzmu:login:$pesantrenId:$userId:$pwd';
+  }
+
+  Future<void> sendNotification(String targetUserId, String title, String body, String type) async {
+    final ref = firestore.collection('users').doc(targetUserId).collection('notifications').doc();
+    final notif = AppNotification(
+      id: ref.id,
+      title: title,
+      body: body,
+      timestamp: DateTime.now(),
+      targetUserId: targetUserId,
+      type: type,
+    );
+    await ref.set(notif.toJson());
+  }
+
+  Future<void> markAllNotificationsAsRead() async {
+    if (currentUserId == null) return;
+    final snap = await firestore
+        .collection('users')
+        .doc(currentUserId)
+        .collection('notifications')
+        .where('isRead', isEqualTo: false)
+        .get();
+    final batch = firestore.batch();
+    for (var doc in snap.docs) {
+      batch.update(doc.reference, {'isRead': true});
+    }
+    await batch.commit();
+  }
+
+  Future<void> markNotificationAsRead(String notificationId) async {
+    if (currentUserId == null) return;
+    await firestore
+        .collection('users')
+        .doc(currentUserId)
+        .collection('notifications')
+        .doc(notificationId)
+        .update({'isRead': true});
+  }
+
+  Future<void> triggerSetoranNotification(String santriId, SetoranRecord record) async {
+    final santri = getSantriById(santriId);
+    if (santri == null) return;
+    final snap = await firestore
+        .collection('users')
+        .where('role', isEqualTo: 'orangTua')
+        .where('linkedId', isEqualTo: santriId)
+        .get();
+
+    for (var doc in snap.docs) {
+      final parentUid = doc.id;
+      final typeStr = record.type == SetoranType.ziyadah ? 'Ziyadah' : 'Murojaah';
+      final statusStr = record.gradeName;
+      final scoreVal = record.finalScore.toStringAsFixed(0);
+      
+      final title = "Setoran Hafalan Baru ($typeStr)";
+      final body = "Alhamdulillah, ${santri.name} baru saja menyetor hafalan $typeStr: Surah ${record.surahName} (${record.ayahStart}-${record.ayahEnd}) dengan predikat $statusStr (Nilai: $scoreVal).";
+
+      await sendNotification(parentUid, title, body, 'setoran');
+    }
+  }
+
+  Future<void> setSantriKehadiranStatus(String santriId, String status) async {
+    final santri = getSantriById(santriId);
+    if (santri == null) return;
+    final halaqahId = santri.halaqahId;
+    if (halaqahId == null) return;
+    final halaqah = getHalaqahById(halaqahId);
+    final halaqahNama = halaqah?.nama ?? 'Halaqah';
+    final musyrifId = halaqah?.musyrifId ?? '';
+    final musyrif = getMusyrifById(musyrifId);
+    final musyrifNama = musyrif?.nama ?? 'Musyrif';
+
+    final now = DateTime.now();
+    final dateStr = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
+    final docId = "${halaqahId}_$dateStr";
+
+    final docRef = getCollection('presensi').doc(docId);
+    final docSnap = await docRef.get();
+
+    if (docSnap.exists) {
+      final existing = PresensiHalaqah.fromJson(docSnap.data()!);
+      final updatedDaftar = Map<String, String>.from(existing.daftarHadir);
+      updatedDaftar[santriId] = status;
+      await docRef.update({
+        'daftarHadir': updatedDaftar,
+        'waktuSubmit': Timestamp.fromDate(now),
+      });
+    } else {
+      final newPresensi = PresensiHalaqah(
+        id: docId,
+        halaqahId: halaqahId,
+        halaqahNama: halaqahNama,
+        musyrifId: musyrifId,
+        musyrifNama: musyrifNama,
+        tanggal: DateTime(now.year, now.month, now.day),
+        waktuSubmit: now,
+        daftarHadir: {santriId: status},
+      );
+      await docRef.set(newPresensi.toJson());
+    }
+
+    final parentSnap = await firestore
+        .collection('users')
+        .where('role', isEqualTo: 'orangTua')
+        .where('linkedId', isEqualTo: santriId)
+        .get();
+
+    String displayStatus;
+    String statusDesc;
+    switch (status) {
+      case 'setoran':
+        displayStatus = 'Setoran (Hadir)';
+        statusDesc = 'Anak Anda hadir di halaqah dan sudah melakukan setoran hafalan.';
+        break;
+      case 'ditunda':
+        displayStatus = 'Ditunda (Bukan Sesi)';
+        statusDesc = 'Anak Anda hadir di halaqah, namun ditunda giliran setorannya hari ini karena keterbatasan waktu.';
+        break;
+      case 'sakit':
+        displayStatus = 'Sakit';
+        statusDesc = 'Anak Anda tidak dapat mengikuti halaqah hari ini karena sakit.';
+        break;
+      case 'izin':
+        displayStatus = 'Izin';
+        statusDesc = 'Anak Anda tidak mengikuti halaqah hari ini karena telah meminta izin sebelumnya.';
+        break;
+      case 'alfa':
+        displayStatus = 'Alfa (Tanpa Keterangan)';
+        statusDesc = 'Anak Anda tidak mengikuti halaqah hari ini tanpa keterangan.';
+        break;
+      default:
+        displayStatus = status.toUpperCase();
+        statusDesc = 'Status kehadiran anak Anda diperbarui menjadi $displayStatus.';
+    }
+
+    for (var doc in parentSnap.docs) {
+      final parentUid = doc.id;
+      final title = "Laporan Kehadiran Hari Ini - $displayStatus";
+      final body = "Pemberitahuan halaqah ${santri.name}: $statusDesc";
+      await sendNotification(parentUid, title, body, 'presensi');
+    }
+  }
   Future<void> addHalaqah(HalaqahData h) async => await getCollection('halaqah').doc(h.id).set(h.toJson());
   Future<void> updateHalaqah(String id, HalaqahData updated) async => await getCollection('halaqah').doc(id).update(updated.toJson());
   Future<void> removeHalaqah(String id) async => await getCollection('halaqah').doc(id).delete();
@@ -334,7 +694,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     final id = generateId('santri');
     String? cloudPhotoUrl;
     if (photoPath != null && photoPath.isNotEmpty && !photoPath.startsWith('http')) {
-      try { cloudPhotoUrl = await firebase.uploadPhoto(localPath: photoPath, folder: 'santri_photos', fileName: id); } catch (_) {}
+      try { cloudPhotoUrl = await firebase.uploadPhoto(localPath: photoPath, folder: 'santri_photos', fileName: id); } catch (e) { debugPrint('Failed to upload santri photo: $e'); }
     }
     final santri = Santri(id: id, name: name, nis: nis, email: email, jenisKelamin: jenisKelamin, kelas: kelas, halaqahId: halaqahId, namaOrangTua: namaOrangTua, namaAyah: namaAyah, namaIbu: namaIbu, nomorHpWali: nomorHpWali, targetHafalan: targetHafalan, photoPath: cloudPhotoUrl ?? photoPath, tanggalLahir: tanggalLahir, initialMemorizedJuz: initialMemorizedJuz ?? []);
     await getCollection('santri').doc(id).set(santri.toJson());
@@ -348,7 +708,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     final s = Santri.fromJson(existing.data()!);
     String? finalPhotoPath = photoPath;
     if (photoPath != null && photoPath.isNotEmpty && !photoPath.startsWith('http')) {
-      try { finalPhotoPath = await firebase.uploadPhoto(localPath: photoPath, folder: 'santri_photos', fileName: santriId); } catch (_) {}
+      try { finalPhotoPath = await firebase.uploadPhoto(localPath: photoPath, folder: 'santri_photos', fileName: santriId); } catch (e) { debugPrint('Failed to update santri photo: $e'); }
     }
     await doc.update(s.copyWith(name: name, nis: nis, email: email, jenisKelamin: jenisKelamin, kelas: kelas, halaqahId: halaqahId, namaOrangTua: namaOrangTua, namaAyah: namaAyah, namaIbu: namaIbu, nomorHpWali: nomorHpWali, targetHafalan: targetHafalan, photoPath: finalPhotoPath, tanggalLahir: tanggalLahir, status: status, initialMemorizedJuz: initialMemorizedJuz).toJson());
   }
@@ -410,6 +770,14 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     }
     await getCollection('santri').doc(sId).collection('setoranHistory').doc(record.id).set(setoranJson);
     
+    final now = DateTime.now();
+    if (record.date.year == now.year && record.date.month == now.month && record.date.day == now.day) {
+      await setSantriKehadiranStatus(sId, 'setoran');
+    }
+
+    // Trigger setoran notification to parent
+    await triggerSetoranNotification(sId, record);
+    
     // Update parent santri document with new aggregates
     await getCollection('santri').doc(sId).update({
       'averageScore': tempSantri.averageScore,
@@ -422,7 +790,8 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
       'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
     });
     
-    clearErrors();
+    await setSantriKehadiranStatus(sId, 'setoran');
+    await endSetoranSession();
     return record;
   }
 
@@ -441,7 +810,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     }
     await getCollection('santri').doc(sId).collection('tasmiHistory').doc(record.id).set(tasmiJson);
     
-    clearErrors();
+    await endSetoranSession();
     return record;
   }
 
@@ -496,40 +865,6 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     );
   }
 
-  Future<void> seedDemoDataToCloud() async {
-    final bundle = await DemoDataService.loadDemoData();
-    for (var m in bundle.musyrifList) {
-      await getCollection('musyrif').doc(m.id).set(m.toJson());
-      final userKey = m.nip?.replaceAll(RegExp(r'\D+'), '') ?? m.id;
-      await getCollection('user_mappings').doc(userKey).set({'linkedId': m.id, 'role': 'musyrif', 'defaultPassword': userKey});
-    }
-    for (var h in bundle.halaqahList) { await getCollection('halaqah').doc(h.id).set(h.toJson()); }
-    for (var s in bundle.santriList) {
-      await getCollection('santri').doc(s.id).set(s.toJson());
-      // Seed subcollections
-      for (var record in s.setoranHistory) {
-        final setoranJson = record.toJson();
-        if (pesantrenId != null) {
-          setoranJson['pesantrenId'] = pesantrenId;
-        }
-        await getCollection('santri').doc(s.id).collection('setoranHistory').doc(record.id).set(setoranJson);
-      }
-      for (var record in s.tasmiHistory) {
-        final tasmiJson = record.toJson();
-        if (pesantrenId != null) {
-          tasmiJson['pesantrenId'] = pesantrenId;
-        }
-        await getCollection('santri').doc(s.id).collection('tasmiHistory').doc(record.id).set(tasmiJson);
-      }
-      if (s.nis != null) {
-        final userKey = s.nis!.replaceAll(RegExp(r'\D+'), '');
-        await getCollection('user_mappings').doc(userKey).set({'linkedId': s.id, 'role': 'orangTua', 'defaultPassword': userKey});
-      }
-    }
-    for (var e in bundle.graduationEvents) { await getCollection('graduation_events').doc(e.id).set(e.toJson()); }
-    await updatePesantrenInfo(pesantrenInfo);
-    notifyListeners();
-  }
 
   Future<void> registerNewPesantren(String nama, String kode, String adminEmail, String adminPassword, {String? logoPath}) async {
     final pesantrenRef = firestore.collection('pesantren').doc(kode);
@@ -542,7 +877,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
           folder: 'pesantren_logos',
           fileName: kode,
         );
-      } catch (_) {}
+      } catch (e) { debugPrint('Failed to upload pesantren logo: $e'); }
     }
     
     // 1. Initialize pesantren document
@@ -565,21 +900,8 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     );
     await pesantrenRef.collection('settings').doc('pesantren_info').set(info.toJson());
     
-    // 3. Register Admin user account in Firebase Auth
-    final cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: adminEmail,
-      password: adminPassword,
-    );
-    
-    // 4. Set the user's role and pesantren link in global users collection
-    await firebase.setUserData(cred.user!.uid, {
-      'role': 'admin',
-      'username': 'admin',
-      'linkedId': null,
-      'pesantrenId': kode,
-    });
-
-    // 5. Create user mapping inside the pesantren collection so they can login by username
+    // 3. Create user mapping — akun Firebase Auth admin akan otomatis
+    //    dibuat saat admin pertama kali login (auto-create di loginWithCredentials)
     await pesantrenRef.collection('user_mappings').doc('admin').set({
       'linkedId': null,
       'role': 'admin',
@@ -599,7 +921,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
             folder: 'pesantren_logos',
             fileName: id,
           );
-        } catch (_) {}
+        } catch (e) { debugPrint('Failed to upload pesantren logo: $e'); }
       } else {
         logoUrl = logoPath;
       }
@@ -618,7 +940,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
       await pesantrenRef.collection('settings').doc('pesantren_info').update({
         'nama': nama,
       });
-    } catch (_) {}
+    } catch (e) { debugPrint('Failed to update pesantren info name: $e'); }
     notifyListeners();
   }
 
@@ -637,7 +959,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     // 1. Delete settings/pesantren_info
     try {
       await pesantrenRef.collection('settings').doc('pesantren_info').delete();
-    } catch (_) {}
+    } catch (e) { debugPrint('Failed to delete pesantren settings: $e'); }
     
     // 2. Delete user mappings
     try {
@@ -645,7 +967,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
       for (var doc in mappings.docs) {
         await doc.reference.delete();
       }
-    } catch (_) {}
+    } catch (e) { debugPrint('Failed to delete user mappings: $e'); }
     
     // 3. Delete pesantren doc itself
     await pesantrenRef.delete();
@@ -701,6 +1023,23 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     }
   }
 
+  Future<void> updatePengawasPhoto(String path) async {
+    if (linkedMusyrifId == null) return;
+    pengawasList = pengawasList.map((p) {
+      if (p.id == linkedMusyrifId) {
+        return p.copyWith(photoPath: path);
+      }
+      return p;
+    }).toList();
+    notifyListeners();
+    try {
+      final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'pengawas_photos', fileName: linkedMusyrifId!);
+      await getCollection('pengawas').doc(linkedMusyrifId!).update({'photoPath': cloudUrl});
+    } catch (e) {
+      debugPrint("Failed to upload pengawas photo: $e");
+    }
+  }
+
   Future<void> updateSantriPhoto(String santriId, String path) async {
     santriList = santriList.map((s) {
       if (s.id == santriId) {
@@ -732,7 +1071,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
     setLoginInfo(role, linkedSantriId: linkedSantriId, linkedMusyrifId: linkedMusyrifId, pesantrenId: pesantrenId);
   }
 
-  void loginAsTenantAdmin(String tenantId, String tenantNama) {
+  Future<void> loginAsTenantAdmin(String tenantId, String tenantNama) async {
     setLoginInfo(
       UserRole.admin,
       linkedSantriId: null,
@@ -740,11 +1079,11 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
       userId: currentUserId,
       pesantrenId: tenantId,
     );
-    setupFirestoreListeners();
+    await setupFirestoreListeners();
     notifyListeners();
   }
 
-  void switchBackToSuperAdmin() {
+  Future<void> switchBackToSuperAdmin() async {
     setLoginInfo(
       UserRole.superAdmin,
       linkedSantriId: null,
@@ -752,168 +1091,7 @@ class AppProvider extends ChangeNotifier with AuthMixin, DataMixin, SessionMixin
       userId: currentUserId,
       pesantrenId: null,
     );
-    setupFirestoreListeners();
+    await setupFirestoreListeners();
     notifyListeners();
-  }
-
-  Future<void> _migrateGlobalDataToDemo() async {
-    final demoSantri = await firestore.collection('pesantren').doc('demo').collection('santri').limit(1).get();
-    if (demoSantri.docs.isNotEmpty) {
-      return;
-    }
-
-    final globalSantri = await firestore.collection('santri').get();
-    if (globalSantri.docs.isEmpty) {
-      return;
-    }
-
-    debugPrint("Starting data migration to 'demo' pesantren...");
-
-    Future<void> copyCollection(String collectionName) async {
-      final snap = await firestore.collection(collectionName).get();
-      for (var doc in snap.docs) {
-        final data = doc.data();
-        await firestore.collection('pesantren').doc('demo').collection(collectionName).doc(doc.id).set(data);
-      }
-    }
-
-    await copyCollection('musyrif');
-    await copyCollection('halaqah');
-    await copyCollection('kelas');
-    await copyCollection('graduation_events');
-    await copyCollection('graduation_registrations');
-
-    final infoDoc = await firestore.collection('settings').doc('pesantren_info').get();
-    if (infoDoc.exists && infoDoc.data() != null) {
-      await firestore.collection('pesantren').doc('demo').collection('settings').doc('pesantren_info').set(infoDoc.data()!);
-    }
-
-    for (var doc in globalSantri.docs) {
-      final santriData = doc.data();
-      final targetSantriRef = firestore.collection('pesantren').doc('demo').collection('santri').doc(doc.id);
-      await targetSantriRef.set(santriData);
-
-      final setoran = await doc.reference.collection('setoranHistory').get();
-      for (var sDoc in setoran.docs) {
-        await targetSantriRef.collection('setoranHistory').doc(sDoc.id).set(sDoc.data());
-      }
-
-      final tasmi = await doc.reference.collection('tasmiHistory').get();
-      for (var tDoc in tasmi.docs) {
-        await targetSantriRef.collection('tasmiHistory').doc(tDoc.id).set(tDoc.data());
-      }
-    }
-
-    final mappings = await firestore.collection('user_mappings').get();
-    for (var doc in mappings.docs) {
-      await firestore.collection('pesantren').doc('demo').collection('user_mappings').doc(doc.id).set(doc.data());
-    }
-
-    debugPrint("Data migration to 'demo' pesantren completed successfully!");
-  }
-
-  Future<void> seedDemoDataForTenant(String tenantId) async {
-    final santriCheck = await firestore.collection('pesantren').doc(tenantId).collection('santri').limit(1).get();
-    if (santriCheck.docs.isNotEmpty) {
-      return;
-    }
-
-    final tenantRef = firestore.collection('pesantren').doc(tenantId);
-
-    final musyrifId = 'musyrif_ahmad';
-    await tenantRef.collection('musyrif').doc(musyrifId).set({
-      'id': musyrifId,
-      'nama': 'Ustadz Ahmad',
-      'username': 'ahmad',
-      'email': 'ahmad@tahfidzmu.com',
-      'status': 'active',
-      'role': 'musyrif',
-    });
-
-    await tenantRef.collection('user_mappings').doc('ahmad').set({
-      'linkedId': musyrifId,
-      'role': 'musyrif',
-      'defaultPassword': 'password123',
-    });
-
-    final kelasId = 'kelas_7a';
-    await tenantRef.collection('kelas').doc(kelasId).set({
-      'id': kelasId,
-      'nama': 'Kelas VII A',
-    });
-
-    final halaqahId = 'halaqah_1';
-    await tenantRef.collection('halaqah').doc(halaqahId).set({
-      'id': halaqahId,
-      'nama': 'Halaqah Abu Bakar',
-      'musyrifId': musyrifId,
-      'musyrifNama': 'Ustadz Ahmad',
-    });
-
-    final santri1Id = 'santri_muhammad';
-    await tenantRef.collection('santri').doc(santri1Id).set({
-      'id': santri1Id,
-      'nama': 'Muhammad Al-Fatih',
-      'nis': '1001',
-      'halaqahId': halaqahId,
-      'kelasId': kelasId,
-      'status': 'active',
-      'targetJuz': 30,
-    });
-
-    await tenantRef.collection('user_mappings').doc('1001').set({
-      'linkedId': santri1Id,
-      'role': 'orangTua',
-      'defaultPassword': '1001',
-    });
-
-    final santri2Id = 'santri_yusuf';
-    await tenantRef.collection('santri').doc(santri2Id).set({
-      'id': santri2Id,
-      'nama': 'Yusuf Mansur',
-      'nis': '1002',
-      'halaqahId': halaqahId,
-      'kelasId': kelasId,
-      'status': 'active',
-      'targetJuz': 30,
-    });
-
-    await tenantRef.collection('user_mappings').doc('1002').set({
-      'linkedId': santri2Id,
-      'role': 'orangTua',
-      'defaultPassword': '1002',
-    });
-
-    final setoran1Id = 'setoran_1';
-    await tenantRef.collection('santri').doc(santri1Id).collection('setoranHistory').doc(setoran1Id).set({
-      'id': setoran1Id,
-      'santriId': santri1Id,
-      'pesantrenId': tenantId,
-      'date': Timestamp.now(),
-      'surahId': 78,
-      'surahName': 'An-Naba',
-      'startVerse': 1,
-      'endVerse': 10,
-      'type': 'setoran',
-      'status': 'lancar',
-      'musyrifId': musyrifId,
-    });
-
-    final setoran2Id = 'setoran_2';
-    await tenantRef.collection('santri').doc(santri1Id).collection('setoranHistory').doc(setoran2Id).set({
-      'id': setoran2Id,
-      'santriId': santri1Id,
-      'pesantrenId': tenantId,
-      'date': Timestamp.now(),
-      'surahId': 78,
-      'surahName': 'An-Naba',
-      'startVerse': 11,
-      'endVerse': 20,
-      'type': 'setoran',
-      'status': 'lancar',
-      'musyrifId': musyrifId,
-    });
-
-    debugPrint("Seeded demo data for tenant $tenantId successfully!");
   }
 }

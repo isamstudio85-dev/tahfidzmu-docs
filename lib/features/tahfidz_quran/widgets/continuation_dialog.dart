@@ -169,11 +169,100 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
               },
               subtitle: 'Atur surah, ayat, dan jenis secara manual',
             ),
+            const SizedBox(height: 24),
+            Divider(color: Colors.grey.shade200, height: 1),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Keterangan Kehadiran Hari Ini',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildPresenceOptions(ctx, provider, santri),
           ],
         ),
       );
     },
   );
+}
+
+Widget _buildPresenceOptions(BuildContext context, AppProvider provider, Santri santri) {
+  final currentStatus = provider.getTodaySantriStatus(santri.id);
+  
+  final options = [
+    _PresenceOption('ditunda', 'Ditunda', Icons.schedule_rounded, Colors.grey),
+    _PresenceOption('sakit', 'Sakit', Icons.local_hospital_rounded, Colors.orange),
+    _PresenceOption('izin', 'Izin', Icons.assignment_ind_rounded, Colors.blue),
+    _PresenceOption('alfa', 'Alfa', Icons.cancel_rounded, Colors.red),
+  ];
+
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: options.map((opt) {
+      final isSelected = currentStatus == opt.value;
+      return Expanded(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: InkWell(
+            onTap: () async {
+              Navigator.pop(context);
+              await provider.setSantriKehadiranStatus(santri.id, opt.value);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Keterangan "${opt.label}" disimpan untuk hari ini.'),
+                    backgroundColor: opt.color,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: isSelected ? opt.color.withValues(alpha: 0.15) : Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected ? opt.color : Colors.grey.shade200,
+                  width: 1.5,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(opt.icon, color: isSelected ? opt.color : Colors.grey.shade500, size: 20),
+                  const SizedBox(height: 4),
+                  Text(
+                    opt.label,
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? opt.color : Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }).toList(),
+  );
+}
+
+class _PresenceOption {
+  final String value;
+  final String label;
+  final IconData icon;
+  final Color color;
+  _PresenceOption(this.value, this.label, this.icon, this.color);
 }
 
 class _OptionTile extends StatelessWidget {

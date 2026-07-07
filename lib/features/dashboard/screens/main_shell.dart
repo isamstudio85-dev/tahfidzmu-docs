@@ -29,7 +29,6 @@ class _MainShellState extends State<MainShell> {
         return const [
           HomeScreen(),
           UserManagementScreen(),
-          QuranMemorizationScreen(),
           ManajemenScreen(),
           ProfilScreen(),
         ];
@@ -44,6 +43,12 @@ class _MainShellState extends State<MainShell> {
         return const [
           HomeScreen(),
           QuranMemorizationScreen(),
+          ProfilScreen(),
+        ];
+      case UserRole.pengawas:
+        return const [
+          HomeScreen(),
+          UserManagementScreen(),
           ProfilScreen(),
         ];
     }
@@ -62,15 +67,17 @@ class _MainShellState extends State<MainShell> {
       dest.add(NavigationDestination(
         icon: const Icon(Icons.group_outlined),
         selectedIcon: const Icon(Icons.group_rounded),
-        label: role == UserRole.admin ? 'Users' : 'Santri',
+        label: (role == UserRole.admin || role == UserRole.pengawas) ? 'Users' : 'Santri',
       ));
     }
 
-    dest.add(const NavigationDestination(
-      icon: Icon(Icons.history_edu_outlined),
-      selectedIcon: Icon(Icons.history_edu_rounded),
-      label: 'Hafalan',
-    ));
+    if (role != UserRole.admin && role != UserRole.pengawas) {
+      dest.add(const NavigationDestination(
+        icon: Icon(Icons.history_edu_outlined),
+        selectedIcon: Icon(Icons.history_edu_rounded),
+        label: 'Hafalan',
+      ));
+    }
 
     if (role == UserRole.admin) {
       dest.add(const NavigationDestination(

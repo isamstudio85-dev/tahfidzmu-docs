@@ -28,11 +28,13 @@ class HalaqahListScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   const Text('Belum ada halaqah', style: TextStyle(color: Colors.grey, fontSize: 16)),
                   const SizedBox(height: 12),
-                  FilledButton.icon(onPressed: () => _showForm(context, null), icon: const Icon(Icons.add), label: const Text('Tambah Halaqah')),
+                  if (provider.isAdmin)
+                    FilledButton.icon(onPressed: () => _showForm(context, null), icon: const Icon(Icons.add), label: const Text('Tambah Halaqah')),
                 ],
               ),
             );
           }
+          final isAdmin = provider.isAdmin;
           return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: list.length,
@@ -45,18 +47,22 @@ class HalaqahListScreen extends StatelessWidget {
                 musyrifNama: musyrif?.nama,
                 santriCount: santriCount,
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => _HalaqahDetailScreen(halaqahId: h.id))),
-                onEdit: () => _showForm(context, h),
-                onDelete: () => _confirmDelete(context, provider, h, santriCount),
+                onEdit: isAdmin ? () => _showForm(context, h) : null,
+                onDelete: isAdmin ? () => _confirmDelete(context, provider, h, santriCount) : null,
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: 'fab_halaqah_add_list',
-        onPressed: () => _showForm(context, null),
-        icon: const Icon(Icons.group_add_rounded),
-        label: const Text('Tambah Halaqah'),
+      floatingActionButton: Consumer<AppProvider>(
+        builder: (context, provider, _) => provider.isAdmin
+            ? FloatingActionButton.extended(
+                heroTag: 'fab_halaqah_add_list',
+                onPressed: () => _showForm(context, null),
+                icon: const Icon(Icons.group_add_rounded),
+                label: const Text('Tambah Halaqah'),
+              )
+            : const SizedBox.shrink(),
       ),
     );
   }
@@ -85,8 +91,8 @@ class HalaqahListScreen extends StatelessWidget {
 }
 
 class _HalaqahCard extends StatelessWidget {
-  const _HalaqahCard({required this.halaqah, this.musyrifNama, required this.santriCount, required this.onTap, required this.onEdit, required this.onDelete});
-  final HalaqahData halaqah; final String? musyrifNama; final int santriCount; final VoidCallback onTap; final VoidCallback onEdit; final VoidCallback onDelete;
+  const _HalaqahCard({required this.halaqah, this.musyrifNama, required this.santriCount, required this.onTap, this.onEdit, this.onDelete});
+  final HalaqahData halaqah; final String? musyrifNama; final int santriCount; final VoidCallback onTap; final VoidCallback? onEdit; final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -122,14 +128,17 @@ class _HalaqahCard extends StatelessWidget {
                     decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                     child: Text('$santriCount Santri', style: const TextStyle(color: AppTheme.primaryGreen, fontSize: 10, fontWeight: FontWeight.bold)),
                   ),
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert_rounded, color: Colors.grey, size: 20),
-                    onSelected: (val) { if (val == 'edit') onEdit(); if (val == 'delete') onDelete(); },
-                    itemBuilder: (ctx) => [
-                      const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit_rounded, size: 18, color: Colors.blue), SizedBox(width: 8), Text('Edit')])),
-                      const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red), SizedBox(width: 8), Text('Hapus')])),
-                    ],
-                  ),
+                  if (onEdit != null || onDelete != null)
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert_rounded, color: Colors.grey, size: 20),
+                      onSelected: (val) { if (val == 'edit') onEdit?.call(); if (val == 'delete') onDelete?.call(); },
+                      itemBuilder: (ctx) => [
+                        if (onEdit != null)
+                          const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit_rounded, size: 18, color: Colors.blue), SizedBox(width: 8), Text('Edit')])),
+                        if (onDelete != null)
+                          const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red), SizedBox(width: 8), Text('Hapus')])),
+                      ],
+                    ),
                 ],
               ),
             ),

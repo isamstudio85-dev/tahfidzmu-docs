@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kebijakan Privasi — TahfidzMU</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background: #f8faf8;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid #2E7D32;
+        }
+        .header h1 {
+            font-size: 28px;
+            color: #2E7D32;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        h2 {
+            color: #2E7D32;
+            font-size: 20px;
+            margin: 32px 0 12px;
+        }
+        p, li {
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        ul {
+            padding-left: 24px;
+        }
+        .footer {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Kebijakan Privasi</h1>
+            <p>TahfidzMU — Aplikasi Manajemen Tahfidz Al-Quran</p>
+            <p>Terakhir diperbarui: 7 Juli 2026</p>
+        </div>
+
+        <h2>1. Pendahuluan</h2>
+        <p>TahfidzMU ("kami", "aplikasi") adalah aplikasi manajemen Tahfidz Al-Quran yang dibuat oleh Dasam Samsudin. Kebijakan privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi pengguna.</p>
+
+        <h2>2. Data yang Kami Kumpulkan</h2>
+        <p>Kami mengumpulkan data berikut yang diberikan secara langsung oleh pengguna atau administrator pesantren:</p>
+        <ul>
+            <li><strong>Data Akun:</strong> Nama, username, email, dan jabatan/peran pengguna.</li>
+            <li><strong>Data Santri:</strong> Nama, NIS, kelas, halaqah, nama orang tua/wali, nomor HP wali, tanggal lahir, dan foto profil.</li>
+            <li><strong>Data Akademik:</strong> Riwayat setoran hafalan, riwayat tasmi, nilai, dan catatan presensi.</li>
+            <li><strong>Data Pesantren:</strong> Nama pesantren, alamat, nomor telepon, dan email institusi.</li>
+            <li><strong>Foto:</strong> Foto profil yang diunggah pengguna (opsional).</li>
+        </ul>
+
+        <h2>3. Bagaimana Kami Menggunakan Data</h2>
+        <p>Data yang dikumpulkan digunakan semata-mata untuk:</p>
+        <ul>
+            <li>Mengelola proses hafalan Al-Quran (setoran, murojaah, tasmi).</li>
+            <li>Menampilkan progres hafalan santri kepada musyrif, pengawas, dan orang tua.</li>
+            <li>Mengirim notifikasi terkait aktivitas hafalan.</li>
+            <li>Mengelola administrasi pesantren (presensi, wisuda, kelas).</li>
+            <li>Autentikasi dan otorisasi pengguna.</li>
+        </ul>
+
+        <h2>4. Penyimpanan dan Keamanan Data</h2>
+        <ul>
+            <li>Semua data disimpan di <strong>Google Firebase</strong> (Firestore dan Firebase Storage) yang berlokasi di server Google dengan standar keamanan tinggi.</li>
+            <li>Akses data dilindungi oleh <strong>Firebase Security Rules</strong> berbasis peran (role-based access control).</li>
+            <li>Data setiap pesantren <strong>terisolasi</strong> — pesantren A tidak dapat mengakses data pesantren B.</li>
+            <li>Koneksi antara aplikasi dan server menggunakan <strong>enkripsi TLS/SSL</strong>.</li>
+        </ul>
+
+        <h2>5. Berbagi Data dengan Pihak Ketiga</h2>
+        <p>Kami <strong>tidak menjual, menyewakan, atau membagikan</strong> data pribadi pengguna kepada pihak ketiga. Data hanya dapat diakses oleh:</p>
+        <ul>
+            <li>Pengguna yang berwenang sesuai peran mereka di pesantren.</li>
+            <li>Pengembang aplikasi untuk keperluan pemeliharaan teknis.</li>
+            <li>Google Firebase sebagai penyedia infrastruktur (tunduk pada <a href="https://firebase.google.com/support/privacy" target="_blank">Kebijakan Privasi Google</a>).</li>
+        </ul>
+
+        <h2>6. Hak Pengguna</h2>
+        <p>Pengguna memiliki hak untuk:</p>
+        <ul>
+            <li><strong>Mengakses</strong> data pribadi mereka melalui aplikasi.</li>
+            <li><strong>Memperbarui</strong> informasi profil mereka.</li>
+            <li><strong>Meminta penghapusan</strong> data dengan menghubungi administrator pesantren atau pengembang.</li>
+        </ul>
+
+        <h2>7. Penggunaan Kamera</h2>
+        <p>Aplikasi menggunakan kamera perangkat hanya untuk:</p>
+        <ul>
+            <li>Memindai QR Code saat login.</li>
+            <li>Mengambil foto profil (opsional).</li>
+        </ul>
+        <p>Kami tidak merekam video atau mengakses kamera di latar belakang.</p>
+
+        <h2>8. Data Anak-Anak</h2>
+        <p>Aplikasi ini digunakan di lingkungan pendidikan pesantren dan dapat memproses data santri di bawah usia 13 tahun. Data anak-anak hanya diinput dan dikelola oleh administrator pesantren atau musyrif yang berwenang, bukan oleh anak-anak secara langsung.</p>
+
+        <h2>9. Perubahan Kebijakan</h2>
+        <p>Kami dapat memperbarui kebijakan privasi ini dari waktu ke waktu. Perubahan akan diumumkan melalui pembaruan aplikasi. Tanggal "terakhir diperbarui" di bagian atas halaman ini akan mencerminkan perubahan terbaru.</p>
+
+        <h2>10. Kontak</h2>
+        <p>Jika Anda memiliki pertanyaan tentang kebijakan privasi ini, silakan hubungi:</p>
+        <ul>
+            <li><strong>Pengembang:</strong> Dasam Samsudin</li>
+            <li><strong>Email:</strong> dasamsamsudin87@gmail.com</li>
+        </ul>
+
+        <div class="footer">
+            <p>&copy; 2026 TahfidzMU — Dibuat oleh Dasam Samsudin</p>
+        </div>
+    </div>
+</body>
+</html>

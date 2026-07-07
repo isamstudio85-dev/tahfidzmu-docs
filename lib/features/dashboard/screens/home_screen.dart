@@ -6,6 +6,7 @@ import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/admin_dashboard.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/musyrif_dashboard.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/orang_tua_dashboard.dart';
+import 'package:tahfidz_app/features/dashboard/widgets/notification_bell.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/graduation_portal_screen.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/dashboard/screens/super_admin_dashboard.dart';
@@ -156,9 +157,16 @@ class _HomeScreenState extends State<HomeScreen> {
         return const Scaffold(body: Center(child: Text('Data tidak ditemukan.')));
       }
       return Scaffold(
-          appBar: AppBar(title: const Text('Dashboard')), body: OrangTuaDashboard(child: child));
+          appBar: AppBar(
+            title: const Text('Dashboard'),
+            actions: const [
+              NotificationBell(),
+              SizedBox(width: 8),
+            ],
+          ),
+          body: OrangTuaDashboard(child: child));
     }
-    if (provider.isAdmin) return AdminDashboard(provider: provider);
+    if (provider.isAdmin || provider.isPengawas) return AdminDashboard(provider: provider);
     return MusyrifDashboard(provider: provider);
   }
 }

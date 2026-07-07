@@ -51,7 +51,15 @@ class FirebaseService {
     if (!await file.exists()) throw Exception("File not found");
 
     // 1. Compression (Optimal Blaze Plan usage)
-    final compressedFile = await _compressImage(file);
+    // Only compress if the file size is larger than 1MB to avoid slow pure-Dart processing.
+    // Files picked via ImagePicker in this app are already resized and compressed natively.
+    final int fileSize = await file.length();
+    final File uploadFile;
+    if (fileSize > 1024 * 1024) {
+      uploadFile = await _compressImage(file);
+    } else {
+      uploadFile = file;
+    }
 
     // 2. Upload
     final ref = _storage.ref().child(folder).child('$fileName.jpg');
@@ -60,12 +68,12 @@ class FirebaseService {
       customMetadata: {'optimized': 'true'},
     );
 
-    final uploadTask = await ref.putFile(compressedFile, metadata);
+    final uploadTask = await ref.putFile(uploadFile, metadata);
     final downloadUrl = await uploadTask.ref.getDownloadURL();
 
     // Cleanup temp file
-    if (compressedFile.path != file.path) {
-      try { await compressedFile.delete(); } catch (_) {}
+    if (uploadFile.path != file.path) {
+      try { await uploadFile.delete(); } catch (_) {}
     }
 
     return downloadUrl;

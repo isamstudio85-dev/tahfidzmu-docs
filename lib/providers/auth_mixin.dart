@@ -19,6 +19,7 @@ mixin AuthMixin on ChangeNotifier {
   bool get isAdmin => currentRole == UserRole.admin;
   bool get isMusyrif => currentRole == UserRole.musyrif;
   bool get isOrangTua => currentRole == UserRole.orangTua;
+  bool get isPengawas => currentRole == UserRole.pengawas;
 
   void setLoginInfo(UserRole role, {String? linkedSantriId, String? linkedMusyrifId, String? userId, String? pesantrenId}) {
     currentRole = role;
@@ -35,6 +36,7 @@ mixin AuthMixin on ChangeNotifier {
       case 'admin': return UserRole.admin;
       case 'musyrif': return UserRole.musyrif;
       case 'orangTua': return UserRole.orangTua;
+      case 'pengawas': return UserRole.pengawas;
       default: return null;
     }
   }

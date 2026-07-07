@@ -28,6 +28,20 @@ class SetoranDetailScreen extends StatelessWidget {
         title: const Text('Rincian Hafalan'),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
+        actions: [
+          if (context.read<AppProvider>().isAdmin) ...[
+            IconButton(
+              icon: const Icon(Icons.edit_rounded),
+              tooltip: 'Koreksi Setoran',
+              onPressed: () => _showEditSetoranDialog(context),
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete_rounded),
+              tooltip: 'Hapus Setoran',
+              onPressed: () => _showDeleteSetoranConfirm(context),
+            ),
+          ],
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -104,6 +118,130 @@ class SetoranDetailScreen extends StatelessWidget {
             const SizedBox(height: 40),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showEditSetoranDialog(BuildContext context) {
+    final provider = context.read<AppProvider>();
+    final startCtrl = TextEditingController(text: record.ayahStart.toString());
+    final endCtrl = TextEditingController(text: record.ayahEnd.toString());
+    final scoreCtrl = TextEditingController(text: record.finalScore.toStringAsFixed(0));
+    SetoranType selectedType = record.type;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSt) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Koreksi Data Setoran'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<SetoranType>(
+                  initialValue: selectedType,
+                  items: SetoranType.values
+                      .map((t) => DropdownMenuItem(value: t, child: Text(t.label)))
+                      .toList(),
+                  onChanged: (val) {
+                    if (val != null) setSt(() => selectedType = val);
+                  },
+                  decoration: const InputDecoration(labelText: 'Jenis Setoran'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: startCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Ayat Mulai'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: endCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Ayat Selesai'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: scoreCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Nilai Kelancaran (0-100)'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+            FilledButton(
+              onPressed: () async {
+                final start = int.tryParse(startCtrl.text) ?? record.ayahStart;
+                final end = int.tryParse(endCtrl.text) ?? record.ayahEnd;
+                final score = double.tryParse(scoreCtrl.text) ?? record.finalScore;
+
+                final updated = SetoranRecord(
+                  id: record.id,
+                  santriId: record.santriId,
+                  type: selectedType,
+                  surahNumber: record.surahNumber,
+                  surahName: record.surahName,
+                  surahEnglishName: record.surahEnglishName,
+                  ayahStart: start,
+                  ayahEnd: end,
+                  passedAyahs: record.passedAyahs,
+                  failedAyahs: record.failedAyahs,
+                  errorMarks: record.errorMarks,
+                  fluencyRating: record.fluencyRating,
+                  date: record.date,
+                  finalScore: score,
+                );
+
+                Navigator.pop(ctx); // Close dialog
+                Navigator.pop(context); // Close detail screen so it refreshes parent
+
+                await provider.updateSetoranRecord(santri.id, updated);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Data setoran berhasil dikoreksi.')),
+                  );
+                }
+              },
+              child: const Text('Simpan'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteSetoranConfirm(BuildContext context) {
+    final provider = context.read<AppProvider>();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Hapus Setoran?'),
+        content: const Text(
+          'Tindakan ini akan menghapus riwayat setoran ini secara permanen dari database.\n\n'
+          'Statistik akumulasi santri akan dihitung ulang secara otomatis.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              Navigator.pop(ctx); // Close dialog
+              Navigator.pop(context); // Close detail screen
+
+              await provider.deleteSetoranRecord(santri.id, record.id);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Riwayat setoran berhasil dihapus.')),
+                );
+              }
+            },
+            child: const Text('Hapus'),
+          ),
+        ],
       ),
     );
   }

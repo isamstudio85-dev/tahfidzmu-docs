@@ -1,13 +1,17 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/management/screens/santri_list_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/graduation_portal_screen.dart';
-import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/tasmi_form_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'dashboard_shared_widgets.dart';
+import 'package:tahfidz_app/features/management/screens/musyrif_list_screen.dart';
+import 'package:tahfidz_app/features/management/screens/halaqah_list_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_ranking_list.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/laporan_screen.dart';
+import 'package:tahfidz_app/features/dashboard/widgets/notification_bell.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key, required this.provider});
@@ -17,7 +21,7 @@ class AdminDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard Admin'),
+        title: Text(provider.isPengawas ? 'Dashboard Pengawas' : 'Dashboard Admin'),
         actions: [
           if (provider.firebase.currentUser?.email == 'dasamsamsudin87@gmail.com')
             Padding(
@@ -28,6 +32,8 @@ class AdminDashboard extends StatelessWidget {
                 label: const Text('Super Admin', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 13)),
               ),
             ),
+          const NotificationBell(),
+          const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
@@ -37,22 +43,24 @@ class AdminDashboard extends StatelessWidget {
           children: [
             _buildBanner(context),
             const SizedBox(height: 20),
-            if (provider.isModuleActive('graduation')) ...[
+            if (provider.isModuleActive('graduation') && provider.graduationEvents.any((e) => e.isPublished)) ...[
               _buildGraduationBanner(context, provider),
               const SizedBox(height: 24),
             ],
             _buildAdminStats(context),
             _buildSubscriptionWarning(context),
             const SizedBox(height: 24),
-            const SectionTitle('Aksi Cepat'),
+            const SectionTitle('Aktivitas Halaqah Saat Ini (LIVE)'),
             const SizedBox(height: 12),
-            _buildAdminQuickActions(context),
+            _buildLiveMonitor(context),
             const SizedBox(height: 24),
-            const SectionTitle('Ringkasan Halaqah'),
+            const SectionTitle('Status Presensi Halaqah Hari Ini'),
             const SizedBox(height: 12),
-            _buildHalaqahList(context),
+            _buildTodayPresensiMonitor(context),
             const SizedBox(height: 24),
-            HafalanMenuSection(provider: provider),
+            const SectionTitle('Laporan & Analisis'),
+            const SizedBox(height: 12),
+            _buildAdminAnalysisCards(context),
             const SizedBox(height: 24),
           ],
         ),
@@ -202,120 +210,489 @@ class AdminDashboard extends StatelessWidget {
   Widget _buildAdminStats(BuildContext context) {
     return Row(
       children: [
-        _statTile('${provider.santriList.length}', 'Santri', Icons.people_alt_rounded, Colors.blue),
+        _statTile(
+          '${provider.santriList.length}',
+          'Santri',
+          Icons.people_alt_rounded,
+          Colors.blue,
+          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SantriListScreen())),
+        ),
         const SizedBox(width: 12),
-        _statTile('${provider.musyrifList.length}', 'Musyrif', Icons.person_pin_rounded, Colors.green),
+        _statTile(
+          '${provider.musyrifList.length}',
+          'Musyrif',
+          Icons.person_pin_rounded,
+          Colors.green,
+          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MusyrifListScreen())),
+        ),
         const SizedBox(width: 12),
-        _statTile('${provider.halaqahList.length}', 'Halaqah', Icons.groups_rounded, Colors.purple),
+        _statTile(
+          '${provider.halaqahList.length}',
+          'Halaqah',
+          Icons.groups_rounded,
+          Colors.purple,
+          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HalaqahListScreen())),
+        ),
       ],
     );
   }
 
-  Widget _buildHalaqahList(BuildContext context) {
-    final halaqahs = provider.halaqahList;
-    if (halaqahs.isEmpty) return const EmptyState('Belum ada data halaqah.');
-    return Column(
-      children: halaqahs.take(5).map((h) {
-        final count = provider.getSantriByHalaqah(h.id).length;
-        final m = provider.getMusyrifById(h.musyrifId);
-        return Card(
-          margin: const EdgeInsets.only(bottom: 10),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.grey.shade100)),
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            leading: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                  color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-              clipBehavior: Clip.antiAlias,
-              child: h.photoPath != null
-                  ? Image.file(File(h.photoPath!), fit: BoxFit.cover)
-                  : const Icon(Icons.groups_rounded, color: AppTheme.primaryGreen),
+  Widget _buildLiveMonitor(BuildContext context) {
+    final pid = provider.pesantrenId;
+    Query query = provider.firestore.collection('active_sessions');
+    if (pid != null) {
+      query = query.where('pesantrenId', isEqualTo: pid);
+    }
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: query.snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator(strokeWidth: 2)));
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey.shade200),
             ),
-            title: Text(h.nama, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-            subtitle: Text(m?.nama ?? 'Tanpa Pembimbing',
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
-            trailing: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration:
-                  BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
-              child: Text('$count Santri',
-                  style: const TextStyle(
-                      color: AppTheme.primaryGreen, fontSize: 10, fontWeight: FontWeight.bold)),
+            child: const Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.nights_stay_rounded, color: Colors.grey, size: 18),
+                  SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      'Belum ada aktivitas saat ini',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        final docs = snapshot.data!.docs;
+
+        return Column(
+          children: docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            final musyrifName = data['musyrifName'] ?? 'Musyrif';
+            final santriName = data['santriName'] ?? 'Santri';
+            final detail = data['detail'] ?? '-';
+            
+            return Card(
+              elevation: 0,
+              margin: const EdgeInsets.only(bottom: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: Colors.green.shade100, width: 1.5),
+              ),
+              color: Colors.green.shade50.withValues(alpha: 0.3),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.record_voice_over_rounded, color: Colors.white, size: 18),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  musyrifName,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              _buildLiveBadge(),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Sedang menyimak: $santriName',
+                            style: const TextStyle(color: Colors.black54, fontSize: 12, fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Detail: $detail',
+                            style: TextStyle(fontFamily: 'monospace', color: Colors.green.shade800, fontSize: 11, fontWeight: FontWeight.w600),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Widget _buildLiveBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.red.shade600,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _LiveDot(),
+          SizedBox(width: 4),
+          Text(
+            'LIVE',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 8, letterSpacing: 0.5),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+  Widget _buildAdminAnalysisCards(BuildContext context) {
+    return Column(
+      children: [
+        _analysisRowCard(
+          context,
+          title: 'Peringkat Santri',
+          subtitle: 'Daftar santri dengan pencapaian setoran & nilai terbaik',
+          icon: Icons.emoji_events_rounded,
+          color: Colors.amber.shade800,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const RankingScreen(title: 'Peringkat Santri', initialIndex: 0)),
+          ),
+        ),
+        const SizedBox(height: 12),
+        _analysisRowCard(
+          context,
+          title: 'Peringkat Halaqah',
+          subtitle: 'Perbandingan rata-rata capaian & nilai per kelompok halaqah',
+          icon: Icons.analytics_rounded,
+          color: Colors.purple.shade700,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const RankingScreen(title: 'Peringkat Halaqah', initialIndex: 1)),
+          ),
+        ),
+        const SizedBox(height: 12),
+        _analysisRowCard(
+          context,
+          title: 'Laporan Statistik',
+          subtitle: 'Analisis agregat perkembangan hafalan seluruh pesantren',
+          icon: Icons.bar_chart_rounded,
+          color: Colors.blue.shade700,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AdminLaporanScreen()),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _analysisRowCard(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: color.withValues(alpha: 0.15), width: 1),
+      ),
+      color: color.withValues(alpha: 0.04),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 11, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Icon(Icons.arrow_forward_ios_rounded, color: color.withValues(alpha: 0.5), size: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _statTile(String value, String label, IconData icon, Color color, VoidCallback onTap) {
+    return Expanded(
+      child: Card(
+        margin: EdgeInsets.zero,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: color.withValues(alpha: 0.1)),
+        ),
+        color: color.withValues(alpha: 0.05),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            child: Column(
+              children: [
+                Icon(icon, color: color, size: 24),
+                const SizedBox(height: 8),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    value,
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color),
+                  ),
+                ),
+                Text(
+                  label,
+                  style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTodayPresensiMonitor(BuildContext context) {
+    final halaqahs = provider.halaqahList;
+    if (halaqahs.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: const Center(
+          child: Text('Belum ada data halaqah', style: TextStyle(color: Colors.grey, fontSize: 12)),
+        ),
+      );
+    }
+
+    final now = DateTime.now();
+
+    return Column(
+      children: halaqahs.map((h) {
+        final musyrif = provider.getMusyrifById(h.musyrifId);
+        
+        final list = provider.presensiList.where((p) =>
+            p.halaqahId == h.id &&
+            p.tanggal.year == now.year &&
+            p.tanggal.month == now.month &&
+            p.tanggal.day == now.day).toList();
+        final presensi = list.isNotEmpty ? list.first : null;
+
+        final isSubmitted = presensi != null;
+
+        return Card(
+          elevation: 0,
+          margin: const EdgeInsets.only(bottom: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: isSubmitted ? Colors.green.shade100 : Colors.red.shade100, width: 1.5),
+          ),
+          color: isSubmitted ? Colors.green.shade50.withValues(alpha: 0.2) : Colors.red.shade50.withValues(alpha: 0.1),
+          child: Padding(
+            padding: const EdgeInsets.all(14.0),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isSubmitted ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isSubmitted ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
+                    color: isSubmitted ? Colors.green.shade700 : Colors.red.shade700,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        h.nama,
+                        style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Musyrif: ${musyrif?.nama ?? 'Tanpa Musyrif'}',
+                        style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      isSubmitted ? 'Sudah Diisi' : 'Belum Diisi',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: isSubmitted ? Colors.green.shade700 : Colors.red.shade700,
+                      ),
+                    ),
+                    if (isSubmitted) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        'Pukul ${presensi.waktuSubmit.hour.toString().padLeft(2, '0')}:${presensi.waktuSubmit.minute.toString().padLeft(2, '0')} WIB',
+                        style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
             ),
           ),
         );
       }).toList(),
     );
   }
+}
 
-  Widget _buildAdminQuickActions(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final w = (constraints.maxWidth - 12) / 2;
-      return Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        children: [
-          _actionCard(w,
-              icon: Icons.people_alt_rounded,
-              label: 'Kelola Santri',
-              color: const Color(0xFF1565C0),
-              onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => const SantriListScreen()))),
-          if (provider.isModuleActive('graduation'))
-            _actionCard(w,
-                icon: Icons.school_rounded,
-                label: 'Ujian Tasmi\'',
-                color: Colors.purple,
-                onTap: () => Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => const TasmiFormScreen()))),
-        ],
-      );
-    });
+class _LiveDot extends StatefulWidget {
+  const _LiveDot();
+
+  @override
+  State<_LiveDot> createState() => _LiveDotState();
+}
+
+class _LiveDotState extends State<_LiveDot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
   }
 
-  Widget _statTile(String value, String label, IconData icon, Color color) {
-    return Expanded(
-        child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.1))),
-      child: Column(children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 8),
-        FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(value,
-                style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color))),
-        Text(label,
-            style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))
-      ]),
-    ));
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
-  Widget _actionCard(double w,
-      {required IconData icon, required String label, required Color color, required VoidCallback onTap}) {
-    return SizedBox(
-        width: w,
-        child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: color.withValues(alpha: 0.2))),
-              child: Column(children: [
-                Icon(icon, color: color, size: 28),
-                const SizedBox(height: 8),
-                Text(label, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 12))
-              ]),
-            )));
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _controller,
+      child: Container(
+        width: 6,
+        height: 6,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}
+
+class RankingScreen extends StatelessWidget {
+  const RankingScreen({super.key, required this.title, required this.initialIndex});
+  final String title;
+  final int initialIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: QuranRankingList(initialIndex: initialIndex),
+    );
+  }
+}
+
+class AdminLaporanScreen extends StatelessWidget {
+  const AdminLaporanScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Laporan Statistik Pesantren')),
+      body: Consumer<AppProvider>(
+        builder: (ctx, provider, _) {
+          final displayList = provider.santriList;
+          final setorans = displayList.expand((s) => s.setoranHistory).toList();
+          if (setorans.isEmpty) {
+            return const Center(
+              child: Text('Belum ada data setoran di pesantren ini.', style: TextStyle(color: Colors.grey)),
+            );
+          }
+          return LaporanScreenBody(setorans: setorans, provider: provider);
+        },
+      ),
+    );
   }
 }
