@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Navigate, Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import NotFound from "./pages/OtherPage/NotFound";
 import AppLayout from "./layout/AppLayout";
@@ -13,6 +13,18 @@ import PengawasManagement from "./pages/PengawasManagement";
 import WisudaManagement from "./pages/WisudaManagement";
 import PesantrenInfoManagement from "./pages/PesantrenInfoManagement";
 import ProfileSettings from "./pages/ProfileSettings";
+import SuperAdminPesantrenPage from "./pages/SuperAdminPesantrenPage";
+import { useAuth } from "./context/AuthContext";
+
+function DashboardEntry() {
+  const { profile } = useAuth();
+
+  if (profile?.role === "superAdmin") {
+    return <Navigate to="/pesantren" replace />;
+  }
+
+  return <Home />;
+}
 
 export default function App() {
   return (
@@ -28,7 +40,8 @@ export default function App() {
               </ProtectedRoute>
             }
           >
-            <Route index path="/" element={<Home />} />
+            <Route index path="/" element={<DashboardEntry />} />
+            <Route path="/pesantren" element={<SuperAdminPesantrenPage />} />
             <Route path="/santri" element={<SantriManagement />} />
             <Route path="/musyrif" element={<MusyrifManagement />} />
             <Route path="/pengawas" element={<PengawasManagement />} />

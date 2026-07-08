@@ -20,6 +20,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
   final MobileScannerController _controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
     facing: CameraFacing.back,
+    formats: [BarcodeFormat.qrCode], // Only analyze QR codes to drastically reduce CPU load and prevent stutters
   );
 
   late AnimationController _animController;
@@ -117,7 +118,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
   }
 
   void _showSuccessAndPop(dynamic result) {
-    // Tampilkan feedback visual sukses
+    // Tampilkan feedback visual sukses (akan melayang di halaman berikutnya)
     final message = widget.returnRaw
         ? "Scan Kartu Berhasil!"
         : "Verifikasi Berhasil: ${result is Santri ? result.name : 'Santri Cocok'}";
@@ -137,15 +138,12 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
           ],
         ),
         backgroundColor: Colors.green,
-        duration: const Duration(seconds: 1),
+        duration: const Duration(milliseconds: 1500),
       ),
     );
 
-    Future.delayed(const Duration(milliseconds: 800), () {
-      if (mounted) {
-        Navigator.pop(context, result);
-      }
-    });
+    // KILAT: Langsung tutup kamera scan tanpa menunggu jeda milidetik!
+    Navigator.pop(context, result);
   }
 
   @override
@@ -183,29 +181,33 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // 1. Scanner view
-          MobileScanner(
-            controller: _controller,
-            onDetect: _onDetect,
-            errorBuilder: (context, error) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.camera_alt_outlined, size: 64, color: Colors.white60),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Kamera tidak dapat diakses.\nPastikan izin kamera telah diberikan.',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(color: Colors.white70, fontSize: 14),
+          // 1. Scanner view wrapped in RepaintBoundary to isolate graphics pipeline from overlay animations
+          Positioned.fill(
+            child: RepaintBoundary(
+              child: MobileScanner(
+                controller: _controller,
+                onDetect: _onDetect,
+                errorBuilder: (context, error) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.camera_alt_outlined, size: 64, color: Colors.white60),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Kamera tidak dapat diakses.\nPastikan izin kamera telah diberikan.',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(color: Colors.white70, fontSize: 14),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
 
           // 2. Custom scanner overlay (Visual Cutout)
@@ -302,9 +304,9 @@ class ScannerOverlayPainter extends CustomPainter {
     final double top = (height - scanSize) / 2;
     final Rect scanRect = Rect.fromLTWH(left, top, scanSize, scanSize);
 
-    // 1. Gambar overlay gelap di luar area scan
+    // 1. Gambar overlay gelap di luar area scan (lebih terang & nyaman)
     final Paint overlayPaint = Paint()
-      ..color = Colors.black.withValues(alpha: errorMessage != null ? 0.8 : 0.6)
+      ..color = Colors.black.withValues(alpha: errorMessage != null ? 0.6 : 0.3)
       ..style = PaintingStyle.fill;
 
     // Path untuk menutupi seluruh screen kecuali scanRect

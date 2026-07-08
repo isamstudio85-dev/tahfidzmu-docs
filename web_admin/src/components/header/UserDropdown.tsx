@@ -6,7 +6,7 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
-  const { profile, logout } = useAuth();
+  const { profile, logout, isImpersonating, switchBackToSuperAdmin } = useAuth();
   const navigate = useNavigate();
   const displayName = profile?.name?.trim() || "Admin";
   const initial = displayName.charAt(0).toUpperCase();
@@ -24,6 +24,12 @@ export default function UserDropdown() {
     closeDropdown();
     await logout();
     navigate("/signin");
+  }
+
+  function handleBackToSuperAdmin() {
+    closeDropdown();
+    switchBackToSuperAdmin();
+    navigate("/pesantren");
   }
 
   return (
@@ -66,8 +72,22 @@ export default function UserDropdown() {
           <div className="min-w-0">
             <span className="block truncate font-medium text-gray-700 text-theme-sm dark:text-gray-400">{displayName}</span>
             <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">{profile?.email || ""}</span>
+            {isImpersonating && <span className="mt-1 block text-[11px] font-semibold uppercase tracking-[0.12em] text-emerald-600 dark:text-emerald-300">Mode Admin Pesantren</span>}
           </div>
         </div>
+
+        {isImpersonating && (
+          <button
+            onClick={handleBackToSuperAdmin}
+            className="mt-4 flex w-full items-center gap-3 rounded-lg bg-emerald-50 px-3 py-2 font-medium text-emerald-700 text-theme-sm hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-current">
+              <path d="M6.25 5.83325L2.08333 9.99992L6.25 14.1666" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M2.91675 9.99992H11.2501C14.0115 9.99992 16.2501 12.2385 16.2501 14.9999V15.4166" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Kembali ke Super Admin
+          </button>
+        )}
 
         <button
           onClick={() => {

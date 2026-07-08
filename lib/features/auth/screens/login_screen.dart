@@ -47,13 +47,21 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  bool get _canLogin => _usernameCtrl.text.trim().isNotEmpty && _passwordCtrl.text.isNotEmpty && !_isLoading;
+  bool get _canLogin =>
+      _usernameCtrl.text.trim().isNotEmpty &&
+      _passwordCtrl.text.isNotEmpty &&
+      !_isLoading;
 
   Future<void> _login() async {
     if (!_canLogin) return;
-    setState(() { _isLoading = true; _errorMessage = null; });
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
 
-    final String? pesantrenId = _pesantrenIdCtrl.text.trim().isEmpty ? null : _pesantrenIdCtrl.text.trim();
+    final String? pesantrenId = _pesantrenIdCtrl.text.trim().isEmpty
+        ? null
+        : _pesantrenIdCtrl.text.trim();
     final String username = _usernameCtrl.text.trim();
     final String password = _passwordCtrl.text;
 
@@ -66,10 +74,17 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
     if (!ok) {
       final err = context.read<AppProvider>().loginError;
-      setState(() { _isLoading = false; _errorMessage = err ?? 'Username atau sandi salah.'; });
+      setState(() {
+        _isLoading = false;
+        _errorMessage = err ?? 'Username atau sandi salah.';
+      });
     } else {
       if (_rememberMe) {
-        await LoginPreferencesService.saveLastCredentials(pesantrenId, username, password);
+        await LoginPreferencesService.saveLastCredentials(
+          pesantrenId,
+          username,
+          password,
+        );
       } else {
         await LoginPreferencesService.clearLastCredentials();
       }
@@ -79,9 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _scanAndLogin() async {
     final rawString = await Navigator.push<String>(
       context,
-      MaterialPageRoute(
-        builder: (_) => const QrScannerScreen(returnRaw: true),
-      ),
+      MaterialPageRoute(builder: (_) => const QrScannerScreen(returnRaw: true)),
     );
 
     if (!mounted || rawString == null || rawString.trim().isEmpty) return;
@@ -115,8 +128,8 @@ class _LoginScreenState extends State<LoginScreen> {
             _errorMessage = err ?? 'Gagal masuk menggunakan QR Code.';
           });
         } else {
-        // QR login does not save credentials
-        await LoginPreferencesService.clearLastCredentials();
+          // QR login does not save credentials
+          await LoginPreferencesService.clearLastCredentials();
         }
       } else {
         setState(() {
@@ -169,6 +182,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildLoginForm() {
+    final providerError = context.watch<AppProvider>().loginError;
+    final displayError = _errorMessage ?? providerError;
+
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(maxWidth: 450),
@@ -181,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 30,
             offset: const Offset(0, 15),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -191,8 +207,8 @@ class _LoginScreenState extends State<LoginScreen> {
           TextField(
             controller: _pesantrenIdCtrl,
             decoration: const InputDecoration(
-              labelText: 'Kode Pondok',
-              hintText: 'Kosongkan jika Super Admin',
+              labelText: 'NPSN Pesantren',
+              hintText: 'Masukkan NPSN pesantren Anda',
               prefixIcon: Icon(Icons.business_rounded),
             ),
           ),
@@ -217,7 +233,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined,
                 ),
-                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                onPressed: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
               ),
             ),
             onSubmitted: (_) => _login(),
@@ -257,11 +274,11 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
 
-          if (_errorMessage != null)
+          if (displayError != null)
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Text(
-                _errorMessage!,
+                displayError,
                 style: const TextStyle(color: Colors.red, fontSize: 13),
               ),
             ),
@@ -274,7 +291,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: FilledButton(
                     onPressed: _canLogin ? _login : null,
                     style: FilledButton.styleFrom(
-                      disabledBackgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.3),
+                      disabledBackgroundColor: AppTheme.primaryGreen.withValues(
+                        alpha: 0.3,
+                      ),
                       disabledForegroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -307,7 +326,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _isLoading ? null : _scanAndLogin,
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    side: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
+                    side: const BorderSide(
+                      color: AppTheme.primaryGreen,
+                      width: 1.5,
+                    ),
                     foregroundColor: AppTheme.primaryGreen,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),

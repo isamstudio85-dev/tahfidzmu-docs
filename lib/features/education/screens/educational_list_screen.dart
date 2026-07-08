@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 class EducationalListScreen extends StatefulWidget {
   const EducationalListScreen({super.key, required this.type});
@@ -40,24 +39,31 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
     final String title = widget.type == 'tajwid' ? 'Ilmu Tajwid' : 'Ilmu Tahsin';
     
     return Scaffold(
+      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: AppTheme.primaryGreen,
+        backgroundColor: const Color(0xFF2E5A27), // Deep olive green for classic book header
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: _isLoading 
           ? const Center(child: CircularProgressIndicator())
           : _items.isEmpty
             ? const Center(child: Text('Data tidak ditemukan'))
-            : ListView.builder(
-                padding: const EdgeInsets.all(16),
+            : ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 itemCount: _items.length,
+                separatorBuilder: (ctx, i) => const Divider(
+                  color: Color(0xFFE5D5B8),
+                  height: 1,
+                  thickness: 1.2,
+                ),
                 itemBuilder: (ctx, i) {
                   final item = _items[i];
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  return Container(
+                    color: const Color(0xFFFDF9F0),
                     child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -71,14 +77,18 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                          color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(_getIcon(item['icon']), color: AppTheme.primaryGreen, size: 20),
+                        child: Icon(_getIcon(item['icon']), color: const Color(0xFF2E5A27), size: 20),
                       ),
                       title: Text(
                         item['title'],
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: const Color(0xFF4E342E), // Soft Espresso
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -88,7 +98,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      trailing: const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                      trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFF2E5A27)),
                     ),
                   );
                 },
@@ -145,7 +155,6 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -161,65 +170,57 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
             ? const Center(child: Text('Gagal memuat materi'))
             : SafeArea(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFDF9F0),
-                      border: Border.all(color: const Color(0xFFD7CCC8), width: 1.5), // Elegant inner frame
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (_data['introduction'] != null) ...[
-                          Text(
-                            _data['introduction'],
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              color: const Color(0xFF4E342E), // Soft Espresso
-                              height: 1.6,
-                            ),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (_data['introduction'] != null) ...[
+                        Text(
+                          _data['introduction'],
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: const Color(0xFF4E342E), // Soft Espresso
+                            height: 1.6,
                           ),
-                          const SizedBox(height: 24),
-                        ],
-                        ...(_data['sections'] as List).map((section) => _buildSection(section)),
-                        if (_data['reference'] != null) ...[
-                          const SizedBox(height: 16),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF2E5A27).withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFF2E5A27).withValues(alpha: 0.15)),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Icon(
-                                  Icons.menu_book_rounded,
-                                  color: Color(0xFF2E5A27),
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    _data['reference'],
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: const Color(0xFF2E5A27),
-                                      height: 1.6,
-                                    ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                      ...(_data['sections'] as List).map((section) => _buildSection(section)),
+                      if (_data['reference'] != null) ...[
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2E5A27).withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: const Color(0xFF2E5A27).withValues(alpha: 0.15)),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(
+                                Icons.menu_book_rounded,
+                                color: Color(0xFF2E5A27),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  _data['reference'],
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF2E5A27),
+                                    height: 1.6,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ],
-                    ),
+                    ],
                   ),
                 ),
               ),
@@ -254,7 +255,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: const Color(0xFFF4EAD4), // Classic yellow highlight/letters backing
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
               border: Border.all(color: const Color(0xFFE5D5B8)),
             ),
             child: Row(
@@ -310,18 +311,12 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
   Widget _buildExample(dynamic ex) {
     return Container(
       margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFCFBF7), // Warm page card color
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEDE8DF)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        color: Color(0xFFFAF6EE), // soft warm tint
+        border: Border(
+          left: BorderSide(color: Color(0xFFE5D5B8), width: 3.5), // classic left line indicator
+        ),
       ),
       child: Row(
         children: [

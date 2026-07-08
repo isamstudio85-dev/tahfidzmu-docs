@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tahfidz_app/models/hadith.dart';
 import 'package:tahfidz_app/services/hadith_service.dart';
-import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/education/screens/hadits_detail_screen.dart';
 
 class HaditsScreen extends StatefulWidget {
@@ -13,149 +12,60 @@ class HaditsScreen extends StatefulWidget {
   State<HaditsScreen> createState() => _HaditsScreenState();
 }
 
-class _HaditsScreenState extends State<HaditsScreen>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+class _HaditsScreenState extends State<HaditsScreen> {
+  Future<Map<String, List<Hadith>>> _loadThemesAndArbain() async {
+    final byTema = await HadithService.getByTema();
+    final arbain = await HadithService.getArbain();
+    
+    final Map<String, List<Hadith>> combined = {};
+    if (arbain.isNotEmpty) {
+      combined['arbain'] = arbain;
+    }
+    combined.addAll(byTema);
+    return combined;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
       appBar: AppBar(
         title: const Text('Hadits Pilihan'),
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
-          indicatorColor: Colors.white,
-          indicatorWeight: 3,
-          tabs: const [
-            Tab(text: 'Arbain Nawawi'),
-            Tab(text: 'Berdasarkan Tema'),
-          ],
-        ),
+        backgroundColor: const Color(0xFF2E5A27), // Deep olive green
+        foregroundColor: Colors.white,
+        elevation: 0,
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const [_ArbainTab(), _TemaTab()],
+      body: FutureBuilder<Map<String, List<Hadith>>>(
+        future: _loadThemesAndArbain(),
+        builder: (context, snap) {
+          if (snap.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snap.hasError || !snap.hasData) {
+            return const Center(child: Text('Gagal memuat data hadits.'));
+          }
+          final combinedData = snap.data!;
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            itemCount: combinedData.length,
+            separatorBuilder: (ctx, i) => const Divider(
+              color: Color(0xFFE5D5B8),
+              height: 1,
+              thickness: 1.2,
+            ),
+            itemBuilder: (context, i) {
+              final tema = combinedData.keys.elementAt(i);
+              final hadiths = combinedData[tema]!;
+              return _TemaSection(tema: tema, hadiths: hadiths);
+            },
+          );
+        },
       ),
     );
   }
 }
 
-// ── Tab Arbain Nawawi ──────────────────────────────────────────────────────────
-
-class _ArbainTab extends StatelessWidget {
-  const _ArbainTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Hadith>>(
-      future: HadithService.getArbain(),
-      builder: (context, snap) {
-        if (snap.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snap.hasError || !snap.hasData) {
-          return const Center(child: Text('Gagal memuat data hadits.'));
-        }
-        final hadiths = snap.data!;
-        return Column(
-          children: [
-            // Banner
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1A237E), Color(0xFF283593)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'الأربعون النووية',
-                    style: GoogleFonts.amiri(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textDirection: TextDirection.rtl,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Kitab Al-Arbain An-Nawawiyyah — Imam Yahya bin Syaraf An-Nawawi',
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
-                  ),
-                  Text(
-                    '${hadiths.length} Hadits',
-                    style: const TextStyle(color: Colors.white60, fontSize: 11),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                itemCount: hadiths.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
-                itemBuilder: (context, i) =>
-                    _HadithCard(hadith: hadiths[i], showArbainNo: true),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-// ── Tab Berdasarkan Tema ───────────────────────────────────────────────────────
-
-class _TemaTab extends StatelessWidget {
-  const _TemaTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, List<Hadith>>>(
-      future: HadithService.getByTema(),
-      builder: (context, snap) {
-        if (snap.connectionState != ConnectionState.done) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snap.hasError || !snap.hasData) {
-          return const Center(child: Text('Gagal memuat data hadits.'));
-        }
-        final byTema = snap.data!;
-        return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-          itemCount: byTema.length,
-          itemBuilder: (context, i) {
-            final tema = byTema.keys.elementAt(i);
-            final hadiths = byTema[tema]!;
-            return _TemaSection(tema: tema, hadiths: hadiths);
-          },
-        );
-      },
-    );
-  }
-}
+// ── Tema Section ───────────────────────────────────────────────────────────────
 
 class _TemaSection extends StatefulWidget {
   const _TemaSection({required this.tema, required this.hadiths});
@@ -172,26 +82,17 @@ class _TemaSectionState extends State<_TemaSection> {
   @override
   Widget build(BuildContext context) {
     final color = _temaColor(widget.tema);
+    final isArbain = widget.tema == 'arbain';
+    final String label = isArbain ? "Arba'in An-Nawawiyyah" : Hadith.temaLabel(widget.tema);
+    
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      color: const Color(0xFFFDF9F0),
       child: Column(
         children: [
           InkWell(
-            borderRadius: BorderRadius.circular(14),
             onTap: () => setState(() => _expanded = !_expanded),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
               child: Row(
                 children: [
                   Container(
@@ -199,7 +100,7 @@ class _TemaSectionState extends State<_TemaSection> {
                     height: 36,
                     decoration: BoxDecoration(
                       color: color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(8),
+                      shape: BoxShape.circle,
                     ),
                     child: Icon(_temaIcon(widget.tema), color: color, size: 18),
                   ),
@@ -209,17 +110,19 @@ class _TemaSectionState extends State<_TemaSection> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          Hadith.temaLabel(widget.tema),
+                          label,
                           style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             fontSize: 14,
+                            color: const Color(0xFF4E342E), // Soft Espresso
                           ),
                         ),
                         Text(
                           '${widget.hadiths.length} hadits',
                           style: TextStyle(
                             fontSize: 11,
-                            color: Colors.grey.shade500,
+                            color: Colors.grey.shade600,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -229,22 +132,28 @@ class _TemaSectionState extends State<_TemaSection> {
                     _expanded
                         ? Icons.expand_less_rounded
                         : Icons.expand_more_rounded,
-                    color: Colors.grey.shade400,
+                    color: const Color(0xFF2E5A27),
                   ),
                 ],
               ),
             ),
           ),
           if (_expanded) ...[
-            const Divider(height: 1),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-              itemCount: widget.hadiths.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 6),
-              itemBuilder: (context, i) =>
-                  _HadithCard(hadith: widget.hadiths[i], showArbainNo: false),
+            Padding(
+              padding: const EdgeInsets.only(left: 12, bottom: 8),
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                itemCount: widget.hadiths.length,
+                separatorBuilder: (_, __) => const Divider(
+                  color: Color(0xFFEDE8DF),
+                  height: 1,
+                  thickness: 0.8,
+                ),
+                itemBuilder: (context, i) =>
+                    _HadithCard(hadith: widget.hadiths[i], showArbainNo: isArbain),
+              ),
             ),
           ],
         ],
@@ -263,48 +172,33 @@ class _HadithCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(12),
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => HaditsDetailScreen(hadith: hadith)),
       ),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Number badge
+            // Number badge (Kitab Kuning Arabic Circle Style)
             Container(
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
-                color: showArbainNo && hadith.isArbain
-                    ? const Color(0xFF1A237E).withValues(alpha: 0.1)
-                    : AppTheme.primaryGreen.withValues(alpha: 0.1),
+                color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
                 shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFE5D5B8), width: 1),
               ),
               child: Center(
                 child: Text(
                   showArbainNo && hadith.isArbain
                       ? '${hadith.arbainNo}'
                       : '${hadith.id}',
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    color: showArbainNo && hadith.isArbain
-                        ? const Color(0xFF1A237E)
-                        : AppTheme.primaryGreen,
+                    fontSize: 11,
+                    color: const Color(0xFF2E5A27),
                   ),
                 ),
               ),
@@ -320,7 +214,12 @@ class _HadithCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     textDirection: TextDirection.rtl,
-                    style: GoogleFonts.amiri(fontSize: 15, height: 1.6),
+                    style: GoogleFonts.amiri(
+                      fontSize: 16,
+                      height: 1.6,
+                      color: const Color(0xFF1B5E20),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   // Perawi
@@ -345,32 +244,12 @@ class _HadithCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  // Tema chip
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _temaColor(hadith.tema).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      Hadith.temaLabel(hadith.tema),
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: _temaColor(hadith.tema),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
             const Icon(
               Icons.chevron_right_rounded,
-              color: Colors.grey,
+              color: Color(0xFF2E5A27),
               size: 18,
             ),
           ],
@@ -385,13 +264,13 @@ class _HadithCard extends StatelessWidget {
 Color _temaColor(String tema) {
   switch (tema) {
     case 'arbain':
-      return const Color(0xFF283593);
+      return const Color(0xFF2E5A27); // Standardize theme color to Olive Green
     case 'niat':
       return const Color(0xFF00897B);
     case 'akidah':
       return const Color(0xFF1565C0);
     case 'ibadah':
-      return AppTheme.primaryGreen;
+      return const Color(0xFF2E5A27);
     case 'akhlak':
       return const Color(0xFF6A1B9A);
     case 'quran':
@@ -418,7 +297,7 @@ Color _temaColor(String tema) {
 IconData _temaIcon(String tema) {
   switch (tema) {
     case 'arbain':
-      return Icons.auto_stories_rounded;
+      return Icons.menu_book_rounded;
     case 'niat':
       return Icons.favorite_rounded;
     case 'akidah':

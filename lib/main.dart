@@ -13,17 +13,14 @@ import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
 import 'package:tahfidz_app/features/auth/screens/login_screen.dart';
 import 'package:tahfidz_app/features/dashboard/screens/main_shell.dart';
-import 'package:tahfidz_app/features/dashboard/screens/super_admin_dashboard.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // Crashlytics: tangkap semua error Flutter
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -38,7 +35,7 @@ void main() async {
     persistenceEnabled: true,
     cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
   );
-  
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -91,11 +88,62 @@ class _TahfidzAppState extends State<TahfidzApp> {
             return const _AppBootstrapLoadingScreen();
           }
           if (!provider.isLoggedIn) return const LoginScreen();
-          if (provider.isSuperAdmin) return SuperAdminDashboard(provider: provider);
+          if (provider.isSuperAdmin) {
+            return const _SuperAdminMobileDisabledScreen();
+          }
           return const MainShell();
         },
       ),
       debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class _SuperAdminMobileDisabledScreen extends StatefulWidget {
+  const _SuperAdminMobileDisabledScreen();
+
+  @override
+  State<_SuperAdminMobileDisabledScreen> createState() =>
+      _SuperAdminMobileDisabledScreenState();
+}
+
+class _SuperAdminMobileDisabledScreenState
+    extends State<_SuperAdminMobileDisabledScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      await context.read<AppProvider>().logout();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.admin_panel_settings_outlined,
+                size: 56,
+                color: AppTheme.primaryGreen,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Akses super admin di Android dinonaktifkan. Gunakan web admin untuk masuk sebagai super admin.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15, height: 1.5),
+              ),
+              SizedBox(height: 16),
+              CircularProgressIndicator(color: AppTheme.primaryGreen),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -108,42 +156,85 @@ class _AppBootstrapLoadingScreen extends StatefulWidget {
       _AppBootstrapLoadingScreenState();
 }
 
-class _AppBootstrapLoadingScreenState extends State<_AppBootstrapLoadingScreen> {
+class _AppBootstrapLoadingScreenState
+    extends State<_AppBootstrapLoadingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: SafeArea(
+        child: Stack(
           children: [
-            Image.asset(
-              'assets/icons/logo-tahfidzmu.png',
-              width: 180,
-              height: 180,
-              fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => const Icon(
-                Icons.auto_stories_rounded,
-                size: 100,
-                color: AppTheme.primaryGreen,
+            // Center Loader & Logo
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/icons/logo-tahfidzmu.png',
+                    width: 160,
+                    height: 160,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => const Icon(
+                      Icons.auto_stories_rounded,
+                      size: 90,
+                      color: AppTheme.primaryGreen,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  const SizedBox(
+                    width: 32,
+                    height: 32,
+                    child: CircularProgressIndicator(
+                      color: AppTheme.primaryGreen,
+                      strokeWidth: 3,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Memuat data...',
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: Colors.grey.shade400,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 40),
-            const SizedBox(
-              width: 40,
-              height: 40,
-              child: CircularProgressIndicator(
-                color: AppTheme.primaryGreen,
-                strokeWidth: 3,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Memuat data...',
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                color: Colors.grey.shade400,
-                letterSpacing: 1.2,
+            // Bottom Developer Branding
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'DEVELOPED BY',
+                      style: GoogleFonts.poppins(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade400,
+                        letterSpacing: 2.0,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Image.asset(
+                      'assets/images/isam-logo.png',
+                      height: 36,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Text(
+                        'iSam',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryGreen,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

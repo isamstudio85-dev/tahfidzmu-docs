@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -30,8 +31,18 @@ class FirebaseService {
   // ── User Data (Roles & Mapping) ────────────────────────────────────────
 
   Future<Map<String, dynamic>?> getUserData(String uid) async {
-    final doc = await _db.collection('users').doc(uid).get();
-    return doc.data();
+    try {
+      final doc = await _db.collection('users').doc(uid).get().timeout(const Duration(seconds: 8));
+      return doc.data();
+    } catch (_) {
+      try {
+        final doc = await _db.collection('users').doc(uid).get(const GetOptions(source: Source.cache));
+        return doc.data();
+      } catch (e) {
+        debugPrint('Failed to get user data from cache: $e');
+        return null;
+      }
+    }
   }
 
   Future<void> setUserData(String uid, Map<String, dynamic> data) async {

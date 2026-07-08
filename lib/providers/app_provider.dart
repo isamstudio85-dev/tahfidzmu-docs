@@ -96,19 +96,18 @@ class AppProvider extends ChangeNotifier
       await _fetchSurahList();
       final user = firebase.currentUser;
       if (user != null) {
-        // Auto-assign superAdmin role for the owner
-        if (user.email == 'dasamsamsudin87@gmail.com') {
-          await firebase.setUserData(user.uid, {
-            'role': 'superAdmin',
-            'username': 'superadmin',
-            'linkedId': null,
-            'pesantrenId': null,
-          });
-        }
         final userData = await firebase.getUserData(user.uid);
         if (userData != null) {
+          final role = userData['role'] as String?;
+          final isOwnerEmail = user.email == 'dasamsamsudin87@gmail.com';
+          if (role == 'superAdmin' || isOwnerEmail) {
+            loginError = 'Login super admin hanya tersedia di web admin.';
+            await performLogout();
+            return;
+          }
+
           setLoginInfo(
-            roleFromString(userData['role'] as String) ?? UserRole.orangTua,
+            roleFromString(role ?? '') ?? UserRole.orangTua,
             linkedSantriId: userData['linkedId'] as String?,
             linkedMusyrifId: userData['linkedId'] as String?,
             userId: user.uid,
@@ -177,25 +176,54 @@ class AppProvider extends ChangeNotifier
   ) async {
     loginError = null;
     try {
+      if (targetPesantrenId == null || targetPesantrenId.trim().isEmpty) {
+        loginError =
+            'Login super admin di Android dinonaktifkan. Gunakan web admin.';
+        return false;
+      }
+
       String email = username;
       if (!username.contains('@')) email = '$username@tahfidzmu.com';
 
       final isSuperAdminEmail = email == 'dasamsamsudin87@gmail.com';
+      if (isSuperAdminEmail) {
+        loginError = 'Login super admin hanya tersedia di web admin.';
+        return false;
+      }
       DocumentSnapshot<Map<String, dynamic>>? mappingDoc;
 
-      if (!isSuperAdminEmail) {
-        final mappingCollection = targetPesantrenId != null
-            ? firestore
-                  .collection('pesantren')
-                  .doc(targetPesantrenId)
-                  .collection('user_mappings')
-            : firestore.collection('user_mappings');
+      final mappingCollection = firestore
+          .collection('pesantren')
+          .doc(targetPesantrenId)
+          .collection('user_mappings');
 
-        mappingDoc = await mappingCollection.doc(username).get();
-        if (!mappingDoc.exists) {
-          final digitsOnly = username.replaceAll(RegExp(r'\D+'), '');
-          if (digitsOnly.isNotEmpty) {
-            mappingDoc = await mappingCollection.doc(digitsOnly).get();
+      try {
+        mappingDoc = await mappingCollection
+            .doc(username)
+            .get()
+            .timeout(const Duration(seconds: 8));
+      } catch (_) {
+        try {
+          mappingDoc = await mappingCollection
+              .doc(username)
+              .get(const GetOptions(source: Source.cache));
+        } catch (_) {}
+      }
+
+      if (mappingDoc == null || !mappingDoc.exists) {
+        final digitsOnly = username.replaceAll(RegExp(r'\D+'), '');
+        if (digitsOnly.isNotEmpty) {
+          try {
+            mappingDoc = await mappingCollection
+                .doc(digitsOnly)
+                .get()
+                .timeout(const Duration(seconds: 8));
+          } catch (_) {
+            try {
+              mappingDoc = await mappingCollection
+                  .doc(digitsOnly)
+                  .get(const GetOptions(source: Source.cache));
+            } catch (_) {}
           }
         }
       }
@@ -224,16 +252,11 @@ class AppProvider extends ChangeNotifier
         }
       }
 
-      if (cred?.user == null) return false;
-      if (cred!.user!.email == 'dasamsamsudin87@gmail.com') {
-        await firebase.setUserData(cred.user!.uid, {
-          'role': 'superAdmin',
-          'username': 'superadmin',
-          'linkedId': null,
-          'pesantrenId': null,
-        });
-      } else if (mappingDoc != null && mappingDoc.exists) {
-        await firebase.setUserData(cred.user!.uid, {
+      final user = cred?.user;
+      if (user == null) return false;
+
+      if (mappingDoc != null && mappingDoc.exists) {
+        await firebase.setUserData(user.uid, {
           'role': mappingDoc.data()?['role'],
           'linkedId': mappingDoc.data()?['linkedId'],
           'username': username,
@@ -241,9 +264,17 @@ class AppProvider extends ChangeNotifier
         });
       }
 
-      final userData = await firebase.getUserData(cred.user!.uid);
+      final userData = await firebase.getUserData(user.uid);
       if (userData == null) {
         loginError = 'Data pengguna tidak ditemukan.';
+        return false;
+      }
+
+      final resolvedRole = userData['role'] as String?;
+      if (resolvedRole == 'superAdmin' ||
+          user.email == 'dasamsamsudin87@gmail.com') {
+        loginError = 'Login super admin hanya tersedia di web admin.';
+        await firebase.signOut();
         return false;
       }
 
@@ -276,7 +307,7 @@ class AppProvider extends ChangeNotifier
         roleFromString(userData['role'] as String) ?? UserRole.orangTua,
         linkedSantriId: userData['linkedId'] as String?,
         linkedMusyrifId: userData['linkedId'] as String?,
-        userId: cred.user!.uid,
+        userId: user.uid,
         pesantrenId: userData['pesantrenId'] as String?,
       );
 
@@ -506,6 +537,26 @@ class AppProvider extends ChangeNotifier
     notifyListeners();
   }
 
+  Future<void> updatePondokKnowledge(List<Map<String, dynamic>> items) async {
+    pondokKnowledgeList = items;
+    isPondokKnowledgeInitialized = true;
+    await getCollection(
+      'settings',
+    ).doc('pondok_knowledge').set({'items': items, 'initialized': true});
+    notifyListeners();
+  }
+
+  Future<void> initializePondokKnowledge(
+    List<Map<String, dynamic>> items,
+  ) async {
+    pondokKnowledgeList = items;
+    isPondokKnowledgeInitialized = true;
+    await getCollection(
+      'settings',
+    ).doc('pondok_knowledge').set({'items': items, 'initialized': true});
+    notifyListeners();
+  }
+
   // Management functions
   Future<void> addMusyrif(
     MusyrifData m, {
@@ -702,25 +753,33 @@ class AppProvider extends ChangeNotifier
   ) async {
     final santri = getSantriById(santriId);
     if (santri == null) return;
-    final snap = await firestore
-        .collection('users')
-        .where('role', isEqualTo: 'orangTua')
-        .where('linkedId', isEqualTo: santriId)
-        .get();
 
-    for (var doc in snap.docs) {
-      final parentUid = doc.id;
-      final typeStr = record.type == SetoranType.ziyadah
-          ? 'Ziyadah'
-          : 'Murojaah';
-      final statusStr = record.gradeName;
-      final scoreVal = record.finalScore.toStringAsFixed(0);
+    try {
+      final snap = await firestore
+          .collection('users')
+          .where('role', isEqualTo: 'orangTua')
+          .where('linkedId', isEqualTo: santriId)
+          .get()
+          .timeout(const Duration(seconds: 5));
 
-      final title = "Setoran Hafalan Baru ($typeStr)";
-      final body =
-          "Alhamdulillah, ${santri.name} baru saja menyetor hafalan $typeStr: Surah ${record.surahName} (${record.ayahStart}-${record.ayahEnd}) dengan predikat $statusStr (Nilai: $scoreVal).";
+      for (var doc in snap.docs) {
+        final parentUid = doc.id;
+        final typeStr = record.type == SetoranType.ziyadah
+            ? 'Ziyadah'
+            : 'Murojaah';
+        final statusStr = record.gradeName;
+        final scoreVal = record.finalScore.toStringAsFixed(0);
 
-      await sendNotification(parentUid, title, body, 'setoran');
+        final title = "Setoran Hafalan Baru ($typeStr)";
+        final body =
+            "Alhamdulillah, ${santri.name} baru saja menyetor hafalan $typeStr: Surah ${record.surahName} (${record.ayahStart}-${record.ayahEnd}) dengan predikat $statusStr (Nilai: $scoreVal).";
+
+        await sendNotification(parentUid, title, body, 'setoran');
+      }
+    } catch (e) {
+      debugPrint(
+        "triggerSetoranNotification parent lookup failed (likely permission restriction): $e",
+      );
     }
   }
 
@@ -765,51 +824,58 @@ class AppProvider extends ChangeNotifier
       await docRef.set(newPresensi.toJson());
     }
 
-    final parentSnap = await firestore
-        .collection('users')
-        .where('role', isEqualTo: 'orangTua')
-        .where('linkedId', isEqualTo: santriId)
-        .get();
+    try {
+      final parentSnap = await firestore
+          .collection('users')
+          .where('role', isEqualTo: 'orangTua')
+          .where('linkedId', isEqualTo: santriId)
+          .get()
+          .timeout(const Duration(seconds: 5));
 
-    String displayStatus;
-    String statusDesc;
-    switch (status) {
-      case 'setoran':
-        displayStatus = 'Setoran (Hadir)';
-        statusDesc =
-            'Anak Anda hadir di halaqah dan sudah melakukan setoran hafalan.';
-        break;
-      case 'ditunda':
-        displayStatus = 'Ditunda (Bukan Sesi)';
-        statusDesc =
-            'Anak Anda hadir di halaqah, namun ditunda giliran setorannya hari ini karena keterbatasan waktu.';
-        break;
-      case 'sakit':
-        displayStatus = 'Sakit';
-        statusDesc =
-            'Anak Anda tidak dapat mengikuti halaqah hari ini karena sakit.';
-        break;
-      case 'izin':
-        displayStatus = 'Izin';
-        statusDesc =
-            'Anak Anda tidak mengikuti halaqah hari ini karena telah meminta izin sebelumnya.';
-        break;
-      case 'alfa':
-        displayStatus = 'Alfa (Tanpa Keterangan)';
-        statusDesc =
-            'Anak Anda tidak mengikuti halaqah hari ini tanpa keterangan.';
-        break;
-      default:
-        displayStatus = status.toUpperCase();
-        statusDesc =
-            'Status kehadiran anak Anda diperbarui menjadi $displayStatus.';
-    }
+      String displayStatus;
+      String statusDesc;
+      switch (status) {
+        case 'setoran':
+          displayStatus = 'Setoran (Hadir)';
+          statusDesc =
+              'Anak Anda hadir di halaqah dan sudah melakukan setoran hafalan.';
+          break;
+        case 'ditunda':
+          displayStatus = 'Ditunda (Bukan Sesi)';
+          statusDesc =
+              'Anak Anda hadir di halaqah, namun ditunda giliran setorannya hari ini karena keterbatasan waktu.';
+          break;
+        case 'sakit':
+          displayStatus = 'Sakit';
+          statusDesc =
+              'Anak Anda tidak dapat mengikuti halaqah hari ini karena sakit.';
+          break;
+        case 'izin':
+          displayStatus = 'Izin';
+          statusDesc =
+              'Anak Anda tidak mengikuti halaqah hari ini karena telah meminta izin sebelumnya.';
+          break;
+        case 'alfa':
+          displayStatus = 'Alfa (Tanpa Keterangan)';
+          statusDesc =
+              'Anak Anda tidak mengikuti halaqah hari ini tanpa keterangan.';
+          break;
+        default:
+          displayStatus = status.toUpperCase();
+          statusDesc =
+              'Status kehadiran anak Anda diperbarui menjadi $displayStatus.';
+      }
 
-    for (var doc in parentSnap.docs) {
-      final parentUid = doc.id;
-      final title = "Laporan Kehadiran Hari Ini - $displayStatus";
-      final body = "Pemberitahuan halaqah ${santri.name}: $statusDesc";
-      await sendNotification(parentUid, title, body, 'presensi');
+      for (var doc in parentSnap.docs) {
+        final parentUid = doc.id;
+        final title = "Laporan Kehadiran Hari Ini - $displayStatus";
+        final body = "Pemberitahuan halaqah ${santri.name}: $statusDesc";
+        await sendNotification(parentUid, title, body, 'presensi');
+      }
+    } catch (e) {
+      debugPrint(
+        "setSantriKehadiranStatus parent lookup failed (likely permission restriction): $e",
+      );
     }
   }
 
@@ -1019,9 +1085,30 @@ class AppProvider extends ChangeNotifier
     final String sId = activeSetoranSantri!.id;
 
     // 1. Fetch current setoran history from Firestore subcollection to calculate new aggregates
-    final historySnap = await getCollection(
-      'santri',
-    ).doc(sId).collection('setoranHistory').get();
+    // We use a safety timeout and local cache fallback to prevent freezing in poor network conditions.
+    QuerySnapshot<Map<String, dynamic>> historySnap;
+    try {
+      historySnap = await getCollection('santri')
+          .doc(sId)
+          .collection('setoranHistory')
+          .get()
+          .timeout(
+            const Duration(seconds: 4),
+            onTimeout: () => getCollection('santri')
+                .doc(sId)
+                .collection('setoranHistory')
+                .get(const GetOptions(source: Source.cache)),
+          );
+    } catch (e) {
+      debugPrint(
+        "Failed to fetch setoran history online (likely offline): $e. Falling back to cache.",
+      );
+      historySnap = await getCollection('santri')
+          .doc(sId)
+          .collection('setoranHistory')
+          .get(const GetOptions(source: Source.cache));
+    }
+
     final existingRecords = historySnap.docs
         .map((doc) => SetoranRecord.fromJson(doc.data()))
         .toList();
@@ -1173,142 +1260,6 @@ class AppProvider extends ChangeNotifier
       ayahEnd: 1,
       type: SetoranType.ziyadah,
     );
-  }
-
-  Future<void> registerNewPesantren(
-    String nama,
-    String kode,
-    String adminEmail,
-    String adminPassword, {
-    String? logoPath,
-  }) async {
-    final pesantrenRef = firestore.collection('pesantren').doc(kode);
-
-    String? logoUrl;
-    if (logoPath != null && logoPath.isNotEmpty) {
-      try {
-        logoUrl = await firebase.uploadPhoto(
-          localPath: logoPath,
-          folder: 'pesantren_logos',
-          fileName: kode,
-        );
-      } catch (e) {
-        debugPrint('Failed to upload pesantren logo: $e');
-      }
-    }
-
-    // 1. Initialize pesantren document
-    await pesantrenRef.set({
-      'id': kode,
-      'nama': nama,
-      'createdAt': FieldValue.serverTimestamp(),
-      'status': 'active',
-      'logoUrl': logoUrl,
-      'subscriptionTier': 'Trial',
-      'activeUntil': Timestamp.fromDate(
-        DateTime.now().add(const Duration(days: 30)),
-      ),
-    });
-
-    // 2. Set default pesantren info settings
-    final info = PesantrenInfo(
-      nama: nama,
-      alamat: 'Alamat belum diatur',
-      noTelp: '-',
-      email: adminEmail,
-    );
-    await pesantrenRef
-        .collection('settings')
-        .doc('pesantren_info')
-        .set(info.toJson());
-
-    // 3. Create user mapping — akun Firebase Auth admin akan otomatis
-    //    dibuat saat admin pertama kali login (auto-create di loginWithCredentials)
-    await pesantrenRef.collection('user_mappings').doc('admin').set({
-      'linkedId': null,
-      'role': 'admin',
-      'defaultPassword': adminPassword,
-    });
-  }
-
-  Future<void> updatePesantren(
-    String id, {
-    required String nama,
-    String? logoPath,
-  }) async {
-    final pesantrenRef = firestore.collection('pesantren').doc(id);
-
-    String? logoUrl;
-    if (logoPath != null && logoPath.isNotEmpty) {
-      if (!logoPath.startsWith('http')) {
-        try {
-          logoUrl = await firebase.uploadPhoto(
-            localPath: logoPath,
-            folder: 'pesantren_logos',
-            fileName: id,
-          );
-        } catch (e) {
-          debugPrint('Failed to upload pesantren logo: $e');
-        }
-      } else {
-        logoUrl = logoPath;
-      }
-    }
-
-    final data = <String, dynamic>{'nama': nama};
-    if (logoUrl != null) {
-      data['logoUrl'] = logoUrl;
-    }
-    await pesantrenRef.update(data);
-
-    // Also update pesantren name in its info settings
-    try {
-      await pesantrenRef.collection('settings').doc('pesantren_info').update({
-        'nama': nama,
-      });
-    } catch (e) {
-      debugPrint('Failed to update pesantren info name: $e');
-    }
-    notifyListeners();
-  }
-
-  Future<void> updateSubscription(
-    String id, {
-    required String tier,
-    required DateTime activeUntil,
-    required String status,
-  }) async {
-    await firestore.collection('pesantren').doc(id).update({
-      'subscriptionTier': tier,
-      'activeUntil': Timestamp.fromDate(activeUntil),
-      'status': status,
-    });
-    notifyListeners();
-  }
-
-  Future<void> deletePesantren(String id) async {
-    final pesantrenRef = firestore.collection('pesantren').doc(id);
-
-    // 1. Delete settings/pesantren_info
-    try {
-      await pesantrenRef.collection('settings').doc('pesantren_info').delete();
-    } catch (e) {
-      debugPrint('Failed to delete pesantren settings: $e');
-    }
-
-    // 2. Delete user mappings
-    try {
-      final mappings = await pesantrenRef.collection('user_mappings').get();
-      for (var doc in mappings.docs) {
-        await doc.reference.delete();
-      }
-    } catch (e) {
-      debugPrint('Failed to delete user mappings: $e');
-    }
-
-    // 3. Delete pesantren doc itself
-    await pesantrenRef.delete();
-    notifyListeners();
   }
 
   Future<void> updateAdminPhoto(String path) async {
@@ -1469,29 +1420,5 @@ class AppProvider extends ChangeNotifier
       linkedMusyrifId: linkedMusyrifId,
       pesantrenId: pesantrenId,
     );
-  }
-
-  Future<void> loginAsTenantAdmin(String tenantId, String tenantNama) async {
-    setLoginInfo(
-      UserRole.admin,
-      linkedSantriId: null,
-      linkedMusyrifId: null,
-      userId: currentUserId,
-      pesantrenId: tenantId,
-    );
-    await setupFirestoreListeners();
-    notifyListeners();
-  }
-
-  Future<void> switchBackToSuperAdmin() async {
-    setLoginInfo(
-      UserRole.superAdmin,
-      linkedSantriId: null,
-      linkedMusyrifId: null,
-      userId: currentUserId,
-      pesantrenId: null,
-    );
-    await setupFirestoreListeners();
-    notifyListeners();
   }
 }

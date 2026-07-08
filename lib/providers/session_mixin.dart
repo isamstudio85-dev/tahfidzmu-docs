@@ -20,6 +20,7 @@ mixin SessionMixin on ChangeNotifier {
   String activeSetoranSurahEnglishName = '';
   int activeSetoranAyahStart = 1;
   int activeSetoranAyahEnd = 7;
+  int defaultSetoranAyahEnd = 7; // Store initial session end to allow toggle-back
   bool isTasmiSession = false;
   List<int> activeTasmiJuz = [];
   String activeTasmiYear = '';
@@ -45,10 +46,16 @@ mixin SessionMixin on ChangeNotifier {
     activeSetoranSurahEnglishName = surah.englishName;
     activeSetoranAyahStart = ayahStart;
     activeSetoranAyahEnd = ayahEnd;
+    defaultSetoranAyahEnd = ayahEnd;
     isTasmiSession = false;
     sessionErrors.clear();
     sessionPassedAyahs.clear();
     sessionFailedAyahs.clear();
+    
+    // Default/Otomatis ceklis diterima untuk semua ayat dalam range
+    for (int i = ayahStart; i <= ayahEnd; i++) {
+      sessionPassedAyahs.add(i);
+    }
     notifyListeners();
   }
 
@@ -64,6 +71,7 @@ mixin SessionMixin on ChangeNotifier {
     activeSetoranSurahNumber = juzRange.startSurah;
     activeSetoranAyahStart = juzRange.startAyah;
     activeSetoranAyahEnd = juzRange.startAyah + 20;
+    defaultSetoranAyahEnd = juzRange.startAyah + 20;
     
     final surah = _surahList.firstWhere((s) => s.number == activeSetoranSurahNumber, orElse: () => _surahList.first);
     activeSetoranSurahName = surah.name;
@@ -71,6 +79,34 @@ mixin SessionMixin on ChangeNotifier {
     sessionErrors.clear();
     sessionPassedAyahs.clear();
     sessionFailedAyahs.clear();
+
+    // Default/Otomatis ceklis diterima untuk semua ayat dalam range
+    for (int i = activeSetoranAyahStart; i <= activeSetoranAyahEnd; i++) {
+      sessionPassedAyahs.add(i);
+    }
+    notifyListeners();
+  }
+
+  void setSessionEndAyah(int ayahNumber) {
+    if (ayahNumber < activeSetoranAyahStart) return;
+    
+    if (activeSetoranAyahEnd == ayahNumber) {
+      // Tap-back cancels the custom end-session marker and restores default
+      activeSetoranAyahEnd = defaultSetoranAyahEnd;
+    } else {
+      activeSetoranAyahEnd = ayahNumber;
+    }
+    
+    // Hapus status lulus/gagal untuk semua ayat setelah batas akhir baru
+    sessionPassedAyahs.removeWhere((a) => a > activeSetoranAyahEnd);
+    sessionFailedAyahs.removeWhere((a) => a > activeSetoranAyahEnd);
+    
+    // Pastikan semua ayat dari awal sampai batas akhir (jika belum gagal) ditandai lulus
+    for (int i = activeSetoranAyahStart; i <= activeSetoranAyahEnd; i++) {
+      if (!sessionFailedAyahs.contains(i)) {
+        sessionPassedAyahs.add(i);
+      }
+    }
     notifyListeners();
   }
 

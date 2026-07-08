@@ -24,22 +24,32 @@ class UserManagementScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.stars_rounded, size: 18),
-            SizedBox(width: 8),
-            Text('Halaqah Saya', style: TextStyle(fontSize: 13)),
+            Icon(Icons.stars_rounded, size: 16),
+            SizedBox(width: 4),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text('Halaqah', style: TextStyle(fontSize: 12)),
+              ),
+            ),
           ],
         ),
       ));
       views.add(const SantriListScreen(hideAppBar: true, showOnlyMine: true));
-
+ 
       // 2. Tab Semua Santri
       tabs.add(const Tab(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.people_alt_rounded, size: 18),
-            SizedBox(width: 8),
-            Text('Semua Santri', style: TextStyle(fontSize: 13)),
+            Icon(Icons.people_alt_rounded, size: 16),
+            SizedBox(width: 4),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text('Santri', style: TextStyle(fontSize: 12)),
+              ),
+            ),
           ],
         ),
       ));
@@ -50,43 +60,58 @@ class UserManagementScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.people_alt_rounded, size: 18),
-            SizedBox(width: 8),
-            Text('Santri', style: TextStyle(fontWeight: FontWeight.bold)),
+            Icon(Icons.people_alt_rounded, size: 16),
+            SizedBox(width: 4),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text('Santri', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
           ],
         ),
       ));
       views.add(const SantriListScreen(hideAppBar: true));
     }
-
+ 
     // Musyrif Tab (Common for both roles)
     tabs.add(Tab(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.person_pin_rounded, size: 18),
-          const SizedBox(width: 8),
-          Text(isMusyrif ? 'Musyrif Lain' : 'Musyrif', style: const TextStyle(fontSize: 13)),
+          const Icon(Icons.person_pin_rounded, size: 16),
+          const SizedBox(width: 4),
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(isMusyrif ? 'Musyrif' : 'Musyrif', style: const TextStyle(fontSize: 12)),
+            ),
+          ),
         ],
       ),
     ));
     views.add(const MusyrifListScreen(hideAppBar: true));
-
+ 
     // Admin sees Pengawas tab as well
     if (isAdmin) {
       tabs.add(const Tab(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.visibility_rounded, size: 18),
-            SizedBox(width: 8),
-            Text('Pengawas', style: TextStyle(fontWeight: FontWeight.bold)),
+            Icon(Icons.visibility_rounded, size: 16),
+            SizedBox(width: 4),
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text('Pengawas', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
           ],
         ),
       ));
       views.add(const PengawasListScreen(hideAppBar: true));
     }
-
+ 
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
@@ -99,11 +124,15 @@ class UserManagementScreen extends StatelessWidget {
             indicatorWeight: 3,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
-            isScrollable: isMusyrif || isAdmin, // Allow scrolling if 3 tabs
+            labelPadding: const EdgeInsets.symmetric(horizontal: 4), // Maximum horizontal space allocation
+            isScrollable: false, // Stretch tabs across screen width, no horizontal scroll
             tabs: tabs,
           ),
         ),
-        body: TabBarView(children: views),
+        body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(), // Disable swiping/sliding
+          children: views,
+        ),
       ),
     );
   }

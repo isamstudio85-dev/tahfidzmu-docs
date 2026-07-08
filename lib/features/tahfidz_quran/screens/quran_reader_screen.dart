@@ -40,7 +40,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFDE7),
+      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
       appBar: _buildAppBar(context),
       body: Selector<AppProvider, bool>(
         selector: (context, p) => p.isSurahLoading,
@@ -76,14 +76,31 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
           );
         },
       ),
-      bottomNavigationBar: widget.isReadOnly
+      floatingActionButton: widget.isReadOnly
           ? null
-          : _BottomBarWrapper(onFinish: () => _confirmFinish(context, context.read<AppProvider>())),
+          : Selector<AppProvider, int>(
+              selector: (context, p) => p.sessionPassedAyahs.length + p.sessionFailedAyahs.length,
+              builder: (context, totalMarked, child) {
+                final provider = context.read<AppProvider>();
+                return FloatingActionButton.extended(
+                  onPressed: totalMarked > 0 ? () => _confirmFinish(context, provider) : null,
+                  backgroundColor: totalMarked > 0 ? AppTheme.primaryGreen : Colors.grey.shade400,
+                  icon: const Icon(Icons.check_circle_outline_rounded, color: Colors.white),
+                  label: const Text(
+                    'SELESAI',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                );
+              },
+            ),
     );
   }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+      backgroundColor: AppTheme.primaryGreen, // Match logo/dashboard green
+      elevation: 0,
+      foregroundColor: Colors.white,
       title: Selector<AppProvider, ({String name, String englishName, SetoranType type})>(
         selector: (context, p) => (
           name: p.activeSetoranSurahName,
@@ -227,21 +244,21 @@ class _LiveDashboardWrapper extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 10, offset: const Offset(0, 4))],
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6, offset: const Offset(0, 2))],
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                padding: const EdgeInsets.fromLTRB(16, 6, 16, 4), // Extremely compact padding
                 child: Row(
                   children: [
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(santri?.name ?? 'Santri', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
-                          const SizedBox(height: 2),
-                          Text('Target Tahunan: ${(yearlyProgress * 100).toStringAsFixed(0)}% Selesai', style: TextStyle(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.bold)),
+                          Text(santri?.name ?? 'Santri', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
+                          Text('Target Tahunan: ${(yearlyProgress * 100).toStringAsFixed(0)}% Selesai', style: TextStyle(fontSize: 9, color: Colors.grey.shade600, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -252,19 +269,19 @@ class _LiveDashboardWrapper extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(10)),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 2), // Reduced vertical spacing
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12), // Reduced internal padding
+                decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(6)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _errorItem('KESALAHAN TAJWID', data.tajwidCount, AppTheme.tajwidColor),
-                    Container(width: 1, height: 20, color: Colors.grey.shade300),
+                    Container(width: 1, height: 14, color: Colors.grey.shade300), // Shorter divider
                     _errorItem('KESALAHAN MAKHROJ', data.makhrojCount, AppTheme.makhrojColor),
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
             ],
           ),
         );
@@ -274,77 +291,26 @@ class _LiveDashboardWrapper extends StatelessWidget {
 
   Widget _statusCircle(String label, int val, Color color) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 32, height: 32,
+          width: 24, height: 24, // Compact size
           decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle, border: Border.all(color: color.withValues(alpha: 0.3))),
-          child: Center(child: Text('$val', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14))),
+          child: Center(child: Text('$val', style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 11))),
         ),
-        const SizedBox(height: 2),
-        Text(label, style: TextStyle(fontSize: 8, color: color, fontWeight: FontWeight.bold)),
+        Text(label, style: TextStyle(fontSize: 7, color: color, fontWeight: FontWeight.bold)),
       ],
     );
   }
 
   Widget _errorItem(String label, int count, Color color) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text('$count', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: color)),
-        const SizedBox(width: 8),
-        Text(label, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5)),
+        Text('$count', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: color)), // Smaller digit size
+        const SizedBox(width: 6),
+        Text(label, style: TextStyle(fontSize: 8, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.3)),
       ],
-    );
-  }
-}
-
-class _BottomBarWrapper extends StatelessWidget {
-  const _BottomBarWrapper({required this.onFinish});
-  final VoidCallback onFinish;
-
-  @override
-  Widget build(BuildContext context) {
-    return Selector<AppProvider, ({int totalMarked, int maxMarked})>(
-      selector: (context, p) {
-        final allMarked = [...p.sessionPassedAyahs, ...p.sessionFailedAyahs];
-        return (
-          totalMarked: allMarked.length,
-          maxMarked: allMarked.isEmpty ? 0 : allMarked.reduce((a, b) => a > b ? a : b),
-        );
-      },
-      builder: (context, data, child) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, -4))],
-          ),
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-          child: SafeArea(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    data.totalMarked == 0 
-                        ? 'Tandai ayat untuk menyimpan' 
-                        : 'Ayat terakhir ditandai: ${data.maxMarked}',
-                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
-                  ),
-                ),
-                SizedBox(
-                  height: 52,
-                  child: FilledButton(
-                    onPressed: data.totalMarked > 0 ? onFinish : null,
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    ),
-                    child: const Text('SELESAI', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.2)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
@@ -402,6 +368,7 @@ class _ReaderContentWrapper extends StatelessWidget {
                   errors: ayahErrors,
                   isPassed: p.sessionPassedAyahs.contains(ayah.numberInSurah),
                   isFailed: p.sessionFailedAyahs.contains(ayah.numberInSurah),
+                  isEndAyah: p.activeSetoranAyahEnd == ayah.numberInSurah,
                 );
               },
               builder: (context, state, child) {
@@ -413,9 +380,11 @@ class _ReaderContentWrapper extends StatelessWidget {
                     sessionErrors: state.errors,
                     isPassed: state.isPassed,
                     isFailed: state.isFailed,
+                    isEndAyah: state.isEndAyah,
                     isReadOnly: isReadOnly,
                     onTogglePassed: () => context.read<AppProvider>().toggleAyahPassed(ayah.numberInSurah),
                     onToggleFailed: () => context.read<AppProvider>().toggleAyahFailed(ayah.numberInSurah),
+                    onMarkEnd: () => context.read<AppProvider>().setSessionEndAyah(ayah.numberInSurah),
                     onWordTap: (wordIndex, word) => onWordTap(surah.number, ayah.numberInSurah, wordIndex, word),
                   ),
                 );
@@ -432,18 +401,20 @@ class _AyahState {
   final Map<String, ErrorMark> errors;
   final bool isPassed;
   final bool isFailed;
+  final bool isEndAyah;
 
   _AyahState({
     required this.errors,
     required this.isPassed,
     required this.isFailed,
+    required this.isEndAyah,
   });
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! _AyahState) return false;
-    if (isPassed != other.isPassed || isFailed != other.isFailed) return false;
+    if (isPassed != other.isPassed || isFailed != other.isFailed || isEndAyah != other.isEndAyah) return false;
     if (errors.length != other.errors.length) return false;
     for (final key in errors.keys) {
       if (errors[key]?.errorType != other.errors[key]?.errorType) return false;
@@ -452,5 +423,5 @@ class _AyahState {
   }
 
   @override
-  int get hashCode => errors.hashCode ^ isPassed.hashCode ^ isFailed.hashCode;
+  int get hashCode => errors.hashCode ^ isPassed.hashCode ^ isFailed.hashCode ^ isEndAyah.hashCode;
 }

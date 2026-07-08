@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { Building2, Mail, MapPin, Phone, Save, School, ShieldAlert, Upload, X } from "lucide-react";
+import { Building2, Globe, Mail, MapPin, Phone, Save, School, ShieldAlert, Upload, UserRound, X } from "lucide-react";
 import PageMeta from "../components/common/PageMeta";
 import { useAuth } from "../context/AuthContext";
 import { db, storage } from "../firebase";
@@ -12,15 +12,19 @@ type PesantrenInfo = {
   noTelp: string;
   email: string;
   logoPath: string;
+  npsn: string;
+  website: string;
+  pimpinan: string;
 };
 
-type ModuleKey = "quran" | "hadits" | "tajwid" | "tahsin" | "graduation";
+type ModuleKey = "quran" | "hadits" | "tajwid" | "tahsin" | "pondok_info" | "graduation";
 
 const moduleItems: Array<{ key: ModuleKey; title: string; description: string; locked?: boolean }> = [
   { key: "quran", title: "Quran", description: "Hafalan dan setoran Al-Quran.", locked: true },
   { key: "hadits", title: "Hadits", description: "Hafalan hadits pilihan." },
   { key: "tajwid", title: "Tajwid", description: "Panduan hukum bacaan Al-Quran." },
   { key: "tahsin", title: "Tahsin", description: "Panduan fasih dan makharijul huruf." },
+  { key: "pondok_info", title: "Pengetahuan Pondok", description: "Materi pengetahuan pondok yang harus dihafal." },
   { key: "graduation", title: "Wisuda & Ujian Tasmi'", description: "Pendaftaran ujian tasmi' dan kelulusan wisuda." },
 ];
 
@@ -30,10 +34,20 @@ const emptyInfo: PesantrenInfo = {
   noTelp: "",
   email: "",
   logoPath: "",
+  npsn: "",
+  website: "",
+  pimpinan: "",
 };
 
 const inputCls = "w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-800 dark:text-white";
 const labelCls = "mb-1 block text-xs font-bold uppercase text-gray-700 dark:text-gray-300";
+const infoTabs = [
+  { key: "profil", label: "Profil" },
+  { key: "kontak", label: "Kontak" },
+  { key: "modul", label: "Modul" },
+] as const;
+
+type InfoTabKey = (typeof infoTabs)[number]["key"];
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -47,6 +61,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 export default function PesantrenInfoManagement() {
   const { profile } = useAuth();
   const [form, setForm] = useState<PesantrenInfo>(emptyInfo);
+  const [activeTab, setActiveTab] = useState<InfoTabKey>("profil");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -79,6 +94,9 @@ export default function PesantrenInfoManagement() {
         noTelp: String(data.noTelp || ""),
         email: String(data.email || ""),
         logoPath: String(data.logoPath || ""),
+        npsn: String(data.npsn || ""),
+        website: String(data.website || ""),
+        pimpinan: String(data.pimpinan || ""),
       });
       if (Array.isArray(active) && active.length > 0) {
         const normalized = Array.from(new Set(["quran", ...active.filter((item): item is ModuleKey => typeof item === "string")])) as ModuleKey[];
@@ -131,6 +149,9 @@ export default function PesantrenInfoManagement() {
             noTelp: form.noTelp.trim(),
             email: form.email.trim(),
             logoPath: finalLogoPath,
+            npsn: form.npsn.trim(),
+            website: form.website.trim(),
+            pimpinan: form.pimpinan.trim(),
           },
           { merge: true }
         ),
@@ -206,59 +227,106 @@ export default function PesantrenInfoManagement() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+            <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
               {error && <div className="mb-4 rounded-xl border border-error-100 bg-error-50 p-3 text-xs text-error-700 dark:bg-error-500/10 dark:text-error-400">{error}</div>}
-              <div className="grid gap-4 md:grid-cols-2">
-                <Field label="Nama Pesantren *">
-                  <div className="relative">
-                    <Building2 size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input value={form.nama} onChange={(e) => setForm((prev) => ({ ...prev, nama: e.target.value }))} className={`${inputCls} pl-10`} />
-                  </div>
-                </Field>
-                <Field label="No. Telp / WA">
-                  <div className="relative">
-                    <Phone size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input value={form.noTelp} onChange={(e) => setForm((prev) => ({ ...prev, noTelp: e.target.value }))} className={`${inputCls} pl-10`} />
-                  </div>
-                </Field>
-                <div className="md:col-span-2">
-                  <Field label="Alamat">
-                    <div className="relative">
-                      <MapPin size={16} className="pointer-events-none absolute left-3 top-3 text-gray-400" />
-                      <textarea value={form.alamat} onChange={(e) => setForm((prev) => ({ ...prev, alamat: e.target.value }))} rows={3} className={`${inputCls} pl-10`} />
-                    </div>
-                  </Field>
-                </div>
-                <div className="md:col-span-2">
-                  <Field label="Email">
-                    <div className="relative">
-                      <Mail size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                      <input type="email" value={form.email} onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))} className={`${inputCls} pl-10`} />
-                    </div>
-                  </Field>
-                </div>
-              </div>
-
-              <div className="mt-6 border-t border-gray-100 pt-6 dark:border-gray-800">
-                <h3 className="text-sm font-bold text-gray-800 dark:text-white">Modul Pesantren</h3>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Disimpan ke dokumen `settings/modules` dengan field `active`.</p>
-                <div className="mt-4 grid gap-3 md:grid-cols-2">
-                  {moduleItems.map((item) => {
-                    const active = modules.includes(item.key);
+              <div className="sticky top-0 z-10 rounded-t-2xl border-b border-gray-200 bg-white/95 px-6 py-4 backdrop-blur dark:border-gray-800 dark:bg-gray-900/95">
+                <div className="flex flex-wrap gap-2">
+                  {infoTabs.map((tab) => {
+                    const active = activeTab === tab.key;
                     return (
-                      <label key={item.key} className="flex items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-white/5">
-                        <div className="pr-4">
-                          <div className="font-semibold text-gray-800 dark:text-white">{item.title}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">{item.description}</div>
-                        </div>
-                        <input type="checkbox" checked={active} disabled={item.locked} onChange={() => toggleModule(item.key)} className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500 disabled:opacity-60" />
-                      </label>
+                      <button
+                        key={tab.key}
+                        type="button"
+                        onClick={() => setActiveTab(tab.key)}
+                        className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${active ? "bg-brand-500 text-white shadow-sm" : "border border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-white/5"}`}
+                      >
+                        {tab.label}
+                      </button>
                     );
                   })}
                 </div>
               </div>
 
-              <div className="mt-6 flex justify-end">
+              <div className="space-y-6 px-6 py-6">
+                {activeTab === "profil" && (
+                  <section className="grid gap-4 md:grid-cols-2">
+                    <Field label="Nama Pesantren *">
+                      <div className="relative">
+                        <Building2 size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input value={form.nama} onChange={(e) => setForm((prev) => ({ ...prev, nama: e.target.value }))} className={`${inputCls} pl-10`} />
+                      </div>
+                    </Field>
+                    <Field label="NPSN">
+                      <div className="relative">
+                        <Building2 size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input value={form.npsn} onChange={(e) => setForm((prev) => ({ ...prev, npsn: e.target.value }))} className={`${inputCls} pl-10`} />
+                      </div>
+                    </Field>
+                    <Field label="Kiai / Pimpinan Pondok">
+                      <div className="relative">
+                        <UserRound size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input value={form.pimpinan} onChange={(e) => setForm((prev) => ({ ...prev, pimpinan: e.target.value }))} className={`${inputCls} pl-10`} />
+                      </div>
+                    </Field>
+                    <div className="md:col-span-2">
+                      <Field label="Alamat">
+                        <div className="relative">
+                          <MapPin size={16} className="pointer-events-none absolute left-3 top-3 text-gray-400" />
+                          <textarea value={form.alamat} onChange={(e) => setForm((prev) => ({ ...prev, alamat: e.target.value }))} rows={3} className={`${inputCls} pl-10`} />
+                        </div>
+                      </Field>
+                    </div>
+                  </section>
+                )}
+
+                {activeTab === "kontak" && (
+                  <section className="grid gap-4 md:grid-cols-2">
+                    <Field label="No. Telp / WA">
+                      <div className="relative">
+                        <Phone size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input value={form.noTelp} onChange={(e) => setForm((prev) => ({ ...prev, noTelp: e.target.value }))} className={`${inputCls} pl-10`} />
+                      </div>
+                    </Field>
+                    <Field label="Email">
+                      <div className="relative">
+                        <Mail size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input type="email" value={form.email} onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))} className={`${inputCls} pl-10`} />
+                      </div>
+                    </Field>
+                    <div className="md:col-span-2">
+                      <Field label="Website Pesantren">
+                        <div className="relative">
+                          <Globe size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                          <input value={form.website} onChange={(e) => setForm((prev) => ({ ...prev, website: e.target.value }))} className={`${inputCls} pl-10`} />
+                        </div>
+                      </Field>
+                    </div>
+                  </section>
+                )}
+
+                {activeTab === "modul" && (
+                  <section>
+                    <h3 className="text-sm font-bold text-gray-800 dark:text-white">Modul Pesantren</h3>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Disimpan ke dokumen `settings/modules` dengan field `active`.</p>
+                    <div className="mt-4 grid gap-3 md:grid-cols-2">
+                      {moduleItems.map((item) => {
+                        const active = modules.includes(item.key);
+                        return (
+                          <label key={item.key} className="flex items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-white/5">
+                            <div className="pr-4">
+                              <div className="font-semibold text-gray-800 dark:text-white">{item.title}</div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">{item.description}</div>
+                            </div>
+                            <input type="checkbox" checked={active} disabled={item.locked} onChange={() => toggleModule(item.key)} className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500 disabled:opacity-60" />
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+              </div>
+
+              <div className="sticky bottom-0 z-10 flex justify-end border-t border-gray-200 bg-white/95 px-6 py-4 backdrop-blur dark:border-gray-800 dark:bg-gray-900/95">
                 <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:opacity-50">
                   <Save size={16} /> {saving ? "Menyimpan..." : "Simpan Perubahan"}
                 </button>

@@ -42,6 +42,13 @@ type GraduationDoc = {
   bannerPath?: string;
 };
 
+type HalaqahActivity = {
+  id: string;
+  name: string;
+  musyrifName: string;
+  santriCount: number;
+};
+
 type QuickLink = {
   title: string;
   subtitle: string;
@@ -71,6 +78,7 @@ export default function Home() {
   const [stats, setStats] = useState<DashboardStats>({ santri: 0, musyrif: 0, halaqah: 0, kelas: 0, wisuda: 0, registrations: 0 });
   const [pesantrenInfo, setPesantrenInfo] = useState<PesantrenInfo>(emptyInfo);
   const [graduationInfo, setGraduationInfo] = useState<PublishedGraduation | null>(null);
+  const [halaqahActivities, setHalaqahActivities] = useState<HalaqahActivity[]>([]);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const [moduleCount, setModuleCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -97,9 +105,30 @@ export default function Home() {
         ]);
 
         const infoData = infoSnap.exists() ? infoSnap.data() : {};
+        const musyrifMap = new Map(
+          musyrifSnap.docs.map((item) => [item.id, String(item.data().nama || "Musyrif belum ditentukan")])
+        );
+        const santriPerHalaqah = santriSnap.docs.reduce<Record<string, number>>((acc, item) => {
+          const halaqahId = String(item.data().halaqahId || "");
+          if (!halaqahId) return acc;
+          acc[halaqahId] = (acc[halaqahId] || 0) + 1;
+          return acc;
+        }, {});
         const publishedGraduationDoc = wisudaSnap.docs
           .map((item) => ({ id: item.id, ...(item.data() as Record<string, unknown>) }) as GraduationDoc)
           .find((item) => item.isPublished);
+        const activeHalaqah = halaqahSnap.docs
+          .map((item) => {
+            const data = item.data() as Record<string, unknown>;
+            return {
+              id: item.id,
+              name: String(data.nama || "Halaqah tanpa nama"),
+              musyrifName: musyrifMap.get(String(data.musyrifId || "")) || "Musyrif belum ditentukan",
+              santriCount: santriPerHalaqah[item.id] || 0,
+            };
+          })
+          .sort((a, b) => b.santriCount - a.santriCount || a.name.localeCompare(b.name, "id", { sensitivity: "base" }))
+          .slice(0, 4);
 
         const activeUntilRaw = pesantrenSnap.exists() ? pesantrenSnap.data()?.activeUntil : null;
         const activeUntil = activeUntilRaw instanceof Timestamp ? activeUntilRaw.toDate() : null;
@@ -132,6 +161,7 @@ export default function Home() {
               }
             : null
         );
+        setHalaqahActivities(activeHalaqah);
         setDaysLeft(currentDaysLeft);
         setModuleCount(Array.isArray(modulesSnap.data()?.active) ? modulesSnap.data()!.active.length : 0);
       } catch (err) {
@@ -144,10 +174,38 @@ export default function Home() {
   }, [profile]);
 
   const cards = [
-    { label: "Total Santri", value: stats.santri, icon: Users, color: "text-brand-500 bg-brand-50 dark:bg-brand-500/10" },
-    { label: "Total Musyrif", value: stats.musyrif, icon: GraduationCap, color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10" },
-    { label: "Total Halaqah", value: stats.halaqah, icon: BookOpen, color: "text-amber-600 bg-amber-50 dark:bg-amber-500/10" },
-    { label: "Total Kelas", value: stats.kelas, icon: FolderOpen, color: "text-blue-600 bg-blue-50 dark:bg-blue-500/10" },
+    {
+      label: "Total Santri",
+      value: stats.santri,
+      icon: Users,
+      iconClass: "text-brand-100 bg-white/15",
+      cardClass: "border-brand-300/40 bg-gradient-to-br from-brand-600 via-brand-500 to-sky-500 text-white",
+      textClass: "text-white/80",
+    },
+    {
+      label: "Total Musyrif",
+      value: stats.musyrif,
+      icon: GraduationCap,
+      iconClass: "text-emerald-100 bg-white/15",
+      cardClass: "border-emerald-300/40 bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 text-white",
+      textClass: "text-white/80",
+    },
+    {
+      label: "Total Halaqah",
+      value: stats.halaqah,
+      icon: BookOpen,
+      iconClass: "text-amber-100 bg-white/15",
+      cardClass: "border-amber-300/40 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 text-white",
+      textClass: "text-white/80",
+    },
+    {
+      label: "Total Kelas",
+      value: stats.kelas,
+      icon: FolderOpen,
+      iconClass: "text-cyan-100 bg-white/15",
+      cardClass: "border-cyan-300/40 bg-gradient-to-br from-cyan-600 via-sky-500 to-blue-500 text-white",
+      textClass: "text-white/80",
+    },
   ];
 
   const quickLinks: QuickLink[] = useMemo(() => ([
@@ -257,20 +315,20 @@ export default function Home() {
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {cards.map((c) => (
-                <div key={c.label} className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.color}`}>
+                <div key={c.label} className={`flex items-center gap-4 rounded-2xl border p-6 shadow-sm ${c.cardClass}`}>
+                  <div className={`flex h-12 w-12 items-center justify-center rounded-xl backdrop-blur-sm ${c.iconClass}`}>
                     <c.icon size={24} />
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{c.label}</span>
-                    <h4 className="mt-1 text-2xl font-bold text-gray-800 dark:text-white/90">{c.value}</h4>
+                    <span className={`text-sm font-medium ${c.textClass}`}>{c.label}</span>
+                    <h4 className="mt-1 text-2xl font-bold text-white">{c.value}</h4>
                   </div>
                 </div>
               ))}
             </div>
 
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-              <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+              <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-brand-50 p-6 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-bold text-gray-800 dark:text-white">Akses Cepat</h3>
@@ -279,7 +337,7 @@ export default function Home() {
                 </div>
                 <div className="mt-5 grid gap-3 md:grid-cols-2">
                   {quickLinks.map((item) => (
-                    <Link key={item.path} to={item.path} className="group rounded-2xl border border-gray-200 p-4 transition hover:border-brand-200 hover:shadow-sm dark:border-gray-800 dark:hover:border-brand-500/20">
+                    <Link key={item.path} to={item.path} className="group rounded-2xl border border-white/70 bg-white/80 p-4 transition hover:border-brand-200 hover:shadow-sm dark:border-gray-800 dark:hover:border-brand-500/20">
                       <div className="flex items-start gap-3">
                         <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${item.bg} ${item.color}`}>
                           <item.icon size={20} />
@@ -297,11 +355,11 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+              <div className="rounded-2xl border border-amber-200/70 bg-gradient-to-br from-amber-50 via-white to-emerald-50 p-6 dark:border-gray-800 dark:bg-white/[0.03]">
                 <h3 className="text-lg font-bold text-gray-800 dark:text-white">Ringkasan Operasional</h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Ikhtisar cepat untuk kebutuhan admin harian.</p>
                 <div className="mt-5 space-y-3">
-                  <div className="rounded-2xl bg-gray-50 p-4 dark:bg-white/5">
+                  <div className="rounded-2xl border border-emerald-100 bg-white/80 p-4 dark:bg-white/5">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10"><Wallet size={18} /></div>
                       <div>
@@ -310,14 +368,36 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-2xl bg-gray-50 p-4 dark:bg-white/5">
+                  <div className="rounded-2xl border border-brand-100 bg-white/80 p-4 dark:bg-white/5">
+                    <div className="text-sm font-semibold text-gray-800 dark:text-white">Aktivitas Halaqah Saat Ini</div>
+                    <div className="mt-3 space-y-3">
+                      {halaqahActivities.length === 0 ? (
+                        <div className="text-sm text-gray-500 dark:text-gray-400">Belum ada halaqah aktif yang bisa diringkas.</div>
+                      ) : (
+                        halaqahActivities.map((item) => (
+                          <div key={item.id} className="rounded-xl border border-brand-100/80 bg-brand-50/60 p-3 dark:border-brand-500/20 dark:bg-brand-500/5">
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <div className="font-semibold text-gray-800 dark:text-white">{item.name}</div>
+                                <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">Musyrif: {item.musyrifName}</div>
+                              </div>
+                              <div className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-brand-600 shadow-sm dark:bg-gray-900 dark:text-brand-300">
+                                {item.santriCount} santri
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                  <div className="rounded-2xl border border-sky-100 bg-white/80 p-4 dark:bg-white/5">
                     <div className="text-sm font-semibold text-gray-800 dark:text-white">Kontak Pesantren</div>
                     <div className="mt-2 space-y-1 text-sm text-gray-500 dark:text-gray-400">
                       <p>{pesantrenInfo.noTelp || "No. telp belum diisi"}</p>
                       <p>{pesantrenInfo.email || "Email belum diisi"}</p>
                     </div>
                   </div>
-                  <div className="rounded-2xl bg-gray-50 p-4 dark:bg-white/5">
+                  <div className="rounded-2xl border border-violet-100 bg-white/80 p-4 dark:bg-white/5">
                     <div className="text-sm font-semibold text-gray-800 dark:text-white">Status Akun</div>
                     <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">Akun ini terhubung ke pesantren dan siap dipakai untuk pengelolaan data web admin.</div>
                   </div>

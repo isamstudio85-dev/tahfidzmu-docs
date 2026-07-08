@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:tahfidz_app/models/hadith.dart';
-import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 class HaditsDetailScreen extends StatelessWidget {
   const HaditsDetailScreen({super.key, required this.hadith});
@@ -16,7 +15,13 @@ class HaditsDetailScreen extends StatelessWidget {
         : 'Hadits ${hadith.id}';
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
+      appBar: AppBar(
+        title: Text(title),
+        backgroundColor: const Color(0xFF2E5A27), // Deep olive green
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -29,7 +34,7 @@ class HaditsDetailScreen extends StatelessWidget {
                 if (hadith.isArbain)
                   _badge(
                     'Arbain Nawawi #${hadith.arbainNo}',
-                    const Color(0xFF1A237E),
+                    const Color(0xFF2E5A27),
                   ),
                 _badge(Hadith.temaLabel(hadith.tema), _temaColor(hadith.tema)),
               ],
@@ -39,33 +44,21 @@ class HaditsDetailScreen extends StatelessWidget {
             // ── Matan Arabic ─────────────────────────────────────────────
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.darkGreen.withValues(alpha: 0.9),
-                    AppTheme.primaryGreen,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.primaryGreen.withValues(alpha: 0.25),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                color: const Color(0xFFF4EAD4), // Classic yellow highlight backing
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE5D5B8), width: 1.5),
               ),
               child: Text(
                 hadith.matanArab,
                 textAlign: TextAlign.center,
                 textDirection: TextDirection.rtl,
                 style: GoogleFonts.amiri(
-                  fontSize: 22,
-                  color: Colors.white,
+                  fontSize: 24,
+                  color: const Color(0xFF1B5E20), // Deep Islamic Green
                   height: 2.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -75,15 +68,9 @@ class HaditsDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                color: const Color(0xFFFDF9F0),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFEDE8DF), width: 1.2),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,16 +78,20 @@ class HaditsDetailScreen extends StatelessWidget {
                   Text(
                     'TERJEMAH',
                     style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.bold,
                       fontSize: 11,
-                      color: Colors.grey.shade500,
+                      color: const Color(0xFF2E5A27),
                       letterSpacing: 0.8,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     hadith.terjemah,
-                    style: const TextStyle(fontSize: 15, height: 1.8),
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      height: 1.7,
+                      color: const Color(0xFF4E342E), // Soft Espresso
+                    ),
                   ),
                 ],
               ),
@@ -111,15 +102,9 @@ class HaditsDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                color: const Color(0xFFFDF9F0),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFEDE8DF), width: 1.2),
               ),
               child: Column(
                 children: [
@@ -127,14 +112,14 @@ class HaditsDetailScreen extends StatelessWidget {
                     Icons.person_rounded,
                     'Perawi',
                     hadith.perawi,
-                    AppTheme.primaryGreen,
+                    const Color(0xFF2E5A27),
                   ),
-                  const Divider(height: 16),
+                  const Divider(height: 16, color: Color(0xFFEDE8DF)),
                   _infoRow(
                     Icons.import_contacts_rounded,
                     'Sumber',
                     hadith.sumber,
-                    const Color(0xFF1A237E),
+                    const Color(0xFF2E5A27),
                   ),
                 ],
               ),
@@ -157,7 +142,7 @@ class HaditsDetailScreen extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: 11,
           color: color,
           fontWeight: FontWeight.w600,
         ),
@@ -173,7 +158,7 @@ class HaditsDetailScreen extends StatelessWidget {
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
+            shape: BoxShape.circle,
           ),
           child: Icon(icon, size: 16, color: color),
         ),
@@ -185,17 +170,18 @@ class HaditsDetailScreen extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey.shade500,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 10,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF4E342E),
                 ),
               ),
             ],
@@ -213,7 +199,7 @@ Color _temaColor(String tema) {
     case 'akidah':
       return const Color(0xFF1565C0);
     case 'ibadah':
-      return AppTheme.primaryGreen;
+      return const Color(0xFF2E5A27);
     case 'akhlak':
       return const Color(0xFF6A1B9A);
     case 'quran':

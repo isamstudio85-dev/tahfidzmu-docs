@@ -29,6 +29,7 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
   StreamSubscription? pengawasSub;
   StreamSubscription? presensiSub;
   StreamSubscription? notificationSub;
+  StreamSubscription? pondokKnowledgeSub;
 
   final Map<String, StreamSubscription> _setoranSubs = {};
   final Map<String, StreamSubscription> _tasmiSubs = {};
@@ -42,6 +43,8 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
   List<PengawasData> pengawasList = [];
   List<PresensiHalaqah> presensiList = [];
   List<AppNotification> notificationList = [];
+  List<Map<String, dynamic>> pondokKnowledgeList = [];
+  bool isPondokKnowledgeInitialized = false;
   
   PesantrenInfo pesantrenInfo = const PesantrenInfo(
     nama: 'Al-Furqon MBS Cibiuk',
@@ -267,6 +270,19 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
       }
     });
 
+    pondokKnowledgeSub = getCollection('settings').doc('pondok_knowledge').snapshots().listen((doc) {
+      if (doc.exists) {
+        pondokKnowledgeList = List<Map<String, dynamic>>.from(doc.data()?['items'] ?? []);
+        isPondokKnowledgeInitialized = true;
+      } else {
+        pondokKnowledgeList = [];
+        isPondokKnowledgeInitialized = false;
+      }
+      notifyListeners();
+    }, onError: (e) {
+      debugPrint("Error listening to pondok_knowledge: $e");
+    });
+
     // Wait for initial essential data streams to yield at least one event before proceeding
     // Capped with a timeout to prevent bootstrapping hangs if there is no cached data and no network
     try {
@@ -379,6 +395,7 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     pengawasSub?.cancel();
     presensiSub?.cancel();
     notificationSub?.cancel();
+    pondokKnowledgeSub?.cancel();
     cancelAllSubcollectionSubscriptions();
   }
 

@@ -10,6 +10,7 @@ import {
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { useAuth } from "../context/AuthContext";
 
 type NavItem = {
   name: string;
@@ -17,7 +18,7 @@ type NavItem = {
   path?: string;
 };
 
-const navItems: NavItem[] = [
+const adminNavItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
@@ -60,9 +61,19 @@ const navItems: NavItem[] = [
   },
 ];
 
+const superAdminNavItems: NavItem[] = [
+  {
+    icon: <GridIcon />,
+    name: "Pesantren",
+    path: "/pesantren",
+  },
+];
+
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+  const { profile } = useAuth();
   const location = useLocation();
+  const navItems = profile?.role === "superAdmin" ? superAdminNavItems : adminNavItems;
   const isActive = useCallback(
     (path: string) => location.pathname === path,
     [location.pathname]
@@ -145,7 +156,7 @@ const AppSidebar: React.FC = () => {
               !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
             }`}
           >
-            Menu Admin
+            {profile?.role === "superAdmin" ? "Super Admin" : "Menu Admin"}
           </h2>
           {renderMenuItems(navItems)}
         </nav>

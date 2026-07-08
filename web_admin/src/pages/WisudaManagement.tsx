@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { collection, deleteDoc, doc, getDocs, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { CalendarDays, Edit2, FolderOpen, GraduationCap, Plus, Save, Search, ShieldAlert, Trash2, Upload, X } from "lucide-react";
+import { CalendarDays, Edit2, GraduationCap, Plus, Save, Search, ShieldAlert, Trash2, Upload, X } from "lucide-react";
 import PageMeta from "../components/common/PageMeta";
 import { useAuth } from "../context/AuthContext";
 import { db, storage } from "../firebase";
@@ -205,6 +205,16 @@ export default function WisudaManagement() {
       .sort((a, b) => String(b.year || "").localeCompare(String(a.year || ""), "id", { numeric: true }));
   }, [events, search]);
 
+  const publishedCount = useMemo(() => events.filter((event) => event.isPublished).length, [events]);
+  const releasedCertificatesCount = useMemo(
+    () => events.filter((event) => event.isCertificatesReleased).length,
+    [events]
+  );
+  const acceptedCount = useMemo(
+    () => registrations.filter((item) => item.status === "diterima").length,
+    [registrations]
+  );
+
   const handleOpenAdd = () => {
     setIsEdit(false);
     setForm(emptyEvent());
@@ -316,12 +326,49 @@ export default function WisudaManagement() {
     <>
       <PageMeta title="Manajemen Wisuda | TahfidzMU Admin" description="Kelola agenda wisuda dan ujian tasmi'." />
       <div className="space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white md:text-2xl">Manajemen Wisuda</h2>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Kelola `graduation_events` agar aplikasi Android dan admin web memakai agenda yang sama.</p>
+        <div className="overflow-hidden rounded-[28px] bg-gradient-to-r from-brand-700 via-brand-600 to-emerald-500 text-white shadow-sm">
+          <div className="grid gap-6 px-6 py-7 lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,0.8fr)] lg:px-8">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em]">
+                <GraduationCap size={14} /> Manajemen Wisuda
+              </div>
+              <h2 className="mt-4 text-2xl font-bold md:text-3xl">Kelola haflah, pendaftar, biaya, dan publikasi dalam satu halaman</h2>
+              <p className="mt-3 max-w-2xl text-sm text-white/80 md:text-base">Banner wisuda sekarang jadi pengantar utama. Admin bisa langsung melihat gambaran agenda aktif, lalu turun ke kartu ringkasan dan daftar peserta di bawahnya.</p>
+            </div>
+            <div className="flex flex-col justify-between gap-4 rounded-3xl border border-white/15 bg-black/10 p-5 backdrop-blur-sm">
+              <div>
+                <div className="text-xs font-bold uppercase tracking-[0.18em] text-white/70">Status Saat Ini</div>
+                <div className="mt-2 text-lg font-semibold">{events.length === 0 ? "Belum ada agenda aktif" : `${publishedCount} agenda sudah dipublikasikan`}</div>
+                <p className="mt-2 text-sm text-white/75">{events.length === 0 ? "Mulai dari membuat agenda pertama agar santri dan wali bisa melihat jadwal wisuda di aplikasi." : `${registrations.length} pendaftaran wisuda sudah tercatat dan siap dikelola.`}</p>
+              </div>
+              <button onClick={handleOpenAdd} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-brand-700 transition hover:bg-white/90">
+                <Plus size={18} /> Tambah Agenda
+              </button>
+            </div>
           </div>
-          <button onClick={handleOpenAdd} className="flex items-center justify-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-600"><Plus size={18} /> Tambah Agenda</button>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-white p-5 dark:border-sky-500/20 dark:bg-sky-500/10">
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-sky-600 dark:text-sky-300">Total Agenda</div>
+            <div className="mt-3 text-3xl font-bold text-sky-950 dark:text-white">{events.length}</div>
+            <div className="mt-1 text-sm text-sky-700/80 dark:text-sky-100/75">Agenda wisuda tersimpan</div>
+          </div>
+          <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-300">Dipublikasikan</div>
+            <div className="mt-3 text-3xl font-bold text-emerald-950 dark:text-white">{publishedCount}</div>
+            <div className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-100/75">Tampil di aplikasi santri dan wali</div>
+          </div>
+          <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5 dark:border-amber-500/20 dark:bg-amber-500/10">
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-amber-600 dark:text-amber-300">Pendaftar</div>
+            <div className="mt-3 text-3xl font-bold text-amber-950 dark:text-white">{registrations.length}</div>
+            <div className="mt-1 text-sm text-amber-700/80 dark:text-amber-100/75">{acceptedCount} santri sudah diterima</div>
+          </div>
+          <div className="rounded-2xl border border-fuchsia-200 bg-gradient-to-br from-fuchsia-50 to-white p-5 dark:border-fuchsia-500/20 dark:bg-fuchsia-500/10">
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-fuchsia-600 dark:text-fuchsia-300">Sertifikat</div>
+            <div className="mt-3 text-3xl font-bold text-fuchsia-950 dark:text-white">{releasedCertificatesCount}</div>
+            <div className="mt-1 text-sm text-fuchsia-700/80 dark:text-fuchsia-100/75">Agenda dengan sertifikat digital aktif</div>
+          </div>
         </div>
 
         <div className="relative">
@@ -332,7 +379,25 @@ export default function WisudaManagement() {
         {loading ? (
           <div className="flex min-h-[200px] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-3 border-brand-500 border-t-transparent"></div></div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-2xl border border-gray-200 bg-white p-12 text-center text-gray-500 dark:border-gray-800 dark:bg-white/[0.03]"><FolderOpen size={36} className="mx-auto mb-3 text-gray-300" /><p className="text-sm">Belum ada agenda wisuda.</p></div>
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+            <div className="grid gap-4 p-6 lg:grid-cols-3">
+              <div className="rounded-2xl border border-brand-100 bg-brand-50 p-5 dark:border-brand-500/20 dark:bg-brand-500/10">
+                <div className="text-sm font-bold text-gray-900 dark:text-white">1. Siapkan jadwal</div>
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Isi nama agenda, tahun, metode tasmi', tanggal ujian, dan hari wisuda.</p>
+              </div>
+              <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
+                <div className="text-sm font-bold text-gray-900 dark:text-white">2. Publikasikan ke aplikasi</div>
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Aktifkan publikasi agar santri dan wali langsung melihat informasi wisuda dari aplikasi.</p>
+              </div>
+              <div className="rounded-2xl border border-amber-100 bg-amber-50 p-5 dark:border-amber-500/20 dark:bg-amber-500/10">
+                <div className="text-sm font-bold text-gray-900 dark:text-white">3. Kelola pendaftar</div>
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Setelah santri mendaftar, status peserta dan pembayaran akan muncul otomatis di halaman ini.</p>
+              </div>
+            </div>
+            <div className="border-t border-gray-100 px-6 py-4 text-sm text-gray-500 dark:border-gray-800 dark:text-gray-400">
+              Saat ini ada {santriList.length} santri di database dan {registrations.length} pendaftaran wisuda tercatat.
+            </div>
+          </div>
         ) : (
           <div className="grid gap-4 lg:grid-cols-2">
             {filtered.map((event) => (

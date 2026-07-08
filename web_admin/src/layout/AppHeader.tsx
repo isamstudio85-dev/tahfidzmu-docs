@@ -1,14 +1,18 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import UserDropdown from "../components/header/UserDropdown";
 import tahfidzLogoIcon from "../../../assets/icons/logo-tahfidzmu.png";
+import { useAuth } from "../context/AuthContext";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+  const { profile, isImpersonating, switchBackToSuperAdmin } = useAuth();
+  const navigate = useNavigate();
+  const isSuperAdmin = profile?.role === "superAdmin";
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
@@ -16,6 +20,11 @@ const AppHeader: React.FC = () => {
     } else {
       toggleMobileSidebar();
     }
+  };
+
+  const handleBackToSuperAdmin = () => {
+    switchBackToSuperAdmin();
+    navigate("/pesantren");
   };
 
   return (
@@ -65,7 +74,13 @@ const AppHeader: React.FC = () => {
               <img src={tahfidzLogoIcon} alt="TahfidzMU" className="h-10 w-10 rounded-xl object-contain" />
               <div className="min-w-0">
                 <p className="text-lg font-bold tracking-[0.12em] text-gray-800 dark:text-white">TahfidzMU</p>
-                <p className="hidden text-xs text-gray-500 dark:text-gray-400 lg:block">Kelola data pesantren dari web dengan struktur yang sama seperti aplikasi Android.</p>
+                <p className="hidden text-xs text-gray-500 dark:text-gray-400 lg:block">
+                  {isImpersonating
+                    ? `Mode admin pesantren aktif untuk ${profile?.pesantrenId || "tenant"}.`
+                    : isSuperAdmin
+                    ? "Kelola daftar pesantren, status akses, dan paket langganan dari satu panel pusat."
+                    : "Kelola data pesantren dari web dengan struktur yang sama seperti aplikasi Android."}
+                </p>
               </div>
             </Link>
           </div>
@@ -94,6 +109,15 @@ const AppHeader: React.FC = () => {
               isApplicationMenuOpen ? "flex" : "hidden"
             } items-center justify-end gap-3 px-5 py-4 lg:flex lg:px-0 lg:py-0`}
           >
+          {isImpersonating && (
+            <button
+              type="button"
+              onClick={handleBackToSuperAdmin}
+              className="hidden rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300 lg:inline-flex"
+            >
+              Kembali ke Super Admin
+            </button>
+          )}
           <ThemeToggleButton />
           <UserDropdown />
           </div>

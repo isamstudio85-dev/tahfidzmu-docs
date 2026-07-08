@@ -40,7 +40,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
     final canAddSetoran = provider.isAdmin || provider.isMusyrif;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F8E9),
+      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
       appBar: AppBar(
         title: Text(
           'Progres Tahfidz',
@@ -50,7 +50,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
             fontSize: 18,
           ),
         ),
-        backgroundColor: AppTheme.primaryGreen,
+        backgroundColor: AppTheme.primaryGreen, // Restore logo green
         iconTheme: const IconThemeData(color: Colors.white),
         bottom: TabBar(
           controller: _tabController,
@@ -68,6 +68,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
       ),
       body: TabBarView(
         controller: _tabController,
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           QuranHistoryList(
             query: _query, 

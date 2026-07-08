@@ -25,7 +25,7 @@ export default function PengawasManagement() {
   const [existingId, setExistingId] = useState("");
   const [existingMappingKey, setExistingMappingKey] = useState("");
   const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+  const [nip, setNip] = useState("");
   const [password, setPassword] = useState("");
   const [noHp, setNoHp] = useState("");
   const [jabatan, setJabatan] = useState("Pengawas");
@@ -71,7 +71,7 @@ export default function PengawasManagement() {
 
   const resetForm = () => {
     setName("");
-    setUsername("");
+    setNip("");
     setPassword("");
     setNoHp("");
     setJabatan("Pengawas");
@@ -95,9 +95,9 @@ export default function PengawasManagement() {
     const entry = Object.entries(mappings).find(([, value]) => value.linkedId === item.id);
     setIsEdit(true);
     setExistingId(item.id);
-    setExistingMappingKey(entry?.[0] || item.username || "");
+    setExistingMappingKey(entry?.[0] || String(item.nip || item.username || "").replace(/\D/g, ""));
     setName(item.nama || "");
-    setUsername(item.username || "");
+    setNip(item.nip || item.username || "");
     setPassword("");
     setNoHp(item.nomorHp || "");
     setJabatan(item.jabatan || "Pengawas");
@@ -127,13 +127,14 @@ export default function PengawasManagement() {
     const pid = profile?.pesantrenId;
     if (!pid) return;
 
-    const normalizedUsername = username.trim().toLowerCase();
-    if (!name.trim() || !normalizedUsername) {
-      setError("Nama dan username wajib diisi");
+    const rawNip = nip.trim();
+    const normalizedNip = rawNip.replace(/\D/g, "");
+    if (!name.trim() || !rawNip) {
+      setError("Nama dan NIP wajib diisi");
       return;
     }
-    if (normalizedUsername.includes(" ")) {
-      setError("Username tidak boleh mengandung spasi");
+    if (!normalizedNip) {
+      setError("NIP harus mengandung angka");
       return;
     }
     if (!isEdit && password.trim() && password.trim().length < 6) {
@@ -167,7 +168,8 @@ export default function PengawasManagement() {
         {
           id: docId,
           nama: name.trim(),
-          username: normalizedUsername,
+          nip: rawNip,
+          username: rawNip,
           nomorHp: noHp.trim(),
           jabatan: jabatan || "Pengawas",
           status,
@@ -177,26 +179,35 @@ export default function PengawasManagement() {
         { merge: true }
       );
 
+      const nextMappingKey = normalizedNip;
+      const currentMappingKey = existingMappingKey || nextMappingKey;
+      const currentDefaultPassword = mappings[currentMappingKey]?.defaultPassword || currentMappingKey;
+      const nextDefaultPassword = password.trim() || currentDefaultPassword || nextMappingKey;
+
       if (!isEdit) {
         await setDoc(
-          doc(db, "pesantren", pid, "user_mappings", normalizedUsername),
+          doc(db, "pesantren", pid, "user_mappings", nextMappingKey),
           {
             linkedId: docId,
             role: "pengawas",
-            defaultPassword: password.trim() || normalizedUsername,
+            defaultPassword: password.trim() || nextMappingKey,
           },
           { merge: true }
         );
-      } else if (password.trim()) {
+      } else {
         await setDoc(
-          doc(db, "pesantren", pid, "user_mappings", existingMappingKey || normalizedUsername),
+          doc(db, "pesantren", pid, "user_mappings", nextMappingKey),
           {
             linkedId: docId,
             role: "pengawas",
-            defaultPassword: password.trim(),
+            defaultPassword: nextDefaultPassword,
           },
           { merge: true }
         );
+
+        if (currentMappingKey && currentMappingKey !== nextMappingKey) {
+          await deleteDoc(doc(db, "pesantren", pid, "user_mappings", currentMappingKey)).catch(() => {});
+        }
       }
 
       setIsOpen(false);
@@ -219,8 +230,11 @@ export default function PengawasManagement() {
       if (entry) {
         await deleteDoc(doc(db, "pesantren", pid, "user_mappings", entry[0])).catch(() => {});
       }
-      if (item.username) {
-        await deleteDoc(doc(db, "pesantren", pid, "user_mappings", item.username)).catch(() => {});
+      const legacyKeys = [item.nip, item.username]
+        .map((value: string | undefined) => String(value || "").replace(/\D/g, ""))
+        .filter(Boolean);
+      for (const legacyKey of legacyKeys) {
+        await deleteDoc(doc(db, "pesantren", pid, "user_mappings", legacyKey)).catch(() => {});
       }
       load();
     } catch (deleteError) {
@@ -231,7 +245,8 @@ export default function PengawasManagement() {
 
   const handleOpenQr = (item: any) => {
     const entry = Object.entries(mappings).find(([, value]) => value.linkedId === item.id);
-    const loginKey = entry ? entry[0] : item.username || item.id;
+    const fallbackKey = String(item.nip || item.username || item.id || "").replace(/\D/g, "") || item.id;
+    const loginKey = entry ? entry[0] : fallbackKey;
     const pwd = entry?.[1]?.defaultPassword || loginKey;
     setSelected({
       ...item,
@@ -253,7 +268,7 @@ export default function PengawasManagement() {
   const filtered = [...list]
     .filter((item) => {
       const needle = search.toLowerCase();
-      return [item.nama, item.username, item.jabatan].join(" ").toLowerCase().includes(needle);
+      return [item.nama, item.nip, item.username, item.jabatan].join(" ").toLowerCase().includes(needle);
     })
     .sort((a, b) => String(a.nama || "").localeCompare(String(b.nama || ""), "id", { sensitivity: "base" }));
 
@@ -271,7 +286,7 @@ export default function PengawasManagement() {
 
         <div className="relative">
           <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input type="text" placeholder="Cari nama, username, jabatan..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white" />
+          <input type="text" placeholder="Cari nama, NIP, jabatan..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white" />
         </div>
 
         {loading ? (
@@ -283,7 +298,7 @@ export default function PengawasManagement() {
                 <thead>
                   <tr className="border-b border-gray-100 bg-gray-50 text-gray-500 dark:border-gray-800 dark:bg-white/[0.02] dark:text-gray-400">
                     <th className="p-4">Pengawas</th>
-                    <th className="p-4">Username</th>
+                    <th className="p-4">NIP</th>
                     <th className="p-4">Jabatan</th>
                     <th className="p-4">No. HP</th>
                     <th className="p-4">Status</th>
@@ -310,7 +325,7 @@ export default function PengawasManagement() {
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 font-mono font-bold text-gray-900 dark:text-white">@{item.username || "-"}</td>
+                      <td className="p-4 font-mono font-bold text-gray-900 dark:text-white">{item.nip || item.username || "-"}</td>
                       <td className="p-4">{item.jabatan || "Pengawas"}</td>
                       <td className="p-4">{item.nomorHp || "-"}</td>
                       <td className="p-4">
@@ -342,6 +357,7 @@ export default function PengawasManagement() {
             <form onSubmit={handleSave} className="space-y-4">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field label="Nama Lengkap *"><input required value={name} onChange={(e) => setName(e.target.value)} className={inputCls} /></Field>
+                <Field label="NIP Login *"><input required value={nip} onChange={(e) => setNip(e.target.value)} placeholder="contoh: 1987654321" className={inputCls} /></Field>
                 <Field label="No. HP / WhatsApp"><input value={noHp} onChange={(e) => setNoHp(e.target.value)} className={inputCls} /></Field>
                 <Field label="Jabatan *">
                   <select value={jabatan} onChange={(e) => setJabatan(e.target.value)} className={inputCls}>
@@ -359,14 +375,14 @@ export default function PengawasManagement() {
 
               {!isEdit && (
                 <div className="grid grid-cols-1 gap-4 rounded-xl border border-dashed border-gray-200 p-3 dark:border-gray-700 sm:grid-cols-2">
-                  <Field label="Username Login *"><input required value={username} onChange={(e) => setUsername(e.target.value)} placeholder="contoh: pengawas1" className={inputCls} /></Field>
-                  <Field label="Sandi Login (opsional)"><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="default: sama dengan username" className={inputCls} /></Field>
+                  <Field label="ID Login"><input disabled value={existingMappingKey || nip.replace(/\D/g, "") || "-"} className={inputCls + " opacity-70"} /></Field>
+                  <Field label="Sandi Login (opsional)"><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="default: sama dengan NIP" className={inputCls} /></Field>
                 </div>
               )}
 
               {isEdit && (
                 <div className="grid grid-cols-1 gap-4 rounded-xl border border-dashed border-gray-200 p-3 dark:border-gray-700 sm:grid-cols-2">
-                  <Field label="Username Login"><input disabled value={`@${existingMappingKey || username || "-"}`} className={inputCls + " opacity-70"} /></Field>
+                  <Field label="ID Login"><input disabled value={nip.replace(/\D/g, "") || existingMappingKey || "-"} className={inputCls + " opacity-70"} /></Field>
                   <Field label="Ganti Sandi Login (opsional)"><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="kosongkan jika tidak diubah" className={inputCls} /></Field>
                 </div>
               )}
@@ -413,7 +429,7 @@ export default function PengawasManagement() {
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold text-gray-900 dark:text-white">{selected.nama}</p>
-                  <p className="text-[11px] text-gray-500 dark:text-gray-400">Username: <span className="font-mono">@{selected.username || selected.id || "-"}</span></p>
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400">NIP: <span className="font-mono">{selected.nip || selected.username || selected.id || "-"}</span></p>
                 </div>
               </div>
               <div className="flex justify-center rounded-xl bg-white p-4"><QRCodeSVG value={selected.qrValue} size={180} /></div>
@@ -421,7 +437,7 @@ export default function PengawasManagement() {
             </div>
             <div className="mt-4 space-y-1 text-center text-sm text-gray-700 dark:text-gray-300">
               <p>Nama: <span className="font-semibold">{selected.nama || "-"}</span></p>
-              <p>Username: <span className="font-mono font-bold">@{selected.username || "-"}</span></p>
+              <p>NIP: <span className="font-mono font-bold">{selected.nip || selected.username || "-"}</span></p>
             </div>
             <button onClick={() => setQrOpen(false)} className="mt-5 w-full rounded-xl bg-brand-500 px-4 py-2 text-sm font-bold text-white hover:bg-brand-600">Tutup</button>
           </div>

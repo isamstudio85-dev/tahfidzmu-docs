@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
@@ -17,9 +17,12 @@ interface AuthContextValue {
   user: User | null;
   profile: AdminProfile | null;
   loading: boolean;
+  isImpersonating: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  switchToTenantAdmin: (pesantrenId: string) => void;
+  switchBackToSuperAdmin: () => void;
 }
 
 const SUPER_ADMIN_EMAIL = "dasamsamsudin87@gmail.com";
@@ -87,21 +90,25 @@ async function loadAdminProfile(currentUser: User) {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<AdminProfile | null>(null);
+  const [baseProfile, setBaseProfile] = useState<AdminProfile | null>(null);
+  const [impersonatedProfile, setImpersonatedProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const profile = impersonatedProfile ?? baseProfile;
+  const isImpersonating = Boolean(impersonatedProfile);
 
   const refreshProfile = useCallback(async () => {
     if (!auth.currentUser) {
-      setProfile(null);
+      setBaseProfile(null);
+      setImpersonatedProfile(null);
       return;
     }
 
     try {
       const nextProfile = await loadAdminProfile(auth.currentUser);
-      setProfile(nextProfile);
+      setBaseProfile(nextProfile);
     } catch (err) {
       console.error("Failed to refresh profile:", err);
-      setProfile({
+      setBaseProfile({
         uid: auth.currentUser.uid,
         name: getEmailFallbackName(auth.currentUser.email),
         role: auth.currentUser.email === SUPER_ADMIN_EMAIL ? "superAdmin" : "admin",
@@ -115,12 +122,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      setImpersonatedProfile(null);
       if (currentUser) {
         try {
-          setProfile(await loadAdminProfile(currentUser));
+          setBaseProfile(await loadAdminProfile(currentUser));
         } catch (err) {
           console.error("Failed to load profile:", err);
-          setProfile({
+          setBaseProfile({
             uid: currentUser.uid,
             name: getEmailFallbackName(currentUser.email),
             role: currentUser.email === SUPER_ADMIN_EMAIL ? "superAdmin" : "admin",
@@ -130,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
         }
       } else {
-        setProfile(null);
+        setBaseProfile(null);
       }
       setLoading(false);
     });
@@ -142,11 +150,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
+    setImpersonatedProfile(null);
     await signOut(auth);
   };
 
+  const switchToTenantAdmin = useCallback((pesantrenId: string) => {
+    setImpersonatedProfile((current) => {
+      const source = baseProfile ?? current;
+      if (!source || source.role !== "superAdmin") return current;
+
+      return {
+        ...source,
+        role: "admin",
+        pesantrenId,
+      };
+    });
+  }, [baseProfile]);
+
+  const switchBackToSuperAdmin = useCallback(() => {
+    setImpersonatedProfile(null);
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      user,
+      profile,
+      loading,
+      isImpersonating,
+      login,
+      logout,
+      refreshProfile,
+      switchToTenantAdmin,
+      switchBackToSuperAdmin,
+    }),
+    [user, profile, loading, isImpersonating, refreshProfile, switchToTenantAdmin, switchBackToSuperAdmin]
+  );
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, logout, refreshProfile }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

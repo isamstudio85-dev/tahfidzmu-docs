@@ -21,20 +21,10 @@ class AdminDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(provider.isPengawas ? 'Dashboard Pengawas' : 'Dashboard Admin'),
-        actions: [
-          if (provider.firebase.currentUser?.email == 'dasamsamsudin87@gmail.com')
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: TextButton.icon(
-                onPressed: () => provider.switchBackToSuperAdmin(),
-                icon: const Icon(Icons.admin_panel_settings_rounded, color: Colors.green),
-                label: const Text('Super Admin', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 13)),
-              ),
-            ),
-          const NotificationBell(),
-          const SizedBox(width: 8),
-        ],
+        title: Text(
+          provider.isPengawas ? 'Dashboard Pengawas' : 'Dashboard Admin',
+        ),
+        actions: [const NotificationBell(), const SizedBox(width: 8)],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -43,7 +33,8 @@ class AdminDashboard extends StatelessWidget {
           children: [
             _buildBanner(context),
             const SizedBox(height: 20),
-            if (provider.isModuleActive('graduation') && provider.graduationEvents.any((e) => e.isPublished)) ...[
+            if (provider.isModuleActive('graduation') &&
+                provider.graduationEvents.any((e) => e.isPublished)) ...[
               _buildGraduationBanner(context, provider),
               const SizedBox(height: 24),
             ],
@@ -69,7 +60,9 @@ class AdminDashboard extends StatelessWidget {
   }
 
   Widget _buildGraduationBanner(BuildContext context, AppProvider provider) {
-    final activeEvents = provider.graduationEvents.where((e) => e.isPublished).toList();
+    final activeEvents = provider.graduationEvents
+        .where((e) => e.isPublished)
+        .toList();
     if (activeEvents.isEmpty) return const SizedBox.shrink();
 
     final event = activeEvents.first;
@@ -84,26 +77,50 @@ class AdminDashboard extends StatelessWidget {
             color: Colors.purple.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: ListTile(
         onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => GraduationPortalScreen(event: event)),
+          MaterialPageRoute(
+            builder: (_) => GraduationPortalScreen(event: event),
+          ),
         ),
         leading: Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(color: Colors.purple.withValues(alpha: 0.1), shape: BoxShape.circle),
-          child: const Icon(Icons.school_rounded, color: Colors.purple, size: 24),
+          decoration: BoxDecoration(
+            color: Colors.purple.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.school_rounded,
+            color: Colors.purple,
+            size: 24,
+          ),
         ),
-        title: Text(event.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        subtitle: const Text('Lihat informasi wisuda & hasil ujian', style: TextStyle(fontSize: 11)),
+        title: Text(
+          event.title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        subtitle: const Text(
+          'Lihat informasi wisuda & hasil ujian',
+          style: TextStyle(fontSize: 11),
+        ),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(8)),
-          child: const Text('INFO',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 9)),
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Text(
+            'INFO',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 9,
+            ),
+          ),
         ),
       ),
     );
@@ -115,36 +132,50 @@ class AdminDashboard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-            colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight),
+          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: AppTheme.primaryGreen.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Row(
         children: [
-          Image.asset('assets/images/TahfidzMU-logo-white.png',
-              width: 60,
-              height: 60,
-              errorBuilder: (_, __, ___) =>
-                  const Icon(Icons.auto_stories_rounded, size: 40, color: Colors.white70)),
+          Image.asset(
+            'assets/images/TahfidzMU-logo-white.png',
+            width: 60,
+            height: 60,
+            errorBuilder: (_, __, ___) => const Icon(
+              Icons.auto_stories_rounded,
+              size: 40,
+              color: Colors.white70,
+            ),
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('TahfidzMU',
-                    style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-                Text(provider.pesantrenName,
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
+                Text(
+                  'TahfidzMU',
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  provider.pesantrenName,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
@@ -170,7 +201,9 @@ class AdminDashboard extends StatelessWidget {
 
         final isExpired = daysLeft < 0;
         final color = isExpired ? Colors.red : Colors.orange;
-        final icon = isExpired ? Icons.block_rounded : Icons.warning_amber_rounded;
+        final icon = isExpired
+            ? Icons.block_rounded
+            : Icons.warning_amber_rounded;
         final title = isExpired
             ? 'Masa Aktif Habis'
             : 'Langganan Hampir Berakhir';
@@ -194,9 +227,22 @@ class AdminDashboard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 13)),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                        fontSize: 13,
+                      ),
+                    ),
                     const SizedBox(height: 2),
-                    Text(subtitle, style: TextStyle(fontSize: 11, color: color.withValues(alpha: 0.85))),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: color.withValues(alpha: 0.85),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -215,7 +261,10 @@ class AdminDashboard extends StatelessWidget {
           'Santri',
           Icons.people_alt_rounded,
           Colors.blue,
-          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SantriListScreen())),
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const SantriListScreen()),
+          ),
         ),
         const SizedBox(width: 12),
         _statTile(
@@ -223,7 +272,10 @@ class AdminDashboard extends StatelessWidget {
           'Musyrif',
           Icons.person_pin_rounded,
           Colors.green,
-          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MusyrifListScreen())),
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const MusyrifListScreen()),
+          ),
         ),
         const SizedBox(width: 12),
         _statTile(
@@ -231,7 +283,10 @@ class AdminDashboard extends StatelessWidget {
           'Halaqah',
           Icons.groups_rounded,
           Colors.purple,
-          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HalaqahListScreen())),
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const HalaqahListScreen()),
+          ),
         ),
       ],
     );
@@ -248,7 +303,12 @@ class AdminDashboard extends StatelessWidget {
       stream: query.snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: Padding(padding: EdgeInsets.all(16.0), child: CircularProgressIndicator(strokeWidth: 2)));
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
@@ -286,7 +346,7 @@ class AdminDashboard extends StatelessWidget {
             final musyrifName = data['musyrifName'] ?? 'Musyrif';
             final santriName = data['santriName'] ?? 'Santri';
             final detail = data['detail'] ?? '-';
-            
+
             return Card(
               elevation: 0,
               margin: const EdgeInsets.only(bottom: 10),
@@ -308,7 +368,11 @@ class AdminDashboard extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: const Center(
-                        child: Icon(Icons.record_voice_over_rounded, color: Colors.white, size: 18),
+                        child: Icon(
+                          Icons.record_voice_over_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -321,7 +385,11 @@ class AdminDashboard extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   musyrifName,
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.black87,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -333,14 +401,23 @@ class AdminDashboard extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             'Sedang menyimak: $santriName',
-                            style: const TextStyle(color: Colors.black54, fontSize: 12, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Detail: $detail',
-                            style: TextStyle(fontFamily: 'monospace', color: Colors.green.shade800, fontSize: 11, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontFamily: 'monospace',
+                              color: Colors.green.shade800,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -371,14 +448,17 @@ class AdminDashboard extends StatelessWidget {
           SizedBox(width: 4),
           Text(
             'LIVE',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 8, letterSpacing: 0.5),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 8,
+              letterSpacing: 0.5,
+            ),
           ),
         ],
       ),
     );
   }
-
-
 
   Widget _buildAdminAnalysisCards(BuildContext context) {
     return Column(
@@ -391,19 +471,30 @@ class AdminDashboard extends StatelessWidget {
           color: Colors.amber.shade800,
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const RankingScreen(title: 'Peringkat Santri', initialIndex: 0)),
+            MaterialPageRoute(
+              builder: (_) => const RankingScreen(
+                title: 'Peringkat Santri',
+                initialIndex: 0,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 12),
         _analysisRowCard(
           context,
           title: 'Peringkat Halaqah',
-          subtitle: 'Perbandingan rata-rata capaian & nilai per kelompok halaqah',
+          subtitle:
+              'Perbandingan rata-rata capaian & nilai per kelompok halaqah',
           icon: Icons.analytics_rounded,
           color: Colors.purple.shade700,
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const RankingScreen(title: 'Peringkat Halaqah', initialIndex: 1)),
+            MaterialPageRoute(
+              builder: (_) => const RankingScreen(
+                title: 'Peringkat Halaqah',
+                initialIndex: 1,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -460,18 +551,30 @@ class AdminDashboard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Colors.black87,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: TextStyle(color: Colors.grey.shade600, fontSize: 11, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 12),
-              Icon(Icons.arrow_forward_ios_rounded, color: color.withValues(alpha: 0.5), size: 16),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: color.withValues(alpha: 0.5),
+                size: 16,
+              ),
             ],
           ),
         ),
@@ -479,7 +582,13 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  Widget _statTile(String value, String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _statTile(
+    String value,
+    String label,
+    IconData icon,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return Expanded(
       child: Card(
         margin: EdgeInsets.zero,
@@ -502,13 +611,21 @@ class AdminDashboard extends StatelessWidget {
                   fit: BoxFit.scaleDown,
                   child: Text(
                     value,
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color),
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: color,
+                    ),
                   ),
                 ),
                 Text(
                   label,
-                  style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600),
-                )
+                  style: TextStyle(
+                    color: color.withValues(alpha: 0.7),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
             ),
           ),
@@ -529,7 +646,10 @@ class AdminDashboard extends StatelessWidget {
           border: Border.all(color: Colors.grey.shade200),
         ),
         child: const Center(
-          child: Text('Belum ada data halaqah', style: TextStyle(color: Colors.grey, fontSize: 12)),
+          child: Text(
+            'Belum ada data halaqah',
+            style: TextStyle(color: Colors.grey, fontSize: 12),
+          ),
         ),
       );
     }
@@ -539,12 +659,16 @@ class AdminDashboard extends StatelessWidget {
     return Column(
       children: halaqahs.map((h) {
         final musyrif = provider.getMusyrifById(h.musyrifId);
-        
-        final list = provider.presensiList.where((p) =>
-            p.halaqahId == h.id &&
-            p.tanggal.year == now.year &&
-            p.tanggal.month == now.month &&
-            p.tanggal.day == now.day).toList();
+
+        final list = provider.presensiList
+            .where(
+              (p) =>
+                  p.halaqahId == h.id &&
+                  p.tanggal.year == now.year &&
+                  p.tanggal.month == now.month &&
+                  p.tanggal.day == now.day,
+            )
+            .toList();
         final presensi = list.isNotEmpty ? list.first : null;
 
         final isSubmitted = presensi != null;
@@ -554,9 +678,14 @@ class AdminDashboard extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: isSubmitted ? Colors.green.shade100 : Colors.red.shade100, width: 1.5),
+            side: BorderSide(
+              color: isSubmitted ? Colors.green.shade100 : Colors.red.shade100,
+              width: 1.5,
+            ),
           ),
-          color: isSubmitted ? Colors.green.shade50.withValues(alpha: 0.2) : Colors.red.shade50.withValues(alpha: 0.1),
+          color: isSubmitted
+              ? Colors.green.shade50.withValues(alpha: 0.2)
+              : Colors.red.shade50.withValues(alpha: 0.1),
           child: Padding(
             padding: const EdgeInsets.all(14.0),
             child: Row(
@@ -564,12 +693,18 @@ class AdminDashboard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: isSubmitted ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
+                    color: isSubmitted
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.red.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    isSubmitted ? Icons.check_circle_rounded : Icons.warning_amber_rounded,
-                    color: isSubmitted ? Colors.green.shade700 : Colors.red.shade700,
+                    isSubmitted
+                        ? Icons.check_circle_rounded
+                        : Icons.warning_amber_rounded,
+                    color: isSubmitted
+                        ? Colors.green.shade700
+                        : Colors.red.shade700,
                     size: 22,
                   ),
                 ),
@@ -580,12 +715,19 @@ class AdminDashboard extends StatelessWidget {
                     children: [
                       Text(
                         h.nama,
-                        style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: Colors.black87,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Musyrif: ${musyrif?.nama ?? 'Tanpa Musyrif'}',
-                        style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ],
                   ),
@@ -598,14 +740,19 @@ class AdminDashboard extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
-                        color: isSubmitted ? Colors.green.shade700 : Colors.red.shade700,
+                        color: isSubmitted
+                            ? Colors.green.shade700
+                            : Colors.red.shade700,
                       ),
                     ),
                     if (isSubmitted) ...[
                       const SizedBox(height: 2),
                       Text(
                         'Pukul ${presensi.waktuSubmit.hour.toString().padLeft(2, '0')}:${presensi.waktuSubmit.minute.toString().padLeft(2, '0')} WIB',
-                        style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey.shade500,
+                        ),
                       ),
                     ],
                   ],
@@ -626,7 +773,8 @@ class _LiveDot extends StatefulWidget {
   State<_LiveDot> createState() => _LiveDotState();
 }
 
-class _LiveDotState extends State<_LiveDot> with SingleTickerProviderStateMixin {
+class _LiveDotState extends State<_LiveDot>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -661,7 +809,11 @@ class _LiveDotState extends State<_LiveDot> with SingleTickerProviderStateMixin 
 }
 
 class RankingScreen extends StatelessWidget {
-  const RankingScreen({super.key, required this.title, required this.initialIndex});
+  const RankingScreen({
+    super.key,
+    required this.title,
+    required this.initialIndex,
+  });
   final String title;
   final int initialIndex;
 
@@ -687,7 +839,10 @@ class AdminLaporanScreen extends StatelessWidget {
           final setorans = displayList.expand((s) => s.setoranHistory).toList();
           if (setorans.isEmpty) {
             return const Center(
-              child: Text('Belum ada data setoran di pesantren ini.', style: TextStyle(color: Colors.grey)),
+              child: Text(
+                'Belum ada data setoran di pesantren ini.',
+                style: TextStyle(color: Colors.grey),
+              ),
             );
           }
           return LaporanScreenBody(setorans: setorans, provider: provider);

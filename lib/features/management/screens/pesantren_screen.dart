@@ -21,6 +21,9 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
   late final TextEditingController _alamatCtrl;
   late final TextEditingController _telponCtrl;
   late final TextEditingController _emailCtrl;
+  late final TextEditingController _npsnCtrl;
+  late final TextEditingController _websiteCtrl;
+  late final TextEditingController _pimpinanCtrl;
 
   @override
   void initState() {
@@ -30,11 +33,20 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
     _alamatCtrl = TextEditingController(text: info.alamat);
     _telponCtrl = TextEditingController(text: info.noTelp);
     _emailCtrl = TextEditingController(text: info.email);
+    _npsnCtrl = TextEditingController(text: info.npsn);
+    _websiteCtrl = TextEditingController(text: info.website);
+    _pimpinanCtrl = TextEditingController(text: info.pimpinan);
   }
 
   @override
   void dispose() {
-    _namaCtrl.dispose(); _alamatCtrl.dispose(); _telponCtrl.dispose(); _emailCtrl.dispose();
+    _namaCtrl.dispose(); 
+    _alamatCtrl.dispose(); 
+    _telponCtrl.dispose(); 
+    _emailCtrl.dispose();
+    _npsnCtrl.dispose();
+    _websiteCtrl.dispose();
+    _pimpinanCtrl.dispose();
     super.dispose();
   }
 
@@ -47,6 +59,9 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
         alamat: _alamatCtrl.text.trim(),
         noTelp: _telponCtrl.text.trim(),
         email: _emailCtrl.text.trim(),
+        npsn: _npsnCtrl.text.trim(),
+        website: _websiteCtrl.text.trim(),
+        pimpinan: _pimpinanCtrl.text.trim(),
       ),
     );
     Navigator.pop(context);
@@ -111,7 +126,9 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
                             ),
                             clipBehavior: Clip.antiAlias,
                             child: info.hasLogo
-                                ? Image.file(File(info.logoPath), fit: BoxFit.cover)
+                                ? (info.logoPath.startsWith('http') 
+                                    ? Image.network(info.logoPath, fit: BoxFit.cover)
+                                    : Image.file(File(info.logoPath), fit: BoxFit.cover))
                                 : Image.asset('assets/images/logoAlf.png', fit: BoxFit.cover, errorBuilder: (_,__,___) => const Icon(Icons.school_rounded, size: 40, color: AppTheme.primaryGreen)),
                           ),
                         ),
@@ -134,21 +151,28 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
                   const SizedBox(height: 12),
                   TextFormField(controller: _namaCtrl, decoration: const InputDecoration(labelText: 'Nama Pesantren *', prefixIcon: Icon(Icons.school_outlined)), textCapitalization: TextCapitalization.words, validator: (v) => v!.isEmpty ? 'Wajib diisi' : null),
                   const SizedBox(height: 12),
-                  TextFormField(controller: _alamatCtrl, decoration: const InputDecoration(labelText: 'Alamat', prefixIcon: Icon(Icons.location_on_outlined)), maxLines: 2),
+                  TextFormField(controller: _npsnCtrl, decoration: const InputDecoration(labelText: 'NPSN (Nomor Induk Nasional)', prefixIcon: Icon(Icons.fingerprint_rounded)), keyboardType: TextInputType.number),
+                  const SizedBox(height: 12),
+                  TextFormField(controller: _pimpinanCtrl, decoration: const InputDecoration(labelText: 'Kiai / Pimpinan Pondok', prefixIcon: Icon(Icons.person_outline_rounded)), textCapitalization: TextCapitalization.words),
+                  const SizedBox(height: 12),
+                  TextFormField(controller: _alamatCtrl, decoration: const InputDecoration(labelText: 'Alamat Lengkap', prefixIcon: Icon(Icons.location_on_outlined)), maxLines: 2),
                   const SizedBox(height: 24),
-                  _section('Kontak'),
+                  _section('Kontak & Media'),
                   const SizedBox(height: 12),
                   TextFormField(controller: _telponCtrl, decoration: const InputDecoration(labelText: 'No. Telpon / WA', prefixIcon: Icon(Icons.phone_outlined)), keyboardType: TextInputType.phone),
                   const SizedBox(height: 12),
-                  TextFormField(controller: _emailCtrl, decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)), keyboardType: TextInputType.emailAddress),
+                  TextFormField(controller: _emailCtrl, decoration: const InputDecoration(labelText: 'Email Resmi', prefixIcon: Icon(Icons.email_outlined)), keyboardType: TextInputType.emailAddress),
+                  const SizedBox(height: 12),
+                  TextFormField(controller: _websiteCtrl, decoration: const InputDecoration(labelText: 'Website Pesantren', prefixIcon: Icon(Icons.language_rounded)), keyboardType: TextInputType.url),
                 ],
                 if (widget.manageModulesOnly) ...[
-                  _section('Modul Hafalan'),
+                  _section('Modul Hafalan & Pengetahuan'),
                   const SizedBox(height: 12),
                   _moduleSwitch(provider, 'Quran', 'Hafalan & Setoran Al-Quran', Icons.menu_book_rounded, true),
                   _moduleSwitch(provider, 'Hadits', 'Hafalan hadits-hadits pilihan', Icons.import_contacts_rounded, provider.isModuleActive('hadits'), onTap: () => provider.toggleModule('hadits')),
                   _moduleSwitch(provider, 'Tajwid', 'Panduan hukum bacaan Al-Quran', Icons.auto_stories_rounded, provider.isModuleActive('tajwid'), onTap: () => provider.toggleModule('tajwid')),
                   _moduleSwitch(provider, 'Tahsin', 'Panduan fasih & makharijul huruf', Icons.record_voice_over_rounded, provider.isModuleActive('tahsin'), onTap: () => provider.toggleModule('tahsin')),
+                  _moduleSwitch(provider, 'Pengetahuan Pondok', 'Materi pengetahuan pondok yang harus dihafal', Icons.lightbulb_outline_rounded, provider.isModuleActive('pondok_info'), onTap: () => provider.toggleModule('pondok_info')),
                   _moduleSwitch(provider, 'Wisuda & Ujian Tasmi\'', 'Pendaftaran ujian tasmi\' dan kelulusan wisuda', Icons.school_rounded, provider.isModuleActive('graduation'), onTap: () => provider.toggleModule('graduation')),
                 ],
                 const SizedBox(height: 32),

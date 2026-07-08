@@ -99,8 +99,10 @@ class AyahBlock extends StatelessWidget {
     required this.onWordTap,
     this.isPassed = false,
     this.isFailed = false,
+    this.isEndAyah = false,
     this.onTogglePassed,
     this.onToggleFailed,
+    this.onMarkEnd,
     this.isReadOnly = false,
   });
 
@@ -110,31 +112,35 @@ class AyahBlock extends StatelessWidget {
   final void Function(int wordIndex, String word) onWordTap;
   final bool isPassed;
   final bool isFailed;
+  final bool isEndAyah;
   final VoidCallback? onTogglePassed;
   final VoidCallback? onToggleFailed;
+  final VoidCallback? onMarkEnd;
   final bool isReadOnly;
 
   @override
   Widget build(BuildContext context) {
     final words = ayah.words;
-    final Color borderColor = isPassed 
-        ? Colors.green 
-        : (isFailed ? Colors.red : Colors.grey.shade100);
+    
+    // Bottom border color reflects the ayah's assessment status
+    final Color lineBorderColor = isEndAyah
+        ? Colors.orange.shade400
+        : (isPassed 
+            ? Colors.green.shade400
+            : (isFailed 
+                ? Colors.red.shade400
+                : const Color(0xFFE5D5B8))); // Neutral gold divider
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor, width: isPassed || isFailed ? 2 : 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+        color: Colors.transparent, // Always transparent, using page background
+        border: Border(
+          bottom: BorderSide(
+            color: lineBorderColor,
+            width: isEndAyah || isPassed || isFailed ? 2.0 : 1.2,
           ),
-        ],
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -144,32 +150,49 @@ class AyahBlock extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isPassed ? Colors.green.withValues(alpha: 0.1) : (isFailed ? Colors.red.withValues(alpha: 0.1) : AppTheme.primaryGreen.withValues(alpha: 0.1)),
-                  borderRadius: BorderRadius.circular(20),
+                  color: isEndAyah
+                      ? Colors.orange.withValues(alpha: 0.15)
+                      : (isPassed
+                          ? Colors.green.withValues(alpha: 0.15)
+                          : (isFailed
+                              ? Colors.red.withValues(alpha: 0.15)
+                              : const Color(0xFF2E5A27).withValues(alpha: 0.1))),
+                  borderRadius: BorderRadius.circular(4), // Flat theme
                 ),
                 child: Text(
-                  'Ayat ${ayah.numberInSurah}',
+                  'Ayat ${ayah.numberInSurah}${isEndAyah ? ' (Batas Akhir)' : ''}',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isPassed ? Colors.green : (isFailed ? Colors.red : AppTheme.primaryGreen),
+                    color: isEndAyah
+                        ? Colors.orange.shade800
+                        : (isPassed ? Colors.green.shade800 : (isFailed ? Colors.red.shade800 : const Color(0xFF2E5A27))),
                   ),
                 ),
               ),
               const Spacer(),
               if (!isReadOnly) ...[
-                _actionBtn(Icons.check_circle_rounded, isPassed ? Colors.green : Colors.grey.shade300, onTogglePassed!),
-                const SizedBox(width: 8),
-                _actionBtn(Icons.cancel_rounded, isFailed ? Colors.red : Colors.grey.shade300, onToggleFailed!),
+                Tooltip(
+                  message: 'Tandai Batas Akhir Hafalan',
+                  child: _actionBtn(
+                    isEndAyah ? Icons.flag_rounded : Icons.outlined_flag_rounded,
+                    isEndAyah ? Colors.orange : Colors.grey.shade400,
+                    onMarkEnd!,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                _actionBtn(Icons.check_circle_rounded, isPassed ? Colors.green : Colors.grey.shade400, onTogglePassed!),
+                const SizedBox(width: 16),
+                _actionBtn(Icons.cancel_rounded, isFailed ? Colors.red : Colors.grey.shade400, onToggleFailed!),
               ],
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
           Directionality(
             textDirection: TextDirection.rtl,
             child: Wrap(
-              spacing: 4,
-              runSpacing: 4,
+              spacing: 6,
+              runSpacing: 8,
               alignment: WrapAlignment.start,
               children: [
                 for (int i = 0; i < words.length; i++)
@@ -189,7 +212,7 @@ class AyahBlock extends StatelessWidget {
                     '﴿${toArabicNumeral(ayah.numberInSurah)}﴾',
                     style: GoogleFonts.amiri(
                       fontSize: 22,
-                      color: AppTheme.primaryGreen.withValues(alpha: 0.8),
+                      color: const Color(0xFF2E5A27).withValues(alpha: 0.8),
                       height: 2.2,
                     ),
                     textDirection: TextDirection.rtl,
