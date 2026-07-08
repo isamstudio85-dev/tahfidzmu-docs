@@ -71,19 +71,19 @@ class LoginPreferencesService {
       await prefs.remove(_pesantrenIdKey);
     }
     await prefs.setString(_usernameKey, username);
-    await prefs.setString(_passwordKey, password);
+    // Securely avoid storing the password locally
+    await prefs.remove(_passwordKey);
   }
 
   static Future<LastLoginCredentials?> loadLastCredentials() async {
     final prefs = await SharedPreferences.getInstance();
     final pesantrenId = prefs.getString(_pesantrenIdKey);
     final username = prefs.getString(_usernameKey);
-    final password = prefs.getString(_passwordKey);
-    if (username == null || password == null) return null;
+    if (username == null) return null;
     return LastLoginCredentials(
       pesantrenId: pesantrenId,
       username: username,
-      password: password,
+      password: '', // Return empty password to force typing
     );
   }
 

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user_role.dart';
 import '../services/firebase_service.dart';
+import '../services/login_preferences_service.dart';
 
 mixin AuthMixin on ChangeNotifier {
   final FirebaseService firebase = FirebaseService();
@@ -43,6 +44,7 @@ mixin AuthMixin on ChangeNotifier {
 
   Future<void> performLogout() async {
     await firebase.signOut();
+    await LoginPreferencesService.clearLastCredentials();
     currentRole = null;
     currentUserId = null;
     linkedSantriId = null;

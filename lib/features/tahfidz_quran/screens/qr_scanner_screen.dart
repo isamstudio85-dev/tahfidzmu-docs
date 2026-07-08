@@ -62,13 +62,22 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
       return;
     }
 
+    // Parse 'tahfidzmu:login:pesantrenId:username:password' if present
+    String cleanCode = codeValue;
+    if (codeValue.startsWith('tahfidzmu:login:')) {
+      final parts = codeValue.split(':');
+      if (parts.length >= 4) {
+        cleanCode = parts[3]; // The username is stored here (NIS/ID)
+      }
+    }
+
     final provider = context.read<AppProvider>();
     final santriList = provider.santriList;
 
     if (widget.expectedSantri != null) {
       // Verifikasi santri tertentu
       final expected = widget.expectedSantri!;
-      final isMatch = codeValue == expected.id || codeValue == expected.nis;
+      final isMatch = cleanCode == expected.id || cleanCode == expected.nis;
 
       if (isMatch) {
         _showSuccessAndPop(expected);
@@ -87,7 +96,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
     } else {
       // Cari santri dari list secara global
       final matched = santriList.firstWhere(
-        (s) => s.id == codeValue || s.nis == codeValue,
+        (s) => s.id == cleanCode || s.nis == cleanCode,
         orElse: () => const Santri(id: '', name: ''),
       );
 

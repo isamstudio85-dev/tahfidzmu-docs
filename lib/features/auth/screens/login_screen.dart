@@ -19,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordCtrl = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
+  bool _rememberMe = true;
   String? _errorMessage;
 
   @override
@@ -34,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _pesantrenIdCtrl.text = saved.pesantrenId ?? '';
       _usernameCtrl.text = saved.username;
       _passwordCtrl.text = saved.password;
+      _rememberMe = true;
     });
   }
 
@@ -66,7 +68,11 @@ class _LoginScreenState extends State<LoginScreen> {
       final err = context.read<AppProvider>().loginError;
       setState(() { _isLoading = false; _errorMessage = err ?? 'Username atau sandi salah.'; });
     } else {
-      await LoginPreferencesService.clearLastCredentials();
+      if (_rememberMe) {
+        await LoginPreferencesService.saveLastCredentials(pesantrenId, username, password);
+      } else {
+        await LoginPreferencesService.clearLastCredentials();
+      }
     }
   }
 
@@ -216,6 +222,40 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             onSubmitted: (_) => _login(),
           ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              SizedBox(
+                height: 24,
+                width: 24,
+                child: Checkbox(
+                  value: _rememberMe,
+                  activeColor: AppTheme.primaryGreen,
+                  onChanged: (val) {
+                    setState(() {
+                      _rememberMe = val ?? false;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _rememberMe = !_rememberMe;
+                  });
+                },
+                child: const Text(
+                  'Ingat Saya',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
 
           if (_errorMessage != null)
             Padding(
@@ -225,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: const TextStyle(color: Colors.red, fontSize: 13),
               ),
             ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           Row(
             children: [
               Expanded(

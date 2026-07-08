@@ -24,8 +24,9 @@ class MusyrifDashboard extends StatelessWidget {
     final myHalaqah = musyrif != null
         ? provider.halaqahList.where((h) => h.musyrifId == musyrif.id).toList()
         : <HalaqahData>[];
-    final mySantri =
-        musyrif != null ? provider.getSantriByMusyrif(musyrif.id) : provider.santriList;
+    final mySantri = musyrif != null
+        ? provider.getSantriByMusyrif(musyrif.id)
+        : provider.santriList;
     final recent = <(Santri, SetoranRecord)>[];
     for (final s in mySantri) {
       for (final r in s.setoranHistory) {
@@ -36,10 +37,18 @@ class MusyrifDashboard extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Beranda Musyrif'),
-        actions: const [
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 14.0, top: 10.0, bottom: 10.0),
+          child: Image.asset(
+            'assets/images/TahfidzMU-logo-white.png',
+            fit: BoxFit.contain,
+          ),
+        ),
+        titleSpacing: 8.0,
+        title: const Text('Dashboard'),
+        actions: [
           NotificationBell(),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
         ],
       ),
       body: Column(
@@ -52,18 +61,30 @@ class MusyrifDashboard extends StatelessWidget {
                 children: [
                   _buildBanner(),
                   const SizedBox(height: 20),
-                  if (provider.isModuleActive('graduation') && provider.graduationEvents.any((e) => e.isPublished)) ...[
+                  if (provider.isModuleActive('graduation') &&
+                      provider.graduationEvents.any((e) => e.isPublished)) ...[
                     _buildGraduationBanner(context, provider),
                     const SizedBox(height: 24),
                   ],
                   const SectionTitle('Statistik Saya'),
                   const SizedBox(height: 12),
-                  Row(children: [
-                    _mStatTile('${myHalaqah.length}', 'Halaqah', Icons.groups_rounded, AppTheme.gold),
-                    const SizedBox(width: 12),
-                    _mStatTile('${mySantri.length}', 'Santri', Icons.people_alt_rounded,
-                        AppTheme.primaryGreen),
-                  ]),
+                  Row(
+                    children: [
+                      _mStatTile(
+                        '${myHalaqah.length}',
+                        'Halaqah',
+                        Icons.groups_rounded,
+                        AppTheme.gold,
+                      ),
+                      const SizedBox(width: 12),
+                      _mStatTile(
+                        '${mySantri.length}',
+                        'Santri',
+                        Icons.people_alt_rounded,
+                        AppTheme.primaryGreen,
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   // KARTU MUSYRIF DIGITAL
                   Card(
@@ -79,7 +100,9 @@ class MusyrifDashboard extends StatelessWidget {
                         showDialog(
                           context: context,
                           builder: (context) => Dialog(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(24.0),
                               child: Column(
@@ -102,23 +125,37 @@ class MusyrifDashboard extends StatelessWidget {
                                     backgroundColor: Colors.white,
                                   ),
                                   const SizedBox(height: 20),
-                                  Divider(color: Colors.grey.shade300, height: 1),
+                                  Divider(
+                                    color: Colors.grey.shade300,
+                                    height: 1,
+                                  ),
                                   const SizedBox(height: 16),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(12),
                                         child: Container(
                                           width: 60,
                                           height: 60,
-                                          color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                                          color: AppTheme.primaryGreen
+                                              .withValues(alpha: 0.1),
                                           child: m?.photoPath != null
-                                              ? Image.network(m!.photoPath!, fit: BoxFit.cover)
+                                              ? Image.network(
+                                                  m!.photoPath!,
+                                                  fit: BoxFit.cover,
+                                                )
                                               : Center(
                                                   child: Text(
                                                     m?.nama[0] ?? 'M',
-                                                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
+                                                    style: const TextStyle(
+                                                      fontSize: 22,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          AppTheme.primaryGreen,
+                                                    ),
                                                   ),
                                                 ),
                                         ),
@@ -126,11 +163,16 @@ class MusyrifDashboard extends StatelessWidget {
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               m?.nama ?? 'Musyrif',
-                                              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
+                                              style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                                color: Colors.black87,
+                                              ),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -153,7 +195,10 @@ class MusyrifDashboard extends StatelessWidget {
                                     onPressed: () => Navigator.pop(context),
                                     child: const Text(
                                       'Tutup',
-                                      style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        color: AppTheme.primaryGreen,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -166,7 +211,11 @@ class MusyrifDashboard extends StatelessWidget {
                         padding: const EdgeInsets.all(16),
                         child: Row(
                           children: [
-                            const Icon(Icons.qr_code_2_rounded, color: Colors.black87, size: 28),
+                            const Icon(
+                              Icons.qr_code_2_rounded,
+                              color: Colors.black87,
+                              size: 28,
+                            ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: Column(
@@ -184,12 +233,19 @@ class MusyrifDashboard extends StatelessWidget {
                                   const SizedBox(height: 4),
                                   Text(
                                     'QR Code untuk akses cepat',
-                                    style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 11,
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
-                            const Icon(Icons.qr_code_rounded, color: Colors.green, size: 20),
+                            const Icon(
+                              Icons.qr_code_rounded,
+                              color: Colors.green,
+                              size: 20,
+                            ),
                           ],
                         ),
                       ),
@@ -203,7 +259,9 @@ class MusyrifDashboard extends StatelessWidget {
                     child: FilledButton.icon(
                       style: FilledButton.styleFrom(
                         backgroundColor: AppTheme.primaryGreen,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                       onPressed: () async {
                         final verifiedSantri = await VerificationGate.show(
@@ -213,29 +271,46 @@ class MusyrifDashboard extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => SetoranFormScreen(santri: verifiedSantri),
+                              builder: (_) =>
+                                  SetoranFormScreen(santri: verifiedSantri),
                             ),
                           );
                         }
                       },
-                      icon: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 20),
+                      icon: const Icon(
+                        Icons.qr_code_scanner_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                       label: const Text(
                         'SCAN QR SANTRI (MULAI SETORAN)',
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 0.5),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  if (provider.isModuleActive('graduation') && provider.graduationEvents.any((e) => e.isPublished)) ...[
+                  if (provider.isModuleActive('graduation') &&
+                      provider.graduationEvents.any((e) => e.isPublished)) ...[
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
-                        onPressed: () =>
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => const TasmiFormScreen())),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const TasmiFormScreen(),
+                          ),
+                        ),
                         icon: const Icon(Icons.school_rounded),
                         label: const Text('Mulai Ujian Tasmi\''),
                         style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.purple, side: const BorderSide(color: Colors.purple)),
+                          foregroundColor: Colors.purple,
+                          side: const BorderSide(color: Colors.purple),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -243,9 +318,18 @@ class MusyrifDashboard extends StatelessWidget {
                   const SectionTitle('Aktivitas Terkini'),
                   const SizedBox(height: 12),
                   if (recent.isEmpty)
-                    const EmptyState('Belum ada riwayat hafalan dari santri Anda.')
+                    const EmptyState(
+                      'Belum ada riwayat hafalan dari santri Anda.',
+                    )
                   else
-                    ...recent.take(5).map((item) => RecentSetoranTile(santri: item.$1, record: item.$2)),
+                    ...recent
+                        .take(5)
+                        .map(
+                          (item) => RecentSetoranTile(
+                            santri: item.$1,
+                            record: item.$2,
+                          ),
+                        ),
                   const SizedBox(height: 80),
                 ],
               ),
@@ -257,7 +341,9 @@ class MusyrifDashboard extends StatelessWidget {
   }
 
   Widget _buildGraduationBanner(BuildContext context, AppProvider provider) {
-    final activeEvents = provider.graduationEvents.where((e) => e.isPublished).toList();
+    final activeEvents = provider.graduationEvents
+        .where((e) => e.isPublished)
+        .toList();
     if (activeEvents.isEmpty) return const SizedBox.shrink();
 
     final event = activeEvents.first;
@@ -272,26 +358,50 @@ class MusyrifDashboard extends StatelessWidget {
             color: Colors.purple.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: ListTile(
         onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => GraduationPortalScreen(event: event)),
+          MaterialPageRoute(
+            builder: (_) => GraduationPortalScreen(event: event),
+          ),
         ),
         leading: Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(color: Colors.purple.withValues(alpha: 0.1), shape: BoxShape.circle),
-          child: const Icon(Icons.school_rounded, color: Colors.purple, size: 24),
+          decoration: BoxDecoration(
+            color: Colors.purple.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.school_rounded,
+            color: Colors.purple,
+            size: 24,
+          ),
         ),
-        title: Text(event.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        subtitle: const Text('Lihat informasi wisuda & hasil ujian', style: TextStyle(fontSize: 11)),
+        title: Text(
+          event.title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+        ),
+        subtitle: const Text(
+          'Lihat informasi wisuda & hasil ujian',
+          style: TextStyle(fontSize: 11),
+        ),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(8)),
-          child: const Text('INFO',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 9)),
+          decoration: BoxDecoration(
+            color: Colors.red,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Text(
+            'INFO',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 9,
+            ),
+          ),
         ),
       ),
     );
@@ -303,28 +413,40 @@ class MusyrifDashboard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          gradient: const LinearGradient(colors: [AppTheme.darkGreen, AppTheme.primaryGreen]),
-          borderRadius: BorderRadius.circular(20)),
+        gradient: const LinearGradient(
+          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         children: [
           AppAvatar(
-              name: m?.nama ?? 'Musyrif',
-              radius: 30,
-              imagePath: m?.photoPath,
-              backgroundColor: Colors.white24,
-              foregroundColor: Colors.white),
+            name: m?.nama ?? 'Musyrif',
+            radius: 30,
+            imagePath: m?.photoPath,
+            backgroundColor: Colors.white24,
+            foregroundColor: Colors.white,
+          ),
           const SizedBox(width: 16),
           Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(m?.nama ?? 'Musyrif',
-                style:
-                    GoogleFonts.poppins(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white)),
-            Text(m?.jabatan ?? 'Pembimbing',
-                style: const TextStyle(color: Colors.white70, fontSize: 13)),
-          ])),
-          Opacity(
-              opacity: 0.5,
-              child: Image.asset('assets/images/TahfidzMU-logo-white.png', width: 40, height: 40)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  m?.nama ?? 'Musyrif',
+                  style: GoogleFonts.poppins(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  m?.jabatan ?? 'Pembimbing',
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -332,22 +454,39 @@ class MusyrifDashboard extends StatelessWidget {
 
   Widget _mStatTile(String value, String label, IconData icon, Color color) {
     return Expanded(
-        child: Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
           color: color.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.1))),
-      child: Column(children: [
-        Icon(icon, color: color, size: 24),
-        const SizedBox(height: 8),
-        FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(value,
-                style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 20, color: color))),
-        Text(label,
-            style: TextStyle(color: color.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w600))
-      ]),
-    ));
+          border: Border.all(color: color.withValues(alpha: 0.1)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 8),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: color,
+                ),
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                color: color.withValues(alpha: 0.7),
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
