@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Permintaan Penghapusan Akun & Data | TahfidzMU</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background: #f6f8f6;
+        }
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 36px 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #b71c1c;
+        }
+        .header h1 {
+            font-size: 26px;
+            color: #b71c1c;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        h2 {
+            color: #b71c1c;
+            font-size: 20px;
+            margin: 28px 0 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        p, li {
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+        ul, ol {
+            padding-left: 22px;
+            margin-bottom: 16px;
+        }
+        .alert-box {
+            background: #ffebee;
+            border-left: 4px solid #b71c1c;
+            padding: 16px;
+            border-radius: 4px;
+            margin: 20px 0;
+            color: #b71c1c;
+        }
+        .alert-box p {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+        }
+        a {
+            color: #b71c1c;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+        input:focus, textarea:focus {
+            border-color: #b71c1c;
+        }
+        .submit-btn {
+            display: inline-block;
+            background: #b71c1c;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
+        .submit-btn:hover {
+            background: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>Penghapusan Akun & Data</h1>
+                <p>TahfidzMU — Formulir Permintaan Penghapusan Data Pengguna</p>
+                <p>Terakhir diperbarui: 8 Juli 2026</p>
+            </div>
+
+            <div class="alert-box">
+                <p><strong>PENTING:</strong> Penghapusan akun bersifat permanen. Seluruh data santri, riwayat hafalan Al-Quran, presensi, kelas, nilai, dan dokumentasi foto akan dihapus selamanya dari server kami dan tidak dapat dipulihkan kembali.</p>
+            </div>
+
+            <h2>Ketentuan Penghapusan Data</h2>
+            <p>Sesuai dengan kebijakan privasi Google Play Store mengenai Transparansi Data, pengguna berhak meminta penghapusan akun beserta seluruh data pribadi mereka. Berikut ketentuannya:</p>
+            <ul>
+                <li><strong>Waktu Proses:</strong> Permintaan penghapusan akan diproses dalam waktu 7 hingga 14 hari kerja setelah verifikasi identitas oleh tim Admin Pesantren.</li>
+                <li><strong>Data yang Dihapus:</strong> Semua data profil (Nama, Foto, NIS/NIP), data program hafalan, nilai kelancaran, presensi, serta log audit yang terhubung dengan akun Anda.</li>
+                <li><strong>Verifikasi:</strong> Untuk mencegah penghapusan yang tidak sah, Admin Pesantren akan menghubungi wali santri/pengguna melalui nomor WhatsApp terdaftar sebelum tindakan penghapusan dijalankan.</li>
+            </ul>
+
+            <h2>Formulir Pengajuan Penghapusan</h2>
+            <p>Silakan isi informasi di bawah ini untuk mengajukan permohonan. Formulir ini akan terformat otomatis menjadi draf email untuk dikirimkan kepada tim pengelola kami:</p>
+            
+            <form action="mailto:dasamsamsudin87@gmail.com" method="post" enctype="text/plain">
+                <div class="form-group">
+                    <label for="name">Nama Lengkap Anda / Nama Santri</label>
+                    <input type="text" id="name" name="Nama Pengaju" placeholder="Contoh: Ahmad Fauzi" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username / NIS / NIP Akun yang Akan Dihapus</label>
+                    <input type="text" id="username" name="Username/NIS" placeholder="Contoh: 20261005" required>
+                </div>
+                <div class="form-group">
+                    <label for="pesantren">NPSN / Nama Pesantren Anda</label>
+                    <input type="text" id="pesantren" name="Nama Pesantren/NPSN" placeholder="Contoh: Pesantren Al-Iman" required>
+                </div>
+                <div class="form-group">
+                    <label for="reason">Alasan Penghapusan (Opsional)</label>
+                    <textarea id="reason" name="Alasan" rows="3" placeholder="Tuliskan alasan Anda di sini..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Kirim Permintaan via Email</button>
+            </form>
+
+            <div class="footer">
+                <p>&copy; 2026 iSam Studio</p>
+                <p>
+                    <a href="index.html">Kebijakan Privasi</a> | 
+                    <a href="terms-of-service.html">Ketentuan Layanan</a> | 
+                    <a href="help.html">Pusat Bantuan</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
