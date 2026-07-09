@@ -51,291 +51,237 @@ class MusyrifDashboard extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildBanner(),
-                  const SizedBox(height: 20),
-                  if (provider.isModuleActive('graduation') &&
-                      provider.graduationEvents.any((e) => e.isPublished)) ...[
-                    _buildGraduationBanner(context, provider),
-                    const SizedBox(height: 24),
-                  ],
-                  const SectionTitle('Statistik Saya'),
-                  const SizedBox(height: 12),
-                  Row(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isTablet = constraints.maxWidth > 700;
+          
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: isTablet ? 40 : 16, vertical: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _mStatTile(
-                        '${myHalaqah.length}',
-                        'Halaqah',
-                        Icons.groups_rounded,
-                        AppTheme.gold,
-                      ),
-                      const SizedBox(width: 12),
-                      _mStatTile(
-                        '${mySantri.length}',
-                        'Santri',
-                        Icons.people_alt_rounded,
-                        AppTheme.primaryGreen,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  // KARTU MUSYRIF DIGITAL
-                  Card(
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(color: Colors.grey.shade200),
-                    ),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () {
-                        final m = provider.linkedMusyrif;
-                        showDialog(
-                          context: context,
-                          builder: (context) => Dialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24),
+                      _buildBanner(),
+                      const SizedBox(height: 20),
+                      if (provider.isModuleActive('graduation') &&
+                          provider.graduationEvents.any((e) => e.isPublished)) ...[
+                        _buildGraduationBanner(context, provider),
+                        const SizedBox(height: 24),
+                      ],
+                      const SectionTitle('Statistik Saya'),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          _mStatTile(
+                            '${myHalaqah.length}',
+                            'Halaqah',
+                            Icons.groups_rounded,
+                            AppTheme.gold,
+                          ),
+                          const SizedBox(width: 12),
+                          _mStatTile(
+                            '${mySantri.length}',
+                            'Santri',
+                            Icons.people_alt_rounded,
+                            AppTheme.primaryGreen,
+                          ),
+                          if (isTablet) ...[
+                            const SizedBox(width: 12),
+                            _mStatTile(
+                              '${recent.length}',
+                              'Total Setoran',
+                              Icons.history_edu_rounded,
+                              Colors.blue,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(24.0),
+                            const SizedBox(width: 12),
+                            _mStatTile(
+                              '${mySantri.fold(0, (sum, s) => sum + s.totalZiyadahAyahs)}',
+                              'Total Ayat',
+                              Icons.menu_book_rounded,
+                              Colors.purple,
+                            ),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      if (isTablet)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
                               child: Column(
-                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    'KARTU MUSYRIF DIGITAL',
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                      color: AppTheme.primaryGreen,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  QrImageView(
-                                    data: m?.id ?? '',
-                                    version: QrVersions.auto,
-                                    size: 180.0,
-                                    backgroundColor: Colors.white,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Divider(
-                                    color: Colors.grey.shade300,
-                                    height: 1,
-                                  ),
+                                  // KARTU MUSYRIF DIGITAL
+                                  _buildDigitalCard(context),
                                   const SizedBox(height: 16),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Container(
-                                          width: 60,
-                                          height: 60,
-                                          color: AppTheme.primaryGreen
-                                              .withValues(alpha: 0.1),
-                                          child: m?.photoPath != null
-                                              ? Image.network(
-                                                  m!.photoPath!,
-                                                  fit: BoxFit.cover,
-                                                )
-                                              : Center(
-                                                  child: Text(
-                                                    m?.nama[0] ?? 'M',
-                                                    style: const TextStyle(
-                                                      fontSize: 22,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color:
-                                                          AppTheme.primaryGreen,
-                                                    ),
-                                                  ),
-                                                ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              m?.nama ?? 'Musyrif',
-                                              style: GoogleFonts.poppins(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
-                                                color: Colors.black87,
-                                              ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              'NIP/ID: ${m?.nip ?? m?.id ?? "-"}',
-                                              style: TextStyle(
-                                                fontFamily: 'monospace',
-                                                color: Colors.grey.shade600,
-                                                fontSize: 11,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text(
-                                      'Tutup',
-                                      style: TextStyle(
-                                        color: AppTheme.primaryGreen,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
+                                  _buildScanButton(context),
                                 ],
                               ),
                             ),
-                          ),
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.qr_code_2_rounded,
-                              color: Colors.black87,
-                              size: 28,
-                            ),
-                            const SizedBox(width: 16),
+                            const SizedBox(width: 20),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'KARTU MUSYRIF DIGITAL',
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.green.shade800,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'QR Code untuk akses cepat',
-                                    style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontSize: 11,
-                                    ),
-                                  ),
+                                  const SectionTitle('Aktivitas Terkini'),
+                                  const SizedBox(height: 12),
+                                  if (recent.isEmpty)
+                                    const EmptyState('Belum ada riwayat hafalan.')
+                                  else
+                                    ...recent.take(5).map((item) => RecentSetoranTile(santri: item.$1, record: item.$2)),
                                 ],
                               ),
                             ),
-                            const Icon(
-                              Icons.qr_code_rounded,
-                              color: Colors.green,
-                              size: 20,
-                            ),
+                          ],
+                        )
+                      else
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildDigitalCard(context),
+                            const SizedBox(height: 16),
+                            _buildScanButton(context),
+                            const SizedBox(height: 20),
+                            if (provider.isModuleActive('graduation') && provider.graduationEvents.any((e) => e.isPublished)) ...[
+                              _buildTasmiButton(context),
+                              const SizedBox(height: 24),
+                            ],
+                            const SectionTitle('Aktivitas Terkini'),
+                            const SizedBox(height: 12),
+                            if (recent.isEmpty)
+                              const EmptyState('Belum ada riwayat hafalan dari santri Anda.')
+                            else
+                              ...recent.take(5).map((item) => RecentSetoranTile(santri: item.$1, record: item.$2)),
                           ],
                         ),
-                      ),
-                    ),
+                      const SizedBox(height: 80),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  // SCAN QR SANTRI BUTTON
-                  SizedBox(
-                    width: double.infinity,
-                    height: 54,
-                    child: FilledButton.icon(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: AppTheme.primaryGreen,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      onPressed: () async {
-                        final verifiedSantri = await VerificationGate.show(
-                          context: context,
-                        );
-                        if (verifiedSantri != null && context.mounted) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  SetoranFormScreen(santri: verifiedSantri),
-                            ),
-                          );
-                        }
-                      },
-                      icon: const Icon(
-                        Icons.qr_code_scanner_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                      label: const Text(
-                        'SCAN QR SANTRI (MULAI SETORAN)',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildDigitalCard(BuildContext context) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => _showDigitalCardDialog(context),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Icon(Icons.qr_code_2_rounded, color: Colors.black87, size: 28),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'KARTU MUSYRIF DIGITAL',
+                      style: GoogleFonts.poppins(color: Colors.green.shade800, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.5),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  if (provider.isModuleActive('graduation') &&
-                      provider.graduationEvents.any((e) => e.isPublished)) ...[
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const TasmiFormScreen(),
-                          ),
-                        ),
-                        icon: const Icon(Icons.school_rounded),
-                        label: const Text('Mulai Ujian Tasmi\''),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.purple,
-                          side: const BorderSide(color: Colors.purple),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 4),
+                    Text('QR Code untuk akses cepat', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
                   ],
-                  const SectionTitle('Aktivitas Terkini'),
-                  const SizedBox(height: 12),
-                  if (recent.isEmpty)
-                    const EmptyState(
-                      'Belum ada riwayat hafalan dari santri Anda.',
-                    )
-                  else
-                    ...recent
-                        .take(5)
-                        .map(
-                          (item) => RecentSetoranTile(
-                            santri: item.$1,
-                            record: item.$2,
-                          ),
-                        ),
-                  const SizedBox(height: 80),
+                ),
+              ),
+              const Icon(Icons.qr_code_rounded, color: Colors.green, size: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScanButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: FilledButton.icon(
+        style: FilledButton.styleFrom(backgroundColor: AppTheme.primaryGreen, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+        onPressed: () async {
+          final verifiedSantri = await VerificationGate.show(context: context);
+          if (verifiedSantri != null && context.mounted) {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => SetoranFormScreen(santri: verifiedSantri)));
+          }
+        },
+        icon: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 20),
+        label: const Text('SCAN QR SANTRI (MULAI SETORAN)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 0.5)),
+      ),
+    );
+  }
+
+  Widget _buildTasmiButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TasmiFormScreen())),
+        icon: const Icon(Icons.school_rounded),
+        label: const Text('Mulai Ujian Tasmi\''),
+        style: OutlinedButton.styleFrom(foregroundColor: Colors.purple, side: const BorderSide(color: Colors.purple)),
+      ),
+    );
+  }
+
+  void _showDigitalCardDialog(BuildContext context) {
+    final m = provider.linkedMusyrif;
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('KARTU MUSYRIF DIGITAL', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: AppTheme.primaryGreen, letterSpacing: 0.5)),
+              const SizedBox(height: 20),
+              QrImageView(data: m?.id ?? '', version: QrVersions.auto, size: 180.0, backgroundColor: Colors.white),
+              const SizedBox(height: 20),
+              Divider(color: Colors.grey.shade300, height: 1),
+              const SizedBox(height: 16),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: 60, height: 60,
+                      color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                      child: m?.photoPath != null ? Image.network(m!.photoPath!, fit: BoxFit.cover) : Center(child: Text(m?.nama[0] ?? 'M', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen))),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(m?.nama ?? 'Musyrif', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87), maxLines: 2, overflow: TextOverflow.ellipsis),
+                        const SizedBox(height: 4),
+                        Text('NIP/ID: ${m?.nip ?? m?.id ?? "-"}', style: TextStyle(fontFamily: 'monospace', color: Colors.grey.shade600, fontSize: 11)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
+              const SizedBox(height: 16),
+              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Tutup', style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold))),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

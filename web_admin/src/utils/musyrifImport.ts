@@ -10,6 +10,7 @@ export type ParsedMusyrifImportRow = {
   noHp: string;
   catatan: string;
   status: string;
+  password?: string;
   error: string | null;
 };
 
@@ -24,6 +25,7 @@ const headerAliases: Record<string, string[]> = {
   noHp: ["no hp", "nomor hp", "hp", "wa", "whatsapp"],
   catatan: ["catatan", "keterangan", "note"],
   status: ["status"],
+  password: ["password", "kata sandi", "sandi", "pass"],
 };
 
 function normalizeHeader(value: string) {
@@ -63,6 +65,7 @@ function validateRow(row: Omit<ParsedMusyrifImportRow, "error">) {
   if (!row.nip) return "NIP wajib diisi";
   if (!row.nip.replace(/\D/g, "")) return "NIP harus mengandung angka";
   if (row.email && !/\S+@\S+\.\S+/.test(row.email)) return "Format email tidak valid";
+  if (row.password && row.password.length < 6) return "Password minimal 6 karakter";
   return null;
 }
 
@@ -90,6 +93,7 @@ export async function parseMusyrifExcelFile(file: File) {
       noHp: toText(getCellValue(source, "noHp")),
       catatan: toText(getCellValue(source, "catatan")),
       status: normalizeStatus(toText(getCellValue(source, "status"))),
+      password: toText(getCellValue(source, "password")),
     };
 
     return {
@@ -102,14 +106,14 @@ export async function parseMusyrifExcelFile(file: File) {
 export function downloadMusyrifExcelTemplate() {
   const workbook = XLSX.utils.book_new();
   const rows = [
-    ["Nama", "NIP", "Email", "Jenis Kelamin", "Jabatan", "No HP", "Catatan", "Status"],
-    ["Musyrif Ahmad", "1987001", "ahmad@example.com", "L", "Musyrif", "081234567890", "Pembimbing halaqah 1", "aktif"],
+    ["Nama", "NIP", "Email", "Jenis Kelamin", "Jabatan", "No HP", "Catatan", "Status", "Password"],
+    ["Musyrif Ahmad", "1987001", "ahmad@example.com", "L", "Musyrif", "081234567890", "Pembimbing halaqah 1", "aktif", "SandiKuat789"],
   ];
   const notes = [
     ["Aturan Import Musyrif"],
     ["Field wajib: Nama dan NIP"],
     ["Email, jabatan, no HP, dan catatan boleh dikosongkan"],
-    ["Sandi login otomatis akan mengikuti NIP jika tidak pernah diubah manual"],
+    ["Password minimal 6 karakter. Jika kosong, sandi akan mengikuti NIP."],
   ];
 
   XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(rows), "Musyrif");

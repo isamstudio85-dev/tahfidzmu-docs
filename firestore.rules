@@ -141,7 +141,10 @@ service cloud.firestore {
         allow list: if isAuth() && isMemberOf(pid);
 
         // Tulis: hanya admin dan superAdmin
-        allow write: if isAuth() && canManage(pid);
+        // Update: izinkan user mengupdate password-nya sendiri di mapping
+        // Kita bandingkan mappingId dengan username untuk memastikan kepemilikan
+        allow update: if isAuth() && (canManage(pid) || mappingId == userData().username);
+        allow create, delete: if isAuth() && canManage(pid);
       }
 
       // ─────────────────────────────────────────

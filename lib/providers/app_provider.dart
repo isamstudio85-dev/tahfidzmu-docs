@@ -6,16 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/santri.dart';
 import '../models/setoran.dart';
 import '../models/surah_model.dart';
-import '../models/setoran_continuation.dart';
 import '../models/user_role.dart';
-import '../models/musyrif_data.dart';
-import '../models/halaqah_data.dart';
-import '../models/kelas_data.dart';
-import '../models/pesantren_info.dart';
-import '../models/graduation_event.dart';
-import '../models/graduation_registration.dart';
 import '../models/tasmi_record.dart';
-import '../models/pengawas_data.dart';
+import '../models/setoran_continuation.dart';
 import '../models/presensi_halaqah.dart';
 import '../models/app_notification.dart';
 import '../services/quran_service.dart';
@@ -26,9 +19,10 @@ import '../services/login_preferences_service.dart';
 import 'auth_mixin.dart';
 import 'data_mixin.dart';
 import 'session_mixin.dart';
+import 'management_mixin.dart';
 
 class AppProvider extends ChangeNotifier
-    with AuthMixin, DataMixin, SessionMixin {
+    with AuthMixin, DataMixin, SessionMixin, ManagementMixin {
   bool _isInitializing = false;
   bool get isInitializing => _isInitializing;
 
@@ -39,13 +33,7 @@ class AppProvider extends ChangeNotifier
   bool isSurahListLoading = false;
   String? surahListError;
 
-  final Set<String> _activeModules = {
-    'quran',
-    'hadits',
-    'tajwid',
-    'tahsin',
-    'graduation',
-  };
+  final Set<String> _activeModules = {'quran', 'hadits', 'tajwid', 'tahsin', 'graduation'};
   Set<String> get activeModules => Set.unmodifiable(_activeModules);
   bool isModuleActive(String key) => _activeModules.contains(key);
 
@@ -59,34 +47,12 @@ class AppProvider extends ChangeNotifier
     notifyListeners();
   }
 
-  String generateId(String collectionName) {
-    return getCollection(collectionName).doc().id;
-  }
+  String generateId(String collectionName) => getCollection(collectionName).doc().id;
 
   String _adminPhoto = '';
   String get adminPhoto => _adminPhoto;
 
-  Santri? get linkedSantri =>
-      linkedSantriId != null ? getSantriById(linkedSantriId!) : null;
-  MusyrifData? get linkedMusyrif => getMusyrifById(linkedMusyrifId);
-
-  PengawasData? getPengawasById(String id) {
-    final list = pengawasList.where((p) => p.id == id).toList();
-    return list.isNotEmpty ? list.first : null;
-  }
-
-  PengawasData? get linkedPengawas =>
-      linkedMusyrifId != null ? getPengawasById(linkedMusyrifId!) : null;
-
-  String get musyrif => linkedMusyrif?.nama ?? 'Musyrif';
-  String get lembaga => linkedMusyrif?.lembaga ?? 'Halaqah Tahfidz';
-  String get jabatan => linkedMusyrif?.jabatan ?? 'Musyrif Al-Quran';
-  String get nomorHp => linkedMusyrif?.nomorHp ?? '';
-  String get musyrifPhoto => linkedMusyrif?.photoPath ?? '';
-
-  AppProvider() {
-    initialize();
-  }
+  AppProvider() { initialize(); }
 
   Future<void> initialize() async {
     if (_isInitializing) return;
@@ -98,24 +64,20 @@ class AppProvider extends ChangeNotifier
       if (user != null) {
         final userData = await firebase.getUserData(user.uid);
         if (userData != null) {
-          final role = userData['role'] as String?;
-          final isOwnerEmail = user.email == 'dasamsamsudin87@gmail.com';
-          if (role == 'superAdmin' || isOwnerEmail) {
+          if (userData['role'] == 'superAdmin' || user.email == 'dasamsamsudin87@gmail.com') {
             loginError = 'Login super admin hanya tersedia di web admin.';
             await performLogout();
             return;
           }
-
           setLoginInfo(
-            roleFromString(role ?? '') ?? UserRole.orangTua,
+            roleFromString(userData['role'] ?? '') ?? UserRole.orangTua,
             linkedSantriId: userData['linkedId'] as String?,
             linkedMusyrifId: userData['linkedId'] as String?,
             userId: user.uid,
             pesantrenId: userData['pesantrenId'] as String?,
           );
-          if (isAdmin) {
-            _adminPhoto = userData['photoPath'] ?? '';
-          }
+          currentUsername = userData['username'] as String?;
+          if (isAdmin) _adminPhoto = userData['photoPath'] ?? '';
           await setupFirestoreListeners();
         } else {
           await firebase.signOut();
@@ -132,8 +94,7 @@ class AppProvider extends ChangeNotifier
     isSurahListLoading = true;
     notifyListeners();
     try {
-      final list = await QuranService.getSurahList();
-      surahList = list;
+      surahList = await QuranService.getSurahList();
     } catch (e) {
       surahListError = e.toString();
     } finally {
@@ -144,23 +105,18 @@ class AppProvider extends ChangeNotifier
 
   Future<void> refreshSurahList() => _fetchSurahList();
 
+  void clearLoginError() { loginError = null; notifyListeners(); }
+
   Future<void> loadSurahForReader(int surahNumber) async {
     activeSetoranSurahNumber = surahNumber;
-    final surahInfo = surahList.firstWhere(
-      (s) => s.number == surahNumber,
-      orElse: () => surahList.first,
-    );
+    final surahInfo = surahList.firstWhere((s) => s.number == surahNumber, orElse: () => surahList.first);
     activeSetoranSurahName = surahInfo.name;
     activeSetoranSurahEnglishName = surahInfo.englishName;
     isSurahLoading = true;
     notifyListeners();
     try {
       currentSurah = await QuranService.getSurah(surahNumber);
-
-      // Speculative pre-caching for next surah to make navigation "instant"
-      if (surahNumber < 114) {
-        QuranService.getSurah(surahNumber + 1);
-      }
+      if (surahNumber < 114) QuranService.getSurah(surahNumber + 1);
     } catch (e) {
       surahLoadError = e.toString();
     } finally {
@@ -169,185 +125,93 @@ class AppProvider extends ChangeNotifier
     }
   }
 
-  Future<bool> loginWithCredentials(
-    String? targetPesantrenId,
-    String username,
-    String password,
-  ) async {
+  Future<bool> loginWithCredentials(String? targetPesantrenId, String username, String password, {bool qrLogin = false}) async {
     loginError = null;
+    final String u = username.trim();
+    String p = password.trim();
     try {
       if (targetPesantrenId == null || targetPesantrenId.trim().isEmpty) {
-        loginError =
-            'Login super admin di Android dinonaktifkan. Gunakan web admin.';
+        loginError = 'Login super admin di Android dinonaktifkan.';
         return false;
       }
+      final String email = u.contains('@') ? u : '$u.$targetPesantrenId@tahfidzmu.com'.toLowerCase().replaceAll(' ', '');
+      if (email == 'dasamsamsudin87@gmail.com') { loginError = 'Login super admin hanya di web.'; return false; }
 
-      String email = username;
-      if (!username.contains('@')) email = '$username@tahfidzmu.com';
-
-      final isSuperAdminEmail = email == 'dasamsamsudin87@gmail.com';
-      if (isSuperAdminEmail) {
-        loginError = 'Login super admin hanya tersedia di web admin.';
-        return false;
-      }
+      final mappingCollection = firestore.collection('pesantren').doc(targetPesantrenId).collection('user_mappings');
       DocumentSnapshot<Map<String, dynamic>>? mappingDoc;
-
-      final mappingCollection = firestore
-          .collection('pesantren')
-          .doc(targetPesantrenId)
-          .collection('user_mappings');
-
-      try {
-        mappingDoc = await mappingCollection
-            .doc(username)
-            .get()
-            .timeout(const Duration(seconds: 8));
+      try { 
+        mappingDoc = await mappingCollection.doc(u).get().timeout(const Duration(seconds: 5)); 
       } catch (_) {
-        try {
-          mappingDoc = await mappingCollection
-              .doc(username)
-              .get(const GetOptions(source: Source.cache));
-        } catch (_) {}
+        mappingDoc = await mappingCollection.doc(u).get(const GetOptions(source: Source.cache));
+      }
+      
+      if (!mappingDoc.exists) {
+        final normalized = normalizeLoginKey(u);
+        if (normalized != u) {
+          mappingDoc = await mappingCollection.doc(normalized).get();
+        }
       }
 
-      if (mappingDoc == null || !mappingDoc.exists) {
-        final digitsOnly = username.replaceAll(RegExp(r'\D+'), '');
-        if (digitsOnly.isNotEmpty) {
-          try {
-            mappingDoc = await mappingCollection
-                .doc(digitsOnly)
-                .get()
-                .timeout(const Duration(seconds: 8));
-          } catch (_) {
+      final String effectiveUsername = mappingDoc.exists ? mappingDoc.id : u;
+      UserCredential? cred;
+      try {
+        cred = await firebase.signIn(email, p);
+      } catch (e) {
+        if (mappingDoc.exists) {
+          final storedPwd = mappingDoc.data()?['defaultPassword'] as String?;
+          if (storedPwd != null && p != storedPwd) {
             try {
-              mappingDoc = await mappingCollection
-                  .doc(digitsOnly)
-                  .get(const GetOptions(source: Source.cache));
+              cred = await firebase.signIn(email, storedPwd);
+              if (cred != null) p = storedPwd;
             } catch (_) {}
           }
         }
-      }
-
-      UserCredential? cred;
-      try {
-        cred = await firebase.signIn(email, password);
-      } catch (e) {
-        if (e is FirebaseAuthException &&
-            (e.code == 'user-not-found' || e.code == 'invalid-credential') &&
-            mappingDoc != null &&
-            mappingDoc.exists) {
-          cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: email,
-            password: password,
-          );
-          await firebase.setUserData(cred.user!.uid, {
-            'role': mappingDoc.data()?['role'],
-            'linkedId': mappingDoc.data()?['linkedId'],
-            'username': username,
-            'pesantrenId': targetPesantrenId,
-          });
-        } else {
-          loginError = 'Username atau sandi salah.';
-          rethrow;
+        if (cred == null && mappingDoc.exists) {
+          final expectedPassword = mappingDoc.data()?['defaultPassword'] ?? effectiveUsername;
+          if (p == expectedPassword) {
+            try {
+              cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: p);
+            } catch (createErr) {
+              if (createErr.toString().contains('already-in-use')) {
+                loginError = 'Sinkronisasi Auth gagal. Admin harus menghapus akun email ini di Firebase Console.';
+              }
+            }
+          }
         }
       }
-
       final user = cred?.user;
-      if (user == null) return false;
+      if (user == null) { loginError ??= 'Username atau sandi salah.'; return false; }
 
-      if (mappingDoc != null && mappingDoc.exists) {
+      if (mappingDoc.exists) {
+        final mData = mappingDoc.data()!;
         await firebase.setUserData(user.uid, {
-          'role': mappingDoc.data()?['role'],
-          'linkedId': mappingDoc.data()?['linkedId'],
-          'username': username,
+          'role': mData['role'],
+          'linkedId': mData['linkedId'],
+          'username': effectiveUsername,
           'pesantrenId': targetPesantrenId,
         });
+        if (mData['mustResetAuth'] == true) {
+           await getCollection('user_mappings').doc(effectiveUsername).update({'mustResetAuth': false});
+        }
       }
 
       final userData = await firebase.getUserData(user.uid);
-      if (userData == null) {
-        loginError = 'Data pengguna tidak ditemukan.';
-        return false;
-      }
+      if (userData == null) { loginError = 'Data pengguna tidak ditemukan.'; return false; }
 
-      final resolvedRole = userData['role'] as String?;
-      if (resolvedRole == 'superAdmin' ||
-          user.email == 'dasamsamsudin87@gmail.com') {
-        loginError = 'Login super admin hanya tersedia di web admin.';
-        await firebase.signOut();
-        return false;
-      }
-
-      // Check subscription status
-      if (userData['pesantrenId'] != null) {
-        final pDoc = await firestore
-            .collection('pesantren')
-            .doc(userData['pesantrenId'] as String)
-            .get();
-        if (pDoc.exists) {
-          final pData = pDoc.data()!;
-          final status = pData['status'] ?? 'active';
-          final activeUntil = pData['activeUntil'] as Timestamp?;
-
-          if (status == 'suspended') {
-            loginError = 'Akun pesantren ditangguhkan oleh Super Admin.';
-            await firebase.signOut();
-            return false;
-          }
-          if (activeUntil != null &&
-              activeUntil.toDate().isBefore(DateTime.now())) {
-            loginError = 'Masa aktif langganan pesantren Anda telah habis.';
-            await firebase.signOut();
-            return false;
-          }
-        }
-      }
-
-      setLoginInfo(
-        roleFromString(userData['role'] as String) ?? UserRole.orangTua,
-        linkedSantriId: userData['linkedId'] as String?,
-        linkedMusyrifId: userData['linkedId'] as String?,
-        userId: user.uid,
-        pesantrenId: userData['pesantrenId'] as String?,
-      );
-
-      if (isAdmin) {
-        _adminPhoto = userData['photoPath'] ?? '';
-      }
+      setLoginInfo(roleFromString(userData['role'] as String) ?? UserRole.orangTua, linkedSantriId: userData['linkedId'] as String?, linkedMusyrifId: userData['linkedId'] as String?, userId: user.uid, pesantrenId: userData['pesantrenId'] as String?);
+      currentUsername = effectiveUsername;
+      currentPassword = p;
+      if (isAdmin) _adminPhoto = userData['photoPath'] ?? '';
       await setupFirestoreListeners();
 
-      // Save account credentials for the account switcher
-      final displayName = isOrangTua
-          ? (linkedSantri?.name ?? username)
-          : (isMusyrif
-                ? (linkedMusyrif?.nama ?? username)
-                : (isPengawas ? (linkedPengawas?.nama ?? username) : 'Admin'));
-      final photoPath = isOrangTua
-          ? linkedSantri?.photoPath
-          : (isMusyrif
-                ? linkedMusyrif?.photoPath
-                : (isPengawas ? linkedPengawas?.photoPath : null));
+      final displayName = isOrangTua ? (linkedSantri?.name ?? u) : (isMusyrif ? (linkedMusyrif?.nama ?? u) : 'Admin');
+      final photoPath = isOrangTua ? linkedSantri?.photoPath : (isMusyrif ? linkedMusyrif?.photoPath : null);
 
       try {
-        await LoginPreferencesService.saveAccount(
-          SavedAccount(
-            username: username,
-            password: password,
-            pesantrenId: targetPesantrenId,
-            displayName: displayName,
-            photoPath: photoPath,
-            role: userData['role'] as String,
-            linkedId: userData['linkedId'] as String?,
-          ),
-        );
-      } catch (e) {
-        debugPrint("Error saving account to switcher: $e");
-      }
-
+        await LoginPreferencesService.saveAccount(SavedAccount(username: u, password: p, pesantrenId: targetPesantrenId, displayName: displayName, photoPath: photoPath, role: userData['role'] as String, linkedId: userData['linkedId'] as String?));
+      } catch (_) {}
       return true;
-    } catch (e, stack) {
-      debugPrint("LOGIN_ERROR: $e");
-      debugPrint("LOGIN_STACK: $stack");
+    } catch (e) {
       loginError ??= 'Gagal masuk. Periksa jaringan Anda.';
       return false;
     }
@@ -358,378 +222,162 @@ class AppProvider extends ChangeNotifier
     notifyListeners();
     try {
       await firebase.signOut();
-      final success = await loginWithCredentials(
-        account.pesantrenId,
-        account.username,
-        account.password,
-      );
-      return success;
-    } catch (e) {
-      debugPrint("Error switching account: $e");
-      return false;
-    } finally {
-      _isInitializing = false;
-      notifyListeners();
-    }
+      return await loginWithCredentials(account.pesantrenId, account.username, account.password);
+    } catch (_) { return false; } finally { _isInitializing = false; notifyListeners(); }
   }
 
-  Future<void> updateSetoranRecord(
-    String santriId,
-    SetoranRecord record,
-  ) async {
-    // 1. Save record to Firestore
+  Future<void> updateSetoranRecord(String santriId, SetoranRecord record) async {
     final setoranJson = record.toJson();
-    if (pesantrenId != null) {
-      setoranJson['pesantrenId'] = pesantrenId;
-    }
-    await getCollection('santri')
-        .doc(santriId)
-        .collection('setoranHistory')
-        .doc(record.id)
-        .set(setoranJson);
-
+    if (pesantrenId != null) setoranJson['pesantrenId'] = pesantrenId;
+    await getCollection('santri').doc(santriId).collection('setoranHistory').doc(record.id).set(setoranJson);
     final now = DateTime.now();
-    if (record.date.year == now.year &&
-        record.date.month == now.month &&
-        record.date.day == now.day) {
+    if (record.date.year == now.year && record.date.month == now.month && record.date.day == now.day) {
       await setSantriKehadiranStatus(santriId, 'setoran');
     }
-
-    // Trigger setoran notification to parent
     await triggerSetoranNotification(santriId, record);
-
-    // 2. Fetch all records to recalculate aggregates
-    final historySnap = await getCollection(
-      'santri',
-    ).doc(santriId).collection('setoranHistory').get();
-    final allRecords = historySnap.docs
-        .map((doc) => SetoranRecord.fromJson(doc.data()))
-        .toList();
-
     final targetSantri = getSantriById(santriId);
     if (targetSantri != null) {
+      final historySnap = await getCollection('santri').doc(santriId).collection('setoranHistory').get();
+      final allRecords = historySnap.docs.map((doc) => SetoranRecord.fromJson(doc.data())).toList();
       final tempSantri = targetSantri.copyWith(setoranHistory: allRecords);
       await getCollection('santri').doc(santriId).update({
-        'averageScore': tempSantri.averageScore,
-        'totalSetoranCount': tempSantri.totalSetoranCount,
-        'totalErrors': tempSantri.totalErrors,
-        'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs,
-        'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs,
-        'totalFailedAyahs': tempSantri.totalFailedAyahs,
-        'estimatedJuz': tempSantri.estimatedJuz,
-        'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
+        'averageScore': tempSantri.averageScore, 'totalSetoranCount': tempSantri.totalSetoranCount, 'totalErrors': tempSantri.totalErrors, 'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs, 'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs, 'totalFailedAyahs': tempSantri.totalFailedAyahs, 'estimatedJuz': tempSantri.estimatedJuz, 'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
       });
     }
     notifyListeners();
   }
 
   Future<void> deleteSetoranRecord(String santriId, String recordId) async {
-    // 1. Delete record from Firestore
-    await getCollection(
-      'santri',
-    ).doc(santriId).collection('setoranHistory').doc(recordId).delete();
-
-    // 2. Fetch remaining records to recalculate aggregates
-    final historySnap = await getCollection(
-      'santri',
-    ).doc(santriId).collection('setoranHistory').get();
-    final allRecords = historySnap.docs
-        .map((doc) => SetoranRecord.fromJson(doc.data()))
-        .toList();
-
+    await getCollection('santri').doc(santriId).collection('setoranHistory').doc(recordId).delete();
     final targetSantri = getSantriById(santriId);
     if (targetSantri != null) {
+      final historySnap = await getCollection('santri').doc(santriId).collection('setoranHistory').get();
+      final allRecords = historySnap.docs.map((doc) => SetoranRecord.fromJson(doc.data())).toList();
       final tempSantri = targetSantri.copyWith(setoranHistory: allRecords);
       await getCollection('santri').doc(santriId).update({
-        'averageScore': tempSantri.averageScore,
-        'totalSetoranCount': tempSantri.totalSetoranCount,
-        'totalErrors': tempSantri.totalErrors,
-        'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs,
-        'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs,
-        'totalFailedAyahs': tempSantri.totalFailedAyahs,
-        'estimatedJuz': tempSantri.estimatedJuz,
-        'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
+        'averageScore': tempSantri.averageScore, 'totalSetoranCount': tempSantri.totalSetoranCount, 'totalErrors': tempSantri.totalErrors, 'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs, 'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs, 'totalFailedAyahs': tempSantri.totalFailedAyahs, 'estimatedJuz': tempSantri.estimatedJuz, 'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
       });
     }
     notifyListeners();
   }
 
+  @override
+  Future<void> performLogout() async { try { cancelSubscriptions(); } catch (_) {} await super.performLogout(); }
+
+  @override
+  void dispose() { cancelSubscriptions(); super.dispose(); }
+
+  bool _isLoggingOut = false;
+  bool get isLoggingOut => _isLoggingOut;
+
   Future<void> logout() async {
-    await performLogout();
-    cancelSubscriptions();
-  }
-
-  @override
-  void startSetoranSession({
-    required Santri santri,
-    required SetoranType type,
-    required SurahInfo surah,
-    required int ayahStart,
-    required int ayahEnd,
-  }) {
-    super.startSetoranSession(
-      santri: santri,
-      type: type,
-      surah: surah,
-      ayahStart: ayahStart,
-      ayahEnd: ayahEnd,
-    );
-    _writeActiveSessionToFirestore(
-      santriName: santri.name,
-      detail: '${type.label}: ${surah.englishName} $ayahStart-$ayahEnd',
-    );
-  }
-
-  @override
-  void startTasmiSession({
-    required Santri santri,
-    required List<int> juzNumbers,
-    required String year,
-  }) {
-    super.startTasmiSession(santri: santri, juzNumbers: juzNumbers, year: year);
-    final juzStr = juzNumbers.join(', ');
-    _writeActiveSessionToFirestore(
-      santriName: santri.name,
-      detail: 'Tasmi\' Juz [$juzStr]',
-    );
-  }
-
-  Future<void> _writeActiveSessionToFirestore({
-    required String santriName,
-    required String detail,
-  }) async {
-    final mId = linkedMusyrifId;
-    if (mId == null) return;
-    final mName = linkedMusyrif?.nama ?? 'Musyrif';
+    if (_isLoggingOut) return;
+    _isLoggingOut = true;
+    notifyListeners();
     try {
+      cancelSubscriptions();
+      clearData();
+      stopSetoranSession();
+      await Future.delayed(const Duration(milliseconds: 100));
+      await performLogout();
+    } catch (_) { await performLogout(); } finally { _isLoggingOut = false; notifyListeners(); }
+  }
+
+  @override
+  void startSetoranSession({required Santri santri, required SetoranType type, required SurahInfo surah, required int ayahStart, required int ayahEnd}) {
+    super.startSetoranSession(santri: santri, type: type, surah: surah, ayahStart: ayahStart, ayahEnd: ayahEnd);
+    _writeActiveSessionToFirestore(santriName: santri.name, detail: '${type.label}: ${surah.englishName} $ayahStart-$ayahEnd');
+  }
+
+  @override
+  void startTasmiSession({required Santri santri, required List<int> juzNumbers, required String year}) {
+    super.startTasmiSession(santri: santri, juzNumbers: juzNumbers, year: year);
+    _writeActiveSessionToFirestore(santriName: santri.name, detail: 'Tasmi\' Juz [${juzNumbers.join(', ')}]');
+  }
+
+  Future<void> _writeActiveSessionToFirestore({required String santriName, required String detail}) async {
+    final sId = currentUserId;
+    if (sId == null) return;
+    try {
+      final String name = linkedMusyrif?.nama ?? (isAdmin ? 'Admin' : 'Musyrif');
       final sessionJson = {
-        'id': mId,
-        'musyrifId': mId,
-        'musyrifName': mName,
-        'santriName': santriName,
-        'detail': detail,
-        'startedAt': FieldValue.serverTimestamp(),
+        'id': sId, 
+        'musyrifId': linkedMusyrifId ?? sId, 
+        'musyrifName': name, 
+        'santriName': santriName, 
+        'detail': detail, 
+        'startedAt': FieldValue.serverTimestamp()
       };
-      if (pesantrenId != null) {
-        sessionJson['pesantrenId'] = pesantrenId!;
-      }
-      await getCollection('active_sessions').doc(mId).set(sessionJson);
+      if (pesantrenId != null) sessionJson['pesantrenId'] = pesantrenId!;
+      await getCollection('active_sessions').doc(sId).set(sessionJson);
+      debugPrint("Live session written for $name");
     } catch (e) {
-      debugPrint("Error writing active session: $e");
+      debugPrint("Failed to write live session: $e");
     }
   }
 
   Future<void> endSetoranSession() async {
-    if (linkedMusyrifId != null && activeSetoranSantri != null) {
-      try {
-        await getCollection('active_sessions').doc(linkedMusyrifId!).delete();
-      } catch (e) {
-        debugPrint("Error clearing active session: $e");
-      }
+    if (currentUserId != null) {
+      try { await getCollection('active_sessions').doc(currentUserId!).delete(); } catch (_) {}
     }
     activeSetoranSantri = null;
     clearErrors();
   }
 
-  Future<void> updatePesantrenInfo(PesantrenInfo info) async {
-    pesantrenInfo = info;
-    await getCollection('settings').doc('pesantren_info').set(info.toJson());
-    notifyListeners();
-  }
-
   Future<void> updatePondokKnowledge(List<Map<String, dynamic>> items) async {
     pondokKnowledgeList = items;
     isPondokKnowledgeInitialized = true;
-    await getCollection(
-      'settings',
-    ).doc('pondok_knowledge').set({'items': items, 'initialized': true});
+    await getCollection('settings').doc('pondok_knowledge').set({'items': items, 'initialized': true});
     notifyListeners();
   }
 
-  Future<void> initializePondokKnowledge(
-    List<Map<String, dynamic>> items,
-  ) async {
+  Future<void> initializePondokKnowledge(List<Map<String, dynamic>> items) async {
     pondokKnowledgeList = items;
     isPondokKnowledgeInitialized = true;
-    await getCollection(
-      'settings',
-    ).doc('pondok_knowledge').set({'items': items, 'initialized': true});
+    await getCollection('settings').doc('pondok_knowledge').set({'items': items, 'initialized': true});
     notifyListeners();
   }
 
-  // Management functions
-  Future<void> addMusyrif(
-    MusyrifData m, {
-    String? username,
-    String? password,
-  }) async {
-    String? cloudPhotoUrl;
-    if (m.photoPath != null &&
-        m.photoPath!.isNotEmpty &&
-        !m.photoPath!.startsWith('http')) {
-      try {
-        cloudPhotoUrl = await firebase.uploadPhoto(
-          localPath: m.photoPath!,
-          folder: 'musyrif_photos',
-          fileName: m.id,
-        );
-      } catch (e) {
-        debugPrint('Failed to upload musyrif photo: $e');
+  Future<void> triggerSetoranNotification(String santriId, SetoranRecord record) async {
+    final santri = getSantriById(santriId);
+    if (santri == null) return;
+    try {
+      final snap = await firestore.collection('users').where('role', isEqualTo: 'orangTua').where('linkedId', isEqualTo: santriId).get();
+      for (var doc in snap.docs) {
+        final title = "Setoran Baru: ${record.surahEnglishName}";
+        final body = "${santri.name} baru saja menyetor hafalan dengan nilai ${record.finalScore.toStringAsFixed(0)}.";
+        await sendNotification(doc.id, title, body, 'setoran');
       }
-    }
-    final updatedM = m.copyWith(photoPath: cloudPhotoUrl ?? m.photoPath);
-    await getCollection('musyrif').doc(m.id).set(updatedM.toJson());
-    final userKey = (username?.isNotEmpty ?? false)
-        ? username!
-        : m.nip?.replaceAll(RegExp(r'\D+'), '') ?? m.id;
-    await getCollection('user_mappings').doc(userKey).set({
-      'linkedId': m.id,
-      'role': 'musyrif',
-      'defaultPassword': password ?? userKey,
-    });
+    } catch (_) {}
   }
 
-  Future<void> updateMusyrifData(String id, MusyrifData updated) async {
-    String? finalPhotoPath = updated.photoPath;
-    if (finalPhotoPath != null &&
-        finalPhotoPath.isNotEmpty &&
-        !finalPhotoPath.startsWith('http')) {
-      try {
-        finalPhotoPath = await firebase.uploadPhoto(
-          localPath: finalPhotoPath,
-          folder: 'musyrif_photos',
-          fileName: id,
-        );
-      } catch (e) {
-        debugPrint('Failed to update musyrif photo: $e');
-      }
-    }
-    await getCollection('musyrif')
-        .doc(id)
-        .set(
-          updated.copyWith(photoPath: finalPhotoPath).toJson(),
-          SetOptions(merge: true),
-        );
-  }
-
-  Future<void> removeMusyrif(String id) async =>
-      await getCollection('musyrif').doc(id).delete();
-
-  Future<void> addPengawas(
-    PengawasData p, {
-    required String username,
-    required String password,
-  }) async {
-    String? cloudPhotoUrl;
-    if (p.photoPath != null &&
-        p.photoPath!.isNotEmpty &&
-        !p.photoPath!.startsWith('http')) {
-      try {
-        cloudPhotoUrl = await firebase.uploadPhoto(
-          localPath: p.photoPath!,
-          folder: 'pengawas_photos',
-          fileName: p.id,
-        );
-      } catch (e) {
-        debugPrint('Failed to upload pengawas photo: $e');
-      }
-    }
-    final updatedP = p.copyWith(photoPath: cloudPhotoUrl ?? p.photoPath);
-    await getCollection('pengawas').doc(p.id).set(updatedP.toJson());
-    await getCollection('user_mappings').doc(username).set({
-      'linkedId': p.id,
-      'role': 'pengawas',
-      'defaultPassword': password,
-    });
-  }
-
-  Future<void> updatePengawasData(String id, PengawasData updated) async {
-    String? finalPhotoPath = updated.photoPath;
-    if (finalPhotoPath != null &&
-        finalPhotoPath.isNotEmpty &&
-        !finalPhotoPath.startsWith('http')) {
-      try {
-        finalPhotoPath = await firebase.uploadPhoto(
-          localPath: finalPhotoPath,
-          folder: 'pengawas_photos',
-          fileName: id,
-        );
-      } catch (e) {
-        debugPrint('Failed to update pengawas photo: $e');
-      }
-    }
-    await getCollection('pengawas')
-        .doc(id)
-        .set(
-          updated.copyWith(photoPath: finalPhotoPath).toJson(),
-          SetOptions(merge: true),
-        );
-  }
-
-  Future<void> removePengawas(String id, String username) async {
-    await getCollection('pengawas').doc(id).delete();
-    await getCollection('user_mappings').doc(username).delete();
-  }
-
-  String? getTodaySantriStatus(String santriId) {
+  Future<void> setSantriKehadiranStatus(String santriId, String status) async {
+    final santri = getSantriById(santriId);
+    if (santri == null || santri.halaqahId == null) return;
+    final halaqah = getHalaqahById(santri.halaqahId);
     final now = DateTime.now();
-    for (final p in presensiList) {
-      if (p.tanggal.year == now.year &&
-          p.tanggal.month == now.month &&
-          p.tanggal.day == now.day) {
-        if (p.daftarHadir.containsKey(santriId)) {
-          return p.daftarHadir[santriId];
-        }
-      }
+    final docId = "${santri.halaqahId}_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
+    final docRef = getCollection('presensi').doc(docId);
+    final docSnap = await docRef.get();
+    if (docSnap.exists) {
+      final updatedDaftar = Map<String, String>.from(docSnap.data()!['daftarHadir'] ?? {});
+      updatedDaftar[santriId] = status;
+      await docRef.update({'daftarHadir': updatedDaftar, 'waktuSubmit': Timestamp.fromDate(now)});
+    } else {
+      final newPresensi = PresensiHalaqah(id: docId, halaqahId: santri.halaqahId!, halaqahNama: halaqah?.nama ?? '', musyrifId: halaqah?.musyrifId ?? '', musyrifNama: getMusyrifById(halaqah?.musyrifId)?.nama ?? '', tanggal: DateTime(now.year, now.month, now.day), waktuSubmit: now, daftarHadir: {santriId: status});
+      await docRef.set(newPresensi.toJson());
     }
-    return null;
   }
 
-  Future<String> getLoginQrData(String userId) async {
-    final snap = await getCollection(
-      'user_mappings',
-    ).where('linkedId', isEqualTo: userId).limit(1).get();
-    if (snap.docs.isNotEmpty) {
-      final doc = snap.docs.first;
-      final username = doc.id;
-      final pwd = doc.data()['defaultPassword'] ?? username;
-      return 'tahfidzmu:login:$pesantrenId:$username:$pwd';
-    }
-    final doc = await getCollection('user_mappings').doc(userId).get();
-    final pwd = doc.data()?['defaultPassword'] ?? userId;
-    return 'tahfidzmu:login:$pesantrenId:$userId:$pwd';
-  }
-
-  Future<void> sendNotification(
-    String targetUserId,
-    String title,
-    String body,
-    String type,
-  ) async {
-    final ref = firestore
-        .collection('users')
-        .doc(targetUserId)
-        .collection('notifications')
-        .doc();
-    final notif = AppNotification(
-      id: ref.id,
-      title: title,
-      body: body,
-      timestamp: DateTime.now(),
-      targetUserId: targetUserId,
-      type: type,
-    );
+  Future<void> sendNotification(String targetUserId, String title, String body, String type) async {
+    final ref = firestore.collection('users').doc(targetUserId).collection('notifications').doc();
+    final notif = AppNotification(id: ref.id, title: title, body: body, timestamp: DateTime.now(), targetUserId: targetUserId, type: type);
     await ref.set(notif.toJson());
   }
 
   Future<void> markAllNotificationsAsRead() async {
     if (currentUserId == null) return;
-    final snap = await firestore
-        .collection('users')
-        .doc(currentUserId)
-        .collection('notifications')
-        .where('isRead', isEqualTo: false)
-        .get();
+    final snap = await firestore.collection('users').doc(currentUserId).collection('notifications').where('isRead', isEqualTo: false).get();
     final batch = firestore.batch();
     for (var doc in snap.docs) {
       batch.update(doc.reference, {'isRead': true});
@@ -739,332 +387,11 @@ class AppProvider extends ChangeNotifier
 
   Future<void> markNotificationAsRead(String notificationId) async {
     if (currentUserId == null) return;
-    await firestore
-        .collection('users')
-        .doc(currentUserId)
-        .collection('notifications')
-        .doc(notificationId)
-        .update({'isRead': true});
+    await firestore.collection('users').doc(currentUserId).collection('notifications').doc(notificationId).update({'isRead': true});
   }
-
-  Future<void> triggerSetoranNotification(
-    String santriId,
-    SetoranRecord record,
-  ) async {
-    final santri = getSantriById(santriId);
-    if (santri == null) return;
-
-    try {
-      final snap = await firestore
-          .collection('users')
-          .where('role', isEqualTo: 'orangTua')
-          .where('linkedId', isEqualTo: santriId)
-          .get()
-          .timeout(const Duration(seconds: 5));
-
-      for (var doc in snap.docs) {
-        final parentUid = doc.id;
-        final typeStr = record.type == SetoranType.ziyadah
-            ? 'Ziyadah'
-            : 'Murojaah';
-        final statusStr = record.gradeName;
-        final scoreVal = record.finalScore.toStringAsFixed(0);
-
-        final title = "Setoran Hafalan Baru ($typeStr)";
-        final body =
-            "Alhamdulillah, ${santri.name} baru saja menyetor hafalan $typeStr: Surah ${record.surahName} (${record.ayahStart}-${record.ayahEnd}) dengan predikat $statusStr (Nilai: $scoreVal).";
-
-        await sendNotification(parentUid, title, body, 'setoran');
-      }
-    } catch (e) {
-      debugPrint(
-        "triggerSetoranNotification parent lookup failed (likely permission restriction): $e",
-      );
-    }
-  }
-
-  Future<void> setSantriKehadiranStatus(String santriId, String status) async {
-    final santri = getSantriById(santriId);
-    if (santri == null) return;
-    final halaqahId = santri.halaqahId;
-    if (halaqahId == null) return;
-    final halaqah = getHalaqahById(halaqahId);
-    final halaqahNama = halaqah?.nama ?? 'Halaqah';
-    final musyrifId = halaqah?.musyrifId ?? '';
-    final musyrif = getMusyrifById(musyrifId);
-    final musyrifNama = musyrif?.nama ?? 'Musyrif';
-
-    final now = DateTime.now();
-    final dateStr =
-        "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
-    final docId = "${halaqahId}_$dateStr";
-
-    final docRef = getCollection('presensi').doc(docId);
-    final docSnap = await docRef.get();
-
-    if (docSnap.exists) {
-      final existing = PresensiHalaqah.fromJson(docSnap.data()!);
-      final updatedDaftar = Map<String, String>.from(existing.daftarHadir);
-      updatedDaftar[santriId] = status;
-      await docRef.update({
-        'daftarHadir': updatedDaftar,
-        'waktuSubmit': Timestamp.fromDate(now),
-      });
-    } else {
-      final newPresensi = PresensiHalaqah(
-        id: docId,
-        halaqahId: halaqahId,
-        halaqahNama: halaqahNama,
-        musyrifId: musyrifId,
-        musyrifNama: musyrifNama,
-        tanggal: DateTime(now.year, now.month, now.day),
-        waktuSubmit: now,
-        daftarHadir: {santriId: status},
-      );
-      await docRef.set(newPresensi.toJson());
-    }
-
-    try {
-      final parentSnap = await firestore
-          .collection('users')
-          .where('role', isEqualTo: 'orangTua')
-          .where('linkedId', isEqualTo: santriId)
-          .get()
-          .timeout(const Duration(seconds: 5));
-
-      String displayStatus;
-      String statusDesc;
-      switch (status) {
-        case 'setoran':
-          displayStatus = 'Setoran (Hadir)';
-          statusDesc =
-              'Anak Anda hadir di halaqah dan sudah melakukan setoran hafalan.';
-          break;
-        case 'ditunda':
-          displayStatus = 'Ditunda (Bukan Sesi)';
-          statusDesc =
-              'Anak Anda hadir di halaqah, namun ditunda giliran setorannya hari ini karena keterbatasan waktu.';
-          break;
-        case 'sakit':
-          displayStatus = 'Sakit';
-          statusDesc =
-              'Anak Anda tidak dapat mengikuti halaqah hari ini karena sakit.';
-          break;
-        case 'izin':
-          displayStatus = 'Izin';
-          statusDesc =
-              'Anak Anda tidak mengikuti halaqah hari ini karena telah meminta izin sebelumnya.';
-          break;
-        case 'alfa':
-          displayStatus = 'Alfa (Tanpa Keterangan)';
-          statusDesc =
-              'Anak Anda tidak mengikuti halaqah hari ini tanpa keterangan.';
-          break;
-        default:
-          displayStatus = status.toUpperCase();
-          statusDesc =
-              'Status kehadiran anak Anda diperbarui menjadi $displayStatus.';
-      }
-
-      for (var doc in parentSnap.docs) {
-        final parentUid = doc.id;
-        final title = "Laporan Kehadiran Hari Ini - $displayStatus";
-        final body = "Pemberitahuan halaqah ${santri.name}: $statusDesc";
-        await sendNotification(parentUid, title, body, 'presensi');
-      }
-    } catch (e) {
-      debugPrint(
-        "setSantriKehadiranStatus parent lookup failed (likely permission restriction): $e",
-      );
-    }
-  }
-
-  Future<void> addHalaqah(HalaqahData h) async =>
-      await getCollection('halaqah').doc(h.id).set(h.toJson());
-  Future<void> updateHalaqah(String id, HalaqahData updated) async =>
-      await getCollection('halaqah').doc(id).update(updated.toJson());
-  Future<void> removeHalaqah(String id) async =>
-      await getCollection('halaqah').doc(id).delete();
-  Future<void> addKelas(KelasData k) async =>
-      await getCollection('kelas').doc(k.id).set(k.toJson());
-  Future<void> updateKelas(String id, KelasData updated) async =>
-      await getCollection('kelas').doc(id).update(updated.toJson());
-  Future<void> removeKelas(String id) async =>
-      await getCollection('kelas').doc(id).delete();
-  Future<void> addGraduationEvent(GraduationEvent event) async =>
-      await getCollection(
-        'graduation_events',
-      ).doc(event.id).set(event.toJson());
-  Future<void> updateGraduationEvent(
-    String id,
-    GraduationEvent updated,
-  ) async =>
-      await getCollection('graduation_events').doc(id).update(updated.toJson());
-  Future<void> removeGraduationEvent(String id) async =>
-      await getCollection('graduation_events').doc(id).delete();
-  Future<void> addGraduationRegistration(GraduationRegistration reg) async =>
-      await getCollection(
-        'graduation_registrations',
-      ).doc(reg.id).set(reg.toJson());
-  Future<void> updateGraduationRegistration(
-    String id,
-    GraduationRegistration updated,
-  ) async => await getCollection(
-    'graduation_registrations',
-  ).doc(id).update(updated.toJson());
-  Future<void> removeGraduationRegistration(String id) async =>
-      await getCollection('graduation_registrations').doc(id).delete();
-
-  Future<void> addSantri(
-    String name, {
-    String? halaqahId,
-    String? kelas,
-    String? nis,
-    String? email,
-    String? jenisKelamin,
-    String? namaOrangTua,
-    String? namaAyah,
-    String? namaIbu,
-    String? nomorHpWali,
-    String? targetHafalan,
-    String? photoPath,
-    String? tanggalLahir,
-    List<int>? initialMemorizedJuz,
-    String? username,
-    String? password,
-  }) async {
-    final id = generateId('santri');
-    String? cloudPhotoUrl;
-    if (photoPath != null &&
-        photoPath.isNotEmpty &&
-        !photoPath.startsWith('http')) {
-      try {
-        cloudPhotoUrl = await firebase.uploadPhoto(
-          localPath: photoPath,
-          folder: 'santri_photos',
-          fileName: id,
-        );
-      } catch (e) {
-        debugPrint('Failed to upload santri photo: $e');
-      }
-    }
-    final santri = Santri(
-      id: id,
-      name: name,
-      nis: nis,
-      email: email,
-      jenisKelamin: jenisKelamin,
-      kelas: kelas,
-      halaqahId: halaqahId,
-      namaOrangTua: namaOrangTua,
-      namaAyah: namaAyah,
-      namaIbu: namaIbu,
-      nomorHpWali: nomorHpWali,
-      targetHafalan: targetHafalan,
-      photoPath: cloudPhotoUrl ?? photoPath,
-      tanggalLahir: tanggalLahir,
-      initialMemorizedJuz: initialMemorizedJuz ?? [],
-    );
-    await getCollection('santri').doc(id).set(santri.toJson());
-    final userKey = (username?.isNotEmpty ?? false)
-        ? username!
-        : nis?.replaceAll(RegExp(r'\D+'), '') ?? id;
-    await getCollection('user_mappings').doc(userKey).set({
-      'linkedId': id,
-      'role': 'orangTua',
-      'defaultPassword': password ?? userKey,
-    });
-  }
-
-  Future<void> updateSantriInfo(
-    String santriId, {
-    String? name,
-    String? nis,
-    String? email,
-    String? jenisKelamin,
-    String? halaqahId,
-    String? kelas,
-    String? namaOrangTua,
-    String? namaAyah,
-    String? namaIbu,
-    String? nomorHpWali,
-    String? targetHafalan,
-    String? photoPath,
-    String? tanggalLahir,
-    String? status,
-    List<int>? initialMemorizedJuz,
-  }) async {
-    final doc = getCollection('santri').doc(santriId);
-    final existing = await doc.get();
-    if (!existing.exists) return;
-    final s = Santri.fromJson(existing.data()!);
-    String? finalPhotoPath = photoPath;
-    if (photoPath != null &&
-        photoPath.isNotEmpty &&
-        !photoPath.startsWith('http')) {
-      try {
-        finalPhotoPath = await firebase.uploadPhoto(
-          localPath: photoPath,
-          folder: 'santri_photos',
-          fileName: santriId,
-        );
-      } catch (e) {
-        debugPrint('Failed to update santri photo: $e');
-      }
-    }
-    await doc.update(
-      s
-          .copyWith(
-            name: name,
-            nis: nis,
-            email: email,
-            jenisKelamin: jenisKelamin,
-            kelas: kelas,
-            halaqahId: halaqahId,
-            namaOrangTua: namaOrangTua,
-            namaAyah: namaAyah,
-            namaIbu: namaIbu,
-            nomorHpWali: nomorHpWali,
-            targetHafalan: targetHafalan,
-            photoPath: finalPhotoPath,
-            tanggalLahir: tanggalLahir,
-            status: status,
-            initialMemorizedJuz: initialMemorizedJuz,
-          )
-          .toJson(),
-    );
-  }
-
-  Future<void> removeSantri(String santriId) async =>
-      await getCollection('santri').doc(santriId).delete();
 
   Future<SetoranRecord?> completeSetoran(int fluencyRating) async {
     if (activeSetoranSantri == null) return null;
-    final errors = sessionErrors.values.toList();
-    final score = ScoringUtils.calculateScore(
-      errorMarks: errors,
-      fluencyRating: fluencyRating,
-    );
-
-    final passed = sessionPassedAyahs.toList()..sort();
-    final failed = sessionFailedAyahs.toList()..sort();
-
-    // Logic Baru: Sesi berakhir pada ayat TERAKHIR yang ditandai LULUS
-    int start = activeSetoranAyahStart;
-    int end = activeSetoranAyahEnd;
-
-    if (passed.isNotEmpty) {
-      end = passed.last;
-      start = (passed.first < activeSetoranAyahStart)
-          ? passed.first
-          : activeSetoranAyahStart;
-    } else if (failed.isNotEmpty) {
-      end = failed.last;
-      start = (failed.first < activeSetoranAyahStart)
-          ? failed.first
-          : activeSetoranAyahStart;
-    }
-
     final record = SetoranRecord(
       id: getCollection('santri').doc().id,
       santriId: activeSetoranSantri!.id,
@@ -1072,353 +399,91 @@ class AppProvider extends ChangeNotifier
       surahNumber: activeSetoranSurahNumber,
       surahName: activeSetoranSurahName,
       surahEnglishName: activeSetoranSurahEnglishName,
-      ayahStart: start,
-      ayahEnd: end,
-      passedAyahs: passed,
-      failedAyahs: failed,
-      errorMarks: errors,
+      ayahStart: activeSetoranAyahStart,
+      ayahEnd: sessionPassedAyahs.isNotEmpty ? sessionPassedAyahs.reduce((a, b) => a > b ? a : b) : activeSetoranAyahEnd,
+      passedAyahs: sessionPassedAyahs.toList(),
+      failedAyahs: sessionFailedAyahs.toList(),
+      errorMarks: sessionErrors.values.toList(),
       fluencyRating: fluencyRating,
       date: DateTime.now(),
-      finalScore: score,
+      finalScore: ScoringUtils.calculateScore(errorMarks: sessionErrors.values.toList(), fluencyRating: fluencyRating),
     );
-
-    final String sId = activeSetoranSantri!.id;
-
-    // 1. Fetch current setoran history from Firestore subcollection to calculate new aggregates
-    // We use a safety timeout and local cache fallback to prevent freezing in poor network conditions.
-    QuerySnapshot<Map<String, dynamic>> historySnap;
-    try {
-      historySnap = await getCollection('santri')
-          .doc(sId)
-          .collection('setoranHistory')
-          .get()
-          .timeout(
-            const Duration(seconds: 4),
-            onTimeout: () => getCollection('santri')
-                .doc(sId)
-                .collection('setoranHistory')
-                .get(const GetOptions(source: Source.cache)),
-          );
-    } catch (e) {
-      debugPrint(
-        "Failed to fetch setoran history online (likely offline): $e. Falling back to cache.",
-      );
-      historySnap = await getCollection('santri')
-          .doc(sId)
-          .collection('setoranHistory')
-          .get(const GetOptions(source: Source.cache));
-    }
-
-    final existingRecords = historySnap.docs
-        .map((doc) => SetoranRecord.fromJson(doc.data()))
-        .toList();
-
-    // Calculate new aggregates using the temp Santri model
-    final tempSantri = activeSetoranSantri!.copyWith(
-      setoranHistory: [...existingRecords, record],
-    );
-
-    // Write setoran record to subcollection
-    final setoranJson = record.toJson();
-    if (pesantrenId != null) {
-      setoranJson['pesantrenId'] = pesantrenId;
-    }
-    await getCollection(
-      'santri',
-    ).doc(sId).collection('setoranHistory').doc(record.id).set(setoranJson);
-
-    final now = DateTime.now();
-    if (record.date.year == now.year &&
-        record.date.month == now.month &&
-        record.date.day == now.day) {
-      await setSantriKehadiranStatus(sId, 'setoran');
-    }
-
-    // Trigger setoran notification to parent
-    await triggerSetoranNotification(sId, record);
-
-    // Update parent santri document with new aggregates
-    await getCollection('santri').doc(sId).update({
-      'averageScore': tempSantri.averageScore,
-      'totalSetoranCount': tempSantri.totalSetoranCount,
-      'totalErrors': tempSantri.totalErrors,
-      'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs,
-      'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs,
-      'totalFailedAyahs': tempSantri.totalFailedAyahs,
-      'estimatedJuz': tempSantri.estimatedJuz,
-      'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
-    });
-
-    await setSantriKehadiranStatus(sId, 'setoran');
+    await updateSetoranRecord(activeSetoranSantri!.id, record);
     await endSetoranSession();
     return record;
   }
 
-  Future<TasmiRecord?> completeTasmi({
-    required List<int> juzNumbers,
-    required int fluencyRating,
-    required String year,
-    String status = 'lulus',
-    String? note,
-  }) async {
+  Future<TasmiRecord?> completeTasmi({required List<int> juzNumbers, required int fluencyRating, required String year, String status = 'lulus', String? note}) async {
     if (activeSetoranSantri == null) return null;
-    final errors = sessionErrors.values.toList();
-    final score = ScoringUtils.calculateScore(
-      errorMarks: errors,
-      fluencyRating: fluencyRating,
-    );
     final record = TasmiRecord(
       id: getCollection('santri').doc().id,
       santriId: activeSetoranSantri!.id,
       juzNumbers: juzNumbers,
-      finalScore: score,
+      finalScore: ScoringUtils.calculateScore(errorMarks: sessionErrors.values.toList(), fluencyRating: fluencyRating),
       fluencyRating: fluencyRating,
-      errorMarks: errors,
+      errorMarks: sessionErrors.values.toList(),
       date: DateTime.now(),
       status: status,
       year: year,
       note: note,
     );
-
-    final String sId = activeSetoranSantri!.id;
-
-    // Write tasmi record to subcollection
     final tasmiJson = record.toJson();
-    if (pesantrenId != null) {
-      tasmiJson['pesantrenId'] = pesantrenId;
-    }
-    await getCollection(
-      'santri',
-    ).doc(sId).collection('tasmiHistory').doc(record.id).set(tasmiJson);
-
+    if (pesantrenId != null) tasmiJson['pesantrenId'] = pesantrenId;
+    await getCollection('santri').doc(activeSetoranSantri!.id).collection('tasmiHistory').doc(record.id).set(tasmiJson);
     await endSetoranSession();
     return record;
   }
 
-  Future<void> updateTasmiStatus(
-    String santriId,
-    String recordId,
-    String newStatus,
-  ) async {
-    await getCollection('santri')
-        .doc(santriId)
-        .collection('tasmiHistory')
-        .doc(recordId)
-        .update({'status': newStatus});
-  }
-
-  SetoranContinuation? getNextSetoranSuggestion(String santriId) {
-    final santri = getSantriById(santriId);
-    if (santri == null || surahList.isEmpty) return null;
-
-    // 1. Cek Hutang (Ayat Gagal) di riwayat terakhir
-    if (santri.setoranHistory.isNotEmpty) {
-      final last = santri.setoranHistory.last;
-      if (last.failedAyahs.isNotEmpty) {
-        final firstFailed = (List<int>.from(last.failedAyahs)..sort()).first;
-        final surah = surahList.firstWhere(
-          (s) => s.number == last.surahNumber,
-          orElse: () => surahList.first,
-        );
-        return SetoranContinuation(
-          surah: surah,
-          ayahStart: firstFailed,
-          ayahEnd: firstFailed,
-          type: last.type,
-        );
-      }
-
-      // 2. Lanjut dari ayat terakhir yang lulus + 1
-      final lastSurahInfo = surahList.firstWhere(
-        (s) => s.number == last.surahNumber,
-        orElse: () => surahList.first,
-      );
-      int nextSurahNumber = last.surahNumber;
-      int nextAyahStart = last.ayahEnd + 1;
-
-      if (nextAyahStart > lastSurahInfo.numberOfAyahs) {
-        nextSurahNumber++;
-        nextAyahStart = 1;
-      }
-
-      if (nextSurahNumber <= 114) {
-        final nextSurahInfo = surahList.firstWhere(
-          (s) => s.number == nextSurahNumber,
-        );
-        return SetoranContinuation(
-          surah: nextSurahInfo,
-          ayahStart: nextAyahStart,
-          ayahEnd: nextAyahStart,
-          type: last.type,
-        );
-      }
+  Future<String> getLoginQrData(String userId) async {
+    final snap = await getCollection('user_mappings').where('linkedId', isEqualTo: userId).limit(1).get();
+    if (snap.docs.isNotEmpty) {
+      final doc = snap.docs.first;
+      final pwd = doc.data()['defaultPassword'] ?? doc.id;
+      return 'tahfidzmu:login:$pesantrenId:${doc.id}:$pwd';
     }
-
-    return SetoranContinuation(
-      surah: surahList.first,
-      ayahStart: 1,
-      ayahEnd: 1,
-      type: SetoranType.ziyadah,
-    );
-  }
-
-  Future<void> updateAdminPhoto(String path) async {
-    if (currentUserId == null) return;
-    _adminPhoto = path;
-    notifyListeners();
-    try {
-      final cloudUrl = await firebase.uploadPhoto(
-        localPath: path,
-        folder: 'admin_photos',
-        fileName: currentUserId!,
-      );
-      _adminPhoto = cloudUrl;
-      await firebase.setUserData(currentUserId!, {'photoPath': cloudUrl});
-      notifyListeners();
-    } catch (e) {
-      debugPrint("Failed to upload admin photo: $e");
-    }
+    return 'tahfidzmu:login:$pesantrenId:$userId:$userId';
   }
 
   Future<bool> changeOwnPassword(String oldPassword, String newPassword) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null || user.email == null) return false;
-      AuthCredential credential = EmailAuthProvider.credential(
-        email: user.email!,
-        password: oldPassword,
-      );
+      AuthCredential credential = EmailAuthProvider.credential(email: user.email!, password: oldPassword);
       await user.reauthenticateWithCredential(credential);
       await user.updatePassword(newPassword);
+      if (currentUsername != null && pesantrenId != null) {
+        try { await getCollection('user_mappings').doc(currentUsername!).update({'defaultPassword': newPassword}); } catch (_) {}
+      }
+      currentPassword = newPassword;
+      notifyListeners();
       return true;
-    } catch (e) {
-      return false;
-    }
+    } catch (_) { return false; }
   }
 
-  Future<void> resetPasswordForLinkedId(
-    String linkedId,
-    String newPassword,
-  ) async {
-    debugPrint("Reset password remote requested for $linkedId");
-  }
-
-  Future<void> updateMusyrifInfo(
-    String name,
-    String lembaga, {
-    String jabatan = '',
-    String nomorHp = '',
-  }) async {
-    if (linkedMusyrifId == null) return;
-    final m = linkedMusyrif?.copyWith(
-      nama: name,
-      lembaga: lembaga,
-      jabatan: jabatan,
-      nomorHp: nomorHp,
-    );
-    if (m != null) await updateMusyrifData(linkedMusyrifId!, m);
-  }
-
-  Future<void> updateMusyrifPhoto(String path) async {
-    if (linkedMusyrifId == null) return;
-    musyrifList = musyrifList.map((m) {
-      if (m.id == linkedMusyrifId) {
-        return m.copyWith(photoPath: path);
-      }
-      return m;
-    }).toList();
-    notifyListeners();
-    try {
-      final cloudUrl = await firebase.uploadPhoto(
-        localPath: path,
-        folder: 'musyrif_photos',
-        fileName: linkedMusyrifId!,
-      );
-      await getCollection(
-        'musyrif',
-      ).doc(linkedMusyrifId!).update({'photoPath': cloudUrl});
-    } catch (e) {
-      debugPrint("Failed to upload musyrif photo: $e");
-    }
-  }
-
-  Future<void> updatePengawasPhoto(String path) async {
-    if (linkedMusyrifId == null) return;
-    pengawasList = pengawasList.map((p) {
-      if (p.id == linkedMusyrifId) {
-        return p.copyWith(photoPath: path);
-      }
-      return p;
-    }).toList();
-    notifyListeners();
-    try {
-      final cloudUrl = await firebase.uploadPhoto(
-        localPath: path,
-        folder: 'pengawas_photos',
-        fileName: linkedMusyrifId!,
-      );
-      await getCollection(
-        'pengawas',
-      ).doc(linkedMusyrifId!).update({'photoPath': cloudUrl});
-    } catch (e) {
-      debugPrint("Failed to upload pengawas photo: $e");
-    }
-  }
-
-  Future<void> updateSantriPhoto(String santriId, String path) async {
-    santriList = santriList.map((s) {
-      if (s.id == santriId) {
-        return s.copyWith(photoPath: path);
-      }
-      return s;
-    }).toList();
-    notifyListeners();
-    try {
-      final cloudUrl = await firebase.uploadPhoto(
-        localPath: path,
-        folder: 'santri_photos',
-        fileName: santriId,
-      );
-      await getCollection(
-        'santri',
-      ).doc(santriId).update({'photoPath': cloudUrl});
-    } catch (e) {
-      debugPrint("Failed to upload santri photo: $e");
-    }
-  }
-
-  // Implement yearly target from Firestore
   dynamic getYearlyTarget(String santriId) => null;
 
-  void resetAllData() async {
-    final collections = [
-      'santri',
-      'musyrif',
-      'halaqah',
-      'kelas',
-      'graduation_events',
-      'graduation_registrations',
-      'user_mappings',
-    ];
-    for (var col in collections) {
-      final snapshot = await getCollection(col).get();
-      for (var doc in snapshot.docs) {
-        await doc.reference.delete();
-      }
+  SetoranContinuation? getNextSetoranSuggestion(String santriId) {
+    final santri = getSantriById(santriId);
+    if (santri == null || santri.setoranHistory.isEmpty) return null;
+    final last = santri.setoranHistory.first;
+    final lastSurah = last.surahNumber;
+    final lastAyah = last.ayahEnd;
+    final currentSurahInfo = surahList.firstWhere((s) => s.number == lastSurah, orElse: () => surahList.first);
+    if (lastAyah < currentSurahInfo.numberOfAyahs) {
+      return SetoranContinuation(surah: currentSurahInfo, ayahStart: lastAyah + 1, ayahEnd: (lastAyah + 10).clamp(lastAyah + 1, currentSurahInfo.numberOfAyahs), type: last.type);
+    } else if (lastSurah < 114) {
+      final nextSurah = surahList.firstWhere((s) => s.number == lastSurah + 1);
+      return SetoranContinuation(surah: nextSurah, ayahStart: 1, ayahEnd: 10.clamp(1, nextSurah.numberOfAyahs), type: last.type);
     }
+    return null;
   }
 
-  void login(
-    UserRole role, {
-    String? linkedSantriId,
-    String? linkedMusyrifId,
-    String? pesantrenId,
-  }) {
-    setLoginInfo(
-      role,
-      linkedSantriId: linkedSantriId,
-      linkedMusyrifId: linkedMusyrifId,
-      pesantrenId: pesantrenId,
-    );
+  Future<void> updateTasmiStatus(String registrationId, String status) async {
+     try { await getCollection('graduation_registrations').doc(registrationId).update({'status': status}); } catch (_) {}
+  }
+
+  /// Helper for tests or manual state injection (Not for production login)
+  void login(UserRole role, {String? linkedSantriId, String? linkedMusyrifId, String? pesantrenId}) {
+    setLoginInfo(role, linkedSantriId: linkedSantriId, linkedMusyrifId: linkedMusyrifId, pesantrenId: pesantrenId);
   }
 }

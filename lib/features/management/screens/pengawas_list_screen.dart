@@ -31,6 +31,7 @@ class _PengawasListScreenState extends State<PengawasListScreen> {
     final showAppBar = !widget.hideAppBar;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: showAppBar ? AppBar(title: const Text('Daftar Pengawas')) : null,
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {
@@ -61,10 +62,11 @@ class _PengawasListScreenState extends State<PengawasListScreen> {
                 Expanded(child: Center(child: Text('Tidak ada pengawas yang cocok', style: TextStyle(color: Colors.grey.shade500))))
               else
                 Expanded(
-                  child: ListView.builder(
+                  child: ListView.separated(
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
                     itemCount: filteredList.length,
-                    itemBuilder: (_, i) => _PengawasCard(
+                    separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5, color: Color(0xFFEEEEEE)),
+                    itemBuilder: (_, i) => _PengawasListItem(
                       pengawas: filteredList[i],
                       onReset: isAdmin ? () => _showResetPasswordDialog(context, provider, filteredList[i]) : null,
                       onEdit: isAdmin ? () => _showFormDialog(context, provider, filteredList[i]) : null,
@@ -167,8 +169,8 @@ class _PengawasListScreenState extends State<PengawasListScreen> {
   }
 }
 
-class _PengawasCard extends StatelessWidget {
-  const _PengawasCard({required this.pengawas, this.onEdit, this.onDelete, this.onReset});
+class _PengawasListItem extends StatelessWidget {
+  const _PengawasListItem({required this.pengawas, this.onEdit, this.onDelete, this.onReset});
   final PengawasData pengawas;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -176,47 +178,59 @@ class _PengawasCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => PengawasDetailScreen(pengawasId: pengawas.id))),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              AppAvatar(name: pengawas.nama, radius: 24, imagePath: pengawas.photoPath?.isNotEmpty == true ? pengawas.photoPath : null),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(pengawas.nama, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
-                    Text('${pengawas.jabatan} • @${pengawas.username}', style: TextStyle(color: Colors.grey.shade600, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
-                    if (pengawas.nomorHp.isNotEmpty) ...[
-                      const SizedBox(height: 2),
-                      Text('WA: ${pengawas.nomorHp}', style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
-                    ],
-                  ],
-                ),
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => PengawasDetailScreen(pengawasId: pengawas.id))),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), // More compact
+        child: Row(
+          children: [
+            // SQUIRCLE AVATAR
+            Container(
+              width: 36, // Smaller
+              height: 36,
+              decoration: BoxDecoration(
+                color: Colors.orange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                image: (pengawas.photoPath?.isNotEmpty ?? false)
+                    ? DecorationImage(image: NetworkImage(pengawas.photoPath!), fit: BoxFit.cover)
+                    : null,
               ),
-              if (onEdit != null || onDelete != null || onReset != null)
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert_rounded, size: 20, color: Colors.grey),
-                  onSelected: (val) {
-                    if (val == 'edit') onEdit?.call();
-                    if (val == 'delete') onDelete?.call();
-                    if (val == 'reset') onReset?.call();
-                  },
-                  itemBuilder: (ctx) => [
-                    const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit_rounded, size: 16, color: Colors.blue), SizedBox(width: 8), Text('Edit Profile', style: TextStyle(fontSize: 13))])),
-                    const PopupMenuItem(value: 'reset', child: Row(children: [Icon(Icons.vpn_key_rounded, size: 16, color: Colors.orange), SizedBox(width: 8), Text('Reset Sandi', style: TextStyle(fontSize: 13))])),
-                    const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete_rounded, size: 16, color: Colors.red), SizedBox(width: 8), Text('Hapus Akun', style: TextStyle(fontSize: 13))])),
-                  ],
-                ),
-            ],
-          ),
+              child: (pengawas.photoPath?.isEmpty ?? true)
+                  ? Center(
+                      child: Text(
+                        pengawas.nama[0].toUpperCase(),
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange, fontSize: 12),
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(pengawas.nama, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text('${pengawas.jabatan} • @${pengawas.username}', style: TextStyle(color: Colors.grey.shade500, fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis),
+                ],
+              ),
+            ),
+            if (onEdit != null || onDelete != null || onReset != null)
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.tune_rounded, size: 18, color: Colors.grey), // Changed
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onSelected: (val) {
+                  if (val == 'edit') onEdit?.call();
+                  if (val == 'delete') onDelete?.call();
+                  if (val == 'reset') onReset?.call();
+                },
+                itemBuilder: (ctx) => [
+                  const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit_rounded, size: 16, color: Colors.blue), SizedBox(width: 8), Text('Edit Profile', style: TextStyle(fontSize: 13))])),
+                  const PopupMenuItem(value: 'reset', child: Row(children: [Icon(Icons.vpn_key_rounded, size: 16, color: Colors.orange), SizedBox(width: 8), Text('Reset Sandi', style: TextStyle(fontSize: 13))])),
+                  const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete_rounded, size: 16, color: Colors.red), SizedBox(width: 8), Text('Hapus Akun', style: TextStyle(fontSize: 13))])),
+                ],
+              ),
+          ],
         ),
       ),
     );

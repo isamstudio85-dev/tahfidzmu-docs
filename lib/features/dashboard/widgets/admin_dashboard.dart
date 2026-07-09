@@ -26,35 +26,72 @@ class AdminDashboard extends StatelessWidget {
         ),
         actions: [const NotificationBell(), const SizedBox(width: 8)],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildBanner(context),
-            const SizedBox(height: 20),
-            if (provider.isModuleActive('graduation') &&
-                provider.graduationEvents.any((e) => e.isPublished)) ...[
-              _buildGraduationBanner(context, provider),
-              const SizedBox(height: 24),
-            ],
-            _buildAdminStats(context),
-            _buildSubscriptionWarning(context),
-            const SizedBox(height: 24),
-            const SectionTitle('Aktivitas Halaqah Saat Ini (LIVE)'),
-            const SizedBox(height: 12),
-            _buildLiveMonitor(context),
-            const SizedBox(height: 24),
-            const SectionTitle('Status Presensi Halaqah Hari Ini'),
-            const SizedBox(height: 12),
-            _buildTodayPresensiMonitor(context),
-            const SizedBox(height: 24),
-            const SectionTitle('Laporan & Analisis'),
-            const SizedBox(height: 12),
-            _buildAdminAnalysisCards(context),
-            const SizedBox(height: 24),
-          ],
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isTablet = constraints.maxWidth > 700;
+          
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: isTablet ? 40 : 16, vertical: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildBanner(context),
+                const SizedBox(height: 20),
+                if (provider.isModuleActive('graduation') &&
+                    provider.graduationEvents.any((e) => e.isPublished)) ...[
+                  _buildGraduationBanner(context, provider),
+                  const SizedBox(height: 24),
+                ],
+                _buildAdminStats(context, isTablet),
+                _buildSubscriptionWarning(context),
+                const SizedBox(height: 24),
+                
+                if (isTablet)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SectionTitle('Aktivitas Halaqah Saat Ini (LIVE)'),
+                            const SizedBox(height: 12),
+                            _buildLiveMonitor(context),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SectionTitle('Status Presensi Hari Ini'),
+                            const SizedBox(height: 12),
+                            _buildTodayPresensiMonitor(context),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SectionTitle('Aktivitas Halaqah Saat Ini (LIVE)'),
+                      const SizedBox(height: 12),
+                      _buildLiveMonitor(context),
+                      const SizedBox(height: 24),
+                      const SectionTitle('Status Presensi Halaqah Hari Ini'),
+                      const SizedBox(height: 12),
+                      _buildTodayPresensiMonitor(context),
+                    ],
+                  ),
+                
+                const SizedBox(height: 40),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -253,7 +290,7 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildAdminStats(BuildContext context) {
+  Widget _buildAdminStats(BuildContext context, bool isTablet) {
     return Row(
       children: [
         _statTile(
@@ -288,16 +325,22 @@ class AdminDashboard extends StatelessWidget {
             MaterialPageRoute(builder: (_) => const HalaqahListScreen()),
           ),
         ),
+        if (isTablet) ...[
+          const SizedBox(width: 12),
+          _statTile(
+            '${provider.santriList.fold(0, (acc, s) => acc + s.setoranHistory.length)}',
+            'Total Setoran',
+            Icons.history_edu_rounded,
+            Colors.orange,
+            () {},
+          ),
+        ],
       ],
     );
   }
 
   Widget _buildLiveMonitor(BuildContext context) {
-    final pid = provider.pesantrenId;
-    Query query = provider.firestore.collection('active_sessions');
-    if (pid != null) {
-      query = query.where('pesantrenId', isEqualTo: pid);
-    }
+    final Query query = provider.getCollection('active_sessions');
 
     return StreamBuilder<QuerySnapshot>(
       stream: query.snapshots(),
@@ -460,128 +503,6 @@ class AdminDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildAdminAnalysisCards(BuildContext context) {
-    return Column(
-      children: [
-        _analysisRowCard(
-          context,
-          title: 'Peringkat Santri',
-          subtitle: 'Daftar santri dengan pencapaian setoran & nilai terbaik',
-          icon: Icons.emoji_events_rounded,
-          color: Colors.amber.shade800,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const RankingScreen(
-                title: 'Peringkat Santri',
-                initialIndex: 0,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        _analysisRowCard(
-          context,
-          title: 'Peringkat Halaqah',
-          subtitle:
-              'Perbandingan rata-rata capaian & nilai per kelompok halaqah',
-          icon: Icons.analytics_rounded,
-          color: Colors.purple.shade700,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const RankingScreen(
-                title: 'Peringkat Halaqah',
-                initialIndex: 1,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        _analysisRowCard(
-          context,
-          title: 'Laporan Statistik',
-          subtitle: 'Analisis agregat perkembangan hafalan seluruh pesantren',
-          icon: Icons.bar_chart_rounded,
-          color: Colors.blue.shade700,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AdminLaporanScreen()),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _analysisRowCard(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: color.withValues(alpha: 0.15), width: 1),
-      ),
-      color: color.withValues(alpha: 0.04),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: color, size: 24),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: color.withValues(alpha: 0.5),
-                size: 16,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _statTile(
     String value,
     String label,
@@ -732,31 +653,41 @@ class AdminDashboard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      isSubmitted ? 'Sudah Diisi' : 'Belum Diisi',
+                const SizedBox(width: 12),
+                if (isSubmitted)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.green.shade100),
+                    ),
+                    child: Text(
+                      '${presensi.waktuSubmit.hour.toString().padLeft(2, '0')}:${presensi.waktuSubmit.minute.toString().padLeft(2, '0')} WIB',
                       style: GoogleFonts.poppins(
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: isSubmitted
-                            ? Colors.green.shade700
-                            : Colors.red.shade700,
+                        color: Colors.green.shade700,
                       ),
                     ),
-                    if (isSubmitted) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        'Pukul ${presensi.waktuSubmit.hour.toString().padLeft(2, '0')}:${presensi.waktuSubmit.minute.toString().padLeft(2, '0')} WIB',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey.shade500,
-                        ),
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red.shade100),
+                    ),
+                    child: Text(
+                      'Belum',
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red.shade700,
                       ),
-                    ],
-                  ],
-                ),
+                    ),
+                  ),
               ],
             ),
           ),

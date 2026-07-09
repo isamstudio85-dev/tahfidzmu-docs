@@ -417,6 +417,60 @@ export default function SuperAdminPesantrenPage() {
     }
   }
 
+  async function handleDeletePesantren(item: TenantItem) {
+    if (item.id === "demo") {
+       const confirmDemo = window.confirm("Anda akan menghapus pesantren DEMO. Ini adalah tindakan permanen. Lanjutkan?");
+       if (!confirmDemo) return;
+    } else {
+       const confirm = window.confirm(`Hapus pesantren ${item.nama} (${item.id}) secara permanen? Seluruh data santri, musyrif, dan riwayat akan hilang.`);
+       if (!confirm) return;
+    }
+
+    const finalConfirm = prompt("Ketik ID pesantren (" + item.id + ") untuk mengonfirmasi penghapusan:");
+    if (finalConfirm !== item.id) {
+      alert("Konfirmasi gagal. Penghapusan dibatalkan.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      // 1. Delete all subcollections and their nested subcollections
+      const collectionsList = ["santri", "musyrif", "halaqah", "kelas", "graduation_events", "graduation_registrations", "user_mappings", "presensi", "active_sessions"];
+
+      for (const col of collectionsList) {
+        const snap = await getDocs(collection(db, "pesantren", item.id, col));
+
+        for (const parentDoc of snap.docs) {
+          // If it's the santri collection, we must delete nested history
+          if (col === "santri") {
+            const subCols = ["setoranHistory", "tasmiHistory"];
+            for (const sub of subCols) {
+              const subSnap = await getDocs(collection(db, "pesantren", item.id, col, parentDoc.id, sub));
+              await Promise.all(subSnap.docs.map((d) => deleteDoc(d.ref)));
+            }
+          }
+          // Now delete the parent document
+          await deleteDoc(parentDoc.ref);
+        }
+      }
+
+      // 2. Delete settings folder contents
+      const settingsSnap = await getDocs(collection(db, "pesantren", item.id, "settings"));
+      await Promise.all(settingsSnap.docs.map((doc) => deleteDoc(doc.ref)));
+
+      // 3. Delete the root document itself (The "Card" identity)
+      await deleteDoc(doc(db, "pesantren", item.id));
+
+      alert(`Pesantren ${item.id} berhasil dihapus total dari sistem.`);
+      await loadPesantren();
+    } catch (err: any) {
+      console.error(err);
+      setError(`Gagal menghapus pesantren: ${err.message || err}`);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   function handleEnterTenant(item: TenantItem) {
     switchToTenantAdmin(item.id);
     navigate("/");
@@ -629,6 +683,14 @@ export default function SuperAdminPesantrenPage() {
                     className="rounded-xl border border-sky-200 px-3 py-2 text-sm font-semibold text-sky-700 hover:bg-sky-50 disabled:opacity-60 dark:border-sky-500/30 dark:text-sky-300 dark:hover:bg-sky-500/10"
                   >
                     Perpanjang 30 Hari
+                  </button>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => void handleDeletePesantren(item)}
+                    className="rounded-xl border border-error-200 px-3 py-2 text-sm font-semibold text-error-700 hover:bg-error-50 disabled:opacity-60 dark:border-error-500/30 dark:text-error-400 dark:hover:bg-error-500/10"
+                  >
+                    Hapus
                   </button>
                 </div>
               </article>

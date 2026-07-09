@@ -10,6 +10,8 @@ import 'package:tahfidz_app/features/tahfidz_quran/screens/laporan_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_form_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/verification_gate.dart';
 
+import 'package:tahfidz_app/features/management/screens/presensi_history_screen.dart';
+
 class QuranMemorizationScreen extends StatefulWidget {
   const QuranMemorizationScreen({super.key});
 
@@ -25,7 +27,15 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    // Admin & Pengawas get 4 tabs (including Presensi), others get 3
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final provider = Provider.of<AppProvider>(context, listen: false);
+    final int length = (provider.isAdmin || provider.isPengawas) ? 4 : 3;
+    _tabController = TabController(length: length, vsync: this);
   }
 
   @override
@@ -38,9 +48,10 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final canAddSetoran = provider.isAdmin || provider.isMusyrif;
+    final bool showPresensi = provider.isAdmin || provider.isPengawas;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
+      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment
       appBar: AppBar(
         title: Text(
           'Progres Tahfidz',
@@ -50,7 +61,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
             fontSize: 18,
           ),
         ),
-        backgroundColor: AppTheme.primaryGreen, // Restore logo green
+        backgroundColor: AppTheme.primaryGreen,
         iconTheme: const IconThemeData(color: Colors.white),
         bottom: TabBar(
           controller: _tabController,
@@ -59,10 +70,12 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
           labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-          tabs: const [
-            Tab(text: 'Daftar'),
-            Tab(text: 'Peringkat'),
-            Tab(text: 'Laporan'),
+          isScrollable: showPresensi, // Scrollable if many tabs
+          tabs: [
+            const Tab(text: 'Daftar'),
+            const Tab(text: 'Peringkat'),
+            const Tab(text: 'Laporan'),
+            if (showPresensi) const Tab(text: 'Presensi'),
           ],
         ),
       ),
@@ -78,6 +91,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
           ),
           const QuranRankingList(),
           const _LaporanStatistikTab(),
+          if (showPresensi) const PresensiHistoryScreen(),
         ],
       ),
       floatingActionButton: canAddSetoran

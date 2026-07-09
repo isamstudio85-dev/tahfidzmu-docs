@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../models/user_role.dart';
 import '../services/firebase_service.dart';
-import '../services/login_preferences_service.dart';
 
 mixin AuthMixin on ChangeNotifier {
   final FirebaseService firebase = FirebaseService();
@@ -21,6 +20,10 @@ mixin AuthMixin on ChangeNotifier {
   bool get isMusyrif => currentRole == UserRole.musyrif;
   bool get isOrangTua => currentRole == UserRole.orangTua;
   bool get isPengawas => currentRole == UserRole.pengawas;
+
+  bool mustChangePassword = false;
+  String? currentUsername;
+  String? currentPassword;
 
   void setLoginInfo(UserRole role, {String? linkedSantriId, String? linkedMusyrifId, String? userId, String? pesantrenId}) {
     currentRole = role;
@@ -44,12 +47,14 @@ mixin AuthMixin on ChangeNotifier {
 
   Future<void> performLogout() async {
     await firebase.signOut();
-    await LoginPreferencesService.clearLastCredentials();
     currentRole = null;
-    currentUserId = null;
     linkedSantriId = null;
     linkedMusyrifId = null;
+    currentUserId = null;
     pesantrenId = null;
+    mustChangePassword = false;
+    currentUsername = null;
+    currentPassword = null;
     notifyListeners();
   }
 }

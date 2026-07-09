@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/models/pengawas_data.dart';
@@ -80,9 +81,10 @@ class ProfilScreen extends StatelessWidget {
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              provider.logout();
+              // Tampilkan dialog loading sederhana atau biarkan root level (TahfidzApp) menangani state isLoggingOut
+              await provider.logout();
             },
             child: const Text('Keluar'),
           ),
@@ -255,6 +257,12 @@ class _AdminProfilView extends StatelessWidget {
             Colors.blueGrey,
             () => _showChangePasswordDialog(context),
           ),
+          _buildTile(
+            Icons.privacy_tip_outlined,
+            'Data & Privasi',
+            Colors.blueGrey,
+            () => _showDeleteAccountDialog(context),
+          ),
           _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
         ]),
         const SizedBox(height: 24),
@@ -298,6 +306,12 @@ class _MusyrifProfilView extends StatelessWidget {
             'Ganti Password',
             Colors.blueGrey,
             () => _showChangePasswordDialog(context),
+          ),
+          _buildTile(
+            Icons.privacy_tip_outlined,
+            'Data & Privasi',
+            Colors.blueGrey,
+            () => _showDeleteAccountDialog(context),
           ),
           _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
         ]),
@@ -350,6 +364,12 @@ class _OrangTuaProfilView extends StatelessWidget {
             'Ganti Password',
             Colors.blueGrey,
             () => _showChangePasswordDialog(context),
+          ),
+          _buildTile(
+            Icons.privacy_tip_outlined,
+            'Data & Privasi',
+            Colors.blueGrey,
+            () => _showDeleteAccountDialog(context),
           ),
           _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
         ]),
@@ -555,6 +575,137 @@ Widget _buildTile(
   );
 }
 
+void _showDeleteAccountDialog(BuildContext context) {
+  Widget dialogLinkTile(IconData icon, String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: AppTheme.primaryGreen),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, size: 18, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Row(
+        children: [
+          const Icon(Icons.privacy_tip_outlined, color: AppTheme.primaryGreen),
+          const SizedBox(width: 8),
+          const Expanded(
+            child: Text(
+              'Data & Privasi',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Informasi Data Terdaftar:',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              '• Profil: Nama, NIP/NIS, & Foto profil.\n'
+              '• Akademik: Catatan setoran, nilai kelancaran, & presensi.\n'
+              '• Keamanan: Enkripsi TLS & isolasi data antar-pesantren.',
+              style: TextStyle(fontSize: 12, color: Colors.black54, height: 1.5),
+            ),
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 8),
+            // Menu Links
+            dialogLinkTile(
+              Icons.article_outlined,
+              'Kebijakan Privasi',
+              () async {
+                final Uri url = Uri.parse('https://isamstudio85-dev.github.io/tahfidzmu-docs/privacy-policy.html');
+                if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                  debugPrint('Could not launch Privacy Policy');
+                }
+              },
+            ),
+            dialogLinkTile(
+              Icons.gavel_rounded,
+              'Ketentuan Layanan',
+              () async {
+                final Uri url = Uri.parse('https://isamstudio85-dev.github.io/tahfidzmu-docs/terms-of-service.html');
+                if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                  debugPrint('Could not launch Terms of Service');
+                }
+              },
+            ),
+            dialogLinkTile(
+              Icons.help_outline_rounded,
+              'Pusat Bantuan (FAQ)',
+              () async {
+                final Uri url = Uri.parse('https://isamstudio85-dev.github.io/tahfidzmu-docs/help.html');
+                if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                  debugPrint('Could not launch Help Center');
+                }
+              },
+            ),
+            const SizedBox(height: 8),
+            const Divider(),
+            const SizedBox(height: 12),
+            const Text(
+              'Kontrol Akun:',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Anda dapat mengajukan penghapusan akun secara permanen. Proses ini memerlukan tinjauan & verifikasi manual oleh Admin.',
+              style: TextStyle(fontSize: 11, color: Colors.grey, height: 1.4),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text('Tutup', style: TextStyle(color: Colors.grey)),
+        ),
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
+          onPressed: () async {
+            Navigator.pop(ctx);
+            final Uri url = Uri.parse('https://isamstudio85-dev.github.io/tahfidzmu-docs/delete-account.html');
+            try {
+              if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                debugPrint('Could not launch delete account URL');
+              }
+            } catch (e) {
+              debugPrint('Error launching URL: $e');
+            }
+          },
+          child: const Text('Hapus Akun', style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ],
+    ),
+  );
+}
+
 void _showChangePasswordDialog(BuildContext context) {
   final oldCtrl = TextEditingController();
   final newCtrl = TextEditingController();
@@ -731,6 +882,12 @@ class _PengawasProfilView extends StatelessWidget {
             'Ganti Password',
             Colors.blueGrey,
             () => _showChangePasswordDialog(context),
+          ),
+          _buildTile(
+            Icons.privacy_tip_outlined,
+            'Data & Privasi',
+            Colors.blueGrey,
+            () => _showDeleteAccountDialog(context),
           ),
           _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
         ]),

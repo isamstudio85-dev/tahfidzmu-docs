@@ -14,6 +14,7 @@ export type ParsedSantriImportRow = {
   tanggalLahir: string;
   status: string;
   initialJuzList: number[];
+  password?: string;
   error: string | null;
 };
 
@@ -32,6 +33,7 @@ const headerAliases: Record<string, string[]> = {
   tanggalLahir: ["tanggal lahir", "tgl lahir", "tanggal_lahir"],
   status: ["status"],
   initialJuzList: ["hafalan awal", "juz awal", "initialmemorizedjuz", "initial juz"],
+  password: ["password", "kata sandi", "sandi", "pass"],
 };
 
 function normalizeHeader(value: string) {
@@ -95,6 +97,7 @@ function validateRow(row: Omit<ParsedSantriImportRow, "error">) {
   if (!row.nis) return "NIS wajib diisi";
   if (!row.nis.replace(/\D/g, "")) return "NIS harus mengandung angka";
   if (row.email && !/\S+@\S+\.\S+/.test(row.email)) return "Format email tidak valid";
+  if (row.password && row.password.length < 6) return "Password minimal 6 karakter";
   return null;
 }
 
@@ -126,6 +129,7 @@ export async function parseSantriExcelFile(file: File) {
       tanggalLahir: normalizeDate(getCellValue(source, "tanggalLahir")),
       status: normalizeStatus(toText(getCellValue(source, "status"))),
       initialJuzList: parseInitialJuz(getCellValue(source, "initialJuzList")),
+      password: toText(getCellValue(source, "password")),
     };
 
     return {
@@ -152,6 +156,7 @@ export function downloadSantriExcelTemplate() {
       "Tanggal Lahir",
       "Status",
       "Hafalan Awal",
+      "Password",
     ],
     [
       "Ahmad Fauzi",
@@ -166,6 +171,7 @@ export function downloadSantriExcelTemplate() {
       "2012-05-10",
       "aktif",
       "1,2,3",
+      "SandiKuat123",
     ],
   ];
 
@@ -176,6 +182,7 @@ export function downloadSantriExcelTemplate() {
     ["Jika nilai kelas/halaqah tidak cocok dengan data yang ada, sistem akan mengosongkannya"],
     ["Format tanggal lahir yang disarankan: YYYY-MM-DD"],
     ["Hafalan Awal diisi dengan angka juz, misal: 1,2,3"],
+    ["Password minimal 6 karakter. Jika kosong, sandi akan mengikuti NIS/ID."],
   ];
 
   const dataSheet = XLSX.utils.aoa_to_sheet(sheetRows);

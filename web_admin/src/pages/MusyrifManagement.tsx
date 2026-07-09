@@ -250,12 +250,11 @@ export default function MusyrifManagement() {
   const handleOpenQr = (item: any) => {
     const entry = Object.entries(mappings).find(([, value]) => value.linkedId === item.id);
     const loginKey = entry ? entry[0] : ((item.nip || "").replace(/\D/g, "") || item.id);
-    const password = entry?.[1]?.defaultPassword || loginKey;
     setSelected({
       ...item,
       loginKey,
-      password,
-      qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}:${password}`,
+      password: entry?.[1]?.defaultPassword || loginKey,
+      qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}`,
     });
     setQrOpen(true);
   };
@@ -327,7 +326,7 @@ export default function MusyrifManagement() {
         await setDoc(mappingRef, {
           linkedId: docId,
           role: "musyrif",
-          defaultPassword: cleanNip,
+          defaultPassword: row.password || cleanNip,
         }, { merge: true });
       }
 

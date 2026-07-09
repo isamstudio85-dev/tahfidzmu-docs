@@ -92,6 +92,9 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                             color: const Color(0xFF4E342E), // Soft Espresso
+                            decoration: cat['title'] == 'Praktik Tilawah' 
+                                ? TextDecoration.underline 
+                                : null,
                           ),
                         ),
                         subtitle: cat['description'] != null && cat['description'].isNotEmpty
@@ -320,6 +323,9 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF2E5A27),
+                    decoration: widget.categoryTitle == 'Praktik Tilawah'
+                        ? TextDecoration.underline
+                        : null,
                   ),
                 ),
               ),

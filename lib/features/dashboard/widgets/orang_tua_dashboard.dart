@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
+import 'package:tahfidz_app/features/dashboard/widgets/notification_bell.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/graduation_portal_screen.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
@@ -20,240 +21,324 @@ class OrangTuaDashboard extends StatelessWidget {
       ..sort((a, b) => b.date.compareTo(a.date));
     final avg = child.averageScore;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildBanner(context),
-          const SizedBox(height: 20),
-          if (context.watch<AppProvider>().isModuleActive('graduation') &&
-              context.watch<AppProvider>().graduationEvents.any(
-                (e) => e.isPublished,
-              )) ...[
-            _buildGraduationBanner(context, context.read<AppProvider>()),
-            const SizedBox(height: 24),
-          ],
-          Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool isTablet = constraints.maxWidth > 700;
+
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 40 : 16,
+            vertical: 16,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _oStat(
-                Icons.menu_book_rounded,
-                'Hafalan',
-                '${child.estimatedJuz.toStringAsFixed(1)} Juz',
-                Colors.purple,
+              const Align(
+                alignment: Alignment.centerRight,
+                child: NotificationBell(),
               ),
-              const SizedBox(width: 12),
-              _oStat(
-                Icons.assignment_turned_in_rounded,
-                'Setoran',
-                '${setorans.length} Sesi',
-                AppTheme.primaryGreen,
-              ),
-              const SizedBox(width: 12),
-              _oStat(
-                Icons.star_rounded,
-                'Rata-rata',
-                avg > 0 ? avg.toStringAsFixed(0) : '-',
-                AppTheme.gold,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          // STATUS KEHADIRAN HARI INI
-          _buildTodayPresenceCard(
-            context,
-            context.watch<AppProvider>().getTodaySantriStatus(child.id),
-          ),
-          const SizedBox(height: 16),
-          // KARTU SANTRI DIGITAL
-          Card(
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Colors.grey.shade200),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
+              const SizedBox(height: 12),
+              _buildBanner(context),
+              const SizedBox(height: 20),
+              if (context.watch<AppProvider>().isModuleActive('graduation') &&
+                  context.watch<AppProvider>().graduationEvents.any(
+                    (e) => e.isPublished,
+                  )) ...[
+                _buildGraduationBanner(context, context.read<AppProvider>()),
+                const SizedBox(height: 24),
+              ],
+              Row(
+                children: [
+                  _oStat(
+                    Icons.menu_book_rounded,
+                    'Hafalan',
+                    '${child.estimatedJuz.toStringAsFixed(1)} Juz',
+                    Colors.purple,
+                  ),
+                  const SizedBox(width: 12),
+                  _oStat(
+                    Icons.assignment_turned_in_rounded,
+                    'Setoran',
+                    '${setorans.length} Sesi',
+                    AppTheme.primaryGreen,
+                  ),
+                  const SizedBox(width: 12),
+                  _oStat(
+                    Icons.star_rounded,
+                    'Rata-rata',
+                    avg > 0 ? avg.toStringAsFixed(0) : '-',
+                    AppTheme.gold,
+                  ),
+                  if (isTablet) ...[
+                    const SizedBox(width: 12),
+                    _oStat(
+                      Icons.history_edu_rounded,
+                      'Total Ayat',
+                      '${child.totalZiyadahAyahs}',
+                      Colors.blue,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              if (isTablet)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 4,
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            'KARTU SANTRI DIGITAL',
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: AppTheme.primaryGreen,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          FutureBuilder<String>(
-                            future: context.read<AppProvider>().getLoginQrData(
+                          _buildTodayPresenceCard(
+                            context,
+                            context.watch<AppProvider>().getTodaySantriStatus(
                               child.id,
                             ),
-                            builder: (context, snapshot) {
-                              return QrImageView(
-                                data: snapshot.data ?? (child.nis ?? child.id),
-                                version: QrVersions.auto,
-                                size: 180.0,
-                                backgroundColor: Colors.white,
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          Divider(color: Colors.grey.shade300, height: 1),
-                          const SizedBox(height: 16),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Container(
-                                  width: 60,
-                                  height: 60,
-                                  color: AppTheme.primaryGreen.withValues(
-                                    alpha: 0.1,
-                                  ),
-                                  child: child.photoPath != null
-                                      ? Image.network(
-                                          child.photoPath!,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Center(
-                                          child: Text(
-                                            child.name[0],
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppTheme.primaryGreen,
-                                            ),
-                                          ),
-                                        ),
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      child.name,
-                                      style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                        color: Colors.black87,
-                                      ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'NIS/ID: ${child.nis ?? child.id}',
-                                      style: TextStyle(
-                                        fontFamily: 'monospace',
-                                        color: Colors.grey.shade600,
-                                        fontSize: 11,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
                           ),
                           const SizedBox(height: 16),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text(
-                              'Tutup',
-                              style: TextStyle(
-                                color: AppTheme.primaryGreen,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          _buildDigitalCard(context),
                         ],
                       ),
                     ),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.qr_code_2_rounded,
-                      color: Colors.black87,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 20),
                     Expanded(
+                      flex: 6,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'KARTU SANTRI DIGITAL',
-                            style: GoogleFonts.poppins(
-                              color: Colors.green.shade800,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'QR Code untuk akses cepat',
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 11,
+                          const SectionTitle('Riwayat Terbaru'),
+                          const SizedBox(height: 12),
+                          if (setorans.isEmpty)
+                            const EmptyState('Belum ada riwayat setoran.')
+                          else
+                            ...setorans
+                                .take(5)
+                                .map(
+                                  (r) => RecentSetoranTile(
+                                    santri: child,
+                                    record: r,
+                                  ),
+                                ),
+                          const SizedBox(height: 24),
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      SantriDetailScreen(santriId: child.id),
+                                ),
+                              ),
+                              icon: const Icon(Icons.person_search_rounded),
+                              label: const Text('Lihat Detail Lengkap'),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const Icon(
-                      Icons.qr_code_rounded,
-                      color: Colors.green,
-                      size: 20,
+                  ],
+                )
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildTodayPresenceCard(
+                      context,
+                      context.watch<AppProvider>().getTodaySantriStatus(
+                        child.id,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDigitalCard(context),
+                    const SizedBox(height: 24),
+                    const SectionTitle('Riwayat Terbaru'),
+                    const SizedBox(height: 12),
+                    if (setorans.isEmpty)
+                      const EmptyState('Belum ada riwayat setoran.')
+                    else
+                      ...setorans
+                          .take(5)
+                          .map(
+                            (r) => RecentSetoranTile(santri: child, record: r),
+                          ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                SantriDetailScreen(santriId: child.id),
+                          ),
+                        ),
+                        icon: const Icon(Icons.person_search_rounded),
+                        label: const Text('Lihat Detail Lengkap'),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDigitalCard(BuildContext context) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => _showDigitalCardDialog(context),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.qr_code_2_rounded,
+                color: Colors.black87,
+                size: 28,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'KARTU SANTRI DIGITAL',
+                      style: GoogleFonts.poppins(
+                        color: Colors.green.shade800,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'QR Code untuk akses cepat',
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 11,
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
+              const Icon(Icons.qr_code_rounded, color: Colors.green, size: 20),
+            ],
           ),
-          const SizedBox(height: 24),
-          const SectionTitle('Riwayat Terbaru'),
-          const SizedBox(height: 12),
-          if (setorans.isEmpty)
-            const EmptyState('Belum ada riwayat setoran.')
-          else
-            ...setorans
-                .take(5)
-                .map((r) => RecentSetoranTile(santri: child, record: r)),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SantriDetailScreen(santriId: child.id),
+        ),
+      ),
+    );
+  }
+
+  void _showDigitalCardDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'KARTU SANTRI DIGITAL',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: AppTheme.primaryGreen,
+                  letterSpacing: 0.5,
                 ),
               ),
-              icon: const Icon(Icons.person_search_rounded),
-              label: const Text('Lihat Detail Lengkap'),
-            ),
+              const SizedBox(height: 20),
+              FutureBuilder<String>(
+                future: context.read<AppProvider>().getLoginQrData(child.id),
+                builder: (context, snapshot) {
+                  return QrImageView(
+                    data: snapshot.data ?? (child.nis ?? child.id),
+                    version: QrVersions.auto,
+                    size: 180.0,
+                    backgroundColor: Colors.white,
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              Divider(color: Colors.grey.shade300, height: 1),
+              const SizedBox(height: 16),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                      child: child.photoPath != null
+                          ? Image.network(child.photoPath!, fit: BoxFit.cover)
+                          : Center(
+                              child: Text(
+                                child.name[0],
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.primaryGreen,
+                                ),
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          child.name,
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Colors.black87,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'NIS/ID: ${child.nis ?? child.id}',
+                          style: TextStyle(
+                            fontFamily: 'monospace',
+                            color: Colors.grey.shade600,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  'Tutup',
+                  style: TextStyle(
+                    color: AppTheme.primaryGreen,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

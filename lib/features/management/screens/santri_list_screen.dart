@@ -37,6 +37,7 @@ class _SantriListScreenState extends State<SantriListScreen> {
     final showAppBar = !widget.hideAppBar;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA), // Match Laporan background
       appBar: showAppBar ? AppBar(title: const Text('Daftar Santri')) : null,
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {
@@ -104,15 +105,42 @@ class _SantriListScreenState extends State<SantriListScreen> {
                 ),
 
               if (list.isEmpty)
-                _emptyState(canManage, 'Belum ada santri.')
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async => await provider.setupFirestoreListeners(),
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                        _emptyState(canManage, 'Belum ada santri.'),
+                      ],
+                    ),
+                  ),
+                )
               else if (filteredList.isEmpty)
-                Expanded(child: Center(child: Text('Tidak ada santri yang cocok', style: TextStyle(color: Colors.grey.shade500))))
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async => await provider.setupFirestoreListeners(),
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                        Center(child: Text('Tidak ada santri yang cocok', style: TextStyle(color: Colors.grey.shade500))),
+                      ],
+                    ),
+                  ),
+                )
               else
                 Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
-                    itemCount: filteredList.length,
-                    itemBuilder: (_, i) => _SantriCard(santri: filteredList[i]),
+                  child: RefreshIndicator(
+                    onRefresh: () async => await provider.setupFirestoreListeners(),
+                    child: ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      itemCount: filteredList.length,
+                      separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5, color: Color(0xFFEEEEEE)),
+                      itemBuilder: (_, i) => _SantriListItem(santri: filteredList[i]),
+                    ),
                   ),
                 ),
             ],
@@ -186,8 +214,8 @@ class _SantriListScreenState extends State<SantriListScreen> {
   }
 }
 
-class _SantriCard extends StatelessWidget {
-  const _SantriCard({required this.santri});
+class _SantriListItem extends StatelessWidget {
+  const _SantriListItem({required this.santri});
   final Santri santri;
 
   @override
@@ -197,74 +225,95 @@ class _SantriCard extends StatelessWidget {
     final halaqah = provider.getHalaqahById(santri.halaqahId);
     final todayStatus = provider.getTodaySantriStatus(santri.id);
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santri.id))),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Row(
-            children: [
-              AppAvatar(
-                name: santri.name,
-                radius: 22,
-                imagePath: (santri.photoPath?.isNotEmpty ?? false) ? santri.photoPath : null,
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santri.id))),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), // More compact
+        child: Row(
+          children: [
+            // SQUIRCLE AVATAR
+            Container(
+              width: 36, // Slightly smaller
+              height: 36,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8), 
+                image: (santri.photoPath?.isNotEmpty ?? false)
+                    ? DecorationImage(image: NetworkImage(santri.photoPath!), fit: BoxFit.cover)
+                    : null,
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(santri.name, style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: (santri.photoPath?.isEmpty ?? true)
+                  ? Center(
+                      child: Text(
+                        santri.name[0].toUpperCase(),
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryGreen, fontSize: 12),
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    santri.name, 
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87), 
+                    maxLines: 1, 
+                    overflow: TextOverflow.ellipsis
+                  ),
+                  const SizedBox(height: 1), // Tighter
+                  Row(
+                    children: [
+                      if (santri.nis != null && santri.nis!.isNotEmpty) ...[
+                        Text(santri.nis!, style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontFamily: 'monospace')),
+                        const SizedBox(width: 6),
+                        Text('•', style: TextStyle(color: Colors.grey.shade300, fontSize: 10)),
+                        const SizedBox(width: 6),
+                      ],
+                      Flexible(
+                        child: Text(
+                          halaqah?.nama ?? 'Tanpa Halaqah', 
+                          style: TextStyle(color: AppTheme.primaryGreen.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w500), 
+                          maxLines: 1, 
+                          overflow: TextOverflow.ellipsis
                         ),
-                        if (todayStatus != null) ...[
-                          const SizedBox(width: 8),
-                          _buildStatusBadge(todayStatus),
-                        ],
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        if (santri.kelas != null && santri.kelas!.isNotEmpty) ...[
-                          Text(santri.kelas!, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 11)),
-                          const SizedBox(width: 6),
-                          Text('•', style: TextStyle(color: Colors.grey.shade300, fontSize: 11)),
-                          const SizedBox(width: 6),
-                        ],
-                        Expanded(child: Text(halaqah?.nama ?? 'Tanpa Halaqah', style: const TextStyle(color: AppTheme.primaryGreen, fontSize: 11, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              if (canManage)
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert_rounded, size: 20, color: Colors.grey),
-                  onSelected: (val) {
-                    if (val == 'edit') Navigator.push(context, MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)));
-                    if (val == 'delete') _confirmDelete(context, provider, santri);
-                    if (val == 'reset') _showResetPasswordDialog(context, provider, santri);
-                    if (val == 'setoran') showSetoranOptions(context, santri);
-                  },
-                  itemBuilder: (ctx) => [
-                    const PopupMenuItem(value: 'setoran', child: _MenuAction(Icons.play_circle_fill_rounded, 'Mulai Setoran', AppTheme.primaryGreen)),
-                    const PopupMenuItem(value: 'edit', child: _MenuAction(Icons.edit_rounded, 'Edit Profile', Colors.blue)),
-                    const PopupMenuItem(value: 'reset', child: _MenuAction(Icons.lock_reset_rounded, 'Reset Sandi', Colors.orange)),
-                    const PopupMenuItem(value: 'delete', child: _MenuAction(Icons.delete_outline_rounded, 'Hapus', Colors.red)),
-                  ],
-                )
-              else
-                IconButton(
-                  icon: const Icon(Icons.play_circle_fill_rounded, color: AppTheme.primaryGreen, size: 28),
-                  onPressed: () => showSetoranOptions(context, santri),
-                ),
+            ),
+            if (todayStatus != null) ...[
+              _buildMiniStatusBadge(todayStatus),
+              const SizedBox(width: 8),
             ],
-          ),
+            if (canManage)
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.tune_rounded, size: 18, color: Colors.grey), // Changed from three dots
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onSelected: (val) {
+                  if (val == 'edit') Navigator.push(context, MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)));
+                  if (val == 'delete') _confirmDelete(context, provider, santri);
+                  if (val == 'reset') _showResetPasswordDialog(context, provider, santri);
+                  if (val == 'setoran') showSetoranOptions(context, santri);
+                },
+                itemBuilder: (ctx) => [
+                  const PopupMenuItem(value: 'setoran', child: _MenuAction(Icons.play_circle_fill_rounded, 'Mulai Setoran', AppTheme.primaryGreen)),
+                  const PopupMenuItem(value: 'edit', child: _MenuAction(Icons.edit_rounded, 'Edit Profile', Colors.blue)),
+                  const PopupMenuItem(value: 'reset', child: _MenuAction(Icons.lock_reset_rounded, 'Reset Sandi', Colors.orange)),
+                  const PopupMenuItem(value: 'delete', child: _MenuAction(Icons.delete_outline_rounded, 'Hapus', Colors.red)),
+                ],
+              )
+            else
+              IconButton(
+                icon: const Icon(Icons.play_circle_outline_rounded, color: AppTheme.primaryGreen, size: 24),
+                onPressed: () => showSetoranOptions(context, santri),
+                constraints: const BoxConstraints(),
+                padding: EdgeInsets.zero,
+              ),
+          ],
         ),
       ),
     );
@@ -302,63 +351,20 @@ class _SantriCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge(String status) {
+  Widget _buildMiniStatusBadge(String status) {
     Color color;
-    String label;
-    IconData icon;
-
     switch (status) {
-      case 'setoran':
-        color = Colors.green;
-        label = 'Setoran';
-        icon = Icons.check_circle_outline_rounded;
-        break;
-      case 'ditunda':
-        color = Colors.grey;
-        label = 'Ditunda';
-        icon = Icons.schedule_rounded;
-        break;
-      case 'sakit':
-        color = Colors.orange;
-        label = 'Sakit';
-        icon = Icons.local_hospital_rounded;
-        break;
-      case 'izin':
-        color = Colors.blue;
-        label = 'Izin';
-        icon = Icons.assignment_ind_rounded;
-        break;
-      case 'alfa':
-        color = Colors.red;
-        label = 'Alfa';
-        icon = Icons.cancel_rounded;
-        break;
-      default:
-        return const SizedBox.shrink();
+      case 'setoran': color = Colors.green; break;
+      case 'ditunda': color = Colors.grey; break;
+      case 'sakit': color = Colors.orange; break;
+      case 'izin': color = Colors.blue; break;
+      case 'alfa': color = Colors.red; break;
+      default: return const SizedBox.shrink();
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 10, color: color),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: GoogleFonts.poppins(
-              fontSize: 9,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-        ],
-      ),
+      width: 10, height: 10,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 1.5)),
     );
   }
 }

@@ -71,7 +71,7 @@ class ResultTile extends StatelessWidget {
   Widget _statusItem(BuildContext context, AppProvider p, String label, String val, Color color) {
     return SimpleDialogOption(
       onPressed: () {
-        p.updateTasmiStatus(santri.id, result.id, val);
+        p.updateTasmiStatus(result.id, val);
         Navigator.pop(context);
       },
       child: Text(label, style: TextStyle(color: color, fontWeight: FontWeight.bold)),

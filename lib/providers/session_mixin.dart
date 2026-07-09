@@ -24,6 +24,7 @@ mixin SessionMixin on ChangeNotifier {
   bool isTasmiSession = false;
   List<int> activeTasmiJuz = [];
   String activeTasmiYear = '';
+  bool isFlagChanged = false;
   
   final Map<String, ErrorMark> sessionErrors = {};
   final Set<int> sessionPassedAyahs = {};
@@ -45,17 +46,19 @@ mixin SessionMixin on ChangeNotifier {
     activeSetoranSurahName = surah.name;
     activeSetoranSurahEnglishName = surah.englishName;
     activeSetoranAyahStart = ayahStart;
-    activeSetoranAyahEnd = ayahEnd;
-    defaultSetoranAyahEnd = ayahEnd;
+    
+    // Clamp ayahEnd to surah length
+    final maxAyah = surah.numberOfAyahs;
+    final clampedAyahEnd = ayahEnd.clamp(ayahStart, maxAyah);
+    activeSetoranAyahEnd = clampedAyahEnd;
+    defaultSetoranAyahEnd = clampedAyahEnd;
+    
     isTasmiSession = false;
+    isFlagChanged = false;
     sessionErrors.clear();
     sessionPassedAyahs.clear();
     sessionFailedAyahs.clear();
     
-    // Default/Otomatis ceklis diterima untuk semua ayat dalam range
-    for (int i = ayahStart; i <= ayahEnd; i++) {
-      sessionPassedAyahs.add(i);
-    }
     notifyListeners();
   }
 
@@ -70,20 +73,21 @@ mixin SessionMixin on ChangeNotifier {
     final juzRange = QuranJuzUtils.getJuzRange(firstJuz);
     activeSetoranSurahNumber = juzRange.startSurah;
     activeSetoranAyahStart = juzRange.startAyah;
-    activeSetoranAyahEnd = juzRange.startAyah + 20;
-    defaultSetoranAyahEnd = juzRange.startAyah + 20;
     
     final surah = _surahList.firstWhere((s) => s.number == activeSetoranSurahNumber, orElse: () => _surahList.first);
     activeSetoranSurahName = surah.name;
     activeSetoranSurahEnglishName = surah.englishName;
+    
+    // Clamp ayahEnd to surah length
+    final clampedAyahEnd = (juzRange.startAyah + 20).clamp(activeSetoranAyahStart, surah.numberOfAyahs);
+    activeSetoranAyahEnd = clampedAyahEnd;
+    defaultSetoranAyahEnd = clampedAyahEnd;
+    
+    isFlagChanged = false;
     sessionErrors.clear();
     sessionPassedAyahs.clear();
     sessionFailedAyahs.clear();
 
-    // Default/Otomatis ceklis diterima untuk semua ayat dalam range
-    for (int i = activeSetoranAyahStart; i <= activeSetoranAyahEnd; i++) {
-      sessionPassedAyahs.add(i);
-    }
     notifyListeners();
   }
 
@@ -97,16 +101,12 @@ mixin SessionMixin on ChangeNotifier {
       activeSetoranAyahEnd = ayahNumber;
     }
     
+    isFlagChanged = true;
+    
     // Hapus status lulus/gagal untuk semua ayat setelah batas akhir baru
     sessionPassedAyahs.removeWhere((a) => a > activeSetoranAyahEnd);
     sessionFailedAyahs.removeWhere((a) => a > activeSetoranAyahEnd);
     
-    // Pastikan semua ayat dari awal sampai batas akhir (jika belum gagal) ditandai lulus
-    for (int i = activeSetoranAyahStart; i <= activeSetoranAyahEnd; i++) {
-      if (!sessionFailedAyahs.contains(i)) {
-        sessionPassedAyahs.add(i);
-      }
-    }
     notifyListeners();
   }
 
@@ -159,6 +159,16 @@ mixin SessionMixin on ChangeNotifier {
   }
 
   void clearErrors() {
+    sessionErrors.clear();
+    sessionPassedAyahs.clear();
+    sessionFailedAyahs.clear();
+    notifyListeners();
+  }
+
+  void stopSetoranSession() {
+    activeSetoranSantri = null;
+    isTasmiSession = false;
+    activeTasmiJuz = [];
     sessionErrors.clear();
     sessionPassedAyahs.clear();
     sessionFailedAyahs.clear();

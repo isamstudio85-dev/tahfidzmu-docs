@@ -58,126 +58,61 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
         final halaqah = provider.getHalaqahById(santri.halaqahId);
         final isAdmin = provider.isAdmin;
 
-        return DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            appBar: AppBar(
-              title: const Text('Detail Santri'),
-              actions: [
-                if (isAdmin)
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined),
-                    tooltip: 'Edit Profil',
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
-                    ),
-                  ),
-              ],
-            ),
-            floatingActionButton: provider.isMusyrif
-                ? FloatingActionButton.extended(
-                    heroTag: 'fab_detail_setoran',
-                    onPressed: () => showSetoranOptions(context, santri),
-                    icon: const Icon(Icons.qr_code_scanner_rounded),
-                    label: const Text('Mulai Setoran'),
-                  )
-                : null,
-            body: Column(
-              children: [
-                // 1. Unified Profile Header (Compact & Centered to prevent right overflow)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                  child: _ProfileHeader(
-                    name: santri.name,
-                    subtitle: '${santri.kelas ?? 'Tanpa Kelas'} • ${halaqah?.nama ?? 'Tanpa Halaqah'}',
-                    photoPath: santri.photoPath,
-                    extra: Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        StarRatingWidget(rating: stars, size: 14),
-                        GradeBadgeWidget(gradeName: grade, stars: stars),
-                      ],
-                    ),
-                  ),
-                ),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final bool isTablet = constraints.maxWidth > 700;
 
-                // 2. TabBar (Shorter text tabs to prevent overflow)
-                TabBar(
-                  tabs: const [
-                    Tab(text: 'Hafalan'),
-                    Tab(text: 'Profil & QR'),
-                  ],
-                  labelColor: AppTheme.primaryGreen,
-                  unselectedLabelColor: Colors.grey.shade600,
-                  indicatorColor: AppTheme.primaryGreen,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  labelStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
-                  unselectedLabelStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
-                ),
-
-                // 3. TabBarView
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      // TAB 1: PERKEMBANGAN HAFALAN (Hafalan-Oriented)
-                      ListView(
-                        padding: const EdgeInsets.all(16),
-                        children: [
-                          // Unified Stats Row
-                          Row(
-                            children: [
-                              _statItem('Rata-rata', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
-                              const SizedBox(width: 12),
-                              _statItem('Total Hafalan', '${santri.estimatedJuz.toStringAsFixed(1)} Juz', Icons.library_books_rounded, Colors.purple.shade600),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              _statItem('Ayat Lulus', '${santri.totalZiyadahAyahs + santri.totalMurojaahAyahs}', Icons.check_circle_outline_rounded, Colors.green),
-                              const SizedBox(width: 12),
-                              _statItem('Ayat Gagal', '${santri.totalFailedAyahs}', Icons.cancel_outlined, Colors.red),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Ujian Tasmi'
-                          if (provider.isModuleActive('graduation')) ...[
-                            _sectionHeader('Ujian Tasmi\' / Wisuda'),
-                            if (santri.tasmiHistory.isEmpty)
-                              _emptyHistory('Belum ada riwayat ujian Tasmi\'')
-                            else
-                              ...santri.tasmiHistory.reversed.map(
-                                (t) => _TasmiHistoryTile(record: t),
-                              ),
-                            const SizedBox(height: 24),
-                          ],
-
-                          // Riwayat Setoran
-                          _sectionHeader('Riwayat Setoran'),
-                          if (santri.setoranHistory.isEmpty)
-                            _emptyHistory('Belum ada riwayat setoran')
-                          else
-                            ...santri.setoranHistory.reversed.map(
-                              (r) => _SetoranHistoryTile(record: r, santri: santri),
-                            ),
-                          const SizedBox(height: 80), // Space for FAB
-                        ],
+            if (isTablet) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: const Text('Detail Santri'),
+                  actions: [
+                    if (isAdmin)
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined),
+                        tooltip: 'Edit Profil',
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
+                        ),
                       ),
-
-                      // TAB 2: PROFIL & KARTU QR (Personal-Oriented)
-                      ListView(
-                        padding: const EdgeInsets.all(16),
+                  ],
+                ),
+                floatingActionButton: provider.isMusyrif
+                    ? FloatingActionButton.extended(
+                        heroTag: 'fab_detail_setoran',
+                        onPressed: () => showSetoranOptions(context, santri),
+                        icon: const Icon(Icons.qr_code_scanner_rounded),
+                        label: const Text('Mulai Setoran'),
+                      )
+                    : null,
+                body: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // LEFT COLUMN: Profile & QR
+                    Expanded(
+                      flex: 4,
+                      child: ListView(
+                        padding: const EdgeInsets.all(24),
                         children: [
-                          // MINI DIGITAL CARD with QR code
+                          _ProfileHeader(
+                            name: santri.name,
+                            subtitle: '${santri.kelas ?? 'Tanpa Kelas'} • ${halaqah?.nama ?? 'Tanpa Halaqah'}',
+                            photoPath: santri.photoPath,
+                            extra: Wrap(
+                              spacing: 8,
+                              runSpacing: 4,
+                              alignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                StarRatingWidget(rating: stars, size: 14),
+                                GradeBadgeWidget(gradeName: grade, stars: stars),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
                           _MiniDigitalCard(santri: santri),
-                          const SizedBox(height: 20),
-
-                          // Informasi Personal
+                          const SizedBox(height: 24),
                           _sectionHeader('Informasi Personal'),
                           _infoCard([
                             _infoRow(Icons.meeting_room_rounded, 'Kelas', santri.kelas ?? '-'),
@@ -192,15 +127,207 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
                             _infoRow(Icons.info_outline, 'Status Akun', santri.isAktif ? 'Aktif' : 'Non-aktif',
                                 valueColor: santri.isAktif ? AppTheme.primaryGreen : Colors.grey),
                           ]),
+                        ],
+                      ),
+                    ),
+                    VerticalDivider(width: 1, color: Colors.grey.shade200),
+                    // RIGHT COLUMN: Hafalan History
+                    Expanded(
+                      flex: 6,
+                      child: ListView(
+                        padding: const EdgeInsets.all(24),
+                        children: [
+                          _sectionHeader('Statistik Perkembangan'),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              _statItem('Rata-rata', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
+                              const SizedBox(width: 12),
+                              _statItem('Total Hafalan', '${santri.estimatedJuz.toStringAsFixed(1)} Juz', Icons.library_books_rounded, Colors.purple.shade600),
+                              const SizedBox(width: 12),
+                              _statItem('Ayat Lulus', '${santri.totalZiyadahAyahs + santri.totalMurojaahAyahs}', Icons.check_circle_outline_rounded, Colors.green),
+                            ],
+                          ),
+                          const SizedBox(height: 32),
+                          // Ujian Tasmi'
+                          if (provider.isModuleActive('graduation') &&
+                              provider.graduationEvents.any((e) => e.isPublished)) ...[
+                            _sectionHeader('Ujian Tasmi\' / Wisuda'),
+                            if (santri.tasmiHistory.isEmpty)
+                              _emptyHistory('Belum ada riwayat ujian Tasmi\'')
+                            else
+                              ...santri.tasmiHistory.reversed.map(
+                                (t) => _TasmiHistoryTile(record: t),
+                              ),
+                            const SizedBox(height: 32),
+                          ],
+
+                          // Riwayat Setoran
+                          _sectionHeader('Riwayat Setoran'),
+                          if (santri.setoranHistory.isEmpty)
+                            _emptyHistory('Belum ada riwayat setoran')
+                          else
+                            GridView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 1,
+                                childAspectRatio: 4.5,
+                                mainAxisSpacing: 8,
+                              ),
+                              itemCount: santri.setoranHistory.length,
+                              itemBuilder: (ctx, i) {
+                                final r = santri.setoranHistory.reversed.toList()[i];
+                                return _SetoranHistoryTile(record: r, santri: santri);
+                              },
+                            ),
                           const SizedBox(height: 80),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
+              );
+            }
+
+            return DefaultTabController(
+              length: 2,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: const Text('Detail Santri'),
+                  actions: [
+                    if (isAdmin)
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined),
+                        tooltip: 'Edit Profil',
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
+                        ),
+                      ),
+                  ],
+                ),
+                floatingActionButton: provider.isMusyrif
+                    ? FloatingActionButton.extended(
+                        heroTag: 'fab_detail_setoran',
+                        onPressed: () => showSetoranOptions(context, santri),
+                        icon: const Icon(Icons.qr_code_scanner_rounded),
+                        label: const Text('Mulai Setoran'),
+                      )
+                    : null,
+                body: Column(
+                  children: [
+                    // 1. Unified Profile Header
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                      child: _ProfileHeader(
+                        name: santri.name,
+                        subtitle: '${santri.kelas ?? 'Tanpa Kelas'} • ${halaqah?.nama ?? 'Tanpa Halaqah'}',
+                        photoPath: santri.photoPath,
+                        extra: Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            StarRatingWidget(rating: stars, size: 14),
+                            GradeBadgeWidget(gradeName: grade, stars: stars),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    TabBar(
+                      tabs: const [
+                        Tab(text: 'Hafalan'),
+                        Tab(text: 'Profil & QR'),
+                      ],
+                      labelColor: AppTheme.primaryGreen,
+                      unselectedLabelColor: Colors.grey.shade600,
+                      indicatorColor: AppTheme.primaryGreen,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      labelStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
+                      unselectedLabelStyle: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
+                    ),
+
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          // TAB 1: PERKEMBANGAN HAFALAN
+                          ListView(
+                            padding: const EdgeInsets.all(16),
+                            children: [
+                              Row(
+                                children: [
+                                  _statItem('Rata-rata', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
+                                  const SizedBox(width: 12),
+                                  _statItem('Total Hafalan', '${santri.estimatedJuz.toStringAsFixed(1)} Juz', Icons.library_books_rounded, Colors.purple.shade600),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  _statItem('Ayat Lulus', '${santri.totalZiyadahAyahs + santri.totalMurojaahAyahs}', Icons.check_circle_outline_rounded, Colors.green),
+                                  const SizedBox(width: 12),
+                                  _statItem('Ayat Gagal', '${santri.totalFailedAyahs}', Icons.cancel_outlined, Colors.red),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+
+                              if (provider.isModuleActive('graduation') &&
+                                  provider.graduationEvents.any((e) => e.isPublished)) ...[
+                                _sectionHeader('Ujian Tasmi\' / Wisuda'),
+                                if (santri.tasmiHistory.isEmpty)
+                                  _emptyHistory('Belum ada riwayat ujian Tasmi\'')
+                                else
+                                  ...santri.tasmiHistory.reversed.map(
+                                    (t) => _TasmiHistoryTile(record: t),
+                                  ),
+                                const SizedBox(height: 24),
+                              ],
+
+                              _sectionHeader('Riwayat Setoran'),
+                              if (santri.setoranHistory.isEmpty)
+                                _emptyHistory('Belum ada riwayat setoran')
+                              else
+                                ...santri.setoranHistory.reversed.map(
+                                  (r) => _SetoranHistoryTile(record: r, santri: santri),
+                                ),
+                              const SizedBox(height: 80),
+                            ],
+                          ),
+
+                          // TAB 2: PROFIL & KARTU QR
+                          ListView(
+                            padding: const EdgeInsets.all(16),
+                            children: [
+                              _MiniDigitalCard(santri: santri),
+                              const SizedBox(height: 20),
+                              _sectionHeader('Informasi Personal'),
+                              _infoCard([
+                                _infoRow(Icons.meeting_room_rounded, 'Kelas', santri.kelas ?? '-'),
+                                _infoRow(Icons.badge_outlined, 'NIS', santri.nis ?? '-'),
+                                _infoRow(Icons.cake_rounded, 'Tanggal Lahir', santri.tanggalLahir ?? '-'),
+                                _infoRow(Icons.male_rounded, 'Jenis Kelamin', santri.jenisKelamin == 'P' ? 'Perempuan' : 'Laki-laki'),
+                                _infoRow(Icons.history_edu_rounded, 'Hafalan Awal', santri.initialMemorizedJuz.isEmpty ? 'Mulai dari Nol' : 'Sudah hafal Juz: ${santri.initialMemorizedJuz.join(', ')}'),
+                                _infoRow(Icons.email_outlined, 'Email', santri.email ?? '-'),
+                                _infoRow(Icons.family_restroom_outlined, 'Orang Tua', santri.namaOrangTua ?? '-'),
+                                _infoRow(Icons.phone_outlined, 'No. HP Wali', santri.nomorHpWali ?? '-'),
+                                _infoRow(Icons.flag_outlined, 'Target Hafalan', santri.targetHafalan ?? '-'),
+                                _infoRow(Icons.info_outline, 'Status Akun', santri.isAktif ? 'Aktif' : 'Non-aktif',
+                                    valueColor: santri.isAktif ? AppTheme.primaryGreen : Colors.grey),
+                              ]),
+                              const SizedBox(height: 80),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );

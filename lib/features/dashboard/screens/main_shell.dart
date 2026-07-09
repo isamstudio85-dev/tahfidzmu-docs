@@ -29,6 +29,7 @@ class _MainShellState extends State<MainShell> {
         return const [
           HomeScreen(),
           UserManagementScreen(),
+          QuranMemorizationScreen(),
           ManajemenScreen(),
           ProfilScreen(),
         ];
@@ -49,6 +50,7 @@ class _MainShellState extends State<MainShell> {
         return const [
           HomeScreen(),
           UserManagementScreen(),
+          QuranMemorizationScreen(),
           ProfilScreen(),
         ];
     }
@@ -71,13 +73,11 @@ class _MainShellState extends State<MainShell> {
       ));
     }
 
-    if (role != UserRole.admin && role != UserRole.pengawas) {
-      dest.add(const NavigationDestination(
-        icon: Icon(Icons.history_edu_outlined),
-        selectedIcon: Icon(Icons.history_edu_rounded),
-        label: 'Hafalan',
-      ));
-    }
+    dest.add(const NavigationDestination(
+      icon: Icon(Icons.history_edu_outlined),
+      selectedIcon: Icon(Icons.history_edu_rounded),
+      label: 'Tahfidz',
+    ));
 
     if (role == UserRole.admin) {
       dest.add(const NavigationDestination(

@@ -14,6 +14,7 @@ import 'providers/app_provider.dart';
 import 'package:tahfidz_app/features/auth/screens/login_screen.dart';
 import 'package:tahfidz_app/features/dashboard/screens/main_shell.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -21,6 +22,9 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Inisialisasi lokalisasi bahasa Indonesia untuk format tanggal (Riwayat Presensi)
+  await initializeDateFormatting('id_ID', null);
 
   // Crashlytics: tangkap semua error Flutter
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -84,10 +88,11 @@ class _TahfidzAppState extends State<TahfidzApp> {
       theme: AppTheme.light,
       home: Consumer<AppProvider>(
         builder: (_, provider, __) {
-          if (provider.isInitializing) {
+          if (provider.isInitializing || provider.isLoggingOut) {
             return const _AppBootstrapLoadingScreen();
           }
           if (!provider.isLoggedIn) return const LoginScreen();
+
           if (provider.isSuperAdmin) {
             return const _SuperAdminMobileDisabledScreen();
           }

@@ -6,7 +6,6 @@ import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/admin_dashboard.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/musyrif_dashboard.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/orang_tua_dashboard.dart';
-import 'package:tahfidz_app/features/dashboard/widgets/notification_bell.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/graduation_portal_screen.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 
@@ -190,32 +189,27 @@ class _HomeScreenState extends State<HomeScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    Widget body;
     if (provider.isOrangTua) {
       final child = provider.linkedSantri;
       if (child == null) {
-        return const Scaffold(
-          body: Center(child: Text('Data tidak ditemukan.')),
-        );
+        body = const Center(child: Text('Data tidak ditemukan.'));
+      } else {
+        body = OrangTuaDashboard(child: child);
       }
-      return Scaffold(
-        appBar: AppBar(
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 14.0, top: 10.0, bottom: 10.0),
-            child: Image.asset(
-              'assets/images/TahfidzMU-logo-white.png',
-              fit: BoxFit.contain,
-            ),
-          ),
-          titleSpacing: 8.0,
-          title: const Text('Dashboard'),
-          actions: [const NotificationBell(), const SizedBox(width: 8)],
-        ),
-        body: OrangTuaDashboard(child: child),
-      );
+    } else if (provider.isAdmin || provider.isPengawas) {
+      body = AdminDashboard(provider: provider);
+    } else {
+      body = MusyrifDashboard(provider: provider);
     }
-    if (provider.isAdmin || provider.isPengawas) {
-      return AdminDashboard(provider: provider);
-    }
-    return MusyrifDashboard(provider: provider);
+
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await provider.setupFirestoreListeners();
+        },
+        child: body,
+      ),
+    );
   }
 }

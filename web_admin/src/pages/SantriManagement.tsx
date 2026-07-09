@@ -224,8 +224,7 @@ export default function SantriManagement() {
   const handleOpenQr = (s: any) => {
     const entry = Object.entries(mappings).find(([, v]) => v.linkedId === s.id);
     const loginKey = entry ? entry[0] : ((s.nis || "").replace(/\D/g, "") || s.id);
-    const pwd = entry?.[1]?.defaultPassword || loginKey;
-    setSelected({ ...s, loginKey, password: pwd, qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}:${pwd}` });
+    setSelected({ ...s, loginKey, password: entry?.[1]?.defaultPassword || loginKey, qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}` });
     setQrOpen(true);
   };
 
@@ -322,7 +321,7 @@ export default function SantriManagement() {
         await setDoc(mappingRef, {
           linkedId: santriDocId,
           role: "orangTua",
-          defaultPassword: cleanNis,
+          defaultPassword: row.password || cleanNis,
         }, { merge: true });
       }
 

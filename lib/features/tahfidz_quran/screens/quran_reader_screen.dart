@@ -188,14 +188,53 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
   }
 
   void _proceedToAssessment(BuildContext context, AppProvider provider) {
+    final start = provider.activeSetoranAyahStart;
+    final end = provider.activeSetoranAyahEnd;
+    final total = provider.sessionPassedAyahs.length;
+    final surahName = provider.activeSetoranSurahEnglishName;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Simpan Hafalan?'),
-        content: Text('Sesi ini akan berakhir pada ayat terakhir yang Anda tandai Lulus.\n\nTotal: ${provider.sessionPassedAyahs.length} ayat lancar.'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(
+              provider.isFlagChanged ? Icons.save_rounded : Icons.warning_amber_rounded,
+              color: provider.isFlagChanged ? AppTheme.primaryGreen : Colors.orange,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                provider.isFlagChanged ? 'Simpan Hafalan?' : 'Konfirmasi Batas',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            provider.isFlagChanged
+                ? 'Anda akan menyimpan setoran $surahName Ayat $start-$end (Total $total ayat lancar).'
+                : 'Anda belum menentukan batas akhir setoran (bendera).\n\nSecara default, setoran akan disimpan dari Ayat $start-$end (Total $total ayat lancar).\n\nApakah ini sudah sesuai?',
+          ),
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
-          FilledButton(onPressed: () { Navigator.pop(ctx); Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AssessmentScreen())); }, child: const Text('Simpan')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(provider.isFlagChanged ? 'Batal' : 'Ubah Batas'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const AssessmentScreen()),
+              );
+            },
+            child: Text(provider.isFlagChanged ? 'Simpan' : 'Ya, Simpan'),
+          ),
         ],
       ),
     );

@@ -12,6 +12,10 @@
 -dontwarn com.google.firebase.**
 -dontwarn com.google.android.gms.**
 
+# Google Play Core (for deferred components & updates)
+-keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
+
 # Keep annotations
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable

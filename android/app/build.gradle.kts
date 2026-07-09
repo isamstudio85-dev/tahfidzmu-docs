@@ -35,7 +35,7 @@ android {
     defaultConfig {
         applicationId = "com.tahfidz.tahfidz_app"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 34
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

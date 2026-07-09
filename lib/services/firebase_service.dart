@@ -23,7 +23,11 @@ class FirebaseService {
   }
 
   Future<void> signOut() async {
-    await _auth.signOut();
+    try {
+      await _auth.signOut().timeout(const Duration(seconds: 2));
+    } catch (e) {
+      debugPrint("Firebase Auth signOut timed out or failed: $e");
+    }
   }
 
   User? get currentUser => _auth.currentUser;

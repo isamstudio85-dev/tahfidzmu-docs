@@ -92,15 +92,11 @@ export default function PengawasManagement() {
   };
 
   const handleOpenEdit = (item: any) => {
-    const entry = Object.entries(mappings).find(([, value]) => value.linkedId === item.id);
     setIsEdit(true);
     setExistingId(item.id);
-    setExistingMappingKey(entry?.[0] || String(item.nip || item.username || "").replace(/\D/g, ""));
     setName(item.nama || "");
     setNip(item.nip || item.username || "");
     setPassword("");
-    setNoHp(item.nomorHp || "");
-    setJabatan(item.jabatan || "Pengawas");
     setStatus(item.status || "aktif");
     setCatatan(item.catatan || "");
     setPhotoFile(null);
@@ -247,10 +243,9 @@ export default function PengawasManagement() {
     const entry = Object.entries(mappings).find(([, value]) => value.linkedId === item.id);
     const fallbackKey = String(item.nip || item.username || item.id || "").replace(/\D/g, "") || item.id;
     const loginKey = entry ? entry[0] : fallbackKey;
-    const pwd = entry?.[1]?.defaultPassword || loginKey;
     setSelected({
       ...item,
-      qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}:${pwd}`,
+      qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}`,
     });
     setQrOpen(true);
   };

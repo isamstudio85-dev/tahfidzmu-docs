@@ -127,38 +127,97 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F8E9),
       appBar: AppBar(title: const Text('Mulai Setoran Baru')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _sectionTitle('1. Pilih Santri'),
-            const SizedBox(height: 10),
-            _buildSantriSelector(),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isTablet = constraints.maxWidth > 700;
+          
+          if (isTablet) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _sectionTitle('1. Pilih Santri'),
+                        const SizedBox(height: 10),
+                        _buildSantriSelector(),
+                        const SizedBox(height: 32),
+                        const Center(child: Text('Musyrif hanya perlu menandai ayat yang lulus/gagal.', style: TextStyle(color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic))),
+                      ],
+                    ),
+                  ),
+                ),
+                VerticalDivider(width: 1, color: Colors.grey.shade300),
+                Expanded(
+                  flex: 6,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _sectionTitle('2. Atur Sesi Simak'),
+                        const SizedBox(height: 12),
+                        _buildTypePicker(),
+                        const SizedBox(height: 12),
+                        _buildSurahSelector(provider),
+                        const SizedBox(height: 12),
+                        _buildAyahStartInfo(),
+                        const SizedBox(height: 60),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 64,
+                          child: FilledButton.icon(
+                            icon: const Icon(Icons.play_arrow_rounded, size: 28),
+                            label: const Text('MULAI SIMAK SEKARANG', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, letterSpacing: 1.0)),
+                            onPressed: _canStart() ? _startSetoran : null,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
 
-            const SizedBox(height: 32),
-            _sectionTitle('2. Atur Sesi Simak'),
-            const SizedBox(height: 12),
-            _buildTypePicker(),
-            const SizedBox(height: 12),
-            _buildSurahSelector(provider),
-            const SizedBox(height: 12),
-            _buildAyahStartInfo(),
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _sectionTitle('1. Pilih Santri'),
+                const SizedBox(height: 10),
+                _buildSantriSelector(),
 
-            const SizedBox(height: 60),
-            SizedBox(
-              width: double.infinity,
-              height: 64,
-              child: FilledButton.icon(
-                icon: const Icon(Icons.play_arrow_rounded, size: 28),
-                label: const Text('MULAI SIMAK SEKARANG', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, letterSpacing: 1.0)),
-                onPressed: _canStart() ? _startSetoran : null,
-              ),
+                const SizedBox(height: 32),
+                _sectionTitle('2. Atur Sesi Simak'),
+                const SizedBox(height: 12),
+                _buildTypePicker(),
+                const SizedBox(height: 12),
+                _buildSurahSelector(provider),
+                const SizedBox(height: 12),
+                _buildAyahStartInfo(),
+
+                const SizedBox(height: 60),
+                SizedBox(
+                  width: double.infinity,
+                  height: 64,
+                  child: FilledButton.icon(
+                    icon: const Icon(Icons.play_arrow_rounded, size: 28),
+                    label: const Text('MULAI SIMAK SEKARANG', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, letterSpacing: 1.0)),
+                    onPressed: _canStart() ? _startSetoran : null,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Center(child: Text('Musyrif hanya perlu menandai ayat yang lulus/gagal.', style: TextStyle(color: Colors.grey, fontSize: 11, fontStyle: FontStyle.italic))),
+              ],
             ),
-            const SizedBox(height: 16),
-            const Center(child: Text('Musyrif hanya perlu menandai ayat yang lulus/gagal.', style: TextStyle(color: Colors.grey, fontSize: 11, fontStyle: FontStyle.italic))),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -265,12 +324,14 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
   bool _canStart() => _selectedSantri != null && _selectedSurah != null;
 
   void _startSetoran() {
+    final maxAyah = _selectedSurah!.numberOfAyahs;
+    final targetEnd = (_ayahStart + 9).clamp(_ayahStart, maxAyah);
     context.read<AppProvider>().startSetoranSession(
       santri: _selectedSantri!, 
       type: _type, 
       surah: _selectedSurah!, 
       ayahStart: _ayahStart, 
-      ayahEnd: _ayahStart + 10 // Dummy initial end, will be adjusted on save
+      ayahEnd: targetEnd,
     );
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const QuranReaderScreen()));
   }

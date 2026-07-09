@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tahfidz_app/models/error_mark.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/models/setoran.dart';
+import 'package:tahfidz_app/models/surah_model.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
@@ -178,6 +179,37 @@ class SetoranDetailScreen extends StatelessWidget {
                 final end = int.tryParse(endCtrl.text) ?? record.ayahEnd;
                 final score = double.tryParse(scoreCtrl.text) ?? record.finalScore;
 
+                final surah = provider.surahList.firstWhere(
+                  (s) => s.number == record.surahNumber,
+                  orElse: () => SurahInfo(number: 1, name: 'Al-Fatihah', englishName: 'Al-Fatihah', numberOfAyahs: 7, revelationType: 'Meccan'),
+                );
+                final maxAyah = surah.numberOfAyahs;
+
+                if (start < 1 || start > maxAyah) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Ayat mulai harus antara 1 sampai $maxAyah')),
+                  );
+                  return;
+                }
+                if (end < 1 || end > maxAyah) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Ayat selesai harus antara 1 sampai $maxAyah')),
+                  );
+                  return;
+                }
+                if (start > end) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Ayat mulai tidak boleh lebih besar dari ayat selesai')),
+                  );
+                  return;
+                }
+                if (score < 0 || score > 100) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Nilai kelancaran harus antara 0 sampai 100')),
+                  );
+                  return;
+                }
+
                 final updated = SetoranRecord(
                   id: record.id,
                   santriId: record.santriId,
@@ -346,7 +378,7 @@ class _SummaryCard extends StatelessWidget {
 
   String _formatDate(DateTime dt) {
     const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
-    return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
+    return '${dt.day} ${months[dt.month - 1]} ${dt.year} • ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 }
 

@@ -74,129 +74,72 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     
     completers.addAll([santriCompleter, halaqahCompleter, musyrifCompleter, kelasCompleter]);
 
-    // ── 1. Role-based Santri & Halaqah Subscription ─────────────────────────
-    if (isOrangTua) {
-      // Orang Tua: only listen to their linked child document
-      if (linkedSantriId != null) {
-        santriSub = getCollection('santri').doc(linkedSantriId).snapshots().listen((doc) {
-          if (doc.exists) {
-            final baseSantri = Santri.fromJson(doc.data()!);
-            santriList = [baseSantri];
-            _listenToSingleSantriSubcollections(linkedSantriId!);
-          } else {
-            santriList = [];
-          }
-          if (!santriCompleter.isCompleted) santriCompleter.complete();
-          notifyListeners();
-        }, onError: (e) {
-          if (!santriCompleter.isCompleted) santriCompleter.complete();
-        });
+    // ── 1. Unified Santri & Halaqah Subscription (Global for Ranking) ──────
+    // To show ranking to everyone, we must fetch all santri and halaqahs.
+    // However, we only attach deep listeners (subcollections) to relevant ones.
+
+    // 1.1 All Santri (Basic Info)
+    santriSub = getCollection('santri').snapshots().listen((snap) {
+      final allSantri = snap.docs.map((doc) => Santri.fromJson(doc.data())).toList();
+      
+      if (isOrangTua) {
+        // Keep santriList populated for ranking, but attach deep listener only to child
+        santriList = allSantri;
+        if (linkedSantriId != null) {
+          _listenToSingleSantriSubcollections(linkedSantriId!);
+        }
+      } else if (isMusyrif) {
+        // Keep santriList populated for ranking, but attach deep listeners only to halaqah
+        santriList = allSantri;
+        final myHalaqahIds = halaqahList.map((h) => h.id).toList();
+        if (myHalaqahIds.isNotEmpty) {
+          final mySantriList = allSantri.where((s) => myHalaqahIds.contains(s.halaqahId)).toList();
+          _listenToMultipleSantriSubcollections(mySantriList);
+        }
       } else {
-        if (!santriCompleter.isCompleted) santriCompleter.complete();
+        // Admin: listen to everything deep
+        _listenToMultipleSantriSubcollections(allSantri);
       }
+      
+      if (!santriCompleter.isCompleted) santriCompleter.complete();
+      notifyListeners();
+    }, onError: (e) {
+      if (!santriCompleter.isCompleted) santriCompleter.complete();
+    });
 
-      // Orang tua only listens to their child's specific halaqah
-      getCollection('santri').doc(linkedSantriId).get().then((doc) {
-        if (doc.exists) {
-          final s = Santri.fromJson(doc.data()!);
-          if (s.halaqahId != null) {
-            halaqahSub = getCollection('halaqah').doc(s.halaqahId).snapshots().listen((hDoc) {
-              if (hDoc.exists) {
-                halaqahList = [HalaqahData.fromJson(hDoc.data()!)];
-              } else {
-                halaqahList = [];
-              }
-              if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
-              notifyListeners();
-            }, onError: (e) {
-              if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
-            });
-          } else {
-            if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
-          }
-        } else {
-          if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
-        }
-      }).catchError((e) {
-        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
-      });
+    // 1.2 All Halaqahs (For Ranking & Statistics)
+    halaqahSub = getCollection('halaqah').snapshots().listen((snap) {
+      halaqahList = snap.docs.map((doc) => HalaqahData.fromJson(doc.data())).toList();
+      if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
+      notifyListeners();
+    }, onError: (e) {
+      if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
+    });
 
+    // ── 2. Role-specific recent activity ────────────────────────────────────
+    recentSetoransSub?.cancel();
+    if (isOrangTua) {
+       // Parents don't need the collectionGroup listener for others
     } else if (isMusyrif) {
-      // Musyrif: only listen to halaqahs under their responsibility
-      halaqahSub = getCollection('halaqah').where('musyrifId', isEqualTo: linkedMusyrifId).snapshots().listen((halaqahSnap) {
-        halaqahList = halaqahSnap.docs.map((doc) => HalaqahData.fromJson(doc.data())).toList();
-        notifyListeners();
-        
-        final halaqahIds = halaqahList.map((h) => h.id).toList();
-        
-        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
-
-        if (halaqahIds.isNotEmpty) {
-          santriSub?.cancel();
-          santriSub = getCollection('santri').where('halaqahId', whereIn: halaqahIds).snapshots().listen((santriSnap) {
-            final baseSantriList = santriSnap.docs.map((doc) => Santri.fromJson(doc.data())).toList();
-            _listenToMultipleSantriSubcollections(baseSantriList);
-            if (!santriCompleter.isCompleted) santriCompleter.complete();
-          }, onError: (e) {
-            if (!santriCompleter.isCompleted) santriCompleter.complete();
-          });
-
-          // Listen to the 20 most recent setoran records across all students in their halaqahs
-          // This replaces loop streams for all individual students, saving massive Firestore reads.
-          recentSetoransSub?.cancel();
-          recentSetoransSub = firestore.collectionGroup('setoranHistory')
-              .where('halaqahId', whereIn: halaqahIds)
-              .orderBy('date', descending: true)
-              .limit(20)
-              .snapshots().listen((snap) {
-            for (var doc in snap.docs) {
-              final record = SetoranRecord.fromJson(doc.data());
-              _addSetoranToSantriInMemory(record);
-            }
-          });
-        } else {
-          santriSub?.cancel();
-          recentSetoransSub?.cancel();
-          santriList = [];
-          cancelAllSubcollectionSubscriptions();
-          if (!santriCompleter.isCompleted) santriCompleter.complete();
-          notifyListeners();
-        }
-      }, onError: (e) {
-        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
-        if (!santriCompleter.isCompleted) santriCompleter.complete();
-      });
-
-    } else {
-      // Admin: listen to all santri
-      santriSub = getCollection('santri').snapshots().listen((snap) {
-        santriList = snap.docs.map((doc) => Santri.fromJson(doc.data())).toList();
-        if (!santriCompleter.isCompleted) santriCompleter.complete();
-        notifyListeners();
-      }, onError: (e) {
-        if (!santriCompleter.isCompleted) santriCompleter.complete();
-      });
-
-      halaqahSub = getCollection('halaqah').snapshots().listen((snap) {
-        halaqahList = snap.docs.map((doc) => HalaqahData.fromJson(doc.data())).toList();
-        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
-        notifyListeners();
-      }, onError: (e) {
-        if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
-      });
-
-      recentSetoransSub?.cancel();
-      Query<Map<String, dynamic>> query = firestore.collectionGroup('setoranHistory');
-      if (pesantrenId != null) {
-        query = query.where('pesantrenId', isEqualTo: pesantrenId);
+      final halaqahIds = halaqahList.map((h) => h.id).toList();
+      if (halaqahIds.isNotEmpty) {
+        recentSetoransSub = firestore.collectionGroup('setoranHistory')
+            .where('halaqahId', whereIn: halaqahIds)
+            .orderBy('date', descending: true)
+            .limit(20)
+            .snapshots().listen((snap) {
+          for (var doc in snap.docs) {
+            _addSetoranToSantriInMemory(SetoranRecord.fromJson(doc.data()));
+          }
+        });
       }
-      recentSetoransSub = query
-          .orderBy('date', descending: true)
-          .limit(100)
-          .snapshots().listen((snap) {
+    } else {
+      // Admin: listen to the 100 most recent records pesantren-wide
+      Query<Map<String, dynamic>> query = firestore.collectionGroup('setoranHistory');
+      if (pesantrenId != null) query = query.where('pesantrenId', isEqualTo: pesantrenId);
+      recentSetoransSub = query.orderBy('date', descending: true).limit(100).snapshots().listen((snap) {
         for (var doc in snap.docs) {
-          final record = SetoranRecord.fromJson(doc.data());
-          _addSetoranToSantriInMemory(record);
+          _addSetoranToSantriInMemory(SetoranRecord.fromJson(doc.data()));
         }
       });
     }
@@ -384,6 +327,20 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     _tasmiSubs.remove(santriId);
   }
 
+  void clearData() {
+    santriList = [];
+    musyrifList = [];
+    halaqahList = [];
+    kelasList = [];
+    graduationEvents = [];
+    graduationRegistrations = [];
+    pengawasList = [];
+    presensiList = [];
+    notificationList = [];
+    pondokKnowledgeList = [];
+    isPondokKnowledgeInitialized = false;
+  }
+
   void cancelSubscriptions() {
     santriSub?.cancel();
     musyrifSub?.cancel();
@@ -436,5 +393,33 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
 
   GraduationRegistration? getRegistration(String eventId, String santriId) {
     try { return graduationRegistrations.firstWhere((r) => r.eventId == eventId && r.santriId == santriId); } catch (_) { return null; }
+  }
+
+  Santri? get linkedSantri => linkedSantriId != null ? getSantriById(linkedSantriId!) : null;
+  MusyrifData? get linkedMusyrif => getMusyrifById(linkedMusyrifId);
+
+  PengawasData? getPengawasById(String id) {
+    final list = pengawasList.where((p) => p.id == id).toList();
+    return list.isNotEmpty ? list.first : null;
+  }
+
+  PengawasData? get linkedPengawas => linkedMusyrifId != null ? getPengawasById(linkedMusyrifId!) : null;
+
+  String get musyrif => linkedMusyrif?.nama ?? 'Musyrif';
+  String get lembaga => linkedMusyrif?.lembaga ?? 'Halaqah Tahfidz';
+  String get jabatan => linkedMusyrif?.jabatan ?? 'Musyrif Al-Quran';
+  String get nomorHp => linkedMusyrif?.nomorHp ?? '';
+  String get musyrifPhoto => linkedMusyrif?.photoPath ?? '';
+
+  String? getTodaySantriStatus(String santriId) {
+    final now = DateTime.now();
+    for (var p in presensiList) {
+      if (p.tanggal.year == now.year && p.tanggal.month == now.month && p.tanggal.day == now.day) {
+        if (p.daftarHadir.containsKey(santriId)) {
+          return p.daftarHadir[santriId];
+        }
+      }
+    }
+    return null;
   }
 }

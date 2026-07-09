@@ -41,7 +41,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Detail Setoran'), findsOneWidget);
+    expect(find.text('Rincian Hafalan'), findsOneWidget);
     expect(find.textContaining('Ali'), findsWidgets);
     expect(find.textContaining('Tajwid'), findsWidgets);
   });

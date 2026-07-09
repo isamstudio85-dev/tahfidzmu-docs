@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, deleteDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { Building2, Globe, Mail, MapPin, Phone, Save, School, ShieldAlert, Upload, UserRound, X } from "lucide-react";
+import { Building2, Globe, Mail, MapPin, Phone, Save, School, ShieldAlert, Upload, UserRound, X, Download, Trash2, Database } from "lucide-react";
 import PageMeta from "../components/common/PageMeta";
 import { useAuth } from "../context/AuthContext";
 import { db, storage } from "../firebase";
@@ -45,6 +45,7 @@ const infoTabs = [
   { key: "profil", label: "Profil" },
   { key: "kontak", label: "Kontak" },
   { key: "modul", label: "Modul" },
+  { key: "keamanan", label: "Keamanan & Data" },
 ] as const;
 
 type InfoTabKey = (typeof infoTabs)[number]["key"];
@@ -178,6 +179,63 @@ export default function PesantrenInfoManagement() {
   const toggleModule = (key: ModuleKey) => {
     if (key === "quran") return;
     setModules((prev) => prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]);
+  };
+
+  const handleBackup = async () => {
+    if (!profile?.pesantrenId) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const backupData: any = {
+        pesantrenId: profile.pesantrenId,
+        timestamp: new Date().toISOString(),
+        collections: {},
+      };
+      const collectionsList = ["santri", "musyrif", "halaqah", "kelas", "graduation_events", "graduation_registrations", "user_mappings"];
+      for (const col of collectionsList) {
+        const snap = await getDocs(collection(db, "pesantren", profile.pesantrenId, col));
+        backupData.collections[col] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      }
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `backup_tahfidzmu_${profile.pesantrenId}_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error(err);
+      setError(`Gagal mengekspor backup: ${err.message || err}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleReset = async () => {
+    if (!profile?.pesantrenId) return;
+    const confirmation = prompt(
+      "PERINGATAN BAHAYA!\nTindakan ini akan menghapus seluruh data santri, musyrif, halaqah, dan kelas secara permanen dari server.\n\nKetik kata 'RESET' untuk mengonfirmasi tindakan:"
+    );
+    if (confirmation !== "RESET") {
+      alert("Konfirmasi batal. Data aman.");
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      const collectionsList = ["santri", "musyrif", "halaqah", "kelas", "graduation_events", "graduation_registrations", "user_mappings"];
+      for (const col of collectionsList) {
+        const snap = await getDocs(collection(db, "pesantren", profile.pesantrenId, col));
+        await Promise.all(snap.docs.map((doc) => deleteDoc(doc.ref)));
+      }
+      alert("Seluruh data database berhasil di-reset bersih.");
+      load();
+    } catch (err: any) {
+      console.error(err);
+      setError(`Gagal mereset database: ${err.message || err}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (profile?.role !== "admin" && profile?.role !== "superAdmin") {
@@ -321,6 +379,52 @@ export default function PesantrenInfoManagement() {
                           </label>
                         );
                       })}
+                    </div>
+                  </section>
+                )}
+
+                {activeTab === "keamanan" && (
+                  <section className="space-y-6">
+                    <div>
+                      <h3 className="text-sm font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                        <Database size={16} className="text-brand-500" />
+                        Pencadangan Data (Backup)
+                      </h3>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        Seluruh data Anda otomatis disinkronkan ke server Google Firebase. Namun, Anda dapat mengunduh berkas salinan cadangan lokal dalam format JSON demi keamanan ekstra.
+                      </p>
+                      <div className="mt-3">
+                        <button
+                          type="button"
+                          onClick={handleBackup}
+                          disabled={saving}
+                          className="inline-flex items-center gap-2 rounded-xl bg-brand-50 px-4 py-2.5 text-xs font-bold text-brand-500 hover:bg-brand-100 dark:bg-brand-500/10"
+                        >
+                          <Download size={14} /> Ekspor Data Pesantren (.json)
+                        </button>
+                      </div>
+                    </div>
+
+                    <hr className="border-gray-200 dark:border-gray-800" />
+
+                    <div>
+                      <h3 className="text-sm font-bold text-error-500 flex items-center gap-2">
+                        <ShieldAlert size={16} className="text-error-500" />
+                        Reset Bersih Database
+                      </h3>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        Menghapus seluruh data secara permanen (Santri, Musyrif, Halaqah, Kelas, Event Wisuda, dan Registrasi) di bawah pesantren ini. Tindakan ini tidak dapat dibatalkan.
+                      </p>
+                      <div className="mt-3">
+                        <button
+                          type="button"
+                          onClick={handleReset}
+                          disabled={saving}
+                          className="inline-flex items-center gap-2 rounded-xl bg-error-50 px-4 py-2.5 text-xs font-bold text-error-500 hover:bg-error-100 dark:bg-error-500/10"
+                        >
+                          <Trash2 size={14} /> Reset Semua Data Pesantren
+                        </button>
+                      </div>
                     </div>
                   </section>
                 )}

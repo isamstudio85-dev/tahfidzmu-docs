@@ -253,21 +253,72 @@ class _QuranHistoryListState extends State<QuranHistoryList> {
               ),
             ),
             if (filtered.isEmpty)
-              Expanded(child: _emptyState(Icons.history_rounded, 'Data tidak ditemukan'))
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async => await provider.setupFirestoreListeners(),
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                      _emptyState(Icons.history_rounded, 'Data tidak ditemukan'),
+                    ],
+                  ),
+                ),
+              )
             else
               Expanded(
-                child: ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
-                  itemCount: filtered.length,
-                  separatorBuilder: (ctx, i) => const Divider(
-                    color: Color(0xFFE5D5B8), // Gold separator line
-                    height: 1,
-                    thickness: 1,
-                  ),
-                  itemBuilder: (ctx, i) => QuranHistoryCard(
-                    santri: filtered[i].$1, 
-                    record: filtered[i].$2,
-                  ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final bool isTablet = constraints.maxWidth > 700;
+                    
+                    if (isTablet) {
+                      return RefreshIndicator(
+                        onRefresh: () async => await provider.setupFirestoreListeners(),
+                        child: GridView.builder(
+                          padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 3.5,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 0,
+                          ),
+                          itemCount: filtered.length,
+                          itemBuilder: (ctx, i) => Column(
+                            children: [
+                              QuranHistoryCard(
+                                santri: filtered[i].$1, 
+                                record: filtered[i].$2,
+                              ),
+                              const Divider(
+                                color: Color(0xFFE5D5B8),
+                                height: 1,
+                                thickness: 1,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    return RefreshIndicator(
+                      onRefresh: () async => await provider.setupFirestoreListeners(),
+                      child: ListView.separated(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: filtered.length,
+                        separatorBuilder: (ctx, i) => const Divider(
+                          color: Color(0xFFE5D5B8), // Gold separator line
+                          height: 1,
+                          thickness: 1,
+                        ),
+                        itemBuilder: (ctx, i) => QuranHistoryCard(
+                          santri: filtered[i].$1, 
+                          record: filtered[i].$2,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
           ],
@@ -354,6 +405,6 @@ class QuranHistoryCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime d) => '${d.day} ${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][d.month-1]}';
+  String _formatDate(DateTime d) => '${d.day} ${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][d.month-1]} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
   Widget _tag(String label, Color color) => Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)), child: Text(label, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.bold)));
 }
