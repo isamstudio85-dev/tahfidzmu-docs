@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/models/pengawas_data.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/management/screens/pengawas_form_screen.dart';
@@ -31,7 +30,6 @@ class _PengawasListScreenState extends State<PengawasListScreen> {
     final showAppBar = !widget.hideAppBar;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
       appBar: showAppBar ? AppBar(title: const Text('Daftar Pengawas')) : null,
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {

@@ -48,10 +48,8 @@ class _LaporanScreenBodyState extends State<LaporanScreenBody> {
     final tajwidCount = errors.where((e) => e.errorType == ErrorType.tajwid).length;
     final makhrojCount = errors.length - tajwidCount;
 
-    return Container(
-      color: const Color(0xFFF8F9FA),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
           final bool isTablet = constraints.maxWidth > 700;
           
           return ListView(
@@ -129,7 +127,6 @@ class _LaporanScreenBodyState extends State<LaporanScreenBody> {
             ],
           );
         },
-      ),
     );
   }
 

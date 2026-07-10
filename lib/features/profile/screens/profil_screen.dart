@@ -796,12 +796,21 @@ class _AboutCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.verified_user_rounded,
-                color: AppTheme.primaryGreen,
-                size: 24,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image.asset(
+                  'assets/icons/Icon-TahfidzMU.png',
+                  width: 52,
+                  height: 52,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.verified_user_rounded,
+                    color: AppTheme.primaryGreen,
+                    size: 24,
+                  ),
+                ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -821,7 +830,7 @@ class _AboutCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 8),
           Text(
             'TahfidzMU adalah aplikasi yang mengelola berbagai hafalan menjadi mudah, praktis, fleksibel, dan modern.',
             style: GoogleFonts.poppins(

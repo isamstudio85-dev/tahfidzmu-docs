@@ -105,151 +105,163 @@ class _QuranHistoryListState extends State<QuranHistoryList> {
         return Column(
           children: [
             Container(
-              margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), // Extremely compact vertical padding
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFFEDE8DF)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: _isSearching
-                    ? Row(
-                        key: const ValueKey('search_active'),
-                        children: [
-                          IconButton(
-                            constraints: const BoxConstraints(),
-                            padding: const EdgeInsets.all(8),
-                            icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.primaryGreen),
-                            onPressed: () {
-                              setState(() {
-                                _isSearching = false;
-                                _searchController.clear();
-                              });
-                              widget.onQueryChanged('');
-                            },
-                          ),
-                          Expanded(
-                            child: SizedBox(
-                              height: 38,
-                              child: TextField(
-                                controller: _searchController,
-                                autofocus: true,
-                                style: const TextStyle(fontSize: 13),
-                                onChanged: widget.onQueryChanged,
-                                decoration: InputDecoration(
-                                  hintText: 'Cari nama santri atau surah...',
-                                  hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-                                  prefixIcon: const Icon(Icons.search_rounded, size: 18, color: AppTheme.primaryGreen),
-                                  suffixIcon: _searchController.text.isNotEmpty
-                                      ? IconButton(
-                                          icon: const Icon(Icons.clear_rounded, size: 16),
-                                          onPressed: () {
-                                            _searchController.clear();
-                                            widget.onQueryChanged('');
-                                            setState(() {});
-                                          },
-                                        )
-                                      : null,
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(color: Colors.grey.shade300),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide(color: Colors.grey.shade300),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
+              color: const Color(0xFFF8F9FA), // Ensure the header area has the right BG
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), 
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFEEEEEE)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                  child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: _isSearching
+                      ? Row(
+                          key: const ValueKey('search_active'),
+                          children: [
+                            IconButton(
+                              constraints: const BoxConstraints(),
+                              padding: const EdgeInsets.all(8),
+                              icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.primaryGreen),
+                              onPressed: () {
+                                setState(() {
+                                  _isSearching = false;
+                                  _searchController.clear();
+                                });
+                                widget.onQueryChanged('');
+                              },
+                            ),
+                            Expanded(
+                              child: SizedBox(
+                                height: 38,
+                                child: TextField(
+                                  controller: _searchController,
+                                  autofocus: true,
+                                  style: const TextStyle(fontSize: 13),
+                                  onChanged: widget.onQueryChanged,
+                                  decoration: InputDecoration(
+                                    hintText: 'Cari nama santri atau surah...',
+                                    hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                                    prefixIcon: const Icon(Icons.search_rounded, size: 18, color: AppTheme.primaryGreen),
+                                    suffixIcon: _searchController.text.isNotEmpty
+                                        ? IconButton(
+                                            icon: const Icon(Icons.clear_rounded, size: 16),
+                                            onPressed: () {
+                                              _searchController.clear();
+                                              widget.onQueryChanged('');
+                                              setState(() {});
+                                            },
+                                          )
+                                        : null,
+                                    filled: true,
+                                    fillColor: Colors.white,
+                                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(color: Colors.grey.shade300),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(color: Colors.grey.shade300),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
-                      )
-                    : Row(
-                        key: const ValueKey('stats_active'),
-                        children: [
-                          // --- STATS OVERVIEW ---
-                          Icon(Icons.check_circle_rounded, size: 14, color: AppTheme.primaryGreen),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Setor: $sudahSetoran',
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
-                          ),
-                          const SizedBox(width: 14),
-                          Icon(Icons.cancel_rounded, size: 14, color: Colors.red.shade700),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Belum: $belumSetoran',
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.red.shade700),
-                          ),
-                          
-                          const Spacer(),
+                          ],
+                        )
+                      : Row(
+                          key: const ValueKey('stats_active'),
+                          children: [
+                            // --- STATS OVERVIEW ---
+                            if (!provider.isOrangTua) ...[
+                              Icon(Icons.check_circle_rounded, size: 14, color: AppTheme.primaryGreen),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Setor: $sudahSetoran',
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
+                              ),
+                              const SizedBox(width: 14),
+                              Icon(Icons.cancel_rounded, size: 14, color: Colors.red.shade700),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Belum: $belumSetoran',
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.red.shade700),
+                              ),
+                            ] else ...[
+                               const Icon(Icons.history_rounded, size: 18, color: AppTheme.primaryGreen),
+                               const SizedBox(width: 8),
+                               const Text(
+                                 'Riwayat Hafalan Anak',
+                                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
+                               ),
+                            ],
+                            
+                            const Spacer(),
 
-                          // --- TOGGLE SCOPE (MY HALAQAH VS ALL SANTRI) ---
-                          if (provider.isMusyrif)
+                            // --- TOGGLE SCOPE (MY HALAQAH VS ALL SANTRI) ---
+                            if (provider.isMusyrif)
+                              IconButton(
+                                constraints: const BoxConstraints(),
+                                padding: const EdgeInsets.all(8),
+                                icon: Icon(
+                                  _onlyMyHalaqah ? Icons.person_pin_rounded : Icons.people_outline_rounded,
+                                  color: _onlyMyHalaqah ? AppTheme.primaryGreen : Colors.grey.shade600,
+                                  size: 22,
+                                ),
+                                tooltip: _onlyMyHalaqah ? 'Halaqah Saya' : 'Semua Santri',
+                                onPressed: () {
+                                  setState(() {
+                                      _onlyMyHalaqah = !_onlyMyHalaqah;
+                                  });
+                                },
+                              ),
+                            
+                            // --- SEARCH ICON (TRIGGERS INLINE SEARCH FIELD) ---
                             IconButton(
                               constraints: const BoxConstraints(),
                               padding: const EdgeInsets.all(8),
                               icon: Icon(
-                                _onlyMyHalaqah ? Icons.person_pin_rounded : Icons.people_outline_rounded,
-                                color: _onlyMyHalaqah ? AppTheme.primaryGreen : Colors.grey.shade600,
+                                Icons.search_rounded, 
+                                color: widget.query.isNotEmpty ? AppTheme.primaryGreen : Colors.grey.shade600,
                                 size: 22,
                               ),
-                              tooltip: _onlyMyHalaqah ? 'Halaqah Saya' : 'Semua Santri',
                               onPressed: () {
                                 setState(() {
-                                    _onlyMyHalaqah = !_onlyMyHalaqah;
+                                  _isSearching = true;
                                 });
                               },
                             ),
-                          
-                          // --- SEARCH ICON (TRIGGERS INLINE SEARCH FIELD) ---
-                          IconButton(
-                            constraints: const BoxConstraints(),
-                            padding: const EdgeInsets.all(8),
-                            icon: Icon(
-                              Icons.search_rounded, 
-                              color: widget.query.isNotEmpty ? AppTheme.primaryGreen : Colors.grey.shade600,
-                              size: 22,
+                            
+                            // --- FILTER POPUP ---
+                            PopupMenuButton<SetoranType?>(
+                              icon: Icon(
+                                Icons.filter_list_rounded, 
+                                color: widget.filterType != null ? AppTheme.primaryGreen : Colors.grey.shade600,
+                                size: 22,
+                              ),
+                              onSelected: widget.onTypeChanged,
+                              itemBuilder: (ctx) => [
+                                const PopupMenuItem(value: null, child: Text('Semua')),
+                                const PopupMenuItem(value: SetoranType.ziyadah, child: Text('Ziyadah')),
+                                const PopupMenuItem(value: SetoranType.murojaah, child: Text('Muroja\'ah')),
+                              ],
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _isSearching = true;
-                              });
-                            },
-                          ),
-                          
-                          // --- FILTER POPUP ---
-                          PopupMenuButton<SetoranType?>(
-                            icon: Icon(
-                              Icons.filter_list_rounded, 
-                              color: widget.filterType != null ? AppTheme.primaryGreen : Colors.grey.shade600,
-                              size: 22,
-                            ),
-                            onSelected: widget.onTypeChanged,
-                            itemBuilder: (ctx) => [
-                              const PopupMenuItem(value: null, child: Text('Semua')),
-                              const PopupMenuItem(value: SetoranType.ziyadah, child: Text('Ziyadah')),
-                              const PopupMenuItem(value: SetoranType.murojaah, child: Text('Muroja\'ah')),
-                            ],
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                ),
               ),
             ),
             if (filtered.isEmpty)
@@ -291,7 +303,7 @@ class _QuranHistoryListState extends State<QuranHistoryList> {
                                 record: filtered[i].$2,
                               ),
                               const Divider(
-                                color: Color(0xFFE5D5B8),
+                                color: Color(0xFFEEEEEE),
                                 height: 1,
                                 thickness: 1,
                               ),
@@ -303,18 +315,23 @@ class _QuranHistoryListState extends State<QuranHistoryList> {
 
                     return RefreshIndicator(
                       onRefresh: () async => await provider.setupFirestoreListeners(),
-                      child: ListView.separated(
+                      child: ListView.builder(
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
                         physics: const AlwaysScrollableScrollPhysics(),
                         itemCount: filtered.length,
-                        separatorBuilder: (ctx, i) => const Divider(
-                          color: Color(0xFFE5D5B8), // Gold separator line
-                          height: 1,
-                          thickness: 1,
-                        ),
-                        itemBuilder: (ctx, i) => QuranHistoryCard(
-                          santri: filtered[i].$1, 
-                          record: filtered[i].$2,
+                        itemBuilder: (ctx, i) => Column(
+                          children: [
+                            QuranHistoryCard(
+                              santri: filtered[i].$1, 
+                              record: filtered[i].$2,
+                            ),
+                            const Divider(
+                              color: Color(0xFFEEEEEE),
+                              height: 1,
+                              thickness: 1,
+                              indent: 16,
+                            ),
+                          ],
                         ),
                       ),
                     );

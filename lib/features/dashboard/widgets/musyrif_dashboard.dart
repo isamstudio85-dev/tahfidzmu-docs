@@ -36,6 +36,7 @@ class MusyrifDashboard extends StatelessWidget {
     recent.sort((a, b) => b.$2.date.compareTo(a.$2.date));
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.only(left: 14.0, top: 10.0, bottom: 10.0),

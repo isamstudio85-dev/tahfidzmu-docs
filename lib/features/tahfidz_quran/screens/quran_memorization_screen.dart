@@ -51,7 +51,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
     final bool showPresensi = provider.isAdmin || provider.isPengawas;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment
+      backgroundColor: const Color(0xFFF8F9FA), // Force consistent gray background
       appBar: AppBar(
         title: Text(
           'Progres Tahfidz',
@@ -72,7 +72,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
           labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           isScrollable: showPresensi, // Scrollable if many tabs
           tabs: [
-            const Tab(text: 'Daftar'),
+            const Tab(text: 'Riwayat'),
             const Tab(text: 'Peringkat'),
             const Tab(text: 'Laporan'),
             if (showPresensi) const Tab(text: 'Presensi'),

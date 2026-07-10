@@ -20,6 +20,7 @@ class AdminDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
         title: Text(
           provider.isPengawas ? 'Dashboard Pengawas' : 'Dashboard Admin',
@@ -600,13 +601,13 @@ class AdminDashboard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
-              color: isSubmitted ? Colors.green.shade100 : Colors.red.shade100,
+              color: isSubmitted ? Colors.green.shade100 : Colors.grey.shade200,
               width: 1.5,
             ),
           ),
           color: isSubmitted
               ? Colors.green.shade50.withValues(alpha: 0.2)
-              : Colors.red.shade50.withValues(alpha: 0.1),
+              : Colors.grey.shade50.withValues(alpha: 0.5),
           child: Padding(
             padding: const EdgeInsets.all(14.0),
             child: Row(
@@ -616,16 +617,16 @@ class AdminDashboard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSubmitted
                         ? Colors.green.withValues(alpha: 0.1)
-                        : Colors.red.withValues(alpha: 0.1),
+                        : Colors.black87, // Dark Background
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     isSubmitted
                         ? Icons.check_circle_rounded
-                        : Icons.warning_amber_rounded,
+                        : Icons.hourglass_empty_rounded, // Use Icon requested
                     color: isSubmitted
                         ? Colors.green.shade700
-                        : Colors.red.shade700,
+                        : Colors.white, // White Icon on Dark BG
                     size: 22,
                   ),
                 ),
@@ -639,7 +640,7 @@ class AdminDashboard extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
-                          color: Colors.black87,
+                          color: isSubmitted ? Colors.black87 : Colors.grey.shade600,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -647,7 +648,7 @@ class AdminDashboard extends StatelessWidget {
                         'Musyrif: ${musyrif?.nama ?? 'Tanpa Musyrif'}',
                         style: TextStyle(
                           fontSize: 11,
-                          color: Colors.grey.shade600,
+                          color: isSubmitted ? Colors.grey.shade600 : Colors.grey.shade400,
                         ),
                       ),
                     ],
@@ -672,21 +673,10 @@ class AdminDashboard extends StatelessWidget {
                     ),
                   )
                 else
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.red.shade100),
-                    ),
-                    child: Text(
-                      'Belum',
-                      style: GoogleFonts.poppins(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red.shade700,
-                      ),
-                    ),
+                  Icon(
+                    Icons.hourglass_empty_rounded,
+                    size: 18,
+                    color: Colors.grey.shade300,
                   ),
               ],
             ),
@@ -751,6 +741,7 @@ class RankingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(title: Text(title)),
       body: QuranRankingList(initialIndex: initialIndex),
     );
@@ -763,6 +754,7 @@ class AdminLaporanScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(title: const Text('Laporan Statistik Pesantren')),
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {

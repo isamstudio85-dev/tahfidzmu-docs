@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:tahfidz_app/models/musyrif_data.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
-import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/management/screens/musyrif_form_screen.dart';
 import 'package:tahfidz_app/features/management/screens/musyrif_detail_screen.dart';
 
@@ -33,7 +32,6 @@ class _MusyrifListScreenState extends State<MusyrifListScreen> {
     final showAppBar = !widget.hideAppBar;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
       appBar: showAppBar ? AppBar(title: const Text('Daftar Musyrif')) : null,
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {

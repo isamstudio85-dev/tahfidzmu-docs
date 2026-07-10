@@ -29,8 +29,11 @@ class MusyrifDetailScreen extends StatelessWidget {
         final santriCount = provider.getSantriByMusyrif(musyrif.id).length;
 
         return Scaffold(
+          backgroundColor: const Color(0xFFF8F9FA),
           appBar: AppBar(
             title: const Text('Detail Musyrif'),
+            backgroundColor: AppTheme.primaryGreen,
+            foregroundColor: Colors.white,
             actions: [
               if (isAdmin)
                 IconButton(
@@ -46,16 +49,18 @@ class MusyrifDetailScreen extends StatelessWidget {
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // 1. MINI DIGITAL CARD with QR code
-              _MiniMusyrifDigitalCard(musyrif: musyrif),
+              // 1. GRADIENT PROFILE HEADER
+              _buildMusyrifHeader(musyrif),
               const SizedBox(height: 20),
 
-              // 2. Unified Stats Row
+              // 2. QUICK ACTION CARDS (Halaqah, Santri, QR)
               Row(
                 children: [
-                  _statItem('Halaqah', '$halaqahCount', Icons.groups_rounded, AppTheme.primaryGreen),
-                  const SizedBox(width: 12),
-                  _statItem('Santri', '$santriCount', Icons.people_alt_rounded, const Color(0xFF1565C0)),
+                  _quickCard('Halaqah', '$halaqahCount', Icons.groups_rounded, AppTheme.primaryGreen),
+                  const SizedBox(width: 10),
+                  _quickCard('Santri', '$santriCount', Icons.people_alt_rounded, const Color(0xFF1565C0)),
+                  const SizedBox(width: 10),
+                  _quickActionCard('Kartu QR', Icons.qr_code_scanner_rounded, Colors.orange, () => _showQrDialog(context, musyrif)),
                 ],
               ),
               const SizedBox(height: 24),
@@ -89,10 +94,172 @@ class MusyrifDetailScreen extends StatelessWidget {
                   child: Text(musyrif.catatan!, style: const TextStyle(fontSize: 14, height: 1.5)),
                 ),
               ],
+              const SizedBox(height: 40),
+              // QR Button
+              const SizedBox(height: 40),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildMusyrifHeader(MusyrifData m) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF1565C0),
+            Color(0xFF0D47A1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0D47A1).withValues(alpha: 0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 2),
+              image: (m.photoPath?.isNotEmpty ?? false)
+                  ? DecorationImage(image: NetworkImage(m.photoPath!), fit: BoxFit.cover)
+                  : null,
+            ),
+            child: (m.photoPath?.isEmpty ?? true)
+                ? Center(
+                    child: Text(
+                      m.nama[0].toUpperCase(),
+                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  )
+                : null,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            m.nama,
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            m.jabatan,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.8),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _quickCard(String label, String value, IconData icon, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(height: 4),
+            Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87)),
+            Text(label, style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.w500)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _quickActionCard(String label, IconData icon, Color color, VoidCallback onTap) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withValues(alpha: 0.1)),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color, size: 22),
+              const SizedBox(height: 6),
+              Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: color)),
+              const SizedBox(height: 2),
+              const Icon(Icons.touch_app_rounded, size: 10, color: Colors.grey),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showQrDialog(BuildContext context, MusyrifData musyrif) {
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'KARTU MUSYRIF DIGITAL',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: AppTheme.primaryGreen,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 20),
+              FutureBuilder<String>(
+                future: context.read<AppProvider>().getLoginQrData(musyrif.id),
+                builder: (context, snapshot) {
+                  return QrImageView(
+                    data: snapshot.data ?? (musyrif.nip ?? musyrif.id),
+                    version: QrVersions.auto,
+                    size: 180.0,
+                    backgroundColor: Colors.white,
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Tutup', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -135,240 +302,6 @@ class MusyrifDetailScreen extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _statItem(String label, String value, IconData icon, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.01), blurRadius: 4, offset: const Offset(0, 2)),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.08), shape: BoxShape.circle),
-              child: Icon(icon, color: color, size: 20),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 10),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MiniMusyrifDigitalCard extends StatelessWidget {
-  final MusyrifData musyrif;
-  const _MiniMusyrifDigitalCard({required this.musyrif});
-
-  void _showQrDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'KARTU MUSYRIF DIGITAL',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: AppTheme.primaryGreen,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(height: 20),
-              FutureBuilder<String>(
-                future: context.read<AppProvider>().getLoginQrData(musyrif.id),
-                builder: (context, snapshot) {
-                  return QrImageView(
-                    data: snapshot.data ?? (musyrif.nip ?? musyrif.id),
-                    version: QrVersions.auto,
-                    size: 180.0,
-                    backgroundColor: Colors.white,
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              Divider(color: Colors.grey.shade300, height: 1),
-              const SizedBox(height: 16),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                      child: musyrif.photoPath != null
-                          ? Image.network(musyrif.photoPath!, fit: BoxFit.cover)
-                          : Center(
-                              child: Text(
-                                musyrif.nama[0],
-                                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
-                              ),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          musyrif.nama,
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'NIP/ID: ${musyrif.nip ?? musyrif.id}',
-                          style: TextStyle(
-                            fontFamily: 'monospace',
-                            color: Colors.grey.shade600,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  'Tutup',
-                  style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppTheme.primaryGreen.withValues(alpha: 0.2), width: 1.5),
-      ),
-      child: InkWell(
-        onTap: () => _showQrDialog(context),
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'KARTU MUSYRIF DIGITAL',
-                    style: GoogleFonts.poppins(
-                      color: AppTheme.primaryGreen,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const Icon(Icons.qr_code_2_rounded, color: AppTheme.primaryGreen, size: 20),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      color: AppTheme.primaryGreen.withValues(alpha: 0.05),
-                      child: musyrif.photoPath != null
-                          ? Image.network(musyrif.photoPath!, fit: BoxFit.cover)
-                          : Center(
-                              child: Text(
-                                musyrif.nama[0],
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppTheme.primaryGreen),
-                              ),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          musyrif.nama,
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'NIP/ID: ${musyrif.nip ?? musyrif.id}',
-                          style: TextStyle(fontFamily: 'monospace', color: Colors.grey.shade600, fontSize: 10),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  FutureBuilder<String>(
-                    future: context.read<AppProvider>().getLoginQrData(musyrif.id),
-                    builder: (context, snapshot) {
-                      return QrImageView(
-                        data: snapshot.data ?? (musyrif.nip ?? musyrif.id),
-                        version: QrVersions.auto,
-                        size: 60.0,
-                        backgroundColor: Colors.white,
-                      );
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: Text(
-                  'Ketuk kartu untuk memperbesar QR Code',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontStyle: FontStyle.italic),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

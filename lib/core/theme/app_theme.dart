@@ -18,7 +18,7 @@ class AppTheme {
         seedColor: primaryGreen,
         brightness: Brightness.light,
       ).copyWith(primary: primaryGreen, secondary: gold, surface: cream),
-      scaffoldBackgroundColor: const Color(0xFFF1F8E9),
+      scaffoldBackgroundColor: const Color(0xFFF8F9FA),
       appBarTheme: AppBarTheme(
         backgroundColor: primaryGreen,
         foregroundColor: Colors.white,

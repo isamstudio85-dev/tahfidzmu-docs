@@ -11,7 +11,6 @@ import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/continuation_dialog.dart';
-import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/management/screens/santri_form_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 
@@ -477,39 +476,73 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.primaryGreen.withValues(alpha: 0.8),
+            AppTheme.darkGreen,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: AppTheme.darkGreen.withValues(alpha: 0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
         ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AppAvatar(
-            name: name,
-            radius: 36,
-            imagePath: photoPath,
-            backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
-            foregroundColor: AppTheme.primaryGreen,
+          // SQUIRCLE AVATAR IN HEADER
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 2),
+              image: photoPath != null
+                  ? DecorationImage(image: NetworkImage(photoPath!), fit: BoxFit.cover)
+                  : null,
+            ),
+            child: photoPath == null
+                ? Center(
+                    child: Text(
+                      name[0].toUpperCase(),
+                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  )
+                : null,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           Text(
             name,
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold, 
+              fontSize: 18, 
+              color: Colors.white,
+              letterSpacing: 0.5,
+            ),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           Text(
             subtitle,
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.8), 
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
             textAlign: TextAlign.center,
           ),
           if (extra != null) ...[
-            const SizedBox(height: 6),
+            const SizedBox(height: 12),
             extra!,
           ],
         ],

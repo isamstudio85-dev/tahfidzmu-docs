@@ -61,8 +61,18 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
                   ),
                   itemBuilder: (ctx, i) {
                     final cat = _categories[i];
+                    final bool isPraktik = cat['title'] == 'Praktik Tilawah';
+                    
                     return Container(
-                      color: const Color(0xFFFDF9F0),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFDF9F0),
+                        border: isPraktik 
+                            ? const Border(
+                                top: BorderSide(color: Color(0xFFE5D5B8), width: 1.2),
+                                bottom: BorderSide(color: Color(0xFFE5D5B8), width: 1.2),
+                              )
+                            : null,
+                      ),
                       child: ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         onTap: () => Navigator.push(
@@ -92,9 +102,6 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                             color: const Color(0xFF4E342E), // Soft Espresso
-                            decoration: cat['title'] == 'Praktik Tilawah' 
-                                ? TextDecoration.underline 
-                                : null,
                           ),
                         ),
                         subtitle: cat['description'] != null && cat['description'].isNotEmpty
@@ -312,20 +319,29 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
             children: [
               // Category Tag
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
+                  color: widget.categoryTitle == 'Praktik Tilawah' 
+                      ? const Color(0xFFFDF9F0) 
+                      : const Color(0xFF2E5A27).withValues(alpha: 0.1),
+                  border: widget.categoryTitle == 'Praktik Tilawah'
+                      ? const Border(
+                          top: BorderSide(color: Color(0xFFE5D5B8), width: 1.2),
+                          bottom: BorderSide(color: Color(0xFFE5D5B8), width: 1.2),
+                        )
+                      : null,
+                  borderRadius: widget.categoryTitle == 'Praktik Tilawah' 
+                      ? null 
+                      : BorderRadius.circular(20),
                 ),
                 child: Text(
                   widget.categoryTitle,
+                  textAlign: widget.categoryTitle == 'Praktik Tilawah' ? TextAlign.center : TextAlign.left,
                   style: GoogleFonts.poppins(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF2E5A27),
-                    decoration: widget.categoryTitle == 'Praktik Tilawah'
-                        ? TextDecoration.underline
-                        : null,
                   ),
                 ),
               ),

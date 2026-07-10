@@ -6,7 +6,6 @@ import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/continuation_dialog.dart';
-import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 import 'package:tahfidz_app/features/management/screens/santri_form_screen.dart';
 
@@ -37,7 +36,6 @@ class _SantriListScreenState extends State<SantriListScreen> {
     final showAppBar = !widget.hideAppBar;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), // Match Laporan background
       appBar: showAppBar ? AppBar(title: const Text('Daftar Santri')) : null,
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
-import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
@@ -31,33 +31,46 @@ class _QuranRankingListState extends State<QuranRankingList> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-          decoration: BoxDecoration(
-            color: Colors.white, 
-            borderRadius: BorderRadius.circular(20), 
-            border: Border.all(color: Colors.grey.shade100)
+    return Container(
+      color: const Color(0xFFF8F9FA),
+      child: Column(
+        children: [
+          Container(
+            margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF1F1F1),
+              borderRadius: BorderRadius.circular(14), 
+            ),
+            child: TabBar(
+              controller: _innerTab,
+              indicator: BoxDecoration(
+                color: Colors.white, 
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              labelColor: AppTheme.primaryGreen,
+              unselectedLabelColor: Colors.grey.shade600,
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerColor: Colors.transparent,
+              padding: const EdgeInsets.all(4),
+              labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 0.5),
+              tabs: const [Tab(text: 'SANTRI'), Tab(text: 'HALAQAH')],
+            ),
           ),
-          child: TabBar(
-            controller: _innerTab,
-            indicator: BoxDecoration(color: AppTheme.primaryGreen, borderRadius: BorderRadius.circular(15)),
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.grey.shade600,
-            indicatorSize: TabBarIndicatorSize.tab,
-            dividerColor: Colors.transparent,
-            labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-            tabs: const [Tab(text: 'SANTRI'), Tab(text: 'HALAQAH')],
+          Expanded(
+            child: TabBarView(
+              controller: _innerTab,
+              children: [const _SantriRankingTab(), const _HalaqahRankingTab()],
+            ),
           ),
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _innerTab,
-            children: [const _SantriRankingTab(), const _HalaqahRankingTab()],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -101,11 +114,10 @@ class _SantriRankingTabState extends State<_SantriRankingTab> {
 
     final childIndex = ranked.indexWhere((s) => s.id == provider.linkedSantriId);
     if (childIndex != -1) {
-      // Estimated item height + margin is ~82.0
       Future.delayed(const Duration(milliseconds: 300), () {
         if (!mounted || !_scrollController.hasClients) return;
         final maxScroll = _scrollController.position.maxScrollExtent;
-        final targetOffset = (childIndex * 82.0).clamp(0.0, maxScroll);
+        final targetOffset = (childIndex * 60.0).clamp(0.0, maxScroll);
         _scrollController.animateTo(
           targetOffset,
           duration: const Duration(milliseconds: 600),
@@ -127,40 +139,19 @@ class _SantriRankingTabState extends State<_SantriRankingTab> {
       });
       if (ranked.isEmpty) return _emptyState(Icons.emoji_events_outlined, 'Belum ada data peringkat');
       
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          final bool isTablet = constraints.maxWidth > 700;
-          
-          if (isTablet) {
-            return GridView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 3.8,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 0,
-              ),
-              itemCount: ranked.length,
-              itemBuilder: (ctx, i) => _RankCard(
-                rank: i + 1, 
-                santri: ranked[i],
-                isChild: provider.isOrangTua && ranked[i].id == provider.linkedSantriId,
-              ),
-            );
-          }
-
-          return ListView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(16),
-            itemCount: ranked.length,
-            itemBuilder: (ctx, i) => _RankCard(
-              rank: i + 1, 
-              santri: ranked[i],
-              isChild: provider.isOrangTua && ranked[i].id == provider.linkedSantriId,
-            ),
-          );
-        }
+      return RefreshIndicator(
+        onRefresh: () async => await provider.setupFirestoreListeners(),
+        child: ListView.separated(
+          controller: _scrollController,
+          padding: const EdgeInsets.fromLTRB(0, 12, 0, 80),
+          itemCount: ranked.length,
+          separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5, color: Color(0xFFEEEEEE), indent: 56),
+          itemBuilder: (ctx, i) => _RankCard(
+            rank: i + 1, 
+            santri: ranked[i],
+            isChild: provider.isOrangTua && ranked[i].id == provider.linkedSantriId,
+          ),
+        ),
       );
     });
   }
@@ -184,30 +175,14 @@ class _HalaqahRankingTab extends StatelessWidget {
       halaqahs.sort((a, b) => b.juz.compareTo(a.juz));
       if (halaqahs.isEmpty) return _emptyState(Icons.groups_outlined, 'Belum ada data halaqah');
       
-      return LayoutBuilder(
-        builder: (context, constraints) {
-          final bool isTablet = constraints.maxWidth > 700;
-          
-          if (isTablet) {
-            return GridView.builder(
-              padding: const EdgeInsets.all(16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 4.5,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 0,
-              ),
-              itemCount: halaqahs.length,
-              itemBuilder: (ctx, i) => _HalaqahRankCard(rank: i + 1, item: halaqahs[i]),
-            );
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: halaqahs.length,
-            itemBuilder: (ctx, i) => _HalaqahRankCard(rank: i + 1, item: halaqahs[i]),
-          );
-        }
+      return RefreshIndicator(
+        onRefresh: () async => await provider.setupFirestoreListeners(),
+        child: ListView.separated(
+          padding: const EdgeInsets.fromLTRB(0, 12, 0, 80),
+          itemCount: halaqahs.length,
+          separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5, color: Color(0xFFEEEEEE), indent: 56),
+          itemBuilder: (ctx, i) => _HalaqahRankCard(rank: i + 1, item: halaqahs[i]),
+        ),
       );
     });
   }
@@ -219,78 +194,68 @@ class _RankCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final juz = santri.estimatedJuz;
-    Color? bgColor = Colors.white;
-    Color? borderColor = Colors.grey.shade100;
-    if (isChild) {
-      bgColor = const Color(0xFFE8F5E9); // Highlight hijau muda lembut
-      borderColor = AppTheme.primaryGreen.withValues(alpha: 0.5);
-    } else if (rank == 1) { bgColor = const Color(0xFFFFF9C4); borderColor = Colors.orange.shade200; }
-    else if (rank == 2) { bgColor = const Color(0xFFF5F5F5); borderColor = Colors.blueGrey.shade100; }
-    else if (rank == 3) { bgColor = const Color(0xFFFFECB3); borderColor = Colors.orange.shade100; }
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20), 
-        side: BorderSide(color: borderColor, width: isChild ? 2 : 1)
-      ),
-      color: bgColor, elevation: 0,
-      child: ListTile(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santri.id))),
-        leading: Stack(
-          alignment: Alignment.bottomRight,
+    
+    return InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santri.id))),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        child: Row(
           children: [
-            AppAvatar(name: santri.name, radius: 22, imagePath: santri.photoPath),
-            if (rank <= 3) 
-              Container(
-                padding: const EdgeInsets.all(2),
-                decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                child: Icon(Icons.workspace_premium_rounded, color: rank == 1 ? AppTheme.gold : (rank == 2 ? Colors.blueGrey : Colors.brown), size: 14),
-              ),
-          ],
-        ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(santri.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87), maxLines: 1, overflow: TextOverflow.ellipsis),
-            ),
-            if (isChild)
-              Container(
-                margin: const EdgeInsets.only(left: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryGreen,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Text(
-                  'Anak Anda',
-                  style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-                ),
-              ),
-          ],
-        ),
-        subtitle: Text('${juz.toStringAsFixed(1)} Juz', style: const TextStyle(fontSize: 12, color: AppTheme.primaryGreen, fontWeight: FontWeight.bold)),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '#$rank',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: isChild ? AppTheme.primaryGreen : Colors.grey.shade400,
-              ),
+            SizedBox(
+              width: 32,
+              child: rank <= 3 
+                ? Icon(Icons.emoji_events_rounded, color: rank == 1 ? AppTheme.gold : (rank == 2 ? Colors.blueGrey : Colors.brown), size: 20)
+                : Text('#$rank', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade400, fontSize: 13)),
             ),
             const SizedBox(width: 8),
-            if (juz >= 1.0)
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center, 
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.emoji_events_rounded, color: AppTheme.gold, size: 20),
-                  Text(juz.toStringAsFixed(1), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.orange)),
-                ]
+            
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(9),
+                image: (santri.photoPath?.isNotEmpty ?? false)
+                    ? DecorationImage(image: NetworkImage(santri.photoPath!), fit: BoxFit.cover)
+                    : null,
               ),
+              child: (santri.photoPath?.isEmpty ?? true)
+                  ? Center(child: Text(santri.name[0].toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryGreen)))
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    santri.name, 
+                    style: GoogleFonts.poppins(
+                      fontWeight: isChild ? FontWeight.bold : FontWeight.w600, 
+                      fontSize: 13, 
+                      color: isChild ? AppTheme.primaryGreen : Colors.black87
+                    ), 
+                    maxLines: 1, 
+                    overflow: TextOverflow.ellipsis
+                  ),
+                  Text(
+                    '${juz.toStringAsFixed(1)} Juz dihafal', 
+                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  ),
+                ],
+              ),
+            ),
+            
+            if (isChild)
+              Container(
+                margin: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                child: const Text('Anak Anda', style: TextStyle(color: AppTheme.primaryGreen, fontSize: 9, fontWeight: FontWeight.bold)),
+              ),
+              
+            const Icon(Icons.chevron_right_rounded, color: Colors.grey, size: 16),
           ],
         ),
       ),
@@ -303,23 +268,36 @@ class _HalaqahRankCard extends StatelessWidget {
   final int rank; final dynamic item;
   @override
   Widget build(BuildContext context) {
-    Color? bgColor = rank == 1 ? const Color(0xFFE8F5E9) : Colors.white;
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.grey.shade100)),
-      color: bgColor, elevation: 0,
-      child: ListTile(
-        leading: CircleAvatar(backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1), child: Text('$rank', style: const TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold))),
-        title: Text(item.data.nama, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis),
-        subtitle: Text('Total Kolektif: ${item.juz.toStringAsFixed(1)} Juz', style: const TextStyle(fontSize: 12)),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.stars_rounded, color: AppTheme.gold, size: 20),
-            Text(item.juz.toStringAsFixed(1), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 32,
+            child: Text('#$rank', style: TextStyle(fontWeight: FontWeight.bold, color: rank == 1 ? AppTheme.primaryGreen : Colors.grey.shade400, fontSize: 13)),
+          ),
+          const SizedBox(width: 8),
+          
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.data.nama, 
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87), 
+                  maxLines: 1, 
+                  overflow: TextOverflow.ellipsis
+                ),
+                Text(
+                  'Kolektif: ${item.juz.toStringAsFixed(1)} Juz', 
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600)
+                ),
+              ],
+            ),
+          ),
+          
+          Icon(Icons.stars_rounded, color: rank == 1 ? AppTheme.gold : Colors.grey.shade300, size: 18),
+        ],
       ),
     );
   }

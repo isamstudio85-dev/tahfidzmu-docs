@@ -21,25 +21,31 @@ class OrangTuaDashboard extends StatelessWidget {
       ..sort((a, b) => b.date.compareTo(a.date));
     final avg = child.averageScore;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final bool isTablet = constraints.maxWidth > 700;
-
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
-            horizontal: isTablet ? 40 : 16,
-            vertical: 16,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Align(
-                alignment: Alignment.centerRight,
-                child: NotificationBell(),
-              ),
-              const SizedBox(height: 12),
-              _buildBanner(context),
-              const SizedBox(height: 20),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
+      appBar: AppBar(
+        title: const Text('Beranda Santri'),
+        backgroundColor: AppTheme.primaryGreen,
+        foregroundColor: Colors.white,
+        actions: [
+          const NotificationBell(),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isTablet = constraints.maxWidth > 700;
+  
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: isTablet ? 40 : 16,
+              vertical: 16,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildBanner(context),
+                const SizedBox(height: 20),
               if (context.watch<AppProvider>().isModuleActive('graduation') &&
                   context.watch<AppProvider>().graduationEvents.any(
                     (e) => e.isPublished,
@@ -184,6 +190,7 @@ class OrangTuaDashboard extends StatelessWidget {
           ),
         );
       },
+    ),
     );
   }
 
