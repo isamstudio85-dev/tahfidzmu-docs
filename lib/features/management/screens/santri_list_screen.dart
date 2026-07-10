@@ -6,6 +6,7 @@ import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/continuation_dialog.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/verification_gate.dart';
 import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 import 'package:tahfidz_app/features/management/screens/santri_form_screen.dart';
 
@@ -291,11 +292,22 @@ class _SantriListItem extends StatelessWidget {
                 icon: const Icon(Icons.tune_rounded, size: 18, color: Colors.grey), // Changed from three dots
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
-                onSelected: (val) {
-                  if (val == 'edit') Navigator.push(context, MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)));
-                  if (val == 'delete') _confirmDelete(context, provider, santri);
-                  if (val == 'reset') _showResetPasswordDialog(context, provider, santri);
+                onSelected: (val) async {
                   if (val == 'setoran') showSetoranOptions(context, santri);
+                  
+                  if (val == 'edit' || val == 'delete' || val == 'reset') {
+                    // SECURE ACTION: Require QR Scan for administrative changes
+                    final verified = await VerificationGate.show(
+                      context: context,
+                      expectedSantri: santri,
+                    );
+                    
+                    if (verified != null && context.mounted) {
+                      if (val == 'edit') Navigator.push(context, MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)));
+                      if (val == 'delete') _confirmDelete(context, provider, santri);
+                      if (val == 'reset') _showResetPasswordDialog(context, provider, santri);
+                    }
+                  }
                 },
                 itemBuilder: (ctx) => [
                   const PopupMenuItem(value: 'setoran', child: _MenuAction(Icons.play_circle_fill_rounded, 'Mulai Setoran', AppTheme.primaryGreen)),

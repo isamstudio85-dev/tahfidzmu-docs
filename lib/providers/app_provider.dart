@@ -434,6 +434,31 @@ class AppProvider extends ChangeNotifier
     return record;
   }
 
+  /// Prepares the reader state for reviewing a past setoran without triggering a live session
+  void prepareReaderForReview({required Santri santri, required SetoranRecord record}) {
+    activeSetoranSantri = santri;
+    activeSetoranType = record.type;
+    activeSetoranSurahNumber = record.surahNumber;
+    activeSetoranSurahName = record.surahName;
+    activeSetoranSurahEnglishName = record.surahEnglishName;
+    activeSetoranAyahStart = record.ayahStart;
+    activeSetoranAyahEnd = record.ayahEnd;
+    
+    // Load recorded data into session state for display
+    sessionPassedAyahs.clear();
+    sessionPassedAyahs.addAll(record.passedAyahs);
+    
+    sessionFailedAyahs.clear();
+    sessionFailedAyahs.addAll(record.failedAyahs);
+    
+    sessionErrors.clear();
+    for (var e in record.errorMarks) {
+      sessionErrors[e.wordKey] = e;
+    }
+    
+    notifyListeners();
+  }
+
   Future<String> getLoginQrData(String userId) async {
     final snap = await getCollection('user_mappings').where('linkedId', isEqualTo: userId).limit(1).get();
     if (snap.docs.isNotEmpty) {

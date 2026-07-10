@@ -7,6 +7,7 @@ import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/models/surah_model.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/verification_gate.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_reader_screen.dart';
 import 'package:provider/provider.dart';
@@ -34,12 +35,28 @@ class SetoranDetailScreen extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.edit_rounded),
               tooltip: 'Koreksi Setoran',
-              onPressed: () => _showEditSetoranDialog(context),
+              onPressed: () async {
+                final verified = await VerificationGate.show(
+                  context: context,
+                  expectedSantri: santri,
+                );
+                if (verified != null && context.mounted) {
+                  _showEditSetoranDialog(context);
+                }
+              },
             ),
             IconButton(
               icon: const Icon(Icons.delete_rounded),
               tooltip: 'Hapus Setoran',
-              onPressed: () => _showDeleteSetoranConfirm(context),
+              onPressed: () async {
+                final verified = await VerificationGate.show(
+                  context: context,
+                  expectedSantri: santri,
+                );
+                if (verified != null && context.mounted) {
+                  _showDeleteSetoranConfirm(context);
+                }
+              },
             ),
           ],
         ],
@@ -63,26 +80,15 @@ class SetoranDetailScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   final provider = context.read<AppProvider>();
-                  // Memulai sesi "Baca Saja" dengan data lama
-                  provider.startSetoranSession(
-                    santri: santri,
-                    type: record.type,
-                    surah: provider.surahList.firstWhere((s) => s.number == record.surahNumber),
-                    ayahStart: record.ayahStart,
-                    ayahEnd: record.ayahEnd,
+                  // Prepare state for Review ONLY (No Firestore write)
+                  provider.prepareReaderForReview(santri: santri, record: record);
+                  
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(
+                      builder: (_) => const QuranReaderScreen(isReadOnly: true)
+                    )
                   );
-                  // Load errors into session so they appear in reader
-                  provider.clearErrors();
-                  for (var e in record.errorMarks) {
-                    provider.toggleError(
-                      surahNumber: e.surahNumber,
-                      ayahNumber: e.ayahNumber,
-                      wordIndex: e.wordIndex,
-                      word: e.word,
-                      errorType: e.errorType,
-                    );
-                  }
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const QuranReaderScreen(isReadOnly: true)));
                 },
                 icon: const Icon(Icons.menu_book_rounded),
                 label: const Text('LIHAT DI AL-QURAN'),

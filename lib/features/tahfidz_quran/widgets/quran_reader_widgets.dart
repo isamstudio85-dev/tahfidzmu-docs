@@ -177,13 +177,13 @@ class AyahBlock extends StatelessWidget {
                   child: _actionBtn(
                     isEndAyah ? Icons.flag_rounded : Icons.outlined_flag_rounded,
                     isEndAyah ? Colors.orange : Colors.grey.shade400,
-                    onMarkEnd!,
+                    onMarkEnd,
                   ),
                 ),
                 const SizedBox(width: 16),
-                _actionBtn(Icons.check_circle_rounded, isPassed ? Colors.green : Colors.grey.shade400, onTogglePassed!),
+                _actionBtn(Icons.check_circle_rounded, isPassed ? Colors.green : Colors.grey.shade400, onTogglePassed),
                 const SizedBox(width: 16),
-                _actionBtn(Icons.cancel_rounded, isFailed ? Colors.red : Colors.grey.shade400, onToggleFailed!),
+                _actionBtn(Icons.cancel_rounded, isFailed ? Colors.red : Colors.grey.shade400, onToggleFailed),
               ],
             ],
           ),
@@ -204,7 +204,7 @@ class AyahBlock extends StatelessWidget {
                           ayah.numberInSurah,
                           i,
                         )],
-                    onTap: () => onWordTap(i, words[i]),
+                    onTap: isReadOnly ? null : () => onWordTap(i, words[i]),
                   ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -226,7 +226,7 @@ class AyahBlock extends StatelessWidget {
     );
   }
 
-  Widget _actionBtn(IconData icon, Color color, VoidCallback onTap) {
+  Widget _actionBtn(IconData icon, Color color, VoidCallback? onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Icon(icon, color: color, size: 28),

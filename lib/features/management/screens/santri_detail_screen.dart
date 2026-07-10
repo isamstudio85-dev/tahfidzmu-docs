@@ -11,6 +11,7 @@ import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/continuation_dialog.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/verification_gate.dart';
 import 'package:tahfidz_app/features/management/screens/santri_form_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 
@@ -70,10 +71,18 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
                       IconButton(
                         icon: const Icon(Icons.edit_outlined),
                         tooltip: 'Edit Profil',
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
-                        ),
+                        onPressed: () async {
+                          final verified = await VerificationGate.show(
+                            context: context,
+                            expectedSantri: santri,
+                          );
+                          if (verified != null && context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
+                            );
+                          }
+                        },
                       ),
                   ],
                 ),
@@ -199,10 +208,18 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
                       IconButton(
                         icon: const Icon(Icons.edit_outlined),
                         tooltip: 'Edit Profil',
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
-                        ),
+                        onPressed: () async {
+                          final verified = await VerificationGate.show(
+                            context: context,
+                            expectedSantri: santri,
+                          );
+                          if (verified != null && context.mounted) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)),
+                            );
+                          }
+                        },
                       ),
                   ],
                 ),

@@ -18,7 +18,7 @@ class WordWidget extends StatefulWidget {
 
   final String word;
   final ErrorMark? errorMark;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final VoidCallback? onDoubleTap;
 
   @override

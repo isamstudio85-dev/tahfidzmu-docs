@@ -57,10 +57,49 @@ class MusyrifDetailScreen extends StatelessWidget {
               Row(
                 children: [
                   _quickCard('Halaqah', '$halaqahCount', Icons.groups_rounded, AppTheme.primaryGreen),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   _quickCard('Santri', '$santriCount', Icons.people_alt_rounded, const Color(0xFF1565C0)),
-                  const SizedBox(width: 10),
-                  _quickActionCard('Kartu QR', Icons.qr_code_scanner_rounded, Colors.orange, () => _showQrDialog(context, musyrif)),
+                  const SizedBox(width: 12),
+                  // QR ACTION CARD
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _showQrDialog(context, musyrif),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Colors.orange, Colors.deepOrange],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.orange.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Column(
+                          children: [
+                            Icon(Icons.qr_code_2_rounded, color: Colors.white, size: 28),
+                            SizedBox(height: 4),
+                            Text(
+                              'ID CARD',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
@@ -174,47 +213,25 @@ class MusyrifDetailScreen extends StatelessWidget {
   Widget _quickCard(String label, String value, IconData icon, Color color) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 8, offset: const Offset(0, 4)),
           ],
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+              child: Icon(icon, color: color, size: 18),
+            ),
+            const SizedBox(height: 8),
             Text(value, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87)),
-            Text(label, style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.w500)),
+            Text(label, style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.w600)),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _quickActionCard(String label, IconData icon, Color color, VoidCallback onTap) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: color.withValues(alpha: 0.1)),
-          ),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 22),
-              const SizedBox(height: 6),
-              Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: color)),
-              const SizedBox(height: 2),
-              const Icon(Icons.touch_app_rounded, size: 10, color: Colors.grey),
-            ],
-          ),
         ),
       ),
     );

@@ -64,8 +64,11 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
                         child: _ReaderContentWrapper(
                           isReadOnly: widget.isReadOnly,
                           scrollController: _scrollController,
-                          onWordTap: (surahNum, ayahNum, wordIdx, word) =>
-                              _onWordTap(context, context.read<AppProvider>(), surahNum, ayahNum, wordIdx, word),
+                          onWordTap: (surahNum, ayahNum, wordIdx, word) {
+                          if (!widget.isReadOnly) {
+                            _onWordTap(context, context.read<AppProvider>(), surahNum, ayahNum, wordIdx, word);
+                          }
+                        },
                         ),
                       ),
                     ],
