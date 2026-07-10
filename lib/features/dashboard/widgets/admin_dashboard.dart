@@ -623,7 +623,7 @@ class AdminDashboard extends StatelessWidget {
                   child: Icon(
                     isSubmitted
                         ? Icons.check_circle_rounded
-                        : Icons.hourglass_empty_rounded, // Use Icon requested
+                        : Icons.groups_rounded, // Better represents a halaqah group
                     color: isSubmitted
                         ? Colors.green.shade700
                         : Colors.white, // White Icon on Dark BG
@@ -673,10 +673,10 @@ class AdminDashboard extends StatelessWidget {
                     ),
                   )
                 else
-                  Icon(
-                    Icons.hourglass_empty_rounded,
+                  const Icon(
+                    Icons.schedule_rounded,
                     size: 18,
-                    color: Colors.grey.shade300,
+                    color: Colors.grey,
                   ),
               ],
             ),

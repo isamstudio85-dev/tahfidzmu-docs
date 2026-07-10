@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
-import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 
 class QuranRankingList extends StatefulWidget {
   const QuranRankingList({super.key, this.initialIndex = 0});
@@ -195,69 +194,66 @@ class _RankCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final juz = santri.estimatedJuz;
     
-    return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santri.id))),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 32,
-              child: rank <= 3 
-                ? Icon(Icons.emoji_events_rounded, color: rank == 1 ? AppTheme.gold : (rank == 2 ? Colors.blueGrey : Colors.brown), size: 20)
-                : Text('#$rank', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade400, fontSize: 13)),
-            ),
-            const SizedBox(width: 8),
-            
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(9),
-                image: (santri.photoPath?.isNotEmpty ?? false)
-                    ? DecorationImage(image: NetworkImage(santri.photoPath!), fit: BoxFit.cover)
-                    : null,
-              ),
-              child: (santri.photoPath?.isEmpty ?? true)
-                  ? Center(child: Text(santri.name[0].toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryGreen)))
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: Row(
+        children: [
+          // Rank Number with Trophy for Top 3
+          SizedBox(
+            width: 32,
+            child: rank <= 3 
+              ? Icon(Icons.emoji_events_rounded, color: rank == 1 ? AppTheme.gold : (rank == 2 ? Colors.blueGrey : Colors.brown), size: 20)
+              : Text('#$rank', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade400, fontSize: 13)),
+          ),
+          const SizedBox(width: 8),
+          
+          // Squircle Avatar
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(9),
+              image: (santri.photoPath?.isNotEmpty ?? false)
+                  ? DecorationImage(image: NetworkImage(santri.photoPath!), fit: BoxFit.cover)
                   : null,
             ),
-            const SizedBox(width: 12),
-            
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    santri.name, 
-                    style: GoogleFonts.poppins(
-                      fontWeight: isChild ? FontWeight.bold : FontWeight.w600, 
-                      fontSize: 13, 
-                      color: isChild ? AppTheme.primaryGreen : Colors.black87
-                    ), 
-                    maxLines: 1, 
-                    overflow: TextOverflow.ellipsis
-                  ),
-                  Text(
-                    '${juz.toStringAsFixed(1)} Juz dihafal', 
-                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
-                  ),
-                ],
-              ),
+            child: (santri.photoPath?.isEmpty ?? true)
+                ? Center(child: Text(santri.name[0].toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryGreen)))
+                : null,
+          ),
+          const SizedBox(width: 12),
+          
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  santri.name, 
+                  style: GoogleFonts.poppins(
+                    fontWeight: isChild ? FontWeight.bold : FontWeight.w600, 
+                    fontSize: 13, 
+                    color: isChild ? AppTheme.primaryGreen : Colors.black87
+                  ), 
+                  maxLines: 1, 
+                  overflow: TextOverflow.ellipsis
+                ),
+                Text(
+                  '${juz.toStringAsFixed(1)} Juz dihafal', 
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                ),
+              ],
             ),
-            
-            if (isChild)
-              Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                child: const Text('Anak Anda', style: TextStyle(color: AppTheme.primaryGreen, fontSize: 9, fontWeight: FontWeight.bold)),
-              ),
-              
-            const Icon(Icons.chevron_right_rounded, color: Colors.grey, size: 16),
-          ],
-        ),
+          ),
+          
+          if (isChild)
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+              child: const Text('Anak Anda', style: TextStyle(color: AppTheme.primaryGreen, fontSize: 9, fontWeight: FontWeight.bold)),
+            ),
+        ],
       ),
     );
   }

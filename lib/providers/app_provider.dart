@@ -78,6 +78,10 @@ class AppProvider extends ChangeNotifier
           );
           currentUsername = userData['username'] as String?;
           if (isAdmin) _adminPhoto = userData['photoPath'] ?? '';
+          
+          // AUTO-CLEANUP: Clear any stuck live sessions for THIS user on startup
+          await endSetoranSession();
+
           await setupFirestoreListeners();
         } else {
           await firebase.signOut();
@@ -153,34 +157,40 @@ class AppProvider extends ChangeNotifier
       }
 
       final String effectiveUsername = mappingDoc.exists ? mappingDoc.id : u;
+
       UserCredential? cred;
       try {
+        // 1. Attempt primary sign-in with EXACT provided password
         cred = await firebase.signIn(email, p);
       } catch (e) {
-        if (mappingDoc.exists) {
-          final storedPwd = mappingDoc.data()?['defaultPassword'] as String?;
-          if (storedPwd != null && p != storedPwd) {
-            try {
-              cred = await firebase.signIn(email, storedPwd);
-              if (cred != null) p = storedPwd;
-            } catch (_) {}
-          }
-        }
-        if (cred == null && mappingDoc.exists) {
-          final expectedPassword = mappingDoc.data()?['defaultPassword'] ?? effectiveUsername;
-          if (p == expectedPassword) {
+        final errStr = e.toString().toLowerCase();
+        
+        // 2. Handle First-Time Auto-Provisioning (Excel Imports)
+        // If sign-in failed, check if the account doesn't exist in Auth and we should create it
+        if (mappingDoc.exists && (errStr.contains('user-not-found') || errStr.contains('invalid-credential'))) {
+          final expectedInitialPassword = (mappingDoc.data()?['defaultPassword'] as String?) ?? effectiveUsername;
+          
+          // Only create if the user provided the CORRECT initial password from mapping
+          if (p == expectedInitialPassword) {
             try {
               cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: p);
             } catch (createErr) {
-              if (createErr.toString().contains('already-in-use')) {
-                loginError = 'Sinkronisasi Auth gagal. Admin harus menghapus akun email ini di Firebase Console.';
-              }
+               // If creation fails with already-in-use, it means the Auth account exists but p was wrong
+               // or there is a ghost account.
+               if (createErr.toString().contains('already-in-use')) {
+                 loginError = 'Kata sandi salah atau akun memerlukan perbaikan Admin.';
+                 return false;
+               }
             }
           }
         }
       }
+
       final user = cred?.user;
-      if (user == null) { loginError ??= 'Username atau sandi salah.'; return false; }
+      if (user == null) { 
+        loginError ??= 'Username atau sandi salah.'; 
+        return false; 
+      }
 
       if (mappingDoc.exists) {
         final mData = mappingDoc.data()!;
@@ -276,6 +286,10 @@ class AppProvider extends ChangeNotifier
     notifyListeners();
     try {
       cancelSubscriptions();
+      
+      // ENSURE FIRESTORE CLEANUP ON LOGOUT
+      await endSetoranSession();
+
       clearData();
       stopSetoranSession();
       await Future.delayed(const Duration(milliseconds: 100));

@@ -225,6 +225,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _scanAndLogin() async {
+    if (_isLoading) return;
+
     final rawString = await Navigator.push<String>(
       context,
       MaterialPageRoute(builder: (_) => const QrScannerScreen(returnRaw: true)),
@@ -460,7 +462,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: SizedBox(
                   height: 54,
                   child: FilledButton(
-                    onPressed: _isLoading ? null : _login,
+                    onPressed: _login,
                     style:
                         FilledButton.styleFrom(
                           backgroundColor: AppTheme.primaryGreen,
@@ -487,7 +489,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(
-                              color: Colors.white,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                               strokeWidth: 3,
                             ),
                           )
@@ -506,14 +508,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 54,
                 width: 54,
                 child: OutlinedButton(
-                  onPressed: _isLoading ? null : _scanAndLogin,
+                  onPressed: _scanAndLogin,
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    side: const BorderSide(
-                      color: AppTheme.primaryGreen,
+                    side: BorderSide(
+                      color: _isLoading ? Colors.grey.shade300 : AppTheme.primaryGreen,
                       width: 1.5,
                     ),
-                    foregroundColor: AppTheme.primaryGreen,
+                    foregroundColor: _isLoading ? Colors.grey.shade400 : AppTheme.primaryGreen,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
