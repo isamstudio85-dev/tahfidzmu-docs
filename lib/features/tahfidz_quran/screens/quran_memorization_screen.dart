@@ -98,6 +98,15 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
           ? FloatingActionButton.extended(
               heroTag: 'fab_setoran_main',
               onPressed: () async {
+                // ADMIN BYPASS: Directly open form for Admin/Pengawas to allow mass entry via list
+                if (provider.isAdmin || provider.isPengawas) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SetoranFormScreen()),
+                  );
+                  return;
+                }
+
                 final verifiedSantri = await VerificationGate.show(
                   context: context,
                 );

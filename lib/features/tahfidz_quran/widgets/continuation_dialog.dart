@@ -22,15 +22,18 @@ import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRecord? record}) async {
   final provider = context.read<AppProvider>();
   final continuation = provider.getNextSetoranSuggestion(santri.id);
+  final bool isAdminOrPengawas = provider.isAdmin || provider.isPengawas;
 
   // If we have a specific record, we might want to show details.
   // If no history, just go to form.
   if (continuation == null && record == null) {
     if (!context.mounted) return;
-    final verified = await VerificationGate.show(
-      context: context,
-      expectedSantri: santri,
-    );
+    
+    // ADMIN BYPASS: Don't force scan when opening from list
+    final verified = isAdminOrPengawas 
+      ? santri 
+      : await VerificationGate.show(context: context, expectedSantri: santri);
+
     if (verified != null && context.mounted) {
       Navigator.push(
         context,
@@ -100,10 +103,10 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
                 subtitle: 'Mulai: ${continuation.description}',
                 onTap: () async {
                   Navigator.pop(ctx);
-                  final verified = await VerificationGate.show(
-                    context: context,
-                    expectedSantri: santri,
-                  );
+                  final verified = isAdminOrPengawas 
+                    ? santri 
+                    : await VerificationGate.show(context: context, expectedSantri: santri);
+
                   if (verified != null) {
                     provider.startSetoranSession(
                       santri: verified,
@@ -146,13 +149,13 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
             _OptionTile(
               icon: Icons.tune_rounded,
               color: const Color(0xFF1565C0),
-              title: 'Tambah Hafalan Baru',
+              title: 'Atur & Simak (Mushaf)',
               onTap: () async {
                 Navigator.pop(ctx);
-                final verified = await VerificationGate.show(
-                  context: context,
-                  expectedSantri: santri,
-                );
+                final verified = isAdminOrPengawas 
+                  ? santri 
+                  : await VerificationGate.show(context: context, expectedSantri: santri);
+
                 if (verified != null && context.mounted) {
                   Navigator.push(
                     context,
@@ -167,7 +170,37 @@ Future<void> showSetoranOptions(BuildContext context, Santri santri, {SetoranRec
                   );
                 }
               },
-              subtitle: 'Atur surah, ayat, dan jenis secara manual',
+              subtitle: 'Gunakan Mushaf digital untuk menyimak',
+            ),
+            const SizedBox(height: 10),
+
+            // 4. Quick Mode Tile
+            _OptionTile(
+              icon: Icons.bolt_rounded,
+              color: Colors.orange.shade800,
+              title: 'Mode Cepat (Input Manual)',
+              onTap: () async {
+                Navigator.pop(ctx);
+                final verified = isAdminOrPengawas 
+                  ? santri 
+                  : await VerificationGate.show(context: context, expectedSantri: santri);
+
+                if (verified != null && context.mounted) {
+                   Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SetoranFormScreen(
+                        santri: verified,
+                        initialSurah: continuation?.surah,
+                        initialAyahStart: continuation?.ayahStart,
+                        initialType: continuation?.type ?? SetoranType.ziyadah,
+                        isQuickModeInitial: true,
+                      ),
+                    ),
+                  );
+                }
+              },
+              subtitle: 'Langsung masukkan skor & jumlah kesalahan',
             ),
             const SizedBox(height: 24),
             Divider(color: Colors.grey.shade200, height: 1),

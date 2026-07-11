@@ -11,6 +11,7 @@ import '../models/tasmi_record.dart';
 import '../models/setoran_continuation.dart';
 import '../models/presensi_halaqah.dart';
 import '../models/app_notification.dart';
+import '../models/error_mark.dart';
 import '../services/quran_service.dart';
 
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
@@ -424,6 +425,63 @@ class AppProvider extends ChangeNotifier
     );
     await updateSetoranRecord(activeSetoranSantri!.id, record);
     await endSetoranSession();
+    return record;
+  }
+
+  /// Saves a setoran directly from manual inputs (Quick Mode)
+  Future<SetoranRecord?> saveManualSetoran({
+    required Santri santri,
+    required SetoranType type,
+    required SurahInfo surah,
+    required int ayahStart,
+    required int ayahEnd,
+    required int tajwidErrors,
+    required int makhrojErrors,
+    required int fluencyRating,
+  }) async {
+    // Generate dummy error marks to satisfy the model and scoring utility
+    // These marks don't have word indices/text since it's a manual aggregate
+    final List<ErrorMark> manualErrors = [];
+    for (int i = 0; i < tajwidErrors; i++) {
+      manualErrors.add(ErrorMark(
+        wordKey: 'manual_t_$i', 
+        errorType: ErrorType.tajwid, 
+        surahNumber: surah.number, 
+        ayahNumber: ayahStart, 
+        wordIndex: -1, 
+        word: '[Manual]'
+      ));
+    }
+    for (int i = 0; i < makhrojErrors; i++) {
+      manualErrors.add(ErrorMark(
+        wordKey: 'manual_m_$i', 
+        errorType: ErrorType.makhroj, 
+        surahNumber: surah.number, 
+        ayahNumber: ayahStart, 
+        wordIndex: -1, 
+        word: '[Manual]'
+      ));
+    }
+
+    final record = SetoranRecord(
+      id: getCollection('santri').doc().id,
+      santriId: santri.id,
+      type: type,
+      surahNumber: surah.number,
+      surahName: surah.name,
+      surahEnglishName: surah.englishName,
+      ayahStart: ayahStart,
+      ayahEnd: ayahEnd,
+      passedAyahs: List.generate(ayahEnd - ayahStart + 1, (index) => ayahStart + index),
+      failedAyahs: [],
+      errorMarks: manualErrors,
+      fluencyRating: fluencyRating,
+      date: DateTime.now(),
+      finalScore: ScoringUtils.calculateScore(errorMarks: manualErrors, fluencyRating: fluencyRating),
+    );
+
+    await updateSetoranRecord(santri.id, record);
+    notifyListeners();
     return record;
   }
 
