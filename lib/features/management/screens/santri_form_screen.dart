@@ -549,7 +549,16 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
       _scanExistingCard();
     } else if (result['action'] == 'confirm') {
       setState(() {
-        _nisCtrl.text = result['id'].toString();
+        final scannedId = result['id'].toString();
+        _nisCtrl.text = scannedId;
+        
+        // AUTO-FILL Username if it's an existing card from another system
+        if (!_isEdit && _usernameCtrl.text.isEmpty) {
+           _usernameCtrl.text = scannedId.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+           _passwordCtrl.text = scannedId; // Default password same as ID for convenience
+           _showAccountInfo = true;
+        }
+
         if (parsedName.isNotEmpty) _namaCtrl.text = parsedName;
         if (parsedEmail.isNotEmpty) _emailCtrl.text = parsedEmail;
         if (parsedKelas.isNotEmpty) _kelasCtrl.text = parsedKelas;
@@ -560,7 +569,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Data kartu berhasil disalin ke form!'), backgroundColor: Colors.green),
+          const SnackBar(content: Text('Data kartu berhasil disalin & dijadikan username login!'), backgroundColor: Colors.green),
         );
       }
     }
@@ -991,39 +1000,32 @@ class _ScanPreviewDialogState extends State<_ScanPreviewDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.qr_code_scanner_rounded, color: AppTheme.primaryGreen, size: 32),
+            ),
+            const SizedBox(height: 16),
             Text(
-              'Pratinjau Hasil Pindai',
-              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primaryGreen),
+              'Gunakan Kartu Luar?',
+              style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black87),
             ),
-            const SizedBox(height: 16),
-            
-            // Realtime QR code generator based on editable ID
-            ValueListenableBuilder<TextEditingValue>(
-              valueListenable: _idCtrl,
-              builder: (context, val, _) {
-                final currentId = val.text.trim();
-                return currentId.isNotEmpty
-                    ? QrImageView(
-                        data: currentId,
-                        version: QrVersions.auto,
-                        size: 140.0,
-                        backgroundColor: Colors.white,
-                      )
-                    : Container(
-                        height: 140,
-                        width: 140,
-                        color: Colors.grey.shade100,
-                        child: const Icon(Icons.qr_code_2_rounded, size: 48, color: Colors.grey),
-                      );
-              },
+            const SizedBox(height: 8),
+            const Text(
+              'Sistem mendeteksi data dari kartu eksternal. ID ini akan digunakan sebagai identitas santri & username login.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey, fontSize: 12, height: 1.5),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             
             // Editable ID Field
             TextFormField(
@@ -1032,18 +1034,20 @@ class _ScanPreviewDialogState extends State<_ScanPreviewDialog> {
                 labelText: widget.isSantri ? 'ID Kartu (NIS) *' : 'ID Kartu (NIP) *',
                 hintText: 'Edit jika ID tidak sesuai',
                 prefixIcon: const Icon(Icons.badge_outlined),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                filled: true,
+                fillColor: Colors.grey.shade50,
               ),
               onChanged: (_) => setState(() {}),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             
             // Scanned details list
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.grey.shade200),
               ),
               child: Column(
@@ -1051,53 +1055,47 @@ class _ScanPreviewDialogState extends State<_ScanPreviewDialog> {
                   _infoRow('Nama', widget.name),
                   if (widget.email.isNotEmpty) _infoRow('Email', widget.email),
                   if (widget.isSantri && widget.kelas.isNotEmpty) _infoRow('Kelas', widget.kelas),
-                  if (!widget.isSantri && widget.jabatan.isNotEmpty) _infoRow('Jabatan', widget.jabatan),
                   if (widget.hp.isNotEmpty) _infoRow('No. HP', widget.hp),
-                  if (widget.tanggalLahir.isNotEmpty) _infoRow('Tgl Lahir', widget.tanggalLahir),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Catatan: Edit nama/data lainnya di form utama setelah disimpan.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontStyle: FontStyle.italic),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             
             // Actions
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppTheme.primaryGreen,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+                onPressed: () {
+                  Navigator.pop(context, {
+                    'action': 'confirm',
+                    'id': _idCtrl.text.trim(),
+                  });
+                },
+                child: const Text('YA, SALIN KE FORM', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
                   child: TextButton.icon(
                     onPressed: () => Navigator.pop(context, {'action': 'rescan'}),
-                    icon: const Icon(Icons.replay_rounded, size: 18, color: Colors.orange),
-                    label: const Text('Pindai Ulang', style: TextStyle(color: Colors.orange, fontSize: 12, fontWeight: FontWeight.bold)),
+                    icon: const Icon(Icons.replay_rounded, size: 18),
+                    label: const Text('Scan Ulang', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                   ),
                 ),
-                const SizedBox(width: 8),
                 Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryGreen,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context, {
-                        'action': 'confirm',
-                        'id': _idCtrl.text.trim(),
-                      });
-                    },
-                    child: const Text('Simpan ke Form', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Batal', style: TextStyle(color: Colors.grey, fontSize: 12)),
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Batal', style: TextStyle(color: Colors.grey)),
             ),
           ],
         ),
@@ -1112,13 +1110,13 @@ class _ScanPreviewDialogState extends State<_ScanPreviewDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 80,
-            child: Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+            width: 70,
+            child: Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 11, fontWeight: FontWeight.bold)),
           ),
           Expanded(
             child: Text(
               value.isEmpty ? '-' : value,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87),
             ),
           ),
         ],

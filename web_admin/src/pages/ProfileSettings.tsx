@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import PageMeta from "../components/common/PageMeta";
 import { useAuth } from "../context/AuthContext";
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
+import { Camera, Upload, X } from "lucide-react";
 
 export default function ProfileSettings() {
   const { user, profile, refreshProfile } = useAuth();
   const [name, setName] = useState(profile?.name || "");
-  const [photoPath, setPhotoPath] = useState(profile?.photoPath || "");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [existingPhotoPath, setExistingPhotoPath] = useState(profile?.photoPath || "");
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
@@ -19,6 +23,19 @@ export default function ProfileSettings() {
   const [savingPassword, setSavingPassword] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        setProfileError("Ukuran foto maksimal 2MB");
+        return;
+      }
+      setPhotoFile(file);
+      setPhotoPreview(URL.createObjectURL(file));
+      setProfileError(null);
+    }
+  };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,19 +49,31 @@ export default function ProfileSettings() {
     setProfileError(null);
     setProfileMessage(null);
     try {
+      let finalPhotoUrl = existingPhotoPath;
+
+      if (photoFile) {
+        const photoRef = ref(storage, `admin_photos/${user.uid}.jpg`);
+        const uploaded = await uploadBytes(photoRef, photoFile);
+        finalPhotoUrl = await getDownloadURL(uploaded.ref);
+      }
+
       await setDoc(
         doc(db, "users", user.uid),
         {
           name: name.trim(),
-          photoPath: photoPath.trim() || null,
+          photoPath: finalPhotoUrl || null,
         },
         { merge: true }
       );
 
       await updateProfile(user, {
         displayName: name.trim(),
-        photoURL: photoPath.trim() || null,
+        photoURL: finalPhotoUrl || null,
       });
+
+      setExistingPhotoPath(finalPhotoUrl || "");
+      setPhotoFile(null);
+      setPhotoPreview(null);
 
       await refreshProfile();
       setProfileMessage("Profil berhasil diperbarui.");
@@ -117,22 +146,25 @@ export default function ProfileSettings() {
               <Field label="Email Login"><input disabled value={profile?.email || ""} className={disabledInputCls} /></Field>
             </div>
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Field label="URL Foto Profil"><input value={photoPath} onChange={(e) => setPhotoPath(e.target.value)} placeholder="https://..." className={inputCls} /></Field>
-              <Field label="Role"><input disabled value={profile?.role || "admin"} className={disabledInputCls} /></Field>
-            </div>
-
-            <div className="mt-4 rounded-2xl bg-gray-50 p-4 dark:bg-white/5">
-              <div className="text-xs uppercase text-gray-400">Preview</div>
-              <div className="mt-3 flex items-center gap-3">
-                {photoPath.trim() ? (
-                  <img src={photoPath.trim()} alt={name || "Admin"} className="h-14 w-14 rounded-full object-cover" />
-                ) : (
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-lg font-bold text-brand-500 dark:bg-brand-500/10">{(name || "A").charAt(0).toUpperCase()}</div>
-                )}
-                <div>
-                  <p className="font-semibold text-gray-900 dark:text-white">{name || "Admin"}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{profile?.email || "-"}</p>
+            <div className="mt-4">
+              <label className={labelCls}>Foto Profil</label>
+              <div className="flex items-center gap-4">
+                <div className="relative group">
+                  {photoPreview || existingPhotoPath ? (
+                    <img src={photoPreview || existingPhotoPath} alt="Preview" className="h-20 w-20 rounded-2xl border border-gray-200 object-cover dark:border-gray-700" />
+                  ) : (
+                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-50 text-2xl font-bold text-brand-500 dark:bg-brand-500/10">{(name || "A").charAt(0).toUpperCase()}</div>
+                  )}
+                  {(photoPreview || existingPhotoPath) && (
+                    <button type="button" onClick={() => { setPhotoFile(null); setPhotoPreview(null); setExistingPhotoPath(""); }} className="absolute -right-2 -top-2 rounded-full bg-error-500 p-1 text-white shadow-lg"><X size={14} /></button>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-brand-50 px-4 py-2.5 text-sm font-bold text-brand-600 transition hover:bg-brand-100 dark:bg-brand-500/10 dark:text-brand-400">
+                    <Camera size={18} /> Pilih Foto Baru
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                  </label>
+                  <p className="mt-2 text-[10px] text-gray-500">Maksimal 2MB. Format: JPG, PNG.</p>
                 </div>
               </div>
             </div>

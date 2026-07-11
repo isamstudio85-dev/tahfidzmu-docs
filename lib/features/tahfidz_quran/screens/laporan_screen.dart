@@ -171,16 +171,20 @@ class _LaporanScreenBodyState extends State<LaporanScreenBody> with AutomaticKee
               const SizedBox(height: 10),
               _buildAttendanceSummaryCard(),
               const SizedBox(height: 12),
-              _buildDetailedSantriAttendance(),
-              const SizedBox(height: 28),
+              if (!widget.provider.isOrangTua) ...[
+                _buildDetailedSantriAttendance(),
+                const SizedBox(height: 28),
+              ],
 
               // 5. Weekly Activity Chart
               _buildSectionHeader('AKTIVITAS MINGGUAN (REAL-TIME)'),
               const SizedBox(height: 10),
               _WeeklyActivityCard(setorans: widget.setorans, sectionCard: _sectionCard),
               
-              const SizedBox(height: 32),
-              _buildExportButton(),
+              if (!widget.provider.isOrangTua) ...[
+                const SizedBox(height: 32),
+                _buildExportButton(),
+              ],
             ],
           );
         },

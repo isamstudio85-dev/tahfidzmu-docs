@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
 import 'package:tahfidz_app/models/santri.dart';
+import 'package:tahfidz_app/providers/app_provider.dart';
 
 class VerificationGate {
   /// Directly opens the QR Scanner camera to verify physical presence.
@@ -9,6 +11,14 @@ class VerificationGate {
     required BuildContext context,
     Santri? expectedSantri,
   }) async {
+    final provider = context.read<AppProvider>();
+    
+    // BYPASS LOGIC: If global QR security is disabled, auto-verify
+    if (!provider.pesantrenInfo.qrSecurityEnabled) {
+      debugPrint("QR Security disabled: Bypassing scan.");
+      return expectedSantri;
+    }
+
     final verified = await Navigator.push<dynamic>(
       context,
       MaterialPageRoute(

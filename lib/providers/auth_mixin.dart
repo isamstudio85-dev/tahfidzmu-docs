@@ -14,6 +14,9 @@ mixin AuthMixin on ChangeNotifier {
   String? pesantrenId;
   String? loginError;
 
+  bool isPhotoUploading = false;
+  String adminPhoto = '';
+
   bool get isLoggedIn => currentRole != null;
   bool get isSuperAdmin => currentRole == UserRole.superAdmin;
   bool get isAdmin => currentRole == UserRole.admin;
@@ -46,15 +49,21 @@ mixin AuthMixin on ChangeNotifier {
   }
 
   Future<void> performLogout() async {
-    await firebase.signOut();
-    currentRole = null;
-    linkedSantriId = null;
-    linkedMusyrifId = null;
-    currentUserId = null;
-    pesantrenId = null;
-    mustChangePassword = false;
-    currentUsername = null;
-    currentPassword = null;
-    notifyListeners();
+    try {
+      await firebase.signOut();
+    } catch (e) {
+      debugPrint("Auth sign out error: $e");
+    } finally {
+      // CLEAR ALL STATE IN FINALLY TO ENSURE UI SWITCH
+      currentRole = null;
+      linkedSantriId = null;
+      linkedMusyrifId = null;
+      currentUserId = null;
+      pesantrenId = null;
+      mustChangePassword = false;
+      currentUsername = null;
+      currentPassword = null;
+      notifyListeners();
+    }
   }
 }

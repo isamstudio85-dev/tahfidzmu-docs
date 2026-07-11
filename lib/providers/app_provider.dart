@@ -51,9 +51,6 @@ class AppProvider extends ChangeNotifier
 
   String generateId(String collectionName) => getCollection(collectionName).doc().id;
 
-  String _adminPhoto = '';
-  String get adminPhoto => _adminPhoto;
-
   AppProvider() { initialize(); }
 
   Future<void> initialize() async {
@@ -79,7 +76,7 @@ class AppProvider extends ChangeNotifier
             pesantrenId: userData['pesantrenId'] as String?,
           );
           currentUsername = userData['username'] as String?;
-          if (isAdmin) _adminPhoto = userData['photoPath'] ?? '';
+          if (isAdmin) adminPhoto = userData['photoPath'] ?? '';
           
           // AUTO-CLEANUP: Clear any stuck live sessions for THIS user on startup
           await endSetoranSession();
@@ -213,7 +210,7 @@ class AppProvider extends ChangeNotifier
       setLoginInfo(roleFromString(userData['role'] as String) ?? UserRole.orangTua, linkedSantriId: userData['linkedId'] as String?, linkedMusyrifId: userData['linkedId'] as String?, userId: user.uid, pesantrenId: userData['pesantrenId'] as String?);
       currentUsername = effectiveUsername;
       currentPassword = p;
-      if (isAdmin) _adminPhoto = userData['photoPath'] ?? '';
+      if (isAdmin) adminPhoto = userData['photoPath'] ?? '';
       await setupFirestoreListeners();
 
       final displayName = isOrangTua ? (linkedSantri?.name ?? u) : (isMusyrif ? (linkedMusyrif?.nama ?? u) : 'Admin');
@@ -332,16 +329,27 @@ class AppProvider extends ChangeNotifier
     _isLoggingOut = true;
     notifyListeners();
     try {
+      // 1. SILENT CLEANUP: Trigger firestore cleanup without 'awaiting' it too long
+      // This prevents the UI from being stuck if the network is slow.
+      endSetoranSession().timeout(const Duration(seconds: 1), onTimeout: () {});
+
+      // 2. DISCONNECT: Stop all listeners immediately
       cancelSubscriptions();
       
-      // ENSURE FIRESTORE CLEANUP ON LOGOUT
-      await endSetoranSession();
-
+      // 3. WIPE: Clear all sensitive data in memory
       clearData();
       stopSetoranSession();
-      await Future.delayed(const Duration(milliseconds: 100));
+      
+      // 4. AUTH EXIT: Perform final sign out and state clearing
       await performLogout();
-    } catch (_) { await performLogout(); } finally { _isLoggingOut = false; notifyListeners(); }
+    } catch (e) {
+      debugPrint("Logout error: $e");
+      // Force logout even on error to prevent being stuck in blank screen
+      await performLogout();
+    } finally {
+      _isLoggingOut = false;
+      notifyListeners();
+    }
   }
 
   @override
@@ -403,13 +411,65 @@ class AppProvider extends ChangeNotifier
     final santri = getSantriById(santriId);
     if (santri == null) return;
     try {
-      final snap = await firestore.collection('users').where('role', isEqualTo: 'orangTua').where('linkedId', isEqualTo: santriId).get();
+      // Find all users linked to this santri (Orang Tua) within the same pesantren
+      final snap = await firestore.collection('users')
+          .where('role', isEqualTo: 'orangTua')
+          .where('linkedId', isEqualTo: santriId)
+          .where('pesantrenId', isEqualTo: pesantrenId)
+          .get();
+
       for (var doc in snap.docs) {
         final title = "Setoran Baru: ${record.surahEnglishName}";
         final body = "${santri.name} baru saja menyetor hafalan dengan nilai ${record.finalScore.toStringAsFixed(0)}.";
-        await sendNotification(doc.id, title, body, 'setoran');
+        await sendNotification(doc.id, title, body, 'setoran', metadata: {'santriId': santriId, 'recordId': record.id});
       }
-    } catch (_) {}
+
+      // Also notify Admins of this pesantren
+      final adminSnap = await firestore.collection('users')
+          .where('role', isEqualTo: 'admin')
+          .where('pesantrenId', isEqualTo: pesantrenId)
+          .get();
+      
+      for (var doc in adminSnap.docs) {
+        if (doc.id == currentUserId) continue; // Don't notify self
+        final title = "Update Hafalan: ${santri.name}";
+        final body = "Setoran baru: ${record.surahEnglishName} (${record.ayahRange}). Skor: ${record.finalScore.toStringAsFixed(0)}.";
+        await sendNotification(doc.id, title, body, 'setoran', metadata: {'santriId': santriId, 'recordId': record.id});
+      }
+    } catch (e) {
+      debugPrint("Failed to trigger setoran notification: $e");
+    }
+  }
+
+  Future<void> triggerPresensiNotification(String santriId, String status) async {
+    final santri = getSantriById(santriId);
+    if (santri == null) return;
+    
+    String statusLabel;
+    switch (status) {
+      case 'setoran': statusLabel = "Hadir & Setoran"; break;
+      case 'sakit': statusLabel = "Sakit"; break;
+      case 'izin': statusLabel = "Izin"; break;
+      case 'alfa': statusLabel = "Alfa"; break;
+      case 'ditunda': statusLabel = "Hadir (Belum Setoran)"; break;
+      default: statusLabel = status;
+    }
+
+    try {
+      final snap = await firestore.collection('users')
+          .where('role', isEqualTo: 'orangTua')
+          .where('linkedId', isEqualTo: santriId)
+          .where('pesantrenId', isEqualTo: pesantrenId)
+          .get();
+
+      for (var doc in snap.docs) {
+        final title = "Kehadiran Halaqah: ${santri.name}";
+        final body = "Status hari ini: $statusLabel.";
+        await sendNotification(doc.id, title, body, 'presensi', metadata: {'santriId': santriId});
+      }
+    } catch (e) {
+      debugPrint("Failed to trigger presensi notification: $e");
+    }
   }
 
   Future<void> setSantriKehadiranStatus(String santriId, String status) async {
@@ -420,19 +480,32 @@ class AppProvider extends ChangeNotifier
     final docId = "${santri.halaqahId}_${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}";
     final docRef = getCollection('presensi').doc(docId);
     final docSnap = await docRef.get();
+    
     if (docSnap.exists) {
       final updatedDaftar = Map<String, String>.from(docSnap.data()!['daftarHadir'] ?? {});
       updatedDaftar[santriId] = status;
       await docRef.update({'daftarHadir': updatedDaftar, 'waktuSubmit': Timestamp.fromDate(now)});
     } else {
-      final newPresensi = PresensiHalaqah(id: docId, halaqahId: santri.halaqahId!, halaqahNama: halaqah?.nama ?? '', musyrifId: halaqah?.musyrifId ?? '', musyrifNama: getMusyrifById(halaqah?.musyrifId)?.nama ?? '', tanggal: DateTime(now.year, now.month, now.day), waktuSubmit: now, daftarHadir: {santriId: status});
+      final newPresensi = PresensiHalaqah(
+        id: docId, 
+        halaqahId: santri.halaqahId!, 
+        halaqahNama: halaqah?.nama ?? '', 
+        musyrifId: halaqah?.musyrifId ?? '', 
+        musyrifNama: getMusyrifById(halaqah?.musyrifId)?.nama ?? '', 
+        tanggal: DateTime(now.year, now.month, now.day), 
+        waktuSubmit: now, 
+        daftarHadir: {santriId: status}
+      );
       await docRef.set(newPresensi.toJson());
     }
+
+    // Trigger Notification for Parents
+    await triggerPresensiNotification(santriId, status);
   }
 
-  Future<void> sendNotification(String targetUserId, String title, String body, String type) async {
+  Future<void> sendNotification(String targetUserId, String title, String body, String type, {Map<String, dynamic>? metadata}) async {
     final ref = firestore.collection('users').doc(targetUserId).collection('notifications').doc();
-    final notif = AppNotification(id: ref.id, title: title, body: body, timestamp: DateTime.now(), targetUserId: targetUserId, type: type);
+    final notif = AppNotification(id: ref.id, title: title, body: body, timestamp: DateTime.now(), targetUserId: targetUserId, type: type, metadata: metadata);
     await ref.set(notif.toJson());
   }
 
@@ -531,6 +604,26 @@ class AppProvider extends ChangeNotifier
     return record;
   }
 
+  Future<void> triggerTasmiNotification(String santriId, TasmiRecord record) async {
+    final santri = getSantriById(santriId);
+    if (santri == null) return;
+    try {
+      final snap = await firestore.collection('users')
+          .where('role', isEqualTo: 'orangTua')
+          .where('linkedId', isEqualTo: santriId)
+          .where('pesantrenId', isEqualTo: pesantrenId)
+          .get();
+
+      for (var doc in snap.docs) {
+        final title = "Hasil Ujian Tasmi': ${santri.name}";
+        final body = "Anak Anda telah menyelesaikan ujian Juz ${record.juzNumbers.join(', ')} dengan skor ${record.finalScore.toStringAsFixed(0)}.";
+        await sendNotification(doc.id, title, body, 'setoran', metadata: {'santriId': santriId, 'tasmiId': record.id});
+      }
+    } catch (e) {
+      debugPrint("Failed to trigger tasmi notification: $e");
+    }
+  }
+
   Future<TasmiRecord?> completeTasmi({required List<int> juzNumbers, required int fluencyRating, required String year, String status = 'lulus', String? note}) async {
     if (activeSetoranSantri == null) return null;
     final record = TasmiRecord(
@@ -548,6 +641,10 @@ class AppProvider extends ChangeNotifier
     final tasmiJson = record.toJson();
     if (pesantrenId != null) tasmiJson['pesantrenId'] = pesantrenId;
     await getCollection('santri').doc(activeSetoranSantri!.id).collection('tasmiHistory').doc(record.id).set(tasmiJson);
+    
+    // Trigger Notification
+    await triggerTasmiNotification(activeSetoranSantri!.id, record);
+
     await endSetoranSession();
     return record;
   }
@@ -622,7 +719,30 @@ class AppProvider extends ChangeNotifier
   }
 
   Future<void> updateTasmiStatus(String registrationId, String status) async {
-     try { await getCollection('graduation_registrations').doc(registrationId).update({'status': status}); } catch (_) {}
+     try { 
+       await getCollection('graduation_registrations').doc(registrationId).update({'status': status}); 
+       
+       // Notify Orang Tua about status update
+       final regDoc = await getCollection('graduation_registrations').doc(registrationId).get();
+       if (regDoc.exists) {
+         final santriId = regDoc.data()?['santriId'] as String?;
+         final eventTitle = regDoc.data()?['eventTitle'] as String? ?? 'Wisuda';
+         if (santriId != null) {
+           final santri = getSantriById(santriId);
+           final snap = await firestore.collection('users')
+               .where('role', isEqualTo: 'orangTua')
+               .where('linkedId', isEqualTo: santriId)
+               .where('pesantrenId', isEqualTo: pesantrenId)
+               .get();
+
+           for (var doc in snap.docs) {
+             final title = "Status Ujian: ${santri?.name ?? 'Santri'}";
+             final body = "Update status untuk $eventTitle: ${status.toUpperCase()}.";
+             await sendNotification(doc.id, title, body, 'peringatan', metadata: {'santriId': santriId});
+           }
+         }
+       }
+     } catch (_) {}
   }
 
   /// Helper for tests or manual state injection (Not for production login)

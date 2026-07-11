@@ -134,7 +134,7 @@ class AyahBlock extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
-        color: Colors.transparent, // Always transparent, using page background
+        color: Colors.transparent,
         border: Border(
           bottom: BorderSide(
             color: lineBorderColor,
@@ -147,44 +147,78 @@ class AyahBlock extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: isEndAyah
-                      ? Colors.orange.withValues(alpha: 0.15)
-                      : (isPassed
-                          ? Colors.green.withValues(alpha: 0.15)
-                          : (isFailed
-                              ? Colors.red.withValues(alpha: 0.15)
-                              : const Color(0xFF2E5A27).withValues(alpha: 0.1))),
-                  borderRadius: BorderRadius.circular(4), // Flat theme
-                ),
-                child: Text(
-                  'Ayat ${ayah.numberInSurah}${isEndAyah ? ' (Batas Akhir)' : ''}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: isEndAyah
-                        ? Colors.orange.shade800
-                        : (isPassed ? Colors.green.shade800 : (isFailed ? Colors.red.shade800 : const Color(0xFF2E5A27))),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isEndAyah
+                          ? Colors.orange.withValues(alpha: 0.15)
+                          : (isPassed
+                              ? Colors.green.withValues(alpha: 0.15)
+                              : (isFailed
+                                  ? Colors.red.withValues(alpha: 0.15)
+                                  : const Color(0xFF2E5A27).withValues(alpha: 0.1))),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'Ayat ${ayah.numberInSurah}${isEndAyah ? ' (Batas)' : ''}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: isEndAyah
+                            ? Colors.orange.shade800
+                            : (isPassed ? Colors.green.shade800 : (isFailed ? Colors.red.shade800 : const Color(0xFF2E5A27))),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ),
               ),
-              const Spacer(),
-              if (!isReadOnly) ...[
-                Tooltip(
-                  message: 'Tandai Batas Akhir Hafalan',
-                  child: _actionBtn(
-                    isEndAyah ? Icons.flag_rounded : Icons.outlined_flag_rounded,
-                    isEndAyah ? Colors.orange : Colors.grey.shade400,
-                    onMarkEnd,
+              const SizedBox(width: 8),
+              if (!isReadOnly)
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade200),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.03),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _actionBtn(
+                        isEndAyah ? Icons.flag_rounded : Icons.outlined_flag_rounded,
+                        isEndAyah ? Colors.orange : Colors.grey.shade400,
+                        onMarkEnd,
+                        isActive: isEndAyah,
+                      ),
+                      const SizedBox(width: 4),
+                      _actionBtn(
+                        Icons.check_circle_rounded, 
+                        isPassed ? Colors.green : Colors.grey.shade400, 
+                        onTogglePassed,
+                        isActive: isPassed,
+                      ),
+                      const SizedBox(width: 4),
+                      _actionBtn(
+                        Icons.cancel_rounded, 
+                        isFailed ? Colors.red : Colors.grey.shade400, 
+                        onToggleFailed,
+                        isActive: isFailed,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 16),
-                _actionBtn(Icons.check_circle_rounded, isPassed ? Colors.green : Colors.grey.shade400, onTogglePassed),
-                const SizedBox(width: 16),
-                _actionBtn(Icons.cancel_rounded, isFailed ? Colors.red : Colors.grey.shade400, onToggleFailed),
-              ],
             ],
           ),
           const SizedBox(height: 18),
@@ -226,10 +260,70 @@ class AyahBlock extends StatelessWidget {
     );
   }
 
-  Widget _actionBtn(IconData icon, Color color, VoidCallback? onTap) {
-    return GestureDetector(
+  Widget _actionBtn(IconData icon, Color color, VoidCallback? onTap, {bool isActive = false}) {
+    return _EmpukButton(
       onTap: onTap,
-      child: Icon(icon, color: color, size: 28),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(8), // Compact hit area
+        decoration: BoxDecoration(
+          color: isActive ? color.withValues(alpha: 0.12) : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          icon, 
+          color: color, 
+          size: 22, // Balanced icon size
+        ),
+      ),
+    );
+  }
+}
+
+/// A wrapper widget that adds a "cushioned" scale effect on tap
+class _EmpukButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  
+  const _EmpukButton({required this.child, this.onTap});
+
+  @override
+  State<_EmpukButton> createState() => _EmpukButtonState();
+}
+
+class _EmpukButtonState extends State<_EmpukButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.90).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) => _controller.reverse(),
+      onTapCancel: () => _controller.reverse(),
+      onTap: widget.onTap,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.child,
+      ),
     );
   }
 }

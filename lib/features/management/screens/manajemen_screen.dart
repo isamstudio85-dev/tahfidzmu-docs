@@ -78,8 +78,18 @@ class ManajemenScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const PesantrenScreen(manageModulesOnly: true)),
                 ),
               ),
+              
+              _header('PENGATURAN APLIKASI'),
+              _buildSecurityToggle(context, provider),
 
               _header('FITUR LANJUTAN'),
+              _tile(
+                icon: Icons.cleaning_services_rounded,
+                title: 'Bersihkan Data Residual',
+                subtitle: 'Hapus sisa field percobaan (subjectId)',
+                color: Colors.blueGrey,
+                onTap: () => _showSanitizeConfirmation(context, provider),
+              ),
               _tile(
                 icon: Icons.delete_forever_rounded,
                 title: 'Reset Data',
@@ -196,11 +206,96 @@ class ManajemenScreen extends StatelessWidget {
     );
   }
 
+  void _showSanitizeConfirmation(BuildContext context, AppProvider provider) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Bersihkan Data Residual?'),
+        content: const Text(
+          'Aplikasi akan menghapus field "subjectId" yang tersisa dari percobaan sebelumnya di Firestore agar data kembali murni Tahfidz Al-Quran.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.blueGrey),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              _showLoadingDialog(context);
+              await provider.sanitizeFirestoreData();
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Data berhasil dibersihkan.')),
+                );
+              }
+            },
+            child: const Text('Bersihkan'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showLoadingDialog(BuildContext context) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _buildSecurityToggle(BuildContext context, AppProvider provider) {
+    final bool isEnabled = provider.pesantrenInfo.qrSecurityEnabled;
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isEnabled ? Colors.green.shade100 : Colors.orange.shade100, width: 1.5),
+        ),
+        child: SwitchListTile(
+          value: isEnabled,
+          activeThumbColor: AppTheme.primaryGreen,
+          activeTrackColor: AppTheme.primaryGreen.withValues(alpha: 0.2),
+          title: Text(
+            'Wajib Scan QR Code',
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
+          subtitle: Text(
+            isEnabled 
+              ? 'Keamanan aktif: Setoran & Koreksi wajib scan kartu.' 
+              : 'Mode Uji Coba: Scan QR dinonaktifkan (bebas masuk).',
+            style: const TextStyle(fontSize: 10),
+          ),
+          secondary: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: (isEnabled ? AppTheme.primaryGreen : Colors.orange).withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              isEnabled ? Icons.qr_code_scanner_rounded : Icons.qr_code_2_rounded,
+              color: isEnabled ? AppTheme.primaryGreen : Colors.orange,
+              size: 20,
+            ),
+          ),
+          onChanged: (val) async {
+            final updated = provider.pesantrenInfo.copyWith(qrSecurityEnabled: val);
+            await provider.updatePesantrenInfo(updated);
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(val ? 'Keamanan QR diaktifkan.' : 'Mode Bebas Scan diaktifkan (Uji Coba).'),
+                  backgroundColor: val ? Colors.green : Colors.orange,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 }

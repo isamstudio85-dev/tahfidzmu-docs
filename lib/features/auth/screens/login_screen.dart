@@ -234,47 +234,56 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted || rawString == null || rawString.trim().isEmpty) return;
 
+    String targetPesantrenId = _pesantrenIdCtrl.text.trim();
+    String username = '';
+    String password = '';
+
     if (rawString.startsWith('tahfidzmu:login:')) {
       final parts = rawString.split(':');
       if (parts.length >= 4) {
-        final pesantrenId = parts[2];
-        final username = parts[3];
-        final password = parts.length >= 5 ? parts[4] : username;
-
-        setState(() {
-          _pesantrenIdCtrl.text = pesantrenId;
-          _usernameCtrl.text = username;
-          _passwordCtrl.text = password;
-          _isLoading = true;
-          _errorMessage = null;
-        });
-
-        final ok = await context.read<AppProvider>().loginWithCredentials(
-          pesantrenId.isEmpty ? null : pesantrenId,
-          username,
-          password,
-          qrLogin: true,
-        );
-
-        if (!mounted) return;
-        if (!ok) {
-          setState(() {
-            _isLoading = false;
-            _errorMessage = 'Username atau sandi salah.';
-          });
-        } else {
-          // QR login does not save credentials
-          await LoginPreferencesService.clearLastCredentials();
-        }
-      } else {
-        setState(() {
-          _errorMessage = 'Format QR Code tidak valid.';
-        });
+        targetPesantrenId = parts[2];
+        username = parts[3];
+        password = parts.length >= 5 ? parts[4] : username;
       }
     } else {
+      // ADAPTIVE LOGIN: Treat any QR as the Username/ID
+      username = rawString.trim();
+      password = username; // Default fallback for initial/unconfigured accounts
+    }
+
+    if (username.isEmpty) {
+      setState(() => _errorMessage = 'QR Code kosong atau tidak terbaca.');
+      return;
+    }
+
+    if (targetPesantrenId.isEmpty) {
+      setState(() => _errorMessage = 'Silahkan isi NPSN Pesantren terlebih dahulu sebelum scan kartu lama.');
+      return;
+    }
+
+    setState(() {
+      _pesantrenIdCtrl.text = targetPesantrenId;
+      _usernameCtrl.text = username;
+      _passwordCtrl.text = password;
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final ok = await context.read<AppProvider>().loginWithCredentials(
+      targetPesantrenId,
+      username,
+      password,
+      qrLogin: true,
+    );
+
+    if (!mounted) return;
+    if (!ok) {
       setState(() {
-        _errorMessage = 'QR Code ini bukan kartu login resmi TahfidzMU.';
+        _isLoading = false;
+        _errorMessage = 'Gagal masuk. Pastikan kartu terdaftar dan sandi sesuai.';
       });
+    } else {
+      await LoginPreferencesService.clearLastCredentials();
     }
   }
 

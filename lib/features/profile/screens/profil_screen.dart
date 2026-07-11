@@ -16,6 +16,7 @@ import 'package:tahfidz_app/features/education/screens/educational_list_screen.d
 import 'package:tahfidz_app/features/education/screens/tahsin_list_screen.dart';
 import 'package:tahfidz_app/core/widgets/account_switcher.dart';
 import 'package:tahfidz_app/features/education/screens/pondok_knowledge_screen.dart';
+import 'package:tahfidz_app/core/widgets/loading_widget.dart';
 
 class ProfilScreen extends StatelessWidget {
   const ProfilScreen({super.key});
@@ -26,46 +27,56 @@ class ProfilScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Profil Saya')),
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {
-          if (provider.isAdmin) {
-            return _AdminProfilView(
-              provider: provider,
-              onLogout: () => _showLogoutConfirm(context, provider),
-              onPhotoTap: () => _showAdminPhotoOptions(context, provider),
-            );
-          } else if (provider.isOrangTua) {
-            return _OrangTuaProfilView(
-              provider: provider,
-              onEdit: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const OrangTuaProfilEditScreen(),
-                ),
-              ),
-              onPhotoTap: () => _showSantriPhotoOptions(context, provider),
-              onLogout: () => _showLogoutConfirm(context, provider),
-            );
-          } else if (provider.isPengawas) {
-            return _PengawasProfilView(
-              provider: provider,
-              onPhotoTap: () => _showPengawasPhotoOptions(context, provider),
-              onLogout: () => _showLogoutConfirm(context, provider),
-            );
-          } else {
-            return _MusyrifProfilView(
-              provider: provider,
-              onEdit: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const MusyrifProfilEditScreen(),
-                ),
-              ),
-              onPhotoTap: () => _showMusyrifPhotoOptions(context, provider),
-              onLogout: () => _showLogoutConfirm(context, provider),
-            );
-          }
+          return Stack(
+            children: [
+              _buildView(context, provider),
+              if (provider.isPhotoUploading)
+                const LoadingOverlay(message: 'Mengunggah foto...'),
+            ],
+          );
         },
       ),
     );
+  }
+
+  Widget _buildView(BuildContext context, AppProvider provider) {
+    if (provider.isAdmin) {
+      return _AdminProfilView(
+        provider: provider,
+        onLogout: () => _showLogoutConfirm(context, provider),
+        onPhotoTap: () => _showAdminPhotoOptions(context, provider),
+      );
+    } else if (provider.isOrangTua) {
+      return _OrangTuaProfilView(
+        provider: provider,
+        onEdit: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const OrangTuaProfilEditScreen(),
+          ),
+        ),
+        onPhotoTap: () => _showSantriPhotoOptions(context, provider),
+        onLogout: () => _showLogoutConfirm(context, provider),
+      );
+    } else if (provider.isPengawas) {
+      return _PengawasProfilView(
+        provider: provider,
+        onPhotoTap: () => _showPengawasPhotoOptions(context, provider),
+        onLogout: () => _showLogoutConfirm(context, provider),
+      );
+    } else {
+      return _MusyrifProfilView(
+        provider: provider,
+        onEdit: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const MusyrifProfilEditScreen(),
+          ),
+        ),
+        onPhotoTap: () => _showMusyrifPhotoOptions(context, provider),
+        onLogout: () => _showLogoutConfirm(context, provider),
+      );
+    }
   }
 
   void _showLogoutConfirm(BuildContext context, AppProvider provider) {
@@ -103,7 +114,22 @@ class ProfilScreen extends StatelessWidget {
         source: source,
         imageQuality: 80,
       );
-      if (file != null) provider.updateAdminPhoto(file.path);
+      if (file != null) {
+        try {
+          await provider.updateAdminPhoto(file.path);
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Foto profil berhasil diperbarui')),
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal memperbarui foto: $e'), backgroundColor: Colors.red),
+            );
+          }
+        }
+      }
     }
   }
 
@@ -119,7 +145,22 @@ class ProfilScreen extends StatelessWidget {
         source: source,
         imageQuality: 80,
       );
-      if (file != null) provider.updateSantriPhoto(santri.id, file.path);
+      if (file != null) {
+        try {
+          await provider.updateSantriPhoto(santri.id, file.path);
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Foto santri berhasil diperbarui')),
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal memperbarui foto: $e'), backgroundColor: Colors.red),
+            );
+          }
+        }
+      }
     }
   }
 
@@ -134,7 +175,20 @@ class ProfilScreen extends StatelessWidget {
         imageQuality: 80,
       );
       if (file != null) {
-        provider.updateMusyrifPhoto(file.path);
+        try {
+          await provider.updateMusyrifPhoto(file.path);
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Foto musyrif berhasil diperbarui')),
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal memperbarui foto: $e'), backgroundColor: Colors.red),
+            );
+          }
+        }
       }
     }
   }
@@ -150,7 +204,20 @@ class ProfilScreen extends StatelessWidget {
         imageQuality: 80,
       );
       if (file != null) {
-        provider.updatePengawasPhoto(file.path);
+        try {
+          await provider.updatePengawasPhoto(file.path);
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Foto pengawas berhasil diperbarui')),
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal memperbarui foto: $e'), backgroundColor: Colors.red),
+            );
+          }
+        }
       }
     }
   }

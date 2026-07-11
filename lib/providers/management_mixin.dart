@@ -324,37 +324,66 @@ mixin ManagementMixin on ChangeNotifier, AuthMixin, DataMixin {
 
   Future<void> updateAdminPhoto(String path) async {
     if (currentUserId == null) return;
+    isPhotoUploading = true;
+    notifyListeners();
     try {
       final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'admin_photos', fileName: currentUserId!);
       await firebase.setUserData(currentUserId!, {'photoPath': cloudUrl});
+      adminPhoto = cloudUrl; // Update local state in AuthMixin
+    } catch (e) {
+      debugPrint("Error updating admin photo: $e");
+      rethrow;
+    } finally {
+      isPhotoUploading = false;
       notifyListeners();
-    } catch (_) {}
+    }
   }
 
   Future<void> updateMusyrifPhoto(String path) async {
     if (linkedMusyrifId == null) return;
+    isPhotoUploading = true;
+    notifyListeners();
     try {
       final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'musyrif_photos', fileName: linkedMusyrifId!);
       await getCollection('musyrif').doc(linkedMusyrifId!).update({'photoPath': cloudUrl});
+    } catch (e) {
+      debugPrint("Error updating musyrif photo: $e");
+      rethrow;
+    } finally {
+      isPhotoUploading = false;
       notifyListeners();
-    } catch (_) {}
+    }
   }
 
   Future<void> updateSantriPhoto(String santriId, String path) async {
+    isPhotoUploading = true;
+    notifyListeners();
     try {
       final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'santri_photos', fileName: santriId);
       await getCollection('santri').doc(santriId).update({'photoPath': cloudUrl});
+    } catch (e) {
+      debugPrint("Error updating santri photo: $e");
+      rethrow;
+    } finally {
+      isPhotoUploading = false;
       notifyListeners();
-    } catch (_) {}
+    }
   }
 
   Future<void> updatePengawasPhoto(String path) async {
     if (linkedMusyrifId == null) return;
+    isPhotoUploading = true;
+    notifyListeners();
     try {
       final cloudUrl = await firebase.uploadPhoto(localPath: path, folder: 'pengawas_photos', fileName: linkedMusyrifId!);
       await getCollection('pengawas').doc(linkedMusyrifId!).update({'photoPath': cloudUrl});
+    } catch (e) {
+      debugPrint("Error updating pengawas photo: $e");
+      rethrow;
+    } finally {
+      isPhotoUploading = false;
       notifyListeners();
-    } catch (_) {}
+    }
   }
 
   Future<void> resetAllData() async {
@@ -394,5 +423,28 @@ mixin ManagementMixin on ChangeNotifier, AuthMixin, DataMixin {
 
   String digitsOnly(String value) {
     return value.replaceAll(RegExp(r'\D+'), '');
+  }
+
+  /// Temporary cleanup tool to remove experimental fields from Firestore
+  Future<void> sanitizeFirestoreData() async {
+    final pid = pesantrenId;
+    if (pid == null) return;
+
+    final halaqahSnap = await firestore
+        .collection('pesantren')
+        .doc(pid)
+        .collection('halaqah')
+        .get();
+
+    final batch = firestore.batch();
+    for (var doc in halaqahSnap.docs) {
+      final data = doc.data();
+      // Remove subjectId if it exists
+      if (data.containsKey('subjectId')) {
+        batch.update(doc.reference, {'subjectId': FieldValue.delete()});
+      }
+    }
+    await batch.commit();
+    notifyListeners();
   }
 }

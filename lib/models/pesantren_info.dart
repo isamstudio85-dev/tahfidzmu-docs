@@ -7,6 +7,7 @@ class PesantrenInfo {
   final String npsn;      // National School ID Number
   final String website;   // Pesantren Website
   final String pimpinan;  // Head / Kyai of the Pesantren
+  final bool qrSecurityEnabled; // Toggle QR scan requirement
 
   const PesantrenInfo({
     this.nama = '',
@@ -17,6 +18,7 @@ class PesantrenInfo {
     this.npsn = '',
     this.website = '',
     this.pimpinan = '',
+    this.qrSecurityEnabled = true,
   });
 
   bool get hasLogo => logoPath.isNotEmpty;
@@ -30,6 +32,7 @@ class PesantrenInfo {
     String? npsn,
     String? website,
     String? pimpinan,
+    bool? qrSecurityEnabled,
   }) {
     return PesantrenInfo(
       nama: nama ?? this.nama,
@@ -40,6 +43,7 @@ class PesantrenInfo {
       npsn: npsn ?? this.npsn,
       website: website ?? this.website,
       pimpinan: pimpinan ?? this.pimpinan,
+      qrSecurityEnabled: qrSecurityEnabled ?? this.qrSecurityEnabled,
     );
   }
 
@@ -52,6 +56,7 @@ class PesantrenInfo {
     'npsn': npsn,
     'website': website,
     'pimpinan': pimpinan,
+    'qrSecurityEnabled': qrSecurityEnabled,
   };
 
   factory PesantrenInfo.fromJson(Map<String, dynamic> json) => PesantrenInfo(
@@ -63,5 +68,6 @@ class PesantrenInfo {
     npsn: json['npsn'] as String? ?? '',
     website: json['website'] as String? ?? '',
     pimpinan: json['pimpinan'] as String? ?? '',
+    qrSecurityEnabled: json['qrSecurityEnabled'] as bool? ?? true,
   );
 }

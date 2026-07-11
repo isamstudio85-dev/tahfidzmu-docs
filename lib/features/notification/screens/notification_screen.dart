@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/models/app_notification.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
+import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
@@ -148,6 +149,16 @@ class NotificationScreen extends StatelessWidget {
         onTap: () async {
           if (!notif.isRead) {
             await provider.markNotificationAsRead(notif.id);
+          }
+          
+          if (notif.metadata != null && context.mounted) {
+            final sId = notif.metadata!['santriId'];
+            if (sId != null) {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: sId))
+              );
+            }
           }
         },
         child: Padding(
