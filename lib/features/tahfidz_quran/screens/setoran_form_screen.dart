@@ -94,8 +94,10 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
                   onTap: () async {
                     final targetSantri = list[i];
                     
-                    // ADMIN BYPASS: Allow Admin/Pengawas to pick students without QR scan for mass entry
-                    final bool needsVerification = !provider.isAdmin && !provider.isPengawas;
+                    // SECURITY LOGIC: 
+                    // 1. If Quick Mode (Rekap): No scan needed (for anyone)
+                    // 2. If Interactive Mode: Must Scan QR (to prove presence)
+                    final bool needsVerification = !_isQuickMode;
                     
                     final verified = needsVerification 
                       ? await VerificationGate.show(context: context, expectedSantri: targetSantri)
@@ -511,17 +513,30 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
 
   bool _canStart() => _selectedSantri != null && _selectedSurah != null;
 
-  void _startSetoran() {
-    final maxAyah = _selectedSurah!.numberOfAyahs;
-    final targetEnd = (_ayahStart + 9).clamp(_ayahStart, maxAyah);
-    context.read<AppProvider>().startSetoranSession(
-      santri: _selectedSantri!, 
-      type: _type, 
-      surah: _selectedSurah!, 
-      ayahStart: _ayahStart, 
-      ayahEnd: targetEnd,
-    );
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const QuranReaderScreen()));
+  void _startSetoran() async {
+    final provider = context.read<AppProvider>();
+    
+    // SMART VERIFICATION:
+    // If student was already scanned (passed from Express Path), skip re-scan.
+    // If student was picked manually from list, force Scan QR to prove presence.
+    final bool isAlreadyVerified = widget.santri?.id == _selectedSantri?.id;
+
+    final verified = isAlreadyVerified 
+      ? _selectedSantri 
+      : await VerificationGate.show(context: context, expectedSantri: _selectedSantri);
+
+    if (verified != null && context.mounted) {
+      final maxAyah = _selectedSurah!.numberOfAyahs;
+      final targetEnd = (_ayahStart + 9).clamp(_ayahStart, maxAyah);
+      provider.startSetoranSession(
+        santri: verified, 
+        type: _type, 
+        surah: _selectedSurah!, 
+        ayahStart: _ayahStart, 
+        ayahEnd: targetEnd,
+      );
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const QuranReaderScreen()));
+    }
   }
 
   void _saveQuickSetoran() async {

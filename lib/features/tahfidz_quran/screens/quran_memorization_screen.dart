@@ -97,33 +97,98 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
       floatingActionButton: canAddSetoran
           ? FloatingActionButton.extended(
               heroTag: 'fab_setoran_main',
-              onPressed: () async {
-                // ADMIN BYPASS: Directly open form for Admin/Pengawas to allow mass entry via list
-                if (provider.isAdmin || provider.isPengawas) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const SetoranFormScreen()),
-                  );
-                  return;
-                }
-
-                final verifiedSantri = await VerificationGate.show(
-                  context: context,
-                );
-                if (verifiedSantri != null && context.mounted) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => SetoranFormScreen(santri: verifiedSantri),
-                    ),
-                  );
-                }
-              },
-              icon: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white),
+              onPressed: () => _showInputModeSelector(context),
+              icon: const Icon(Icons.add_circle_outline_rounded, color: Colors.white),
               label: const Text('Input Hafalan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               backgroundColor: AppTheme.primaryGreen,
             )
           : null,
+    );
+  }
+
+  void _showInputModeSelector(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 24),
+            const Text(
+              'Pilih Metode Input',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                _modeOption(
+                  context,
+                  icon: Icons.qr_code_scanner_rounded,
+                  label: 'Scan QR Santri',
+                  sub: 'Jalur Ekspres & Simak Live',
+                  color: AppTheme.primaryGreen,
+                  onTap: () async {
+                    Navigator.pop(ctx);
+                    final verifiedSantri = await VerificationGate.show(context: context);
+                    if (verifiedSantri != null && context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => SetoranFormScreen(santri: verifiedSantri, isQuickModeInitial: false)),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(width: 16),
+                _modeOption(
+                  context,
+                  icon: Icons.bolt_rounded,
+                  label: 'Mode Cepat',
+                  sub: 'Input Manual (Rekap)',
+                  color: Colors.orange.shade800,
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SetoranFormScreen(isQuickModeInitial: true)),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _modeOption(BuildContext context, {required IconData icon, required String label, required String sub, required Color color, required VoidCallback onTap}) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color, size: 40),
+              const SizedBox(height: 12),
+              Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: color)),
+              const SizedBox(height: 4),
+              Text(sub, textAlign: TextAlign.center, style: TextStyle(fontSize: 9, color: Colors.grey.shade600)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
