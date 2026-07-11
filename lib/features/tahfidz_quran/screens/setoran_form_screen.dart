@@ -43,6 +43,7 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
   int _tajwidErrors = 0;
   int _makhrojErrors = 0;
   int _fluencyRating = 5;
+  bool _showDetailedErrors = false;
   bool _isSaving = false;
 
   @override
@@ -263,8 +264,12 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
                   const SizedBox(height: 24),
                   _sectionTitle('3. Hasil Setoran (Manual)'),
                   const SizedBox(height: 12),
-                  _buildErrorCounters(),
+                  _buildAssessmentModeToggle(),
                   const SizedBox(height: 16),
+                  if (_showDetailedErrors) ...[
+                    _buildErrorCounters(),
+                    const SizedBox(height: 16),
+                  ],
                   _buildFluencyPicker(),
                 ],
 
@@ -407,8 +412,12 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
 
   Widget _rangeCounterTile(String label, int value, ValueChanged<int> onChanged, {int max = 999, Color color = AppTheme.primaryGreen}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(16), border: Border.all(color: color.withValues(alpha: 0.1))),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.05), 
+        borderRadius: BorderRadius.circular(16), 
+        border: Border.all(color: color.withValues(alpha: 0.1))
+      ),
       child: Row(
         children: [
           Icon(Icons.history_edu_rounded, color: color, size: 18),
@@ -416,12 +425,135 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
           Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
           const Spacer(),
           _circleBtn(Icons.remove, () => onChanged(value - 1), color: color),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text('$value', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: color)),
+          
+          // Clickable value for quick picker
+          InkWell(
+            onTap: () => _showAyahPicker(label, value, max, onChanged),
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Text('$value', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: color)),
+                  const SizedBox(width: 4),
+                  Icon(Icons.arrow_drop_down_rounded, color: color, size: 20),
+                ],
+              ),
+            ),
           ),
+          
           _circleBtn(Icons.add, () => onChanged(value + 1), color: color),
         ],
+      ),
+    );
+  }
+
+  void _showAyahPicker(String title, int current, int max, ValueChanged<int> onChanged) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        height: MediaQuery.of(context).size.height * 0.4,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text('Pilih $title', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16)),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: max,
+                itemBuilder: (ctx, i) {
+                  final ayahNum = i + 1;
+                  final isSelected = ayahNum == current;
+                  return InkWell(
+                    onTap: () {
+                      onChanged(ayahNum);
+                      Navigator.pop(ctx);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade300),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$ayahNum',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isSelected ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAssessmentModeToggle() {
+    return Row(
+      children: [
+        _modeChip('Hanya Kelancaran', Icons.star_half_rounded, !_showDetailedErrors, () => setState(() => _showDetailedErrors = false)),
+        const SizedBox(width: 8),
+        _modeChip('Detail (Koreksi)', Icons.playlist_add_check_rounded, _showDetailedErrors, () => setState(() => _showDetailedErrors = true)),
+      ],
+    );
+  }
+
+  Widget _modeChip(String label, IconData icon, bool isSelected, VoidCallback onTap) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.primaryGreen : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade300),
+            boxShadow: isSelected ? [BoxShadow(color: AppTheme.primaryGreen.withValues(alpha: 0.2), blurRadius: 4, offset: const Offset(0, 2))] : [],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 16, color: isSelected ? Colors.white : Colors.grey.shade600),
+              const SizedBox(width: 6),
+              Text(
+                label, 
+                style: TextStyle(
+                  fontSize: 11, 
+                  fontWeight: FontWeight.bold, 
+                  color: isSelected ? Colors.white : Colors.grey.shade600
+                )
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -563,8 +695,8 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
         surah: _selectedSurah!,
         ayahStart: _ayahStart,
         ayahEnd: _ayahEnd,
-        tajwidErrors: _tajwidErrors,
-        makhrojErrors: _makhrojErrors,
+        tajwidErrors: _showDetailedErrors ? _tajwidErrors : 0,
+        makhrojErrors: _showDetailedErrors ? _makhrojErrors : 0,
         fluencyRating: _fluencyRating,
       );
 
