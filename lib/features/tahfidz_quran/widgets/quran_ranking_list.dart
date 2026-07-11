@@ -13,8 +13,11 @@ class QuranRankingList extends StatefulWidget {
   State<QuranRankingList> createState() => _QuranRankingListState();
 }
 
-class _QuranRankingListState extends State<QuranRankingList> with SingleTickerProviderStateMixin {
+class _QuranRankingListState extends State<QuranRankingList> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController _innerTab;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -30,6 +33,7 @@ class _QuranRankingListState extends State<QuranRankingList> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       color: const Color(0xFFF8F9FA),
       child: Column(
@@ -81,8 +85,13 @@ class _SantriRankingTab extends StatefulWidget {
   State<_SantriRankingTab> createState() => _SantriRankingTabState();
 }
 
-class _SantriRankingTabState extends State<_SantriRankingTab> {
+class _SantriRankingTabState extends State<_SantriRankingTab> with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
+  String _searchQuery = '';
+  bool _isSearching = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -128,6 +137,7 @@ class _SantriRankingTabState extends State<_SantriRankingTab> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Consumer<AppProvider>(builder: (ctx, provider, _) {
       final list = provider.santriList;
       var ranked = [...list];
@@ -136,30 +146,99 @@ class _SantriRankingTabState extends State<_SantriRankingTab> {
         if (cmp == 0) return b.averageScore.compareTo(a.averageScore);
         return cmp;
       });
-      if (ranked.isEmpty) return _emptyState(Icons.emoji_events_outlined, 'Belum ada data peringkat');
-      
-      return RefreshIndicator(
-        onRefresh: () async => await provider.setupFirestoreListeners(),
-        child: ListView.separated(
-          controller: _scrollController,
-          padding: const EdgeInsets.fromLTRB(0, 12, 0, 80),
-          itemCount: ranked.length,
-          separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5, color: Color(0xFFEEEEEE), indent: 56),
-          itemBuilder: (ctx, i) => _RankCard(
-            rank: i + 1, 
-            santri: ranked[i],
-            isChild: provider.isOrangTua && ranked[i].id == provider.linkedSantriId,
+
+      // Filter by search query
+      if (_searchQuery.isNotEmpty) {
+        ranked = ranked.where((s) => s.name.toLowerCase().contains(_searchQuery.toLowerCase()) || (s.nis?.contains(_searchQuery) ?? false)).toList();
+      }
+
+      return Column(
+        children: [
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              height: _isSearching ? 50 : 0,
+              child: _isSearching 
+                ? TextField(
+                    autofocus: true,
+                    onChanged: (v) => setState(() => _searchQuery = v),
+                    decoration: InputDecoration(
+                      hintText: 'Cari nama santri...',
+                      prefixIcon: const Icon(Icons.search, size: 18),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.close, size: 18),
+                        onPressed: () => setState(() {
+                          _searchQuery = '';
+                          _isSearching = false;
+                        }),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            ),
           ),
-        ),
+          
+          if (!_isSearching)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Leaderboard Santri', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey.shade700)),
+                  IconButton(
+                    onPressed: () => setState(() => _isSearching = true),
+                    icon: const Icon(Icons.search, size: 20, color: AppTheme.primaryGreen),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+            ),
+
+          Expanded(
+            child: ranked.isEmpty 
+              ? _emptyState(Icons.search_off_rounded, 'Santri tidak ditemukan')
+              : RefreshIndicator(
+                  onRefresh: () async => await provider.setupFirestoreListeners(),
+                  child: ListView.separated(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 80),
+                    itemCount: ranked.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5, color: Color(0xFFEEEEEE), indent: 56),
+                    itemBuilder: (ctx, i) => _RankCard(
+                      rank: i + 1, 
+                      santri: ranked[i],
+                      isChild: provider.isOrangTua && ranked[i].id == provider.linkedSantriId,
+                    ),
+                  ),
+                ),
+          ),
+        ],
       );
     });
   }
 }
 
-class _HalaqahRankingTab extends StatelessWidget {
+class _HalaqahRankingTab extends StatefulWidget {
   const _HalaqahRankingTab();
+
+  @override
+  State<_HalaqahRankingTab> createState() => _HalaqahRankingTabState();
+}
+
+class _HalaqahRankingTabState extends State<_HalaqahRankingTab> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Consumer<AppProvider>(builder: (ctx, provider, _) {
       final Map<String, (int ayahs, double score, int count)> stats = {};
       for (var s in provider.santriList) {

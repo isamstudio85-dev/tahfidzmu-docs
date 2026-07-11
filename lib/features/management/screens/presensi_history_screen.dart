@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
@@ -6,17 +7,22 @@ import 'package:tahfidz_app/models/presensi_halaqah.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 
 class PresensiHistoryScreen extends StatefulWidget {
-  const PresensiHistoryScreen({super.key});
+  const PresensiHistoryScreen({super.key, this.hideAppBar = false});
+  final bool hideAppBar;
 
   @override
   State<PresensiHistoryScreen> createState() => _PresensiHistoryScreenState();
 }
 
-class _PresensiHistoryScreenState extends State<PresensiHistoryScreen> {
+class _PresensiHistoryScreenState extends State<PresensiHistoryScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final provider = context.watch<AppProvider>();
     final List<PresensiHalaqah> sortedPresensi = List.from(provider.presensiList)
       ..sort((a, b) => b.tanggal.compareTo(a.tanggal));
@@ -27,43 +33,88 @@ class _PresensiHistoryScreenState extends State<PresensiHistoryScreen> {
       return matchesHalaqah || matchesMusyrif;
     }).toList();
 
+    final body = Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: TextField(
+            decoration: InputDecoration(
+              hintText: 'Cari Halaqah atau Musyrif...',
+              prefixIcon: const Icon(Icons.search, size: 20),
+              filled: true,
+              fillColor: Colors.white,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.grey.shade200),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Colors.grey.shade200),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
+              ),
+            ),
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value;
+              });
+            },
+          ),
+        ),
+        if (widget.hideAppBar)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+            child: Row(
+              children: [
+                Text(
+                  'LOG KEHADIRAN HALAQAH',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold, 
+                    fontSize: 10, 
+                    color: Colors.grey.shade500,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${filteredPresensi.length} Data',
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade400, fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          ),
+        Expanded(
+          child: filteredPresensi.isEmpty
+              ? _buildEmptyState()
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                  itemCount: filteredPresensi.length,
+                  itemBuilder: (context, index) {
+                    final presensi = filteredPresensi[index];
+                    return _PresensiRecordCard(presensi: presensi);
+                  },
+                ),
+        ),
+      ],
+    );
+
+    if (widget.hideAppBar) {
+      return Container(
+        color: const Color(0xFFF8F9FA),
+        child: body,
+      );
+    }
+
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
         title: const Text('Riwayat Presensi Halaqah'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Cari Halaqah atau Musyrif...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-            ),
-          ),
-          Expanded(
-            child: filteredPresensi.isEmpty
-                ? _buildEmptyState()
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: filteredPresensi.length,
-                    itemBuilder: (context, index) {
-                      final presensi = filteredPresensi[index];
-                      return _PresensiRecordCard(presensi: presensi);
-                    },
-                  ),
-          ),
-        ],
-      ),
+      body: body,
     );
   }
 
@@ -103,6 +154,8 @@ class _PresensiRecordCard extends StatelessWidget {
       ),
       elevation: 0,
       child: ExpansionTile(
+        shape: const Border(),
+        collapsedShape: const Border(),
         title: Text(
           presensi.halaqahNama,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),

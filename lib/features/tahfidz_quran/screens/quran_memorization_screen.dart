@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_history_list.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_ranking_list.dart';
+import 'package:tahfidz_app/models/santri.dart' show Santri;
 import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/laporan_screen.dart';
@@ -70,7 +71,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
           labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-          isScrollable: showPresensi, // Scrollable if many tabs
+          isScrollable: false, // Force fixed tabs for cleaner look
           tabs: [
             const Tab(text: 'Riwayat'),
             const Tab(text: 'Peringkat'),
@@ -81,7 +82,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
       ),
       body: TabBarView(
         controller: _tabController,
-        physics: const NeverScrollableScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         children: [
           QuranHistoryList(
             query: _query, 
@@ -91,7 +92,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
           ),
           const QuranRankingList(),
           const _LaporanStatistikTab(),
-          if (showPresensi) const PresensiHistoryScreen(),
+          if (showPresensi) const PresensiHistoryScreen(hideAppBar: true),
         ],
       ),
       floatingActionButton: canAddSetoran
@@ -193,21 +194,51 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
   }
 }
 
-class _LaporanStatistikTab extends StatelessWidget {
+class _LaporanStatistikTab extends StatefulWidget {
   const _LaporanStatistikTab();
+
+  @override
+  State<_LaporanStatistikTab> createState() => _LaporanStatistikTabState();
+}
+
+class _LaporanStatistikTabState extends State<_LaporanStatistikTab> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  List<Santri>? _lastSource;
+  List<SetoranRecord>? _cachedSetorans;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
         final sourceList = provider.isMusyrif && provider.linkedMusyrif != null ? provider.getSantriByMusyrif(provider.linkedMusyrif!.id) : provider.santriList;
         final displayList = provider.isOrangTua 
             ? sourceList.where((s) => s.id == provider.linkedSantriId).toList()
             : sourceList;
-        final setorans = displayList.expand((s) => s.setoranHistory).toList();
+            
+        // Memoize the flattened list
+        if (_lastSource == null || !_areListsEqual(_lastSource!, displayList)) {
+          _lastSource = List.from(displayList);
+          _cachedSetorans = displayList.expand((s) => s.setoranHistory).toList();
+        }
+
+        final setorans = _cachedSetorans ?? [];
+
         if (setorans.isEmpty) return _emptyState(Icons.bar_chart_rounded, 'Belum ada data statistik');
+
         return LaporanScreenBody(setorans: setorans, provider: provider);
       },
     );
+  }
+
+  bool _areListsEqual(List<Santri> a, List<Santri> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i].id != b[i].id || a[i].setoranHistory.length != b[i].setoranHistory.length) return false;
+    }
+    return true;
   }
 
   Widget _emptyState(IconData icon, String msg) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(icon, size: 64, color: Colors.grey.shade200), const SizedBox(height: 16), Text(msg, style: TextStyle(color: Colors.grey.shade400, fontWeight: FontWeight.w500))]));

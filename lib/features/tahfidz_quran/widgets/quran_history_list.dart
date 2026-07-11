@@ -27,7 +27,10 @@ class QuranHistoryList extends StatefulWidget {
   State<QuranHistoryList> createState() => _QuranHistoryListState();
 }
 
-class _QuranHistoryListState extends State<QuranHistoryList> {
+class _QuranHistoryListState extends State<QuranHistoryList> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   bool _isSearching = false;
   bool _onlyMyHalaqah = true; // Toggle between Musyrif's own halaqah and all students
   late TextEditingController _searchController;
@@ -61,6 +64,7 @@ class _QuranHistoryListState extends State<QuranHistoryList> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
         final sourceList = provider.isMusyrif && provider.linkedMusyrif != null && _onlyMyHalaqah

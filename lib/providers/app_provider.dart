@@ -15,6 +15,7 @@ import '../models/error_mark.dart';
 import '../services/quran_service.dart';
 
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
+import 'package:tahfidz_app/core/utils/quran_juz_utils.dart';
 import '../services/login_preferences_service.dart';
 
 import 'auth_mixin.dart';
@@ -246,27 +247,72 @@ class AppProvider extends ChangeNotifier
       await setSantriKehadiranStatus(santriId, 'setoran');
     }
     await triggerSetoranNotification(santriId, record);
+    
+    // INCREMENTAL UPDATE: Don't fetch all history. Update aggregate fields directly.
     final targetSantri = getSantriById(santriId);
     if (targetSantri != null) {
-      final historySnap = await getCollection('santri').doc(santriId).collection('setoranHistory').get();
-      final allRecords = historySnap.docs.map((doc) => SetoranRecord.fromJson(doc.data())).toList();
-      final tempSantri = targetSantri.copyWith(setoranHistory: allRecords);
+      final int currentCount = targetSantri.totalSetoranCount;
+      final double currentAvg = targetSantri.averageScore;
+      final double newAvg = ((currentAvg * currentCount) + record.finalScore) / (currentCount + 1);
+      
+      final currentZiyadah = targetSantri.totalZiyadahAyahs;
+      final currentMurojaah = targetSantri.totalMurojaahAyahs;
+      
+      int addedZiyadah = 0;
+      int addedMurojaah = 0;
+      if (record.type == SetoranType.ziyadah) {
+        addedZiyadah = record.passedAyahs.length;
+      } else {
+        addedMurojaah = record.passedAyahs.length;
+      }
+
+      final Set<int> juzSet = Set.from(targetSantri.juzCoveredByZiyadah);
+      if (record.type == SetoranType.ziyadah) {
+        final jStart = QuranJuzUtils.juzOf(record.surahNumber, record.ayahStart);
+        final jEnd = QuranJuzUtils.juzOf(record.surahNumber, record.ayahEnd);
+        for (int j = jStart; j <= jEnd; j++) {
+          juzSet.add(j);
+        }
+      }
+
+      final double newEstimatedJuz = targetSantri.initialMemorizedJuz.length + ((currentZiyadah + addedZiyadah) / 604.0);
+
       await getCollection('santri').doc(santriId).update({
-        'averageScore': tempSantri.averageScore, 'totalSetoranCount': tempSantri.totalSetoranCount, 'totalErrors': tempSantri.totalErrors, 'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs, 'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs, 'totalFailedAyahs': tempSantri.totalFailedAyahs, 'estimatedJuz': tempSantri.estimatedJuz, 'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
+        'averageScore': newAvg,
+        'totalSetoranCount': currentCount + 1,
+        'totalErrors': FieldValue.increment(record.totalErrors),
+        'totalZiyadahAyahs': currentZiyadah + addedZiyadah,
+        'totalMurojaahAyahs': currentMurojaah + addedMurojaah,
+        'totalFailedAyahs': FieldValue.increment(record.failedAyahs.length),
+        'estimatedJuz': newEstimatedJuz,
+        'juzCoveredByZiyadah': juzSet.toList()..sort(),
+        'lastSetoranAt': record.date.toIso8601String(),
       });
     }
     notifyListeners();
   }
 
   Future<void> deleteSetoranRecord(String santriId, String recordId) async {
+    // Note: Deletion still needs a full re-calc for absolute accuracy if we don't have the old record's values easily
     await getCollection('santri').doc(santriId).collection('setoranHistory').doc(recordId).delete();
     final targetSantri = getSantriById(santriId);
     if (targetSantri != null) {
       final historySnap = await getCollection('santri').doc(santriId).collection('setoranHistory').get();
       final allRecords = historySnap.docs.map((doc) => SetoranRecord.fromJson(doc.data())).toList();
       final tempSantri = targetSantri.copyWith(setoranHistory: allRecords);
+      
+      final lastDate = allRecords.isEmpty ? null : allRecords.first.date.toIso8601String();
+
       await getCollection('santri').doc(santriId).update({
-        'averageScore': tempSantri.averageScore, 'totalSetoranCount': tempSantri.totalSetoranCount, 'totalErrors': tempSantri.totalErrors, 'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs, 'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs, 'totalFailedAyahs': tempSantri.totalFailedAyahs, 'estimatedJuz': tempSantri.estimatedJuz, 'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
+        'averageScore': tempSantri.averageScore, 
+        'totalSetoranCount': tempSantri.totalSetoranCount, 
+        'totalErrors': tempSantri.totalErrors, 
+        'totalZiyadahAyahs': tempSantri.totalZiyadahAyahs, 
+        'totalMurojaahAyahs': tempSantri.totalMurojaahAyahs, 
+        'totalFailedAyahs': tempSantri.totalFailedAyahs, 
+        'estimatedJuz': tempSantri.estimatedJuz, 
+        'juzCoveredByZiyadah': tempSantri.juzCoveredByZiyadah,
+        'lastSetoranAt': lastDate,
       });
     }
     notifyListeners();

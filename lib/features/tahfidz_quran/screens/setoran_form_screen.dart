@@ -669,7 +669,9 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
       ? _selectedSantri 
       : await VerificationGate.show(context: context, expectedSantri: _selectedSantri);
 
-    if (verified != null && context.mounted) {
+    if (!mounted) return;
+
+    if (verified != null) {
       final maxAyah = _selectedSurah!.numberOfAyahs;
       final targetEnd = (_ayahStart + 9).clamp(_ayahStart, maxAyah);
       provider.startSetoranSession(
@@ -679,7 +681,9 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
         ayahStart: _ayahStart, 
         ayahEnd: targetEnd,
       );
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const QuranReaderScreen()));
+      if (mounted) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const QuranReaderScreen()));
+      }
     }
   }
 

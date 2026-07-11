@@ -273,6 +273,11 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
                           ListView(
                             padding: const EdgeInsets.all(16),
                             children: [
+                              _buildProgressCard(santri),
+                              const SizedBox(height: 24),
+                              
+                              _sectionHeader('Statistik Detail'),
+                              const SizedBox(height: 12),
                               Row(
                                 children: [
                                   _statItem('Rata-rata', avg.toStringAsFixed(0), Icons.bar_chart_rounded, AppTheme.gold),
@@ -357,6 +362,113 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
         style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey.shade800),
       ),
     );
+  }
+
+  Widget _buildProgressCard(Santri santri) {
+    final double percentage = (santri.estimatedJuz / 30.0).clamp(0.0, 1.0);
+    final String lastSetoranStr = santri.lastSetoranAt != null 
+        ? _formatTimeAgo(santri.lastSetoranAt!) 
+        : 'Belum pernah';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppTheme.primaryGreen, AppTheme.primaryGreen.withValues(alpha: 0.8)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryGreen.withValues(alpha: 0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'PROGRES 30 JUZ',
+                      style: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${(percentage * 100).toStringAsFixed(1)}%',
+                      style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        santri.juzCoveredText,
+                        style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: CircularProgressIndicator(
+                      value: percentage,
+                      strokeWidth: 8,
+                      backgroundColor: Colors.white24,
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                  const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 28),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Divider(color: Colors.white24, height: 1),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _miniProgressInfo('Setoran Terakhir', lastSetoranStr),
+              _miniProgressInfo('Status', santri.isAktif ? 'Aktif Belajar' : 'Cuti/Non-aktif'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _miniProgressInfo(String label, String val) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(color: Colors.white60, fontSize: 9, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 2),
+        Text(val, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  String _formatTimeAgo(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inDays == 0) return 'Hari ini';
+    if (diff.inDays == 1) return 'Kemarin';
+    if (diff.inDays < 7) return '${diff.inDays} hari lalu';
+    return '${(diff.inDays / 7).floor()} minggu lalu';
   }
 
   Widget _infoCard(List<Widget> children) {
@@ -495,34 +607,26 @@ class _ProfileHeader extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [
-            AppTheme.primaryGreen.withValues(alpha: 0.8),
-            AppTheme.darkGreen,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.darkGreen.withValues(alpha: 0.2),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // SQUIRCLE AVATAR IN HEADER
+          // SQUIRCLE AVATAR (Now with subtle color to pop on white)
           Container(
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 2),
+              color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(24),
               image: photoPath != null
                   ? DecorationImage(image: NetworkImage(photoPath!), fit: BoxFit.cover)
                   : null,
@@ -531,7 +635,7 @@ class _ProfileHeader extends StatelessWidget {
                 ? Center(
                     child: Text(
                       name[0].toUpperCase(),
-                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
                     ),
                   )
                 : null,
@@ -542,7 +646,7 @@ class _ProfileHeader extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.bold, 
               fontSize: 18, 
-              color: Colors.white,
+              color: Colors.black87,
               letterSpacing: 0.5,
             ),
             textAlign: TextAlign.center,
@@ -552,7 +656,7 @@ class _ProfileHeader extends StatelessWidget {
           Text(
             subtitle,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8), 
+              color: Colors.grey.shade600,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),

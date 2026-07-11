@@ -33,6 +33,7 @@ class Santri {
   final int? totalFailedAyahsField;
   final double? estimatedJuzField;
   final List<int>? juzCoveredByZiyadahField;
+  final String? lastSetoranAtField;
 
   // Backward-compat getters so old references still compile
   String? get nik => nis;
@@ -66,6 +67,7 @@ class Santri {
     this.totalFailedAyahsField,
     this.estimatedJuzField,
     this.juzCoveredByZiyadahField,
+    this.lastSetoranAtField,
   });
 
   bool get isAktif => status == 'aktif';
@@ -96,6 +98,7 @@ class Santri {
     int? totalFailedAyahsField,
     double? estimatedJuzField,
     List<int>? juzCoveredByZiyadahField,
+    String? lastSetoranAtField,
     // old-name aliases
     String? nik,
     String? namaOrtu,
@@ -128,6 +131,7 @@ class Santri {
       totalFailedAyahsField: totalFailedAyahsField ?? this.totalFailedAyahsField,
       estimatedJuzField: estimatedJuzField ?? this.estimatedJuzField,
       juzCoveredByZiyadahField: juzCoveredByZiyadahField ?? this.juzCoveredByZiyadahField,
+      lastSetoranAtField: lastSetoranAtField ?? this.lastSetoranAtField,
     );
   }
 
@@ -161,6 +165,12 @@ class Santri {
   int get totalSetoranCount => totalSetoranCountField ?? setoranHistory.length;
 
   int get totalErrors => totalErrorsField ?? setoranHistory.fold<int>(0, (sum, s) => sum + s.totalErrors);
+
+  DateTime? get lastSetoranAt {
+    if (lastSetoranAtField != null) return DateTime.tryParse(lastSetoranAtField!);
+    if (setoranHistory.isEmpty) return null;
+    return setoranHistory.first.date;
+  }
 
   // ── Hafalan accumulation ──────────────────────────────────────────────────
 
@@ -244,6 +254,7 @@ class Santri {
     'totalFailedAyahs': totalFailedAyahs,
     'estimatedJuz': estimatedJuz,
     'juzCoveredByZiyadah': juzCoveredByZiyadah,
+    'lastSetoranAt': lastSetoranAtField,
   };
 
   factory Santri.fromJson(Map<String, dynamic> json) => Santri(
@@ -286,5 +297,6 @@ class Santri {
     juzCoveredByZiyadahField: (json['juzCoveredByZiyadah'] as List?)
             ?.map((e) => e as int)
             .toList(),
+    lastSetoranAtField: json['lastSetoranAt'] as String?,
   );
 }

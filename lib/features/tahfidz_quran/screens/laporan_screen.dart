@@ -9,6 +9,11 @@ import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/quran_memorization_screen.dart';
 
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'package:http/http.dart' as http;
+
 class LaporanScreen extends StatelessWidget {
   const LaporanScreen({super.key});
   @override
@@ -26,8 +31,59 @@ class LaporanScreenBody extends StatefulWidget {
   State<LaporanScreenBody> createState() => _LaporanScreenBodyState();
 }
 
-class _LaporanScreenBodyState extends State<LaporanScreenBody> {
+class _LaporanScreenBodyState extends State<LaporanScreenBody> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   DateTime _selectedDate = DateTime.now();
+  String _searchQuery = '';
+  String? _selectedHalaqahId;
+  
+  // Cache for attendance stats: Map<SantriId, Map<Status, Count>>
+  Map<String, Map<String, int>> _attendanceCache = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _calculateAttendanceCache();
+  }
+
+  @override
+  void didUpdateWidget(LaporanScreenBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.provider.presensiList != widget.provider.presensiList) {
+      _calculateAttendanceCache();
+    }
+  }
+
+  void _calculateAttendanceCache() {
+    final Map<String, Map<String, int>> newCache = {};
+    final monthPresensi = widget.provider.presensiList.where((p) => 
+      p.tanggal.month == _selectedDate.month && 
+      p.tanggal.year == _selectedDate.year
+    ).toList();
+
+    for (var s in widget.provider.santriList) {
+      int h = 0, sakit = 0, izin = 0, alfa = 0;
+      for (var p in monthPresensi) {
+        final status = p.daftarHadir[s.id];
+        if (status == 'setoran' || status == 'ditunda') {
+          h++;
+        } else if (status == 'sakit') {
+          sakit++;
+        } else if (status == 'izin') {
+          izin++;
+        } else if (status == 'alfa') {
+          alfa++;
+        }
+      }
+      newCache[s.id] = {'H': h, 'S': sakit, 'I': izin, 'A': alfa};
+    }
+
+    setState(() {
+      _attendanceCache = newCache;
+    });
+  }
 
   List<SetoranRecord> get _filteredSetorans {
     return widget.setorans.where((s) => 
@@ -38,6 +94,7 @@ class _LaporanScreenBodyState extends State<LaporanScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final filtered = _filteredSetorans;
     final ziyadah = filtered.where((s) => s.type == SetoranType.ziyadah).length;
     final murojaah = filtered.length - ziyadah;
@@ -143,9 +200,12 @@ class _LaporanScreenBodyState extends State<LaporanScreenBody> {
         children: [
           IconButton(
             icon: const Icon(Icons.chevron_left),
-            onPressed: () => setState(() {
-              _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1);
-            }),
+            onPressed: () {
+              setState(() {
+                _selectedDate = DateTime(_selectedDate.year, _selectedDate.month - 1);
+              });
+              _calculateAttendanceCache();
+            },
           ),
           Column(
             children: [
@@ -161,9 +221,12 @@ class _LaporanScreenBodyState extends State<LaporanScreenBody> {
           ),
           IconButton(
             icon: const Icon(Icons.chevron_right),
-            onPressed: () => setState(() {
-              _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1);
-            }),
+            onPressed: () {
+              setState(() {
+                _selectedDate = DateTime(_selectedDate.year, _selectedDate.month + 1);
+              });
+              _calculateAttendanceCache();
+            },
           ),
         ],
       ),
@@ -175,13 +238,17 @@ class _LaporanScreenBodyState extends State<LaporanScreenBody> {
   }
 
   Widget _buildDetailedSantriAttendance() {
-    final santriList = widget.provider.santriList;
-    if (santriList.isEmpty) return const SizedBox.shrink();
+    var santriList = widget.provider.santriList;
+    
+    // Apply filters
+    if (_selectedHalaqahId != null) {
+      santriList = santriList.where((s) => s.halaqahId == _selectedHalaqahId).toList();
+    }
+    if (_searchQuery.isNotEmpty) {
+      santriList = santriList.where((s) => s.name.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+    }
 
-    final monthPresensi = widget.provider.presensiList.where((p) => 
-      p.tanggal.month == _selectedDate.month && 
-      p.tanggal.year == _selectedDate.year
-    ).toList();
+    if (santriList.isEmpty) return const SizedBox.shrink();
 
     return _sectionCard(
       backgroundColor: Colors.white,
@@ -189,43 +256,77 @@ class _LaporanScreenBodyState extends State<LaporanScreenBody> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Rekap Per Santri', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Rekap Per Santri', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87)),
+              Text('${santriList.length} Santri', style: const TextStyle(fontSize: 10, color: Colors.grey)),
+            ],
+          ),
           const SizedBox(height: 12),
+          
+          // Filters
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  onChanged: (v) => setState(() => _searchQuery = v),
+                  style: const TextStyle(fontSize: 12),
+                  decoration: InputDecoration(
+                    hintText: 'Cari nama...',
+                    prefixIcon: const Icon(Icons.search, size: 16),
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: DropdownButton<String?>(
+                  value: _selectedHalaqahId,
+                  underline: const SizedBox(),
+                  hint: const Text('Semua', style: TextStyle(fontSize: 11)),
+                  icon: const Icon(Icons.filter_list_rounded, size: 16),
+                  style: const TextStyle(fontSize: 11, color: Colors.black87),
+                  items: [
+                    const DropdownMenuItem(value: null, child: Text('Semua Halaqah')),
+                    ...widget.provider.halaqahList.map((h) => DropdownMenuItem(value: h.id, child: Text(h.nama))),
+                  ],
+                  onChanged: (v) => setState(() => _selectedHalaqahId = v),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: santriList.length,
-            separatorBuilder: (_, __) => const Divider(height: 20),
+            separatorBuilder: (_, __) => const Divider(height: 16, thickness: 0.5),
             itemBuilder: (ctx, i) {
               final s = santriList[i];
-              int h = 0, sCount = 0, iCount = 0, a = 0;
+              final stats = _attendanceCache[s.id] ?? {'H': 0, 'S': 0, 'I': 0, 'A': 0};
               
-              for (var p in monthPresensi) {
-                final status = p.daftarHadir[s.id];
-                if (status == 'setoran' || status == 'ditunda') {
-                  h++;
-                } else if (status == 'sakit') {
-                  sCount++;
-                } else if (status == 'izin') {
-                  iCount++;
-                } else if (status == 'alfa') {
-                  a++;
-                }
-              }
-
               return Row(
                 children: [
                   Expanded(
                     flex: 3,
                     child: Text(s.name, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis),
                   ),
-                  _miniBadge('$h H', Colors.green),
+                  _miniBadge('${stats['H']} H', Colors.green),
                   const SizedBox(width: 4),
-                  _miniBadge('$sCount S', Colors.orange),
+                  _miniBadge('${stats['S']} S', Colors.orange),
                   const SizedBox(width: 4),
-                  _miniBadge('$iCount I', Colors.blue),
+                  _miniBadge('${stats['I']} I', Colors.blue),
                   const SizedBox(width: 4),
-                  _miniBadge('$a A', Colors.red),
+                  _miniBadge('${stats['A']} A', Colors.red),
                 ],
               );
             },
@@ -349,14 +450,232 @@ class _LaporanScreenBodyState extends State<LaporanScreenBody> {
   }
 
   Widget _buildExportButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        icon: const Icon(Icons.description_outlined),
-        label: const Text('SALIN REKAP TEKS (BULANAN)'),
-        onPressed: _exportMonthlySummary,
-      ),
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          height: 54,
+          child: FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppTheme.primaryGreen,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            ),
+            icon: const Icon(Icons.picture_as_pdf_rounded),
+            label: const Text('CETAK RAPOR PDF (RESMI)', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
+            onPressed: _generatePdfReport,
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.grey.shade700,
+              side: BorderSide(color: Colors.grey.shade300),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            ),
+            icon: const Icon(Icons.copy_all_rounded, size: 18),
+            label: const Text('Salin Ringkasan Teks (WhatsApp)', style: TextStyle(fontSize: 12)),
+            onPressed: _exportMonthlySummary,
+          ),
+        ),
+      ],
     );
+  }
+
+  Future<void> _generatePdfReport() async {
+    final pdf = pw.Document();
+    final monthName = _getMonthName(_selectedDate);
+    final santriList = widget.provider.santriList;
+    final info = widget.provider.pesantrenInfo;
+
+    try {
+      // ── PREPARE LOGOS ──────────────────────────────────────────────────────
+      pw.MemoryImage? logoPesantren;
+      pw.MemoryImage? logoTahfidzMu;
+
+      try {
+        final tahfidzMuBytes = await rootBundle.load('assets/images/TahfidzMU-logo.png');
+        logoTahfidzMu = pw.MemoryImage(tahfidzMuBytes.buffer.asUint8List());
+      } catch (e) {
+        debugPrint('Error loading TahfidzMU logo: $e');
+      }
+
+      if (info.logoPath.isNotEmpty) {
+        try {
+          if (info.logoPath.startsWith('http')) {
+            final response = await http.get(Uri.parse(info.logoPath)).timeout(const Duration(seconds: 5));
+            if (response.statusCode == 200) {
+              logoPesantren = pw.MemoryImage(response.bodyBytes);
+            }
+          }
+        } catch (e) {
+          debugPrint('Error loading Pesantren logo: $e');
+        }
+      }
+
+      // ── BUILD PDF ──────────────────────────────────────────────────────────
+      pdf.addPage(
+        pw.MultiPage(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(32),
+          build: (pw.Context context) {
+            return [
+              // OFFICIAL HEADER (KOP SURAT)
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  // Pesantren Logo (LEFT)
+                  if (logoPesantren != null)
+                    pw.Container(
+                      width: 65,
+                      height: 60,
+                      margin: const pw.EdgeInsets.only(right: 12),
+                      child: pw.Image(logoPesantren, fit: pw.BoxFit.contain),
+                    ),
+                  
+                  // Pesantren Info (CENTER)
+                  pw.Expanded(
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          info.nama.toUpperCase(),
+                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.SizedBox(height: 2),
+                        pw.Text(info.alamat, style: const pw.TextStyle(fontSize: 8)),
+                        pw.Text(
+                          'Telp: ${info.noTelp} | Email: ${info.email}',
+                          style: const pw.TextStyle(fontSize: 8),
+                        ),
+                        if (info.website.isNotEmpty)
+                          pw.Text('Website: ${info.website}', style: const pw.TextStyle(fontSize: 8)),
+                      ],
+                    ),
+                  ),
+
+                  // TahfidzMU Logo (RIGHT)
+                  if (logoTahfidzMu != null)
+                    pw.Container(
+                      width: 45,
+                      height: 45,
+                      margin: const pw.EdgeInsets.only(left: 12),
+                      child: pw.Image(logoTahfidzMu, fit: pw.BoxFit.contain),
+                    ),
+                ],
+              ),
+              pw.SizedBox(height: 6),
+              pw.Divider(thickness: 2, color: PdfColors.black),
+              pw.SizedBox(height: 1),
+              pw.Divider(thickness: 0.5, color: PdfColors.black),
+              pw.SizedBox(height: 20),
+
+              // REPORT TITLE
+              pw.Center(
+                child: pw.Column(
+                  children: [
+                    pw.Text(
+                      'LAPORAN PERKEMBANGAN TAHFIDZ AL-QURAN',
+                      style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
+                    ),
+                    pw.Text(
+                      'PERIODE: $monthName ${_selectedDate.year}'.toUpperCase(),
+                      style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              pw.SizedBox(height: 24),
+
+              // SUMMARY TABLE
+              pw.Text('I. RINGKASAN KOLEKTIF', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11)),
+              pw.SizedBox(height: 8),
+              pw.TableHelper.fromTextArray(
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                headerDecoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                headerHeight: 25,
+                cellHeight: 18,
+                cellStyle: const pw.TextStyle(fontSize: 9),
+                cellAlignments: {
+                  0: pw.Alignment.centerLeft,
+                  1: pw.Alignment.center,
+                },
+                headers: ['Kategori Statistik', 'Nilai / Jumlah'],
+                data: [
+                  ['Total Sesi Setoran', _filteredSetorans.length.toString()],
+                  ['Total Ziyadah (Hafalan Baru)', _filteredSetorans.where((s) => s.type == SetoranType.ziyadah).length.toString()],
+                  ['Total Murojaah (Mengulang)', _filteredSetorans.where((s) => s.type == SetoranType.murojaah).length.toString()],
+                  ['Rata-rata Skor Kelancaran', (widget.setorans.isEmpty ? 0.0 : widget.setorans.map((s) => s.finalScore).reduce((a,b)=>a+b)/widget.setorans.length).toStringAsFixed(1)],
+                ],
+              ),
+              pw.SizedBox(height: 24),
+
+              // DETAILED LIST
+              pw.Text('II. REKAP KEHADIRAN & PROGRES SANTRI', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 11)),
+              pw.SizedBox(height: 8),
+              pw.TableHelper.fromTextArray(
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                headerDecoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
+                cellStyle: const pw.TextStyle(fontSize: 8.5),
+                columnWidths: {
+                  0: const pw.FlexColumnWidth(3),
+                  1: const pw.FixedColumnWidth(40),
+                  2: const pw.FixedColumnWidth(40),
+                  3: const pw.FixedColumnWidth(40),
+                  4: const pw.FixedColumnWidth(40),
+                  5: const pw.FixedColumnWidth(50),
+                },
+                headers: ['Nama Santri', 'Hadir', 'Sakit', 'Izin', 'Alfa', 'Total Juz'],
+                data: santriList.map((s) {
+                  final stats = _attendanceCache[s.id] ?? {'H': 0, 'S': 0, 'I': 0, 'A': 0};
+                  return [
+                    s.name,
+                    stats['H'].toString(),
+                    stats['S'].toString(),
+                    stats['I'].toString(),
+                    stats['A'].toString(),
+                    s.estimatedJuz.toStringAsFixed(1),
+                  ];
+                }).toList(),
+              ),
+
+              pw.SizedBox(height: 40),
+              // FOOTER SIGNATURE
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.end,
+                children: [
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Text('Dicetak pada: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}', style: const pw.TextStyle(fontSize: 7)),
+                      pw.SizedBox(height: 12),
+                      pw.Text('Mengetahui,', style: const pw.TextStyle(fontSize: 9)),
+                      pw.Text('Admin / Musyrif Koordinator', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9)),
+                      pw.SizedBox(height: 45),
+                      pw.Text('__________________________', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      pw.Text(info.pimpinan.isNotEmpty ? info.pimpinan : '( Nama Terang )', style: const pw.TextStyle(fontSize: 9)),
+                    ],
+                  ),
+                ],
+              ),
+            ];
+          },
+        ),
+      );
+
+      await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf.save(),
+        name: 'Laporan_Tahfidz_$monthName.pdf',
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal membuat PDF: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   void _exportMonthlySummary() {
