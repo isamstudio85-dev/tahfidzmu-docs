@@ -15,7 +15,10 @@ class MusyrifListScreen extends StatefulWidget {
   State<MusyrifListScreen> createState() => _MusyrifListScreenState();
 }
 
-class _MusyrifListScreenState extends State<MusyrifListScreen> {
+class _MusyrifListScreenState extends State<MusyrifListScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
 
@@ -27,6 +30,7 @@ class _MusyrifListScreenState extends State<MusyrifListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final provider = context.watch<AppProvider>();
     final isAdmin = provider.isAdmin;
     final showAppBar = !widget.hideAppBar;

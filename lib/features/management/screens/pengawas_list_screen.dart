@@ -13,7 +13,10 @@ class PengawasListScreen extends StatefulWidget {
   State<PengawasListScreen> createState() => _PengawasListScreenState();
 }
 
-class _PengawasListScreenState extends State<PengawasListScreen> {
+class _PengawasListScreenState extends State<PengawasListScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
 
@@ -25,6 +28,7 @@ class _PengawasListScreenState extends State<PengawasListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final provider = context.watch<AppProvider>();
     final isAdmin = provider.isAdmin;
     final showAppBar = !widget.hideAppBar;

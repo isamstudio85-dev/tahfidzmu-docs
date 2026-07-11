@@ -19,7 +19,10 @@ class SantriListScreen extends StatefulWidget {
   State<SantriListScreen> createState() => _SantriListScreenState();
 }
 
-class _SantriListScreenState extends State<SantriListScreen> {
+class _SantriListScreenState extends State<SantriListScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
   String? _selectedHalaqahId;
@@ -32,6 +35,7 @@ class _SantriListScreenState extends State<SantriListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final provider = context.watch<AppProvider>();
     final canManage = provider.isAdmin;
     final showAppBar = !widget.hideAppBar;

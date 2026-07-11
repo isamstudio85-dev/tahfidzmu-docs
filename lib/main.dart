@@ -211,34 +211,37 @@ class _AppBootstrapLoadingScreenState
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'DEVELOPED BY',
-                      style: GoogleFonts.poppins(
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade400,
-                        letterSpacing: 2.0,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Image.asset(
-                      'assets/images/isam-logo.png',
-                      height: 36,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => Text(
-                        'iSam',
+                padding: const EdgeInsets.only(bottom: 32.0),
+                child: Opacity(
+                  opacity: 0.5, // Make it more discreet
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'created by',
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryGreen,
+                          fontSize: 8,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade500,
+                          letterSpacing: 1.0,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 6),
+                      Image.asset(
+                        'assets/images/isam-logo.png',
+                        height: 18, // Much smaller, professional look
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => Text(
+                          'iSam',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

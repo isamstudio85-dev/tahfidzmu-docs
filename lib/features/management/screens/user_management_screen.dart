@@ -26,12 +26,7 @@ class UserManagementScreen extends StatelessWidget {
           children: [
             Icon(Icons.stars_rounded, size: 16),
             SizedBox(width: 4),
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text('Halaqah', style: TextStyle(fontSize: 12)),
-              ),
-            ),
+            Text('Halaqah', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           ],
         ),
       ));
@@ -44,12 +39,7 @@ class UserManagementScreen extends StatelessWidget {
           children: [
             Icon(Icons.people_alt_rounded, size: 16),
             SizedBox(width: 4),
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text('Santri', style: TextStyle(fontSize: 12)),
-              ),
-            ),
+            Text('Santri', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           ],
         ),
       ));
@@ -62,12 +52,7 @@ class UserManagementScreen extends StatelessWidget {
           children: [
             Icon(Icons.people_alt_rounded, size: 16),
             SizedBox(width: 4),
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text('Santri', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
+            Text('Santri', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           ],
         ),
       ));
@@ -75,18 +60,13 @@ class UserManagementScreen extends StatelessWidget {
     }
  
     // Musyrif Tab (Common for both roles)
-    tabs.add(Tab(
+    tabs.add(const Tab(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.person_pin_rounded, size: 16),
-          const SizedBox(width: 4),
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(isMusyrif ? 'Musyrif' : 'Musyrif', style: const TextStyle(fontSize: 12)),
-            ),
-          ),
+          Icon(Icons.person_pin_rounded, size: 16),
+          SizedBox(width: 4),
+          Text('Musyrif', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
     ));
@@ -100,12 +80,7 @@ class UserManagementScreen extends StatelessWidget {
           children: [
             Icon(Icons.visibility_rounded, size: 16),
             SizedBox(width: 4),
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text('Pengawas', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
+            Text('Pengawas', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           ],
         ),
       ));
@@ -124,13 +99,13 @@ class UserManagementScreen extends StatelessWidget {
             indicatorWeight: 3,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
-            labelPadding: const EdgeInsets.symmetric(horizontal: 4), // Maximum horizontal space allocation
-            isScrollable: false, // Stretch tabs across screen width, no horizontal scroll
+            labelPadding: EdgeInsets.zero, // Equal width allocation
+            isScrollable: false,
             tabs: tabs,
           ),
         ),
         body: TabBarView(
-          physics: const NeverScrollableScrollPhysics(), // Disable swiping/sliding
+          physics: const BouncingScrollPhysics(),
           children: views,
         ),
       ),
