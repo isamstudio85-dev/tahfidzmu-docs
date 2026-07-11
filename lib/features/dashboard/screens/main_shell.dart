@@ -22,7 +22,10 @@ class _MainShellState extends State<MainShell> {
   int _index = 0;
   UserRole? _lastRole;
 
-  List<Widget> _getScreens(UserRole role) {
+  List<Widget> _getScreens(AppProvider provider) {
+    final role = provider.currentRole;
+    final isKoordinator = provider.linkedMusyrif?.isKoordinator ?? false;
+
     switch (role) {
       case UserRole.admin:
         return [
@@ -33,6 +36,22 @@ class _MainShellState extends State<MainShell> {
           const ProfilScreen(),             // 4
         ];
       case UserRole.musyrif:
+        if (isKoordinator) {
+          return [
+            const HomeScreen(),               // 0
+            const UserManagementScreen(),     // 1
+            const QuranMemorizationScreen(),  // 2 (Center)
+            const ManajemenScreen(),          // 3
+            const ProfilScreen(),             // 4
+          ];
+        }
+        return [
+          const HomeScreen(),               // 0
+          const UserManagementScreen(),     // 1
+          const QuranMemorizationScreen(),  // 2 (Center)
+          const PresensiHistoryScreen(),    // 3
+          const ProfilScreen(),             // 4
+        ];
       case UserRole.pengawas:
         return [
           const HomeScreen(),               // 0
@@ -56,6 +75,7 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final role = provider.currentRole;
+    final isKoordinator = provider.linkedMusyrif?.isKoordinator ?? false;
 
     if (role == null) {
       return const Scaffold(
@@ -68,7 +88,7 @@ class _MainShellState extends State<MainShell> {
       _index = 0;
     }
 
-    final screens = _getScreens(role);
+    final screens = _getScreens(provider);
     final bool isFiveMenu = role != UserRole.orangTua;
     final int safeIndex = _index.clamp(0, screens.length - 1);
 
@@ -96,7 +116,7 @@ class _MainShellState extends State<MainShell> {
                       _navItem(0, Icons.home_outlined, Icons.home_rounded, 'Beranda'),
                       _navItem(1, Icons.group_outlined, Icons.group_rounded, 'Pengguna'),
                       _centerLogoItem(2),
-                      _navItem(3, Icons.assignment_outlined, Icons.assignment_rounded, role == UserRole.admin ? 'Kelola' : 'Riwayat'),
+                      _navItem(3, Icons.assignment_outlined, Icons.assignment_rounded, (role == UserRole.admin || isKoordinator) ? 'Kelola' : 'Riwayat'),
                       _navItem(4, Icons.person_outline_rounded, Icons.person_rounded, 'Profil'),
                     ],
                   )

@@ -10,6 +10,13 @@ class MusyrifData {
   final String? email;
   final String status; // 'aktif' / 'nonaktif'
   final String? catatan;
+  
+  /// Whether this musyrif has administrative privileges (can manage others).
+  final bool isKoordinator;
+  
+  /// List of halaqah IDs that this coordinator is responsible for.
+  /// If empty and isKoordinator is true, they might manage everything (depending on pesantren size).
+  final List<String> managedHalaqahIds;
 
   const MusyrifData({
     required this.id,
@@ -23,6 +30,8 @@ class MusyrifData {
     this.email,
     this.status = 'aktif',
     this.catatan,
+    this.isKoordinator = false,
+    this.managedHalaqahIds = const [],
   });
 
   bool get isAktif => status == 'aktif';
@@ -38,6 +47,8 @@ class MusyrifData {
     String? email,
     String? status,
     String? catatan,
+    bool? isKoordinator,
+    List<String>? managedHalaqahIds,
   }) {
     return MusyrifData(
       id: id,
@@ -51,6 +62,8 @@ class MusyrifData {
       email: email ?? this.email,
       status: status ?? this.status,
       catatan: catatan ?? this.catatan,
+      isKoordinator: isKoordinator ?? this.isKoordinator,
+      managedHalaqahIds: managedHalaqahIds ?? this.managedHalaqahIds,
     );
   }
 
@@ -66,6 +79,8 @@ class MusyrifData {
     'email': email,
     'status': status,
     'catatan': catatan,
+    'isKoordinator': isKoordinator,
+    'managedHalaqahIds': managedHalaqahIds,
   };
 
   factory MusyrifData.fromJson(Map<String, dynamic> json) => MusyrifData(
@@ -80,5 +95,7 @@ class MusyrifData {
     email: json['email'] as String?,
     status: (json['status'] as String?) ?? 'aktif',
     catatan: json['catatan'] as String?,
+    isKoordinator: json['isKoordinator'] as bool? ?? false,
+    managedHalaqahIds: (json['managedHalaqahIds'] as List?)?.map((e) => e.toString()).toList() ?? [],
   );
 }

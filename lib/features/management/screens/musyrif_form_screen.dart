@@ -36,6 +36,8 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
   String? _photoPath;
   bool _showAccountInfo = false;
   bool _isSaving = false;
+  bool _isKoordinator = false;
+  List<String> _managedHalaqahIds = [];
 
   bool get _isEdit => widget.existing != null;
 
@@ -53,6 +55,8 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
     _jenisKelamin = m?.jenisKelamin ?? 'L';
     _status = m?.status ?? 'aktif';
     _photoPath = m?.photoPath;
+    _isKoordinator = m?.isKoordinator ?? false;
+    _managedHalaqahIds = List.from(m?.managedHalaqahIds ?? []);
   }
 
   @override
@@ -218,6 +222,8 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
         status: _status,
         photoPath: _photoPath,
         email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
+        isKoordinator: _isKoordinator,
+        managedHalaqahIds: _managedHalaqahIds,
       );
 
       if (_isEdit) {
@@ -369,6 +375,7 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AppProvider>();
     return Scaffold(
       appBar: AppBar(
         title: Text(_isEdit ? 'Edit Musyrif' : 'Tambah Musyrif'),
@@ -535,6 +542,33 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
             ),
 
             const SizedBox(height: 24),
+            _section('Hak Akses (Peran)'),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: _isKoordinator ? AppTheme.primaryGreen.withValues(alpha: 0.05) : Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: _isKoordinator ? AppTheme.primaryGreen.withValues(alpha: 0.2) : Colors.grey.shade200),
+              ),
+              child: SwitchListTile(
+                value: _isKoordinator,
+                activeThumbColor: AppTheme.primaryGreen,
+                title: const Text('Angkat Sebagai Administrator (Koordinator)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                subtitle: const Text('Koordinator dapat menginput santri baru dan mengelola beberapa halaqah sekaligus.', style: TextStyle(fontSize: 10)),
+                onChanged: (v) => setState(() => _isKoordinator = v),
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+
+            if (_isKoordinator) ...[
+              const SizedBox(height: 16),
+              _labelText('Tanggung Jawab Halaqah'),
+              const SizedBox(height: 8),
+              _buildManagedHalaqahSelector(provider),
+            ],
+
+            const SizedBox(height: 24),
             InkWell(
               onTap: () => setState(() => _showAccountInfo = !_showAccountInfo),
               child: Padding(
@@ -607,6 +641,45 @@ class _MusyrifFormScreenState extends State<MusyrifFormScreen> {
             const SizedBox(height: 24),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildManagedHalaqahSelector(AppProvider provider) {
+    if (provider.halaqahList.isEmpty) {
+      return const Text('Belum ada data halaqah', style: TextStyle(fontSize: 12, color: Colors.grey));
+    }
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: provider.halaqahList.length,
+        separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
+        itemBuilder: (context, index) {
+          final h = provider.halaqahList[index];
+          final isChecked = _managedHalaqahIds.contains(h.id);
+          return CheckboxListTile(
+            value: isChecked,
+            activeColor: AppTheme.primaryGreen,
+            title: Text(h.nama, style: const TextStyle(fontSize: 13)),
+            subtitle: Text(provider.getMusyrifById(h.musyrifId)?.nama ?? 'Tanpa Pembimbing', style: const TextStyle(fontSize: 10)),
+            onChanged: (val) {
+              setState(() {
+                if (val == true) {
+                  _managedHalaqahIds.add(h.id);
+                } else {
+                  _managedHalaqahIds.remove(h.id);
+                }
+              });
+            },
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          );
+        },
       ),
     );
   }
