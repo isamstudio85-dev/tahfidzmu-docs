@@ -465,19 +465,31 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
 
   Widget _buildFluencyPicker() {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.grey.shade200)),
+      decoration: BoxDecoration(
+        color: AppTheme.gold.withValues(alpha: 0.05), 
+        borderRadius: BorderRadius.circular(16), 
+        border: Border.all(color: AppTheme.gold.withValues(alpha: 0.2))
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Tingkat Kelancaran:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          Text(
+            'Tingkat Kelancaran:', 
+            style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.amber.shade900)
+          ),
+          const SizedBox(height: 12),
           StarRatingWidget(
             rating: _fluencyRating, 
             onChanged: (v) => setState(() => _fluencyRating = v),
-            size: 32,
+            size: 36,
           ),
-          const SizedBox(height: 4),
-          Text(_getFluencyLabel(_fluencyRating), style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Text(
+            _getFluencyLabel(_fluencyRating), 
+            style: TextStyle(fontSize: 12, color: Colors.amber.shade800, fontWeight: FontWeight.bold)
+          ),
         ],
       ),
     );
