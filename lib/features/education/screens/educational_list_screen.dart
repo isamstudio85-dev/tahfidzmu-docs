@@ -15,7 +15,9 @@ class EducationalListScreen extends StatefulWidget {
 
 class _EducationalListScreenState extends State<EducationalListScreen> {
   List<dynamic> _items = [];
+  List<dynamic> _filteredItems = [];
   bool _isLoading = true;
+  String _searchQuery = "";
   
   // WIDE MODE STATE
   dynamic _selectedDetailData;
@@ -33,11 +35,23 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
       final data = await json.decode(response);
       setState(() {
         _items = data;
+        _filteredItems = data;
         _isLoading = false;
       });
     } catch (e) {
       setState(() => _isLoading = false);
     }
+  }
+
+  void _filterList(String q) {
+    setState(() {
+      _searchQuery = q.toLowerCase();
+      _filteredItems = _items.where((item) {
+        final title = (item['title'] ?? "").toString().toLowerCase();
+        final desc = (item['description'] ?? "").toString().toLowerCase();
+        return title.contains(_searchQuery) || desc.contains(_searchQuery);
+      }).toList();
+    });
   }
 
   @override
@@ -52,27 +66,52 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
       );
     }
 
-    Widget sidebar = ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      itemCount: _items.length,
-      separatorBuilder: (ctx, i) => const Divider(color: Color(0xFFE5D5B8), height: 1),
-      itemBuilder: (ctx, i) {
-        final item = _items[i];
-        return _TajwidAccordion(
-          item: item,
-          type: widget.type,
-          isWide: isWide,
-          isSelected: _selectedDetailTitle == item['title'],
-          onDetailLoaded: (title, data) {
-            if (isWide) {
-              setState(() {
-                _selectedDetailTitle = title;
-                _selectedDetailData = data;
-              });
-            }
-          },
-        );
-      },
+    Widget sidebarHeader = Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      child: TextField(
+        onChanged: _filterList,
+        decoration: InputDecoration(
+          hintText: 'Cari materi...',
+          prefixIcon: const Icon(Icons.search_rounded, size: 20),
+          isDense: true,
+          filled: true,
+          fillColor: isWide ? Colors.white : const Color(0xFFF4EAD4).withValues(alpha: 0.5),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
+
+    Widget listWidget = Column(
+      children: [
+        sidebarHeader,
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            itemCount: _filteredItems.length,
+            separatorBuilder: (ctx, i) => const Divider(color: Color(0xFFE5D5B8), height: 1),
+            itemBuilder: (ctx, i) {
+              final item = _filteredItems[i];
+              return _TajwidAccordion(
+                item: item,
+                type: widget.type,
+                isWide: isWide,
+                isSelected: _selectedDetailTitle == item['title'],
+                onDetailLoaded: (title, data) {
+                  if (isWide) {
+                    setState(() {
+                      _selectedDetailTitle = title;
+                      _selectedDetailData = data;
+                    });
+                  }
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
 
     if (isWide) {
@@ -90,7 +129,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
               width: 320,
               child: Container(
                 decoration: const BoxDecoration(border: Border(right: BorderSide(color: Color(0xFFE5D5B8)))),
-                child: sidebar,
+                child: listWidget,
               ),
             ),
             Expanded(
@@ -127,7 +166,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: sidebar,
+      body: listWidget,
     );
   }
 }

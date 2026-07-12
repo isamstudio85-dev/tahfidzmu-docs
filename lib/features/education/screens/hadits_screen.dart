@@ -14,17 +14,41 @@ class HaditsScreen extends StatefulWidget {
 
 class _HaditsScreenState extends State<HaditsScreen> {
   Hadith? _selectedHadith;
+  String _searchQuery = "";
+  Map<String, List<Hadith>> _allData = {};
+  Map<String, List<Hadith>> _filteredData = {};
 
   Future<Map<String, List<Hadith>>> _loadThemesAndArbain() async {
+    if (_allData.isNotEmpty) return _allData;
     final byTema = await HadithService.getByTema();
     final arbain = await HadithService.getArbain();
     
     final Map<String, List<Hadith>> combined = {};
-    if (arbain.isNotEmpty) {
-      combined['arbain'] = arbain;
-    }
+    if (arbain.isNotEmpty) combined['arbain'] = arbain;
     combined.addAll(byTema);
+    _allData = combined;
+    _filteredData = combined;
     return combined;
+  }
+
+  void _filterHadits(String q) {
+    setState(() {
+      _searchQuery = q.toLowerCase();
+      if (_searchQuery.isEmpty) {
+        _filteredData = _allData;
+      } else {
+        final Map<String, List<Hadith>> result = {};
+        _allData.forEach((tema, list) {
+          final matches = list.where((h) {
+            return h.judul.toLowerCase().contains(_searchQuery) || 
+                   h.terjemah.toLowerCase().contains(_searchQuery) ||
+                   h.perawi.toLowerCase().contains(_searchQuery);
+          }).toList();
+          if (matches.isNotEmpty) result[tema] = matches;
+        });
+        _filteredData = result;
+      }
+    });
   }
 
   @override
@@ -34,57 +58,75 @@ class _HaditsScreenState extends State<HaditsScreen> {
     return FutureBuilder<Map<String, List<Hadith>>>(
       future: _loadThemesAndArbain(),
       builder: (context, snap) {
-        if (snap.connectionState != ConnectionState.done) {
+        if (snap.connectionState != ConnectionState.done && _allData.isEmpty) {
           return Scaffold(
             appBar: AppBar(title: const Text('Hadits Pilihan')),
             body: const Center(child: CircularProgressIndicator()),
           );
         }
-        if (snap.hasError || !snap.hasData) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Hadits Pilihan')),
-            body: const Center(child: Text('Gagal memuat data hadits.')),
-          );
-        }
 
-        final combinedData = snap.data!;
-        
         // Auto select first hadith if none selected in wide mode
-        if (isWide && _selectedHadith == null && combinedData.isNotEmpty) {
-          final firstTema = combinedData.keys.first;
-          if (combinedData[firstTema]!.isNotEmpty) {
-            _selectedHadith = combinedData[firstTema]!.first;
+        if (isWide && _selectedHadith == null && _filteredData.isNotEmpty) {
+          final firstTema = _filteredData.keys.first;
+          if (_filteredData[firstTema]!.isNotEmpty) {
+            _selectedHadith = _filteredData[firstTema]!.first;
           }
         }
 
-        Widget listWidget = ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          itemCount: combinedData.length,
-          separatorBuilder: (ctx, i) => const Divider(
-            color: Color(0xFFE5D5B8),
-            height: 1,
-            thickness: 1.2,
+        Widget sidebarHeader = Container(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: TextField(
+            onChanged: _filterHadits,
+            decoration: InputDecoration(
+              hintText: 'Cari hadits atau makna...',
+              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+              isDense: true,
+              filled: true,
+              fillColor: isWide ? Colors.white : const Color(0xFFF4EAD4).withValues(alpha: 0.5),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
           ),
-          itemBuilder: (context, i) {
-            final tema = combinedData.keys.elementAt(i);
-            final hadiths = combinedData[tema]!;
-            return _TemaSection(
-              tema: tema, 
-              hadiths: hadiths,
-              isWide: isWide,
-              selectedHadith: _selectedHadith,
-              onHadithTap: (h) {
-                if (isWide) {
-                  setState(() => _selectedHadith = h);
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => HaditsDetailScreen(hadith: h)),
+        );
+
+        Widget listWidget = Column(
+          children: [
+            sidebarHeader,
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                itemCount: _filteredData.length,
+                separatorBuilder: (ctx, i) => const Divider(
+                  color: Color(0xFFE5D5B8),
+                  height: 1,
+                  thickness: 1.2,
+                ),
+                itemBuilder: (context, i) {
+                  final tema = _filteredData.keys.elementAt(i);
+                  final hadiths = _filteredData[tema]!;
+                  return _TemaSection(
+                    key: ValueKey('tema_$tema'),
+                    tema: tema, 
+                    hadiths: hadiths,
+                    isWide: isWide,
+                    selectedHadith: _selectedHadith,
+                    onHadithTap: (h) {
+                      if (isWide) {
+                        setState(() => _selectedHadith = h);
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => HaditsDetailScreen(hadith: h)),
+                        );
+                      }
+                    },
                   );
-                }
-              },
-            );
-          },
+                },
+              ),
+            ),
+          ],
         );
 
         if (isWide) {
@@ -140,6 +182,7 @@ class _HaditsScreenState extends State<HaditsScreen> {
 
 class _TemaSection extends StatefulWidget {
   const _TemaSection({
+    super.key,
     required this.tema, 
     required this.hadiths,
     required this.isWide,

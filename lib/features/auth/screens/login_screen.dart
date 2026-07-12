@@ -560,6 +560,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
           ),
           const SizedBox(height: 20),
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

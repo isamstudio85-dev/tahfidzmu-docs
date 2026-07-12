@@ -51,7 +51,7 @@ const adminNavItems: NavItem[] = [
     path: "/halaqah",
   },
   {
-    icon: <ListIcon />,
+    icon: <PageIcon />,
     name: "Manajemen Wisuda",
     path: "/wisuda",
   },

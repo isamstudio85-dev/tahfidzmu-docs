@@ -1,0 +1,38 @@
+{
+  "title": "Jinayat & Peradilan",
+  "introduction": "Fiqih Jinayat mengatur tentang pencegahan dan penindakan atas kejahatan guna menjamin keamanan nyawa, harta, dan martabat manusia.",
+  "sections": [
+    {
+      "name": "1. Definisi & Dalil",
+      "definition": "Jinayat adalah setiap perbuatan yang dilarang oleh syara' dan dapat dikenakan sanksi demi menjaga ketertiban masyarakat.\n\nDalil Al-Quran:\nوَلَكُمْ فِي الْقِصَاصِ حَيَاةٌ يَا أُولِي الْأَلْبَابِ لَعَلَّكُمْ تَتَّقُونَ\n'Dan dalam qishash itu ada (jaminan kelangsungan) hidup bagimu, hai orang-orang yang berakal, supaya kamu bertakwa.' (QS. Al-Baqarah: 179)"
+    },
+    {
+      "name": "2. Tujuan Hukum (Maqashid Shariah)",
+      "definition": "Hukum Islam diturunkan untuk melindungi 5 hal dasar:\n1. Perlindungan Agama (Hifdz ad-Din)\n2. Perlindungan Nyawa (Hifdz an-Nafs)\n3. Perlindungan Akal (Hifdz al-'Aql)\n4. Perlindungan Keturunan (Hifdz an-Nasl)\n5. Perlindungan Harta (Hifdz al-Mal)"
+    },
+    {
+      "name": "3. Macam-Macam Hukuman",
+      "definition": "1. Hudud: Hukuman yang jenis dan kadarnya ditetapkan Allah (seperti pencurian, zina).\n2. Qishash: Hukuman pembalasan yang setimpal (jiwa dibalas jiwa).\n3. Ta'zir: Hukuman yang jenisnya ditetapkan oleh hakim/penguasa (seperti denda, penjara)."
+    },
+    {
+      "name": "4. Diyat (Denda Ganti Rugi)",
+      "definition": "Diyat adalah tebusan harta yang dibayarkan kepada korban atau wali korban sebagai pengganti qishash (jika dimaafkan). Ini merupakan bentuk rahmat dalam hukum Islam."
+    },
+    {
+      "name": "5. Mawani' (Pencegah Hukuman)",
+      "definition": "Hukuman hudud/qishash dapat gugur jika:\n1. Adanya keraguan (syubhat) dalam bukti.\n2. Pemaafan dari pihak korban (dalam qishash).\n3. Pelaku adalah orang gila atau anak kecil yang belum baligh."
+    },
+    {
+      "name": "6. Rukhshah (Keringanan: Bela Diri)",
+      "definition": "Seseorang dibolehkan (bahkan wajib) melawan untuk membela kehormatan, nyawa, atau harta yang dirampas secara zalim. Jika pelaku kejahatan terluka atau tewas saat korban membela diri, maka korban tidak dikenakan hukuman."
+    },
+    {
+      "name": "7. Adab Menjadi Saksi & Hakim",
+      "definition": "- Menjadi saksi yang jujur dan tidak menyembunyikan kebenaran.\n- Hakim dilarang memutuskan dalam keadaan marah atau condong pada salah satu pihak.\n- Mengutamakan perdamaian (Shulhu) jika memungkinkan."
+    },
+    {
+      "name": "8. Hikmah",
+      "definition": "- Menimbulkan efek jera bagi pelaku kejahatan.\n- Menjamin rasa aman dan tenteram bagi warga negara.\n- Menghapus tradisi balas dendam yang membabi buta.\n- Memberikan keadilan bagi korban secara manusiawi."
+    }
+  ]
+}

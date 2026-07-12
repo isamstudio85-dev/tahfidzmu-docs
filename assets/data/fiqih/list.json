@@ -1,5 +1,12 @@
 [
   {
+    "id": 0,
+    "title": "Mukoddimah & Manhaj",
+    "description": "Landasan ilmiah dan kitab rujukan.",
+    "icon": "info",
+    "fileName": "mukoddimah.json"
+  },
+  {
     "id": 1,
     "title": "Thaharah (Bersuci)",
     "description": "Kunci utama sahnya ibadah.",
@@ -79,8 +86,29 @@
   {
     "id": 12,
     "title": "Fiqih Jenazah",
-    "description": "Kewajiban terakhir terhadap sesama muslim.",
+    "description": "Kewajiban terakhir terhadap muslim.",
     "icon": "history_edu",
     "fileName": "jenazah.json"
+  },
+  {
+    "id": 13,
+    "title": "Fiqih Waris (Mawarith)",
+    "description": "Aturan pembagian harta pusaka.",
+    "icon": "account_balance",
+    "fileName": "waris.json"
+  },
+  {
+    "id": 14,
+    "title": "Jinayat & Peradilan",
+    "description": "Keadilan dan perlindungan jiwa.",
+    "icon": "gavel",
+    "fileName": "jinayat.json"
+  },
+  {
+    "id": 15,
+    "title": "Sumpah & Nadzar",
+    "description": "Ketentuan janji dan kaffarah.",
+    "icon": "verified_user",
+    "fileName": "nadzar.json"
   }
 ]
