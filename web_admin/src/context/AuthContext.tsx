@@ -11,6 +11,8 @@ export interface AdminProfile {
   pesantrenId: string | null;
   email: string | null;
   photoPath: string | null;
+  isKoordinator?: boolean;
+  managedHalaqahIds?: string[];
 }
 
 interface AuthContextValue {
@@ -76,15 +78,35 @@ async function loadAdminProfile(currentUser: User) {
   const snap = await getDoc(doc(db, "users", currentUser.uid));
   const data = (snap.exists() ? snap.data() : {}) as Record<string, unknown>;
 
+  const role = (data.role as string) || (currentUser.email === SUPER_ADMIN_EMAIL ? "superAdmin" : "admin");
+  const pesantrenId = (data.pesantrenId as string) ?? (data.pid as string) ?? null;
+  const linkedId = data.linkedId as string | undefined;
+
+  let isKoordinator = false;
+  let managedHalaqahIds: string[] = [];
+
+  if (role === "musyrif" && pesantrenId && linkedId) {
+    try {
+      const musyrifSnap = await getDoc(doc(db, "pesantren", pesantrenId, "musyrif", linkedId));
+      if (musyrifSnap.exists()) {
+        const mData = musyrifSnap.data();
+        isKoordinator = Boolean(mData.isKoordinator);
+        managedHalaqahIds = Array.isArray(mData.managedHalaqahIds) ? mData.managedHalaqahIds : [];
+      }
+    } catch (err) {
+      console.error("Failed to load linked musyrif data:", err);
+    }
+  }
+
   return {
     uid: currentUser.uid,
     name: getProfileName(data, currentUser),
-    role:
-      (data.role as string) ||
-      (currentUser.email === SUPER_ADMIN_EMAIL ? "superAdmin" : "admin"),
-    pesantrenId: (data.pesantrenId as string) ?? (data.pid as string) ?? null,
+    role,
+    pesantrenId,
     email: currentUser.email,
     photoPath: getProfilePhoto(data, currentUser),
+    isKoordinator,
+    managedHalaqahIds,
   } satisfies AdminProfile;
 }
 

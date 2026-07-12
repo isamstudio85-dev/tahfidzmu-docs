@@ -425,11 +425,12 @@ mixin ManagementMixin on ChangeNotifier, AuthMixin, DataMixin {
     return value.replaceAll(RegExp(r'\D+'), '');
   }
 
-  /// Temporary cleanup tool to remove experimental fields from Firestore
+  /// Temporary cleanup tool to remove experimental fields and fix missing metadata for collectionGroups
   Future<void> sanitizeFirestoreData() async {
     final pid = pesantrenId;
     if (pid == null) return;
 
+    // 1. Sanitize Halaqah (Remove subjectId)
     final halaqahSnap = await firestore
         .collection('pesantren')
         .doc(pid)
@@ -438,13 +439,40 @@ mixin ManagementMixin on ChangeNotifier, AuthMixin, DataMixin {
 
     final batch = firestore.batch();
     for (var doc in halaqahSnap.docs) {
-      final data = doc.data();
-      // Remove subjectId if it exists
-      if (data.containsKey('subjectId')) {
+      if (doc.data().containsKey('subjectId')) {
         batch.update(doc.reference, {'subjectId': FieldValue.delete()});
       }
     }
     await batch.commit();
+
+    // 2. Fix Setoran Metadata (Add pesantrenId/halaqahId if missing)
+    // Note: This iterates through all santri. For 200+ it might need chunking.
+    final santriSnap = await firestore
+        .collection('pesantren')
+        .doc(pid)
+        .collection('santri')
+        .get();
+
+    for (var sDoc in santriSnap.docs) {
+      final sData = sDoc.data();
+      final hId = sData['halaqahId'] as String?;
+      
+      final historySnap = await sDoc.reference.collection('setoranHistory').get();
+      if (historySnap.docs.isNotEmpty) {
+        final hBatch = firestore.batch();
+        for (var hDoc in historySnap.docs) {
+          final hData = hDoc.data();
+          if (!hData.containsKey('pesantrenId') || !hData.containsKey('halaqahId')) {
+            hBatch.update(hDoc.reference, {
+              'pesantrenId': pid,
+              if (hId != null) 'halaqahId': hId,
+            });
+          }
+        }
+        await hBatch.commit();
+      }
+    }
+
     notifyListeners();
   }
 }

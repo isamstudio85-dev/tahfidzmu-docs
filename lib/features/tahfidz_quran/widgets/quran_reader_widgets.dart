@@ -202,14 +202,14 @@ class AyahBlock extends StatelessWidget {
                         onMarkEnd,
                         isActive: isEndAyah,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 2),
                       _actionBtn(
                         Icons.check_circle_rounded, 
                         isPassed ? Colors.green : Colors.grey.shade400, 
                         onTogglePassed,
                         isActive: isPassed,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 2),
                       _actionBtn(
                         Icons.cancel_rounded, 
                         isFailed ? Colors.red : Colors.grey.shade400, 
@@ -265,7 +265,7 @@ class AyahBlock extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(8), // Compact hit area
+        padding: const EdgeInsets.all(6), // Even more compact
         decoration: BoxDecoration(
           color: isActive ? color.withValues(alpha: 0.12) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
@@ -273,7 +273,7 @@ class AyahBlock extends StatelessWidget {
         child: Icon(
           icon, 
           color: color, 
-          size: 22, // Balanced icon size
+          size: 20, // Scaled down icon
         ),
       ),
     );

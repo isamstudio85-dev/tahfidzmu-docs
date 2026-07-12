@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../context/AuthContext";
-import tahfidzLogo from "../../../../assets/icons/logo-tahfidzmu.png";
+import tahfidzLogo from "../../../../assets/images/TahfidzMU-logo.png";
 
 export default function SignInFirebase() {
   const { login } = useAuth();
@@ -34,79 +34,91 @@ export default function SignInFirebase() {
   };
 
   return (
-    <div className="flex flex-col flex-1">
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
-        <div>
-          <div className="mb-5 sm:mb-8">
-            <div className="mb-6 flex items-center gap-3 lg:hidden">
-              <img src={tahfidzLogo} alt="TahfidzMU" className="h-12 w-12 rounded-2xl object-contain" />
-              <div>
-                <p className="text-lg font-bold tracking-[0.08em] text-gray-900 dark:text-white">TahfidzMU</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Panel administrasi pesantren</p>
-              </div>
-            </div>
-            <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-              Masuk Admin
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Masuk dengan email dan kata sandi administrator untuk mengelola data pesantren secara terpusat.
-            </p>
+    <div className="w-full max-w-md mx-auto">
+      <div className="mb-8">
+        <div className="mb-6 flex items-center gap-3 lg:hidden">
+          <img src={tahfidzLogo} alt="TahfidzMU" className="h-14 w-14 rounded-2xl object-contain" />
+          <div>
+            <p className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">TahfidzMU</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Web Admin Pesantren</p>
           </div>
+        </div>
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-2">
+          Selamat Datang
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400">
+          Silakan masuk ke akun administrator Anda untuk mengelola data santri dan hafalan.
+        </p>
+      </div>
 
-          {error && (
-            <div className="p-3 mb-4 text-sm text-error-700 bg-error-50 border border-error-100 rounded-lg dark:bg-error-500/10 dark:text-error-400">
-              {error}
+      {error && (
+        <div className="p-4 mb-6 text-sm font-medium text-red-700 bg-red-50 border border-red-100 rounded-2xl dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-6">
+          <div>
+            <label className="block mb-2 text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+              Alamat Email
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="admin@pesantren.com"
+              className="w-full px-5 py-4 bg-gray-50 border border-gray-200 dark:bg-gray-800 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all shadow-sm"
+            />
+          </div>
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                Kata Sandi
+              </label>
             </div>
-          )}
-
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-5">
-              <div>
-                <label className="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Email <span className="text-error-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@pesantren.com"
-                  className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
-                />
-              </div>
-              <div>
-                <label className="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Kata Sandi <span className="text-error-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Masukkan kata sandi"
-                    className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute -translate-y-1/2 cursor-pointer right-4 top-1/2 text-sm text-gray-500 dark:text-gray-400"
-                  >
-                    {showPassword ? "Sembunyikan" : "Lihat"}
-                  </button>
-                </div>
-              </div>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-5 py-4 bg-gray-50 border border-gray-200 dark:bg-gray-800 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all shadow-sm"
+              />
               <button
-                type="submit"
-                disabled={loading}
-                className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 hover:bg-brand-600 disabled:opacity-50"
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-5 flex items-center text-sm font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700"
               >
-                {loading ? "Memproses..." : "Masuk"}
+                {showPassword ? "Sembunyikan" : "Lihat"}
               </button>
             </div>
-          </form>
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-4 px-6 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-2xl shadow-lg shadow-brand-500/20 transition-all active:scale-[0.98] disabled:opacity-50"
+          >
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>Memproses...</span>
+              </div>
+            ) : (
+              "Masuk ke Dashboard"
+            )}
+          </button>
         </div>
+      </form>
+
+      <div className="mt-8 pt-8 border-t border-gray-100 dark:border-gray-800 text-center">
+        <p className="text-xs text-gray-400 dark:text-gray-500">
+          &copy; {new Date().getFullYear()} TahfidzMU. Hak cipta dilindungi.
+        </p>
       </div>
     </div>
   );
 }
+

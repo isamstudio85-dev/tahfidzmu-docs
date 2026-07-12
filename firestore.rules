@@ -67,6 +67,27 @@ service cloud.firestore {
     }
 
     // ═══════════════════════════════════════════════════
+    // COLLECTION GROUP RULES (Untuk Query Lintas Santri)
+    // ═══════════════════════════════════════════════════
+
+    match /{path=**}/setoranHistory/{setoranId} {
+      // Izinkan baca jika user adalah anggota pesantren yang sesuai dengan data dokumen
+      allow read: if isAuth() && (
+        resource != null &&
+        resource.data.keys().contains('pesantrenId') &&
+        isMemberOf(resource.data.pesantrenId)
+      );
+    }
+
+    match /{path=**}/tasmiHistory/{tasmiId} {
+      allow read: if isAuth() && (
+        resource != null &&
+        resource.data.keys().contains('pesantrenId') &&
+        isMemberOf(resource.data.pesantrenId)
+      );
+    }
+
+    // ═══════════════════════════════════════════════════
     // /users/{uid} — Data profil pengguna (Firebase Auth UID)
     // ═══════════════════════════════════════════════════
     match /users/{uid} {

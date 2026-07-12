@@ -7,6 +7,7 @@ import PageMeta from "../components/common/PageMeta";
 import { QRCodeSVG } from "qrcode.react";
 import { Plus, Search, QrCode, Trash2, Edit2, ShieldAlert, Upload, X, FileSpreadsheet, Download } from "lucide-react";
 import { downloadSantriExcelTemplate, parseSantriExcelFile, type ParsedSantriImportRow } from "../utils/santriImport";
+import defaultAvatar from "../../../assets/images/avatar-default.png";
 
 interface Mapping { linkedId: string; role: string; defaultPassword: string }
 
@@ -337,20 +338,31 @@ export default function SantriManagement() {
     }
   };
 
-  if (profile?.role !== "admin" && profile?.role !== "superAdmin") {
+  const canManage = profile?.role === "admin" || profile?.role === "superAdmin" || profile?.isKoordinator;
+
+  if (!canManage) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200 dark:border-gray-800">
         <ShieldAlert size={48} className="text-error-500 mb-4" />
         <h3 className="text-lg font-bold text-gray-800 dark:text-white">Akses Ditolak</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Halaman ini hanya untuk Administrator.</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Halaman ini hanya untuk Administrator atau Koordinator.</p>
       </div>
     );
   }
 
   const filtered = [...santriList]
-    .filter((s) =>
-      (s.name || "").toLowerCase().includes(search.toLowerCase()) || (s.nis || "").includes(search)
-    )
+    .filter((s) => {
+      const matchesSearch = (s.name || "").toLowerCase().includes(search.toLowerCase()) || (s.nis || "").includes(search);
+
+      // If Coordinator, only show santri from managed halaqahs
+      if (profile?.role === "musyrif" && profile?.isKoordinator && Array.isArray(profile?.managedHalaqahIds)) {
+        if (profile.managedHalaqahIds.length > 0) {
+          return matchesSearch && profile.managedHalaqahIds.includes(s.halaqahId);
+        }
+      }
+
+      return matchesSearch;
+    })
     .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "id", { sensitivity: "base" }));
 
   return (
@@ -397,13 +409,11 @@ export default function SantriManagement() {
                     <tr key={s.id} className="text-gray-700 dark:text-gray-300 hover:bg-gray-50/50 dark:hover:bg-white/[0.01]">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          {s.photoPath ? (
-                            <img src={s.photoPath} alt={s.name} className="h-10 w-10 rounded-full object-cover" />
-                          ) : (
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 font-bold text-brand-500 dark:bg-brand-500/10">
-                              {(s.name || "S").charAt(0).toUpperCase()}
-                            </div>
-                          )}
+                          <img
+                            src={s.photoPath || defaultAvatar}
+                            alt={s.name}
+                            className="h-10 w-10 rounded-full object-cover border border-gray-100 dark:border-gray-800"
+                          />
                           <div>
                             <p className="font-semibold text-gray-900 dark:text-white">{s.name}</p>
                             {s.email ? <p className="text-xs text-gray-500 dark:text-gray-400">{s.email}</p> : null}
@@ -438,8 +448,8 @@ export default function SantriManagement() {
 
       {/* Modal Add/Edit */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
-          <div className="w-full max-w-2xl my-8 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-6">
+        <div className="fixed inset-0 z-50 flex justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto items-start">
+          <div className="w-full max-w-2xl mt-12 mb-12 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-6">
             <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">{isEdit ? "Edit Santri" : "Tambah Santri"}</h3>
             {error && <div className="p-3 mb-4 text-xs text-error-700 bg-error-50 border border-error-100 rounded-xl dark:bg-error-500/10 dark:text-error-400">{error}</div>}
             <form onSubmit={handleSave} className="space-y-4">
@@ -493,12 +503,18 @@ export default function SantriManagement() {
               <div>
                 <label className={labelCls}>Foto Santri</label>
                 <div className="flex items-center gap-3">
-                  {(photoPreview || existingPhotoPath) ? (
-                    <div className="relative">
-                      <img src={photoPreview || existingPhotoPath || ""} alt="Foto" className="w-16 h-16 object-cover rounded-xl border border-gray-200 dark:border-gray-700" />
-                      <button type="button" onClick={() => { setPhotoFile(null); setPhotoPreview(null); setExistingPhotoPath(null); }} className="absolute -top-2 -right-2 p-1 bg-error-500 text-white rounded-full"><X size={12} /></button>
-                    </div>
-                  ) : null}
+                  <div className="relative">
+                    <img
+                      src={photoPreview || existingPhotoPath || defaultAvatar}
+                      alt="Foto"
+                      className="w-16 h-16 object-cover rounded-xl border border-gray-200 dark:border-gray-700"
+                    />
+                    {(photoPreview || existingPhotoPath) && (
+                      <button type="button" onClick={() => { setPhotoFile(null); setPhotoPreview(null); setExistingPhotoPath(null); }} className="absolute -top-2 -right-2 p-1 bg-error-500 text-white rounded-full">
+                        <X size={12} />
+                      </button>
+                    )}
+                  </div>
                   <label className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-500/10 rounded-xl cursor-pointer hover:bg-brand-100"><Upload size={14} /> Pilih Foto<input type="file" accept="image/*" onChange={handleFileChange} className="hidden" /></label>
                 </div>
               </div>
@@ -513,8 +529,8 @@ export default function SantriManagement() {
       )}
 
       {importOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm">
-          <div className="my-8 w-full max-w-5xl rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-800 dark:bg-gray-900">
+        <div className="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm items-start">
+          <div className="mt-12 mb-12 w-full max-w-5xl rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-800 dark:bg-gray-900">
             <div className="flex flex-col gap-4 border-b border-gray-100 pb-4 dark:border-gray-800 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h3 className="text-lg font-bold text-gray-800 dark:text-white">Import Santri dari Excel</h3>
@@ -615,13 +631,11 @@ export default function SantriManagement() {
                 <QrCode size={18} className="text-brand-500" />
               </div>
               <div className="mb-4 flex items-center gap-3">
-                {selected.photoPath ? (
-                  <img src={selected.photoPath} alt={selected.name} className="h-12 w-12 rounded-xl object-cover border border-brand-100 dark:border-brand-500/20" />
-                ) : (
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 font-bold text-brand-500 dark:bg-brand-500/10">
-                    {(selected.name || "S").charAt(0).toUpperCase()}
-                  </div>
-                )}
+                <img
+                  src={selected.photoPath || defaultAvatar}
+                  alt={selected.name}
+                  className="h-12 w-12 rounded-xl object-cover border border-brand-100 dark:border-brand-500/20"
+                />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-bold text-gray-900 dark:text-white">{selected.name}</p>
                   <p className="text-[11px] text-gray-500 dark:text-gray-400">NIS/ID: <span className="font-mono">{selected.nis || selected.id || "-"}</span></p>

@@ -349,25 +349,25 @@ export default function WisudaManagement() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 to-white p-5 dark:border-sky-500/20 dark:bg-sky-500/10">
-            <div className="text-xs font-bold uppercase tracking-[0.18em] text-sky-600 dark:text-sky-300">Total Agenda</div>
+          <div className="rounded-2xl border border-sky-200 bg-sky-50/50 p-5 dark:border-sky-500/20 dark:bg-sky-500/5">
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-sky-600 dark:text-sky-400">Total Agenda</div>
             <div className="mt-3 text-3xl font-bold text-sky-950 dark:text-white">{events.length}</div>
-            <div className="mt-1 text-sm text-sky-700/80 dark:text-sky-100/75">Agenda wisuda tersimpan</div>
+            <div className="mt-1 text-sm text-sky-700/80 dark:text-sky-200/60">Agenda wisuda tersimpan</div>
           </div>
-          <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-5 dark:border-emerald-500/20 dark:bg-emerald-500/10">
-            <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-300">Dipublikasikan</div>
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 dark:border-emerald-500/20 dark:bg-emerald-500/5">
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-400">Dipublikasikan</div>
             <div className="mt-3 text-3xl font-bold text-emerald-950 dark:text-white">{publishedCount}</div>
-            <div className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-100/75">Tampil di aplikasi santri dan wali</div>
+            <div className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-200/60">Tampil di aplikasi santri dan wali</div>
           </div>
-          <div className="rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5 dark:border-amber-500/20 dark:bg-amber-500/10">
-            <div className="text-xs font-bold uppercase tracking-[0.18em] text-amber-600 dark:text-amber-300">Pendaftar</div>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 dark:border-amber-500/20 dark:bg-amber-500/5">
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-amber-600 dark:text-amber-400">Pendaftar</div>
             <div className="mt-3 text-3xl font-bold text-amber-950 dark:text-white">{registrations.length}</div>
-            <div className="mt-1 text-sm text-amber-700/80 dark:text-amber-100/75">{acceptedCount} santri sudah diterima</div>
+            <div className="mt-1 text-sm text-amber-700/80 dark:text-amber-200/60">{acceptedCount} santri sudah diterima</div>
           </div>
-          <div className="rounded-2xl border border-fuchsia-200 bg-gradient-to-br from-fuchsia-50 to-white p-5 dark:border-fuchsia-500/20 dark:bg-fuchsia-500/10">
-            <div className="text-xs font-bold uppercase tracking-[0.18em] text-fuchsia-600 dark:text-fuchsia-300">Sertifikat</div>
+          <div className="rounded-2xl border border-fuchsia-200 bg-fuchsia-50/50 p-5 dark:border-fuchsia-500/20 dark:bg-fuchsia-500/5">
+            <div className="text-xs font-bold uppercase tracking-[0.18em] text-fuchsia-600 dark:text-fuchsia-400">Sertifikat</div>
             <div className="mt-3 text-3xl font-bold text-fuchsia-950 dark:text-white">{releasedCertificatesCount}</div>
-            <div className="mt-1 text-sm text-fuchsia-700/80 dark:text-fuchsia-100/75">Agenda dengan sertifikat digital aktif</div>
+            <div className="mt-1 text-sm text-fuchsia-700/80 dark:text-fuchsia-200/60">Agenda dengan sertifikat digital aktif</div>
           </div>
         </div>
 
@@ -415,19 +415,19 @@ export default function WisudaManagement() {
                     </div>
                   </div>
                   <div className="mt-4 grid gap-3 text-sm text-gray-600 dark:text-gray-300 sm:grid-cols-2">
-                    <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-white/5">
+                    <div className="rounded-xl bg-gray-50 px-3 py-2 dark:border dark:border-gray-700 dark:bg-gray-800/40">
                       <div className="text-[11px] uppercase text-gray-400">Mulai Ujian</div>
                       <div className="mt-1 font-semibold">{formatDateLabel(event.examStartDate)}</div>
                     </div>
-                    <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-white/5">
+                    <div className="rounded-xl bg-gray-50 px-3 py-2 dark:border dark:border-gray-700 dark:bg-gray-800/40">
                       <div className="text-[11px] uppercase text-gray-400">Hari Wisuda</div>
                       <div className="mt-1 font-semibold">{formatDateLabel(event.graduationDate)}</div>
                     </div>
-                    <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-white/5">
+                    <div className="rounded-xl bg-gray-50 px-3 py-2 dark:border dark:border-gray-700 dark:bg-gray-800/40">
                       <div className="text-[11px] uppercase text-gray-400">Sesi</div>
                       <div className="mt-1 font-semibold">{event.sessionsCount} kali duduk</div>
                     </div>
-                    <div className="rounded-xl bg-gray-50 px-3 py-2 dark:bg-white/5">
+                    <div className="rounded-xl bg-gray-50 px-3 py-2 dark:border dark:border-gray-700 dark:bg-gray-800/40">
                       <div className="text-[11px] uppercase text-gray-400">Status</div>
                       <div className="mt-1 font-semibold">{event.status}</div>
                     </div>
@@ -439,13 +439,13 @@ export default function WisudaManagement() {
                       <span className="rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-bold text-brand-500 dark:bg-brand-500/10">{getEventRegistrations(event.id).length} santri</span>
                     </div>
                     {getEventRegistrations(event.id).length === 0 ? (
-                      <div className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500 dark:bg-white/5 dark:text-gray-400">Belum ada pendaftar.</div>
+                      <div className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-500 dark:bg-gray-800/30 dark:text-gray-400">Belum ada pendaftar.</div>
                     ) : (
                       <div className="space-y-3">
                         {getEventRegistrations(event.id).map((registration) => {
                           const santri = getSantri(registration.santriId);
                           return (
-                            <div key={registration.id} className="rounded-2xl border border-gray-200 p-4 dark:border-gray-800">
+                            <div key={registration.id} className="rounded-2xl border border-gray-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800/20">
                               <div className="flex items-start gap-3">
                                 {santri?.photoPath ? (
                                   <img src={santri.photoPath} alt={santri.name} className="h-11 w-11 rounded-full object-cover" />
@@ -502,8 +502,8 @@ export default function WisudaManagement() {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-800 dark:bg-gray-900">
+        <div className="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm items-start">
+          <div className="mt-12 mb-12 w-full max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:border-gray-800 dark:bg-gray-900">
             <h3 className="mb-4 text-lg font-bold text-gray-800 dark:text-white">{isEdit ? "Edit Agenda Wisuda" : "Tambah Agenda Wisuda"}</h3>
             {error && <div className="mb-4 rounded-xl border border-error-100 bg-error-50 p-3 text-xs text-error-700 dark:bg-error-500/10 dark:text-error-400">{error}</div>}
             <form onSubmit={handleSave} className="space-y-5">
@@ -572,10 +572,13 @@ export default function WisudaManagement() {
                   ) : (
                     <div className="flex h-28 w-44 items-center justify-center rounded-xl bg-brand-50 text-brand-500 dark:bg-brand-500/10"><GraduationCap size={34} /></div>
                   )}
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-brand-50 px-3 py-2 text-xs font-bold text-brand-500 hover:bg-brand-100 dark:bg-brand-500/10">
-                    <Upload size={14} /> Pilih Banner
-                    <input type="file" accept="image/*" onChange={handleBannerChange} className="hidden" />
-                  </label>
+                  <div className="flex-1">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-brand-50 px-3 py-2 text-xs font-bold text-brand-500 hover:bg-brand-100 dark:bg-brand-500/10">
+                      <Upload size={14} /> Pilih Banner
+                      <input type="file" accept="image/*" onChange={handleBannerChange} className="hidden" />
+                    </label>
+                    <p className="mt-2 text-[10px] text-gray-500 dark:text-gray-400">Rekomendasi: 1200 x 400 pixel agar tidak pecah. Maksimal 2MB.</p>
+                  </div>
                 </div>
               </div>
 

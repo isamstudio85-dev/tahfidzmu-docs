@@ -59,9 +59,9 @@ class _PengawasListScreenState extends State<PengawasListScreen> with AutomaticK
                 ),
               ),
               if (list.isEmpty)
-                _emptyState(isAdmin, 'Belum ada pengawas.')
+                _emptyStateNoExpanded(isAdmin, 'Belum ada pengawas.')
               else if (filteredList.isEmpty)
-                Expanded(child: Center(child: Text('Tidak ada pengawas yang cocok', style: TextStyle(color: Colors.grey.shade500))))
+                const Expanded(child: Center(child: Text('Tidak ada pengawas yang cocok', style: TextStyle(color: Colors.grey))))
               else
                 Expanded(
                   child: ListView.separated(
@@ -91,25 +91,23 @@ class _PengawasListScreenState extends State<PengawasListScreen> with AutomaticK
     );
   }
 
-  Widget _emptyState(bool isAdmin, String message) {
-    return Expanded(
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.visibility_off_rounded, size: 64, color: Colors.grey.shade300),
-            const SizedBox(height: 16),
-            Text(message, style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
-            if (isAdmin) ...[
-              const SizedBox(height: 12),
-              ElevatedButton.icon(
-                onPressed: () => _showFormDialog(context, context.read<AppProvider>(), null),
-                icon: const Icon(Icons.add),
-                label: const Text('Tambah Pengawas'),
-              ),
-            ],
+  Widget _emptyStateNoExpanded(bool isAdmin, String message) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.visibility_off_rounded, size: 64, color: Colors.grey),
+          const SizedBox(height: 16),
+          Text(message, style: const TextStyle(color: Colors.grey, fontSize: 16)),
+          if (isAdmin) ...[
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () => _showFormDialog(context, context.read<AppProvider>(), null),
+              icon: const Icon(Icons.add),
+              label: const Text('Tambah Pengawas'),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }

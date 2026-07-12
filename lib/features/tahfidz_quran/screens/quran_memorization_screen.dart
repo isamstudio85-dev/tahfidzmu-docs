@@ -21,38 +21,44 @@ class QuranMemorizationScreen extends StatefulWidget {
 }
 
 class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  TabController? _tabController;
   String _query = '';
   SetoranType? _filterType;
 
   @override
   void initState() {
     super.initState();
-    // Admin & Pengawas get 4 tabs (including Presensi), others get 3
+    _initTabController();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final provider = Provider.of<AppProvider>(context, listen: false);
+  void _initTabController() {
+    final provider = context.read<AppProvider>();
     final int length = (provider.isAdmin || provider.isPengawas) ? 4 : 3;
     _tabController = TabController(length: length, vsync: this);
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
+    
+    // Safety check for tab length changes (e.g. role change without restart)
+    final int expectedLength = (provider.isAdmin || provider.isPengawas) ? 4 : 3;
+    if (_tabController == null || _tabController!.length != expectedLength) {
+      _tabController?.dispose();
+      _tabController = TabController(length: expectedLength, vsync: this);
+    }
+
     final canAddSetoran = provider.isAdmin || provider.isMusyrif;
     final bool showPresensi = provider.isAdmin || provider.isPengawas;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), // Force consistent gray background
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
         title: Text(
           'Progres Tahfidz',
@@ -71,7 +77,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
           labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-          isScrollable: false, // Force fixed tabs for cleaner look
+          isScrollable: false,
           tabs: [
             const Tab(text: 'Riwayat'),
             const Tab(text: 'Peringkat'),
@@ -87,8 +93,12 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
           QuranHistoryList(
             query: _query, 
             filterType: _filterType,
-            onQueryChanged: (v) => setState(() => _query = v),
-            onTypeChanged: (v) => setState(() => _filterType = v),
+            onQueryChanged: (v) {
+               if (mounted) setState(() => _query = v);
+            },
+            onTypeChanged: (v) {
+               if (mounted) setState(() => _filterType = v);
+            },
           ),
           const QuranRankingList(),
           const _LaporanStatistikTab(),

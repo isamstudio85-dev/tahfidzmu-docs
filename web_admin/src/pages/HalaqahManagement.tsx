@@ -97,11 +97,14 @@ export default function HalaqahManagement() {
 
   const getMusyrifName = (mid: string) => musyrifList.find((m) => m.id === mid)?.nama || "-";
 
-  if (profile?.role !== "admin" && profile?.role !== "superAdmin") {
+  const canManage = profile?.role === "admin" || profile?.role === "superAdmin" || profile?.isKoordinator;
+
+  if (!canManage) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-white dark:bg-white/[0.03] rounded-2xl border border-gray-200 dark:border-gray-800">
         <ShieldAlert size={48} className="text-error-500 mb-4" />
         <h3 className="text-lg font-bold text-gray-800 dark:text-white">Akses Ditolak</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Halaman ini hanya untuk Administrator atau Koordinator.</p>
       </div>
     );
   }
@@ -155,8 +158,8 @@ export default function HalaqahManagement() {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-6">
+        <div className="fixed inset-0 z-50 flex justify-center overflow-y-auto bg-black/50 p-4 backdrop-blur-sm items-start">
+          <div className="mt-12 mb-12 w-full max-w-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-6">
             <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4">{isEdit ? "Edit Halaqah" : "Buat Halaqah"}</h3>
             {error && <div className="p-3 mb-4 text-xs text-error-700 bg-error-50 border border-error-100 rounded-xl dark:bg-error-500/10 dark:text-error-400">{error}</div>}
             <form onSubmit={handleSave} className="space-y-4">

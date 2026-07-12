@@ -6,6 +6,7 @@ import PageMeta from "../components/common/PageMeta";
 import { useAuth } from "../context/AuthContext";
 import { db, storage } from "../firebase";
 import { Camera, Upload, X } from "lucide-react";
+import defaultAvatar from "../../../assets/images/avatar-default.png";
 
 export default function ProfileSettings() {
   const { user, profile, refreshProfile } = useAuth();
@@ -150,13 +151,15 @@ export default function ProfileSettings() {
               <label className={labelCls}>Foto Profil</label>
               <div className="flex items-center gap-4">
                 <div className="relative group">
-                  {photoPreview || existingPhotoPath ? (
-                    <img src={photoPreview || existingPhotoPath} alt="Preview" className="h-20 w-20 rounded-2xl border border-gray-200 object-cover dark:border-gray-700" />
-                  ) : (
-                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-50 text-2xl font-bold text-brand-500 dark:bg-brand-500/10">{(name || "A").charAt(0).toUpperCase()}</div>
-                  )}
+                  <img
+                    src={photoPreview || existingPhotoPath || defaultAvatar}
+                    alt="Preview"
+                    className="h-20 w-20 rounded-2xl border border-gray-200 object-cover dark:border-gray-700"
+                  />
                   {(photoPreview || existingPhotoPath) && (
-                    <button type="button" onClick={() => { setPhotoFile(null); setPhotoPreview(null); setExistingPhotoPath(""); }} className="absolute -right-2 -top-2 rounded-full bg-error-500 p-1 text-white shadow-lg"><X size={14} /></button>
+                    <button type="button" onClick={() => { setPhotoFile(null); setPhotoPreview(null); setExistingPhotoPath(""); }} className="absolute -right-2 -top-2 rounded-full bg-error-500 p-1 text-white shadow-lg">
+                      <X size={14} />
+                    </button>
                   )}
                 </div>
                 <div className="flex-1">

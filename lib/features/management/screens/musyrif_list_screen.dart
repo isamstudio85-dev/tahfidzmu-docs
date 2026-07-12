@@ -61,9 +61,9 @@ class _MusyrifListScreenState extends State<MusyrifListScreen> with AutomaticKee
                 ),
               ),
               if (list.isEmpty)
-                _emptyState(isAdmin, 'Belum ada musyrif.')
+                _emptyStateNoExpanded(isAdmin, 'Belum ada musyrif.')
               else if (filteredList.isEmpty)
-                Expanded(child: Center(child: Text('Tidak ada musyrif yang cocok', style: TextStyle(color: Colors.grey.shade500))))
+                const Expanded(child: Center(child: Text('Tidak ada musyrif yang cocok', style: TextStyle(color: Colors.grey))))
               else
                 Expanded(
                   child: ListView.separated(
@@ -95,25 +95,23 @@ class _MusyrifListScreenState extends State<MusyrifListScreen> with AutomaticKee
     );
   }
 
-  Widget _emptyState(bool isAdmin, String message) {
-    return Expanded(
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.person_off_rounded, size: 64, color: Colors.grey.shade300),
-            const SizedBox(height: 16),
-            Text(message, style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
-            if (isAdmin) ...[
-              const SizedBox(height: 12),
-              ElevatedButton.icon(
-                onPressed: () => _showFormDialog(context, null),
-                icon: const Icon(Icons.add),
-                label: const Text('Tambah Musyrif'),
-              ),
-            ],
+  Widget _emptyStateNoExpanded(bool isAdmin, String message) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.person_off_rounded, size: 64, color: Colors.grey),
+          const SizedBox(height: 16),
+          Text(message, style: const TextStyle(color: Colors.grey, fontSize: 16)),
+          if (isAdmin) ...[
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () => _showFormDialog(context, null),
+              icon: const Icon(Icons.add),
+              label: const Text('Tambah Musyrif'),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }

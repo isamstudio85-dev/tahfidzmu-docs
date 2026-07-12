@@ -71,7 +71,6 @@ const AppHeader: React.FC = () => {
             </button>
 
             <Link to="/" className="flex min-w-0 items-center gap-3">
-              <img src={tahfidzLogoIcon} alt="TahfidzMU" className="h-10 w-10 rounded-xl object-contain" />
               <div className="min-w-0">
                 <p className="text-lg font-bold tracking-[0.12em] text-gray-800 dark:text-white">TahfidzMU</p>
                 <p className="hidden text-xs text-gray-500 dark:text-gray-400 lg:block">

@@ -304,6 +304,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
   }
 
   Future<void> _saveSetoran(AppProvider provider) async {
+    if (!mounted) return;
     setState(() => _isSaving = true);
     try {
       if (provider.isTasmiSession) {
@@ -313,12 +314,12 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           year: provider.activeTasmiYear,
           status: _tasmiStatus,
         );
-        if (record != null) {
+        if (mounted && record != null) {
           setState(() { _savedRecord = record; _saved = true; });
         }
       } else {
         final record = await provider.completeSetoran(_fluency);
-        if (record != null) {
+        if (mounted && record != null) {
           setState(() { _savedRecord = record; _saved = true; });
         }
       }

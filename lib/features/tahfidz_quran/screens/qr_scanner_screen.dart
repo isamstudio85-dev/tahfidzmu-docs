@@ -190,18 +190,45 @@ class _QrScannerScreenState extends State<QrScannerScreen> with SingleTickerProv
                 errorBuilder: (context, error) {
                   return Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.camera_alt_outlined, size: 64, color: Colors.white60),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Kamera tidak dapat diakses.\nPastikan izin kamera telah diberikan.',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(color: Colors.white70, fontSize: 14),
-                          ),
-                        ],
+                      padding: const EdgeInsets.all(32.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(color: Colors.white10, shape: BoxShape.circle),
+                              child: const Icon(Icons.videocam_off_rounded, size: 48, color: Colors.white60),
+                            ),
+                            const SizedBox(height: 24),
+                            Text(
+                              'Kamera Bermasalah',
+                              style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Perangkat ini mungkin tidak mendukung kamera atau izin belum diberikan.',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(color: Colors.white70, fontSize: 13),
+                            ),
+                            const SizedBox(height: 32),
+                            if (widget.expectedSantri != null)
+                              SizedBox(
+                                width: double.infinity,
+                                child: FilledButton.icon(
+                                  style: FilledButton.styleFrom(backgroundColor: AppTheme.primaryGreen, padding: const EdgeInsets.symmetric(vertical: 16)),
+                                  onPressed: () => _showSuccessAndPop(widget.expectedSantri),
+                                  icon: const Icon(Icons.check_circle_outline_rounded),
+                                  label: const Text('VERIFIKASI MANUAL', style: TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                              ),
+                            const SizedBox(height: 12),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Kembali', style: TextStyle(color: Colors.white60)),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

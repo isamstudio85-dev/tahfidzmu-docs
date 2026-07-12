@@ -49,6 +49,8 @@ class AppProvider extends ChangeNotifier
     notifyListeners();
   }
 
+  bool get isCoordinator => linkedMusyrif?.isKoordinator ?? false;
+
   String generateId(String collectionName) => getCollection(collectionName).doc().id;
 
   AppProvider() { initialize(); }
@@ -237,7 +239,11 @@ class AppProvider extends ChangeNotifier
 
   Future<void> updateSetoranRecord(String santriId, SetoranRecord record) async {
     final setoranJson = record.toJson();
+    final targetSantri = getSantriById(santriId);
+    
     if (pesantrenId != null) setoranJson['pesantrenId'] = pesantrenId;
+    if (targetSantri?.halaqahId != null) setoranJson['halaqahId'] = targetSantri!.halaqahId;
+
     await getCollection('santri').doc(santriId).collection('setoranHistory').doc(record.id).set(setoranJson);
     final now = DateTime.now();
     if (record.date.year == now.year && record.date.month == now.month && record.date.day == now.day) {
@@ -246,7 +252,6 @@ class AppProvider extends ChangeNotifier
     await triggerSetoranNotification(santriId, record);
     
     // INCREMENTAL UPDATE: Don't fetch all history. Update aggregate fields directly.
-    final targetSantri = getSantriById(santriId);
     if (targetSantri != null) {
       final int currentCount = targetSantri.totalSetoranCount;
       final double currentAvg = targetSantri.averageScore;
@@ -640,6 +645,9 @@ class AppProvider extends ChangeNotifier
     );
     final tasmiJson = record.toJson();
     if (pesantrenId != null) tasmiJson['pesantrenId'] = pesantrenId;
+    if (activeSetoranSantri?.halaqahId != null) {
+      tasmiJson['halaqahId'] = activeSetoranSantri!.halaqahId;
+    }
     await getCollection('santri').doc(activeSetoranSantri!.id).collection('tasmiHistory').doc(record.id).set(tasmiJson);
     
     // Trigger Notification

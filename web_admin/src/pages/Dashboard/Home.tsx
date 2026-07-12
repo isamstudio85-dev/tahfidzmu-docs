@@ -328,7 +328,7 @@ export default function Home() {
             </div>
 
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-              <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-brand-50 p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 dark:border-gray-800 dark:bg-white/[0.03]">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-bold text-gray-800 dark:text-white">Akses Cepat</h3>
@@ -337,7 +337,7 @@ export default function Home() {
                 </div>
                 <div className="mt-5 grid gap-3 md:grid-cols-2">
                   {quickLinks.map((item) => (
-                    <Link key={item.path} to={item.path} className="group rounded-2xl border border-white/70 bg-white/80 p-4 transition hover:border-brand-200 hover:shadow-sm dark:border-gray-800 dark:hover:border-brand-500/20">
+                    <Link key={item.path} to={item.path} className="group rounded-2xl border border-white/70 bg-white p-4 transition hover:border-brand-200 hover:shadow-sm dark:border-gray-700 dark:bg-gray-800/40 dark:hover:border-brand-500/20">
                       <div className="flex items-start gap-3">
                         <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${item.bg} ${item.color}`}>
                           <item.icon size={20} />
@@ -355,11 +355,11 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-amber-200/70 bg-gradient-to-br from-amber-50 via-white to-emerald-50 p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+              <div className="rounded-2xl border border-amber-200/70 bg-amber-50/30 p-6 dark:border-gray-800 dark:bg-white/[0.03]">
                 <h3 className="text-lg font-bold text-gray-800 dark:text-white">Ringkasan Operasional</h3>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Ikhtisar cepat untuk kebutuhan admin harian.</p>
                 <div className="mt-5 space-y-3">
-                  <div className="rounded-2xl border border-emerald-100 bg-white/80 p-4 dark:bg-white/5">
+                  <div className="rounded-2xl border border-emerald-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800/40">
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10"><Wallet size={18} /></div>
                       <div>
@@ -368,7 +368,7 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-2xl border border-brand-100 bg-white/80 p-4 dark:bg-white/5">
+                  <div className="rounded-2xl border border-brand-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800/40">
                     <div className="text-sm font-semibold text-gray-800 dark:text-white">Aktivitas Halaqah Saat Ini</div>
                     <div className="mt-3 space-y-3">
                       {halaqahActivities.length === 0 ? (
@@ -390,14 +390,14 @@ export default function Home() {
                       )}
                     </div>
                   </div>
-                  <div className="rounded-2xl border border-sky-100 bg-white/80 p-4 dark:bg-white/5">
+                  <div className="rounded-2xl border border-sky-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800/40">
                     <div className="text-sm font-semibold text-gray-800 dark:text-white">Kontak Pesantren</div>
                     <div className="mt-2 space-y-1 text-sm text-gray-500 dark:text-gray-400">
                       <p>{pesantrenInfo.noTelp || "No. telp belum diisi"}</p>
                       <p>{pesantrenInfo.email || "Email belum diisi"}</p>
                     </div>
                   </div>
-                  <div className="rounded-2xl border border-violet-100 bg-white/80 p-4 dark:bg-white/5">
+                  <div className="rounded-2xl border border-violet-100 bg-white p-4 dark:border-gray-700 dark:bg-gray-800/40">
                     <div className="text-sm font-semibold text-gray-800 dark:text-white">Status Akun</div>
                     <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">Akun ini terhubung ke pesantren dan siap dipakai untuk pengelolaan data web admin.</div>
                   </div>

@@ -36,7 +36,7 @@ class _SantriListScreenState extends State<SantriListScreen> with AutomaticKeepA
   Widget build(BuildContext context) {
     super.build(context);
     final provider = context.watch<AppProvider>();
-    final canManage = provider.isAdmin;
+    final canManage = provider.isAdmin || provider.isCoordinator;
     final showAppBar = !widget.hideAppBar;
 
     return Scaffold(
@@ -114,7 +114,7 @@ class _SantriListScreenState extends State<SantriListScreen> with AutomaticKeepA
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
                         SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-                        _emptyState(canManage, 'Belum ada santri.'),
+                        _emptyStateNoExpanded(canManage, 'Belum ada santri.'),
                       ],
                     ),
                   ),
@@ -127,7 +127,7 @@ class _SantriListScreenState extends State<SantriListScreen> with AutomaticKeepA
                       physics: const AlwaysScrollableScrollPhysics(),
                       children: [
                         SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-                        Center(child: Text('Tidak ada santri yang cocok', style: TextStyle(color: Colors.grey.shade500))),
+                        const Center(child: Text('Tidak ada santri yang cocok', style: TextStyle(color: Colors.grey))),
                       ],
                     ),
                   ),
@@ -173,25 +173,23 @@ class _SantriListScreenState extends State<SantriListScreen> with AutomaticKeepA
     );
   }
 
-  Widget _emptyState(bool canManage, String message) {
-    return Expanded(
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.people_outline, size: 64, color: Colors.grey.shade300),
-            const SizedBox(height: 16),
-            Text(message, style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
-            if (canManage) ...[
-              const SizedBox(height: 12),
-              ElevatedButton.icon(
-                onPressed: () => _showAddSantriDialog(context),
-                icon: const Icon(Icons.add),
-                label: const Text('Tambah Santri'),
-              ),
-            ],
+  Widget _emptyStateNoExpanded(bool canManage, String message) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.people_outline, size: 64, color: Colors.grey.shade300),
+          const SizedBox(height: 16),
+          Text(message, style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
+          if (canManage) ...[
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              onPressed: () => _showAddSantriDialog(context),
+              icon: const Icon(Icons.add),
+              label: const Text('Tambah Santri'),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }

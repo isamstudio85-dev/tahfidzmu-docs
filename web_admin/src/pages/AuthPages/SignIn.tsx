@@ -6,7 +6,7 @@ export default function SignIn() {
   return (
     <>
       <PageMeta
-        title="Masuk | TahfidzMU Web Admin"
+        title="Masuk | Web Admin TahfidzMU"
         description="Halaman masuk Administrator Pesantren TahfidzMU."
       />
       <AuthLayout>

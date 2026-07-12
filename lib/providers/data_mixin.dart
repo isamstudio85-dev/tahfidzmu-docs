@@ -121,17 +121,26 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     if (isOrangTua) {
        // Parents don't need the collectionGroup listener for others
     } else if (isMusyrif) {
-      final halaqahIds = halaqahList.map((h) => h.id).toList();
-      if (halaqahIds.isNotEmpty) {
+      // COORDINATOR SUPPORT: A coordinator might have many halaqahs.
+      // Firebase 'whereIn' is limited to 10. We'll query pesantren-wide 
+      // and filter in-memory for accuracy and stability.
+      if (pesantrenId != null) {
         recentSetoransSub = firestore.collectionGroup('setoranHistory')
-            .where('halaqahId', whereIn: halaqahIds)
+            .where('pesantrenId', isEqualTo: pesantrenId)
             .orderBy('date', descending: true)
-            .limit(20)
+            .limit(50) // Increased limit to ensure we find enough relevant ones
             .snapshots().listen((snap) {
+          final myHalaqahIds = halaqahList.where((h) => h.musyrifId == currentUserId || (linkedMusyrif?.managedHalaqahIds.contains(h.id) ?? false)).map((h) => h.id).toSet();
+          
           for (var doc in snap.docs) {
-            _addSetoranToSantriInMemory(SetoranRecord.fromJson(doc.data()));
+            final data = doc.data();
+            final hId = data['halaqahId'] as String?;
+            // Only add if it belongs to one of my managed halaqahs
+            if (hId != null && myHalaqahIds.contains(hId)) {
+              _addSetoranToSantriInMemory(SetoranRecord.fromJson(data));
+            }
           }
-        });
+        }, onError: (e) => debugPrint("Recent Setorans Sub Error: $e"));
       }
     } else {
       // Admin: listen to the 100 most recent records pesantren-wide
@@ -387,7 +396,14 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
   List<Santri> getSantriByHalaqah(String halaqahId) => santriList.where((s) => s.halaqahId == halaqahId).toList();
   
   List<Santri> getSantriByMusyrif(String musyrifId) {
-    final halaqahIds = halaqahList.where((h) => h.musyrifId == musyrifId).map((h) => h.id).toSet();
+    final m = getMusyrifById(musyrifId);
+    final Set<String> halaqahIds = halaqahList.where((h) => h.musyrifId == musyrifId).map((h) => h.id).toSet();
+    
+    // Add halaqahs explicitly managed by coordinator
+    if (m?.isKoordinator == true) {
+      halaqahIds.addAll(m!.managedHalaqahIds);
+    }
+
     return santriList.where((s) => halaqahIds.contains(s.halaqahId)).toList();
   }
 

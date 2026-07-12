@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../../context/AuthContext";
 import { Dropdown } from "../ui/dropdown/Dropdown";
+import defaultAvatar from "../../../../assets/images/avatar-default.png";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,11 +37,12 @@ export default function UserDropdown() {
     <div className="relative">
       <button onClick={toggleDropdown} className="dropdown-toggle flex items-center text-gray-700 dark:text-gray-400">
         <span className="mr-3 flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-brand-50 text-sm font-bold text-brand-500 dark:bg-brand-500/10">
-          {showPhoto ? (
-            <img src={profile?.photoPath || ""} alt={displayName} className="h-full w-full object-cover" onError={() => setImageFailed(true)} />
-          ) : (
-            initial
-          )}
+          <img
+            src={showPhoto ? profile?.photoPath! : defaultAvatar}
+            alt={displayName}
+            className="h-full w-full object-cover"
+            onError={() => setImageFailed(true)}
+          />
         </span>
         <span className="mr-1 block max-w-[140px] truncate font-medium text-theme-sm">{displayName}</span>
         <svg
@@ -62,11 +64,12 @@ export default function UserDropdown() {
       >
         <div className="flex items-center gap-3">
           <span className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-brand-50 text-sm font-bold text-brand-500 dark:bg-brand-500/10">
-            {showPhoto ? (
-              <img src={profile?.photoPath || ""} alt={displayName} className="h-full w-full object-cover" onError={() => setImageFailed(true)} />
-            ) : (
-              initial
-            )}
+            <img
+              src={showPhoto ? profile?.photoPath! : defaultAvatar}
+              alt={displayName}
+              className="h-full w-full object-cover"
+              onError={() => setImageFailed(true)}
+            />
           </span>
 
           <div className="min-w-0">

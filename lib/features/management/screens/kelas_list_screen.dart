@@ -9,6 +9,9 @@ class KelasListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AppProvider>();
+    final bool canManage = provider.isAdmin || provider.isCoordinator;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daftar Kelas'),
@@ -27,11 +30,12 @@ class KelasListScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   const Text('Belum ada data kelas', style: TextStyle(color: Colors.grey)),
                   const SizedBox(height: 12),
-                  FilledButton.icon(
-                    onPressed: () => _showForm(context, null),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Tambah Kelas'),
-                  ),
+                  if (canManage)
+                    FilledButton.icon(
+                      onPressed: () => _showForm(context, null),
+                      icon: const Icon(Icons.add),
+                      label: const Text('Tambah Kelas'),
+                    ),
                 ],
               ),
             );
@@ -52,7 +56,7 @@ class KelasListScreen extends StatelessWidget {
                   ),
                   title: Text(k.nama, style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text('$santriCount Santri', style: const TextStyle(fontSize: 12)),
-                  trailing: PopupMenuButton<String>(
+                  trailing: canManage ? PopupMenuButton<String>(
                     onSelected: (val) {
                       if (val == 'edit') _showForm(context, k);
                       if (val == 'delete') _confirmDelete(context, provider, k, santriCount);
@@ -61,18 +65,18 @@ class KelasListScreen extends StatelessWidget {
                       const PopupMenuItem(value: 'edit', child: Text('Edit')),
                       const PopupMenuItem(value: 'delete', child: Text('Hapus')),
                     ],
-                  ),
+                  ) : null,
                 ),
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: canManage ? FloatingActionButton.extended(
         onPressed: () => _showForm(context, null),
         icon: const Icon(Icons.add),
         label: const Text('Tambah Kelas'),
-      ),
+      ) : null,
     );
   }
 

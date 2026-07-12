@@ -210,9 +210,9 @@ class ManajemenScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Bersihkan Data Residual?'),
+        title: const Text('Sinkronisasi Metadata?'),
         content: const Text(
-          'Aplikasi akan menghapus field "subjectId" yang tersisa dari percobaan sebelumnya di Firestore agar data kembali murni Tahfidz Al-Quran.',
+          'Aplikasi akan memperbaiki metadata riwayat setoran dan menghapus sisa data percobaan sebelumnya di database. Ini penting untuk kestabilan laporan.',
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
@@ -225,11 +225,11 @@ class ManajemenScreen extends StatelessWidget {
               if (context.mounted) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Data berhasil dibersihkan.')),
+                  const SnackBar(content: Text('Metadata berhasil disinkronkan.')),
                 );
               }
             },
-            child: const Text('Bersihkan'),
+            child: const Text('Sinkronkan'),
           ),
         ],
       ),

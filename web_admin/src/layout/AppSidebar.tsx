@@ -1,6 +1,7 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Link, useLocation } from "react-router";
 import tahfidzLogoIcon from "../../../assets/icons/logo-tahfidzmu.png";
+import tahfidzLogoFull from "../../../assets/images/Tahfidzmu-teks.png";
 
 import {
   GridIcon,
@@ -73,7 +74,19 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const { profile } = useAuth();
   const location = useLocation();
-  const navItems = profile?.role === "superAdmin" ? superAdminNavItems : adminNavItems;
+
+  const navItems = useMemo(() => {
+    if (profile?.role === "superAdmin") return superAdminNavItems;
+
+    // If Admin or Musyrif Coordinator, show Admin Menu
+    if (profile?.role === "admin" || profile?.isKoordinator) {
+      return adminNavItems;
+    }
+
+    // For regular Musyrif, you might want to show a limited menu or nothing on web
+    return adminNavItems; // Default to admin items for now as web is mainly for management
+  }, [profile]);
+
   const isActive = useCallback(
     (path: string) => location.pathname === path,
     [location.pathname]
@@ -124,40 +137,26 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`flex py-8 ${
-          !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-        }`}
+        className="flex pt-4 pb-4 justify-center border-b border-gray-100 dark:border-gray-800 mb-5"
       >
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center justify-center">
           {isExpanded || isHovered || isMobileOpen ? (
-            <div className="flex items-center gap-3">
-              <img
-                src={tahfidzLogoIcon}
-                alt="TahfidzMU"
-                className="h-11 w-11 rounded-2xl object-contain"
-              />
-              <div className="min-w-0">
-                <p className="text-base font-bold tracking-[0.1em] text-gray-900 dark:text-white">TahfidzMU</p>
-              </div>
-            </div>
+            <img
+              src={tahfidzLogoFull}
+              alt="TahfidzMU"
+              className="h-8 w-auto object-contain"
+            />
           ) : (
             <img
               src={tahfidzLogoIcon}
               alt="TahfidzMU"
-              className="h-9 w-9 rounded-xl object-contain"
+              className="h-7 w-7 rounded-xl object-contain"
             />
           )}
         </Link>
       </div>
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
-          <h2
-            className={`mb-4 flex text-xs uppercase leading-[20px] text-gray-400 ${
-              !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-            }`}
-          >
-            {profile?.role === "superAdmin" ? "Super Admin" : "Menu Admin"}
-          </h2>
           {renderMenuItems(navItems)}
         </nav>
       </div>

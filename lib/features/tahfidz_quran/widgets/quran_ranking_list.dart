@@ -122,7 +122,8 @@ class _SantriRankingTabState extends State<_SantriRankingTab> with AutomaticKeep
 
     final childIndex = ranked.indexWhere((s) => s.id == provider.linkedSantriId);
     if (childIndex != -1) {
-      Future.delayed(const Duration(milliseconds: 300), () {
+      // Use WidgetsBinding to wait for the next frame before scrolling
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || !_scrollController.hasClients) return;
         final maxScroll = _scrollController.position.maxScrollExtent;
         final targetOffset = (childIndex * 60.0).clamp(0.0, maxScroll);

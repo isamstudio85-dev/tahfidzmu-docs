@@ -689,6 +689,7 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
 
   void _saveQuickSetoran() async {
     if (!_canStart()) return;
+    if (!mounted) return;
     setState(() => _isSaving = true);
     
     try {
