@@ -133,7 +133,7 @@ const AppSidebar: React.FC = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+      className={`fixed mt-[76px] flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white dark:bg-gray-900 dark:border-gray-800 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200
         ${
           isExpanded || isMobileOpen
             ? "w-[290px]"
@@ -147,25 +147,25 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className="flex pt-4 pb-4 justify-center border-b border-gray-100 dark:border-gray-800 mb-5"
+        className="flex h-[76px] items-center justify-center border-b border-gray-200 dark:border-gray-800 mb-6"
       >
         <Link to="/" className="flex items-center justify-center">
           {isExpanded || isHovered || isMobileOpen ? (
             <img
               src={tahfidzLogoFull}
               alt="TahfidzMU"
-              className="h-8 w-auto object-contain"
+              className="h-11 w-auto object-contain"
             />
           ) : (
             <img
               src={tahfidzLogoIcon}
               alt="TahfidzMU"
-              className="h-7 w-7 rounded-xl object-contain"
+              className="h-9 w-9 rounded-xl object-contain"
             />
           )}
         </Link>
       </div>
-      <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+      <div className="flex flex-col overflow-y-auto duration-300 ease-linear custom-scrollbar">
         <nav className="mb-6">
           {renderMenuItems(navItems)}
         </nav>

@@ -6,7 +6,6 @@ import PageMeta from "../components/common/PageMeta";
 import { Search, Save, User, BookOpen, Star, CheckCircle2, AlertCircle } from "lucide-react";
 import defaultAvatar from "../../../assets/images/avatar-default.png";
 
-// Surah List defined locally to avoid cross-directory import issues with Vite
 const surahs: SurahInfo[] = [
   {"number": 1, "name": "الفاتحة", "englishName": "Al-Fatihah", "numberOfAyahs": 7},
   {"number": 2, "name": "البقرة", "englishName": "Al-Baqarah", "numberOfAyahs": 286},
@@ -25,7 +24,7 @@ const surahs: SurahInfo[] = [
   {"number": 15, "name": "الحجر", "englishName": "Al-Hijr", "numberOfAyahs": 99},
   {"number": 16, "name": "النحل", "englishName": "An-Nahl", "numberOfAyahs": 128},
   {"number": 17, "name": "الإسراء", "englishName": "Al-Isra", "numberOfAyahs": 111},
-  {"number": 18, "name": "الكهف", "englishName": "Al-Kahf", "numberOfAyahs": 110},
+  {"number": 18, "name": "الكهf", "englishName": "Al-Kahf", "numberOfAyahs": 110},
   {"number": 19, "name": "مريم", "englishName": "Maryam", "numberOfAyahs": 98},
   {"number": 20, "name": "طه", "englishName": "Ta-Ha", "numberOfAyahs": 135},
   {"number": 21, "name": "الأنبياء", "englishName": "Al-Anbiya", "numberOfAyahs": 112},
@@ -150,11 +149,9 @@ export default function InputHafalan() {
   const [santriList, setSantriList] = useState<SantriLite[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Selection state
   const [selectedSantri, setSelectedSantri] = useState<SantriLite | null>(null);
   const [searchSantri, setSearchSantri] = useState("");
 
-  // Form state
   const [type, setType] = useState<"ziyadah" | "murojaah">("ziyadah");
   const [surahNum, setSurahNum] = useState(1);
   const [ayahStart, setAyahStart] = useState(1);
@@ -221,7 +218,6 @@ export default function InputHafalan() {
       const pid = profile?.pesantrenId;
       if (!pid) return;
 
-      // Load Santri
       const sSnap = await getDocs(collection(db, "pesantren", pid, "santri"));
       const sList = sSnap.docs.map(d => ({ id: d.id, ...d.data() } as SantriLite));
       setSantriList(sList);
@@ -278,10 +274,8 @@ export default function InputHafalan() {
         halaqahId: selectedSantri.halaqahId,
       };
 
-      // 1. Save record
       await setDoc(doc(db, "pesantren", pid, "santri", selectedSantri.id, "setoranHistory", setoranId), record);
 
-      // 2. Update Santri Aggregates (Incremental)
       const newCount = (selectedSantri.totalSetoranCount || 0) + 1;
       const newAvg = (((selectedSantri.averageScore || 0) * (selectedSantri.totalSetoranCount || 0)) + finalScore) / newCount;
 
@@ -303,7 +297,6 @@ export default function InputHafalan() {
       await updateDoc(doc(db, "pesantren", pid, "santri", selectedSantri.id), updateData);
 
       setMessage({ type: "success", text: `Setoran ${selectedSantri.name} berhasil disimpan.` });
-
       setTajwidErrors(0);
       setMakhrojErrors(0);
       setFluency(5);
@@ -324,7 +317,7 @@ export default function InputHafalan() {
         {/* Left Column: Santri Selection */}
         <div className="w-full lg:w-80 flex flex-col bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm">
           <div className="p-4 border-b border-gray-100 dark:border-gray-800">
-            <h3 className="font-bold text-gray-800 dark:text-white mb-3">Pilih Santri</h3>
+            <h3 className="font-bold text-gray-800 dark:text-white mb-3 text-start">Pilih Santri</h3>
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
@@ -332,12 +325,12 @@ export default function InputHafalan() {
                 placeholder="Cari nama/NIS..."
                 value={searchSantri}
                 onChange={(e) => setSearchSantri(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20"
+                className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20 text-gray-900 dark:text-white"
               />
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
             {filteredSantri.map(s => (
               <button
                 key={s.id}
@@ -357,7 +350,7 @@ export default function InputHafalan() {
         {/* Right Column: Input Form */}
         <div className="flex-1 bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm flex flex-col overflow-hidden">
           {selectedSantri ? (
-            <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 lg:p-8">
+            <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 lg:p-8 custom-scrollbar">
               <div className="flex items-center gap-4 mb-8 text-start">
                 <div className="p-3 bg-brand-50 dark:bg-brand-500/10 rounded-2xl">
                   <User size={32} className="text-brand-600 dark:text-brand-400" />
@@ -376,7 +369,6 @@ export default function InputHafalan() {
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-start">
-                {/* 1. Tipe Setoran */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tipe Setoran</label>
                   <div className="flex bg-gray-50 dark:bg-gray-800 p-1 rounded-xl border border-gray-200 dark:border-gray-700">
@@ -385,7 +377,6 @@ export default function InputHafalan() {
                   </div>
                 </div>
 
-                {/* 2. Pilih Surah */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Pilih Surah</label>
                   <select
@@ -399,7 +390,7 @@ export default function InputHafalan() {
                         setAyahEnd(Math.min(10, s.numberOfAyahs));
                       }
                     }}
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20 dark:text-white"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20 dark:text-white"
                   >
                     {surahs.map(s => (
                       <option key={s.number} value={s.number}>{s.number}. {s.englishName}</option>
@@ -407,7 +398,6 @@ export default function InputHafalan() {
                   </select>
                 </div>
 
-                {/* 3. Rentang Ayat */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Ayat Mulai</label>
                   <input
@@ -416,7 +406,7 @@ export default function InputHafalan() {
                     max={currentSurah?.numberOfAyahs || 1}
                     value={ayahStart}
                     onChange={(e) => setAyahStart(Number(e.target.value))}
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20 dark:text-white"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20 dark:text-white"
                   />
                 </div>
                 <div className="space-y-2">
@@ -427,11 +417,10 @@ export default function InputHafalan() {
                     max={currentSurah?.numberOfAyahs || 1}
                     value={ayahEnd}
                     onChange={(e) => setAyahEnd(Number(e.target.value))}
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20 dark:text-white"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-500/20 dark:text-white"
                   />
                 </div>
 
-                {/* 4. Kesalahan */}
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Salah Tajwid</label>
                   <div className="flex items-center gap-4">
@@ -450,7 +439,6 @@ export default function InputHafalan() {
                 </div>
               </div>
 
-              {/* 5. Kelancaran */}
               <div className="mt-8 p-6 bg-amber-50/50 dark:bg-amber-500/5 rounded-2xl border border-amber-100 dark:border-amber-500/10">
                 <label className="block text-center text-xs font-bold text-amber-800 dark:text-amber-400 uppercase tracking-wider mb-4">Tingkat Kelancaran</label>
                 <div className="flex justify-center gap-4">
@@ -470,7 +458,6 @@ export default function InputHafalan() {
                 </p>
               </div>
 
-              {/* Skor Preview */}
               <div className="mt-8 flex flex-col items-center">
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Prediksi Skor</p>
                 <p className="text-5xl font-black text-brand-600 dark:text-brand-400">{calculateScore().toFixed(0)}</p>

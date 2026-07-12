@@ -6,10 +6,22 @@ import { useAuth } from "../context/AuthContext";
 import PageMeta from "../components/common/PageMeta";
 import { Plus, Search, Trash2, Edit2, ShieldAlert, BookOpen, Upload, X } from "lucide-react";
 
+interface Halaqah {
+  id: string;
+  nama: string;
+  musyrifId: string | null;
+  photoPath: string | null;
+}
+
+interface Musyrif {
+  id: string;
+  nama: string;
+}
+
 export default function HalaqahManagement() {
   const { profile } = useAuth();
-  const [list, setList] = useState<any[]>([]);
-  const [musyrifList, setMusyrifList] = useState<any[]>([]);
+  const [list, setList] = useState<Halaqah[]>([]);
+  const [musyrifList, setMusyrifList] = useState<Musyrif[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
@@ -46,7 +58,7 @@ export default function HalaqahManagement() {
     setIsEdit(false); setId(""); setName(""); setMusyrifId("");
     setPhotoFile(null); setPhotoPreview(null); setExistingPhotoPath(null); setError(null); setIsOpen(true);
   };
-  const handleOpenEdit = (h: any) => {
+  const handleOpenEdit = (h: Halaqah) => {
     setIsEdit(true); setId(h.id); setName(h.nama || ""); setMusyrifId(h.musyrifId || "");
     setPhotoFile(null); setPhotoPreview(null); setExistingPhotoPath(h.photoPath || null); setError(null); setIsOpen(true);
   };
@@ -82,7 +94,11 @@ export default function HalaqahManagement() {
         photoPath: finalPhotoUrl || null,
       }, { merge: true });
       setIsOpen(false); load();
-    } catch (err: any) { console.error(err); setError("Gagal menyimpan: " + err.message); }
+    } catch (err: unknown) {
+      console.error(err);
+      const msg = err instanceof Error ? err.message : String(err);
+      setError("Gagal menyimpan: " + msg);
+    }
     finally { setSaving(false); }
   };
 
@@ -127,7 +143,7 @@ export default function HalaqahManagement() {
 
         <div className="relative">
           <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input type="text" placeholder="Cari halaqah..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 dark:bg-white/[0.03] dark:border-gray-800 dark:text-white" />
+          <input type="text" placeholder="Cari halaqah..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 text-gray-900 dark:text-white shadow-sm" />
         </div>
 
         {loading ? (
