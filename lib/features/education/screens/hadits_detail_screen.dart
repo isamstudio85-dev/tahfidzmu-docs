@@ -33,13 +33,13 @@ class HaditsDetailScreen extends StatelessWidget {
                 title,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
-                  fontSize: 22,
+                  fontSize: 24,
                   color: const Color(0xFF2E5A27),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               const Divider(color: Color(0xFFE5D5B8)),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
             ],
             // ── Tema badge ────────────────────────────────────────────────
             Wrap(
@@ -47,78 +47,73 @@ class HaditsDetailScreen extends StatelessWidget {
               children: [
                 if (hadith.isArbain)
                   _badge(
-                    'Arbain Nawawi #${hadith.arbainNo}',
+                    'Arba\'in Nawawi #${hadith.arbainNo}',
                     const Color(0xFF2E5A27),
                   ),
                 _badge(Hadith.temaLabel(hadith.tema), _temaColor(hadith.tema)),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
             // ── Matan Arabic ─────────────────────────────────────────────
+            const Text(
+              'MATAN ARAB',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                color: Color(0xFF2E5A27),
+                letterSpacing: 1.2,
+              ),
+            ),
+            _buildArabicCard(hadith.matanArab),
+            const SizedBox(height: 12),
+
+            // ── Terjemah ──────────────────────────────────────────────────
+            const Text(
+              'TERJEMAH INDONESIA',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                color: Color(0xFF2E5A27),
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 12),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(22),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFF4EAD4), // Classic yellow highlight backing
+                color: const Color(0xFFFAF6EE),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE5D5B8), width: 1.5),
+                border: Border.all(color: const Color(0xFFEDE8DF), width: 1.0),
               ),
               child: Text(
-                hadith.matanArab,
-                textAlign: TextAlign.center,
-                textDirection: TextDirection.rtl,
-                style: GoogleFonts.amiri(
-                  fontSize: 24,
-                  color: const Color(0xFF1B5E20), // Deep Islamic Green
-                  height: 2.0,
-                  fontWeight: FontWeight.bold,
+                hadith.terjemah,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  height: 1.6,
+                  color: const Color(0xFF4E342E),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-
-            // ── Terjemah ──────────────────────────────────────────────────
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFDF9F0),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFEDE8DF), width: 1.2),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'TERJEMAH',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                      color: const Color(0xFF2E5A27),
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    hadith.terjemah,
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      height: 1.7,
-                      color: const Color(0xFF4E342E), // Soft Espresso
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
 
             // ── Perawi & Sumber ───────────────────────────────────────────
+            const Text(
+              'INFORMASI HADITS',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                color: Color(0xFF2E5A27),
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFFDF9F0),
+                color: const Color(0xFFFAF6EE),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFEDE8DF), width: 1.2),
+                border: Border.all(color: const Color(0xFFEDE8DF), width: 1.0),
               ),
               child: Column(
                 children: [
@@ -128,18 +123,42 @@ class HaditsDetailScreen extends StatelessWidget {
                     hadith.perawi,
                     const Color(0xFF2E5A27),
                   ),
-                  const Divider(height: 16, color: Color(0xFFEDE8DF)),
+                  const Divider(height: 20, color: Color(0xFFEDE8DF)),
                   _infoRow(
                     Icons.import_contacts_rounded,
-                    'Sumber',
+                    'Sumber Kitab',
                     hadith.sumber,
                     const Color(0xFF2E5A27),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 40),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildArabicCard(String text) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4EAD4),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5D5B8), width: 1.2),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.rtl,
+        style: GoogleFonts.amiri(
+          fontSize: 22,
+          color: const Color(0xFF1B5E20),
+          height: 1.7,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -206,7 +225,8 @@ class HaditsDetailScreen extends StatelessWidget {
   }
 }
 
-Color _temaColor(String tema) {
+Color _temaColor(String? tema) {
+  if (tema == null) return Colors.blueGrey;
   switch (tema) {
     case 'niat':
       return const Color(0xFF00897B);

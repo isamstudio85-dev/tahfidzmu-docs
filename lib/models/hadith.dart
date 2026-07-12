@@ -1,6 +1,7 @@
 class Hadith {
   final int id;
   final int? arbainNo;
+  final String judul;
   final String tema;
   final String perawi;
   final String sumber;
@@ -10,6 +11,7 @@ class Hadith {
   const Hadith({
     required this.id,
     this.arbainNo,
+    required this.judul,
     required this.tema,
     required this.perawi,
     required this.sumber,
@@ -20,16 +22,18 @@ class Hadith {
   bool get isArbain => arbainNo != null;
 
   factory Hadith.fromJson(Map<String, dynamic> json) => Hadith(
-    id: json['id'] as int,
+    id: json['id'] as int? ?? 0,
     arbainNo: json['arbain_no'] as int?,
-    tema: json['tema'] as String,
-    perawi: json['perawi'] as String,
-    sumber: json['sumber'] as String,
-    matanArab: json['matan_arab'] as String,
-    terjemah: json['terjemah'] as String,
+    judul: json['judul'] as String? ?? 'Hadits ${json['id'] ?? ''}',
+    tema: json['tema'] as String? ?? 'umum',
+    perawi: json['perawi'] as String? ?? 'Perawi tidak diketahui',
+    sumber: json['sumber'] as String? ?? 'Sumber tidak diketahui',
+    matanArab: json['matan_arab'] as String? ?? '',
+    terjemah: json['terjemah'] as String? ?? '',
   );
 
-  static String temaLabel(String key) {
+  static String temaLabel(String? key) {
+    if (key == null) return 'Umum';
     const labels = {
       'niat': 'Niat & Ikhlas',
       'akidah': 'Akidah & Tauhid',

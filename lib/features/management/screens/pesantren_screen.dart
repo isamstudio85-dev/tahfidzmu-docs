@@ -172,6 +172,7 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
                   _moduleSwitch(provider, 'Hadits', 'Hafalan hadits-hadits pilihan', Icons.import_contacts_rounded, provider.isModuleActive('hadits'), onTap: () => provider.toggleModule('hadits')),
                   _moduleSwitch(provider, 'Tajwid', 'Panduan hukum bacaan Al-Quran', Icons.auto_stories_rounded, provider.isModuleActive('tajwid'), onTap: () => provider.toggleModule('tajwid')),
                   _moduleSwitch(provider, 'Tahsin', 'Panduan fasih & makharijul huruf', Icons.record_voice_over_rounded, provider.isModuleActive('tahsin'), onTap: () => provider.toggleModule('tahsin')),
+                  _moduleSwitch(provider, 'Fiqih', 'Tuntunan ibadah lengkap & sistematis', Icons.menu_book_rounded, provider.isModuleActive('fiqih'), onTap: () => provider.toggleModule('fiqih')),
                   _moduleSwitch(provider, 'Pengetahuan Pondok', 'Materi pengetahuan pondok yang harus dihafal', Icons.lightbulb_outline_rounded, provider.isModuleActive('pondok_info'), onTap: () => provider.toggleModule('pondok_info')),
                   _moduleSwitch(provider, 'Wisuda & Ujian Tasmi\'', 'Pendaftaran ujian tasmi\' dan kelulusan wisuda', Icons.school_rounded, provider.isModuleActive('graduation'), onTap: () => provider.toggleModule('graduation')),
                 ],

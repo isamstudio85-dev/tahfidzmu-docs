@@ -35,9 +35,22 @@ class AppProvider extends ChangeNotifier
   bool isSurahListLoading = false;
   String? surahListError;
 
-  final Set<String> _activeModules = {'quran', 'hadits', 'tajwid', 'tahsin', 'graduation'};
+  final Set<String> _activeModules = {'quran', 'hadits', 'tajwid', 'tahsin', 'graduation', 'fiqih', 'pondok_info'};
   Set<String> get activeModules => Set.unmodifiable(_activeModules);
   bool isModuleActive(String key) => _activeModules.contains(key);
+
+  void updateActiveModules(List<String> modules) {
+    _activeModules.clear();
+    _activeModules.addAll(modules);
+    
+    // Core and new modules always on by default if not explicitly off 
+    // (In this case, we just force them on for now to ensure they appear for existing users)
+    _activeModules.add('quran'); 
+    _activeModules.add('fiqih');
+    _activeModules.add('pondok_info');
+
+    notifyListeners();
+  }
 
   void toggleModule(String key) {
     if (key == 'quran') return;

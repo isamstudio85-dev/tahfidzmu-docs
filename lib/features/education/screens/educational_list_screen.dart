@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tahfidz_app/features/education/screens/tahsin_list_screen.dart';
 
 class EducationalListScreen extends StatefulWidget {
   const EducationalListScreen({super.key, required this.type, this.hideAppBar = false});
@@ -41,7 +42,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String title = widget.type == 'tajwid' ? 'Ilmu Tajwid' : 'Ilmu Tahsin';
+    final String title = widget.type == 'tajwid' ? 'Ilmu Tajwid' : (widget.type == 'fiqih' ? 'Fiqih' : 'Ilmu Tahsin');
     final bool isWide = MediaQuery.of(context).size.width > 900;
 
     if (_isLoading) {
@@ -291,6 +292,16 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
                         const SizedBox(height: 20),
                       ],
                       if (_data['introduction'] != null) ...[
+                        const Text(
+                          'PENDAHULUAN',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                            color: Color(0xFF2E5A27),
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
                         Text(
                           _data['introduction'],
                           style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF4E342E), height: 1.7),
@@ -309,24 +320,225 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(section['name'], style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16, color: const Color(0xFF2E5A27))),
-        const SizedBox(height: 10),
-        if (section['definition'] != null) Text(section['definition'], style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF5D4037), height: 1.6)),
+        Text(
+          section['name'],
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: const Color(0xFF2E5A27),
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (section['definition'] != null) _buildSmartContent(section['definition']),
         if (section['letters'] != null) ...[
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(color: const Color(0xFFF4EAD4), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFE5D5B8))),
-            child: Row(children: [const Text('Huruf: ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF4E342E))), Expanded(child: Text(section['letters'], style: GoogleFonts.amiri(fontSize: 24, color: const Color(0xFF1B5E20), fontWeight: FontWeight.bold), textDirection: TextDirection.rtl))]),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4EAD4),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE5D5B8)),
+            ),
+            child: Row(
+              children: [
+                const Text(
+                  'Huruf: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Color(0xFF4E342E),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    section['letters'],
+                    style: GoogleFonts.amiri(
+                      fontSize: 24,
+                      color: const Color(0xFF1B5E20),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textDirection: TextDirection.rtl,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
         if (section['example'] != null) ...[
           const SizedBox(height: 16),
-          const Text('Contoh:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Color(0xFF8D6E63))),
+          const Text(
+            'Contoh:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              color: Color(0xFF8D6E63),
+            ),
+          ),
           ...(section['example'] as List).map((ex) => _buildExample(ex)),
         ],
-        const Padding(padding: EdgeInsets.symmetric(vertical: 20), child: Divider(color: Color(0xFFE5D5B8))),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: Divider(color: Color(0xFFE5D5B8)),
+        ),
       ],
+    );
+  }
+
+  Widget _buildSmartContent(String content) {
+    final lines = content.split('\n');
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: lines.map((line) {
+        final trimmed = line.trim();
+        if (trimmed.isEmpty) return const SizedBox(height: 8);
+
+        // Detect Link Placeholder [LINK:...]
+        if (trimmed.startsWith('[LINK:')) {
+          return _buildLinkButton(trimmed);
+        }
+
+        // Detect Arabic lines (Must contain at least one Arabic letter, not just marks)
+        final hasArabicLetters = RegExp(r'[\u0621-\u064A\u0671-\u06D3]').hasMatch(line);
+
+        if (hasArabicLetters) {
+          return _buildArabicCard(line);
+        }
+
+        // Detect Numbering (e.g. 1. Niat)
+        final numMatch = RegExp(r'^(\d+)\.\s(.*)').firstMatch(trimmed);
+        if (numMatch != null) {
+          return _buildListItem(numMatch.group(1)!, numMatch.group(2)!, isNumeric: true);
+        }
+
+        // Detect Bullet (e.g. - Membasuh)
+        final bulletMatch = RegExp(r'^([\-\*])\s(.*)').firstMatch(trimmed);
+        if (bulletMatch != null) {
+          return _buildListItem('•', bulletMatch.group(2)!, isNumeric: false);
+        }
+
+        // Regular line (Paragraph part)
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10.0),
+          child: Text(
+            line,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: const Color(0xFF5D4037),
+              height: 1.6,
+              fontWeight: line.contains(':') ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildListItem(String leading, String text, {required bool isNumeric}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10.0, left: 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (isNumeric)
+            Container(
+              margin: const EdgeInsets.only(top: 2, right: 10),
+              width: 20,
+              height: 20,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                leading,
+                style: const TextStyle(
+                  color: Color(0xFF2E5A27),
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          else
+            Container(
+              margin: const EdgeInsets.only(top: 7, right: 12, left: 6),
+              width: 6,
+              height: 6,
+              decoration: const BoxDecoration(
+                color: Color(0xFF2E5A27),
+                shape: BoxShape.circle,
+              ),
+            ),
+          Expanded(
+            child: Text(
+              text,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: const Color(0xFF4E342E),
+                height: 1.5,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildArabicCard(String text) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.all(16), // Slimmer padding for HP
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4EAD4), 
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5D5B8), width: 1.2),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.rtl,
+        style: GoogleFonts.amiri(
+          fontSize: 22, // Optimized size for HP
+          color: const Color(0xFF1B5E20),
+          height: 1.7,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLinkButton(String tag) {
+    String label = "Buka Panduan";
+    VoidCallback? action;
+
+    if (tag.contains("TAHSIN_FATIHAH")) {
+      label = "Belajar Tahsin Surat Al-Fatihah";
+      action = () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const TahsinListScreen()),
+        );
+      };
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: OutlinedButton.icon(
+        onPressed: action,
+        icon: const Icon(Icons.record_voice_over_rounded, size: 18),
+        label: Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: const Color(0xFF2E5A27),
+          side: const BorderSide(color: Color(0xFF2E5A27), width: 1.5),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      ),
     );
   }
 

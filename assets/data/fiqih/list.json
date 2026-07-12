@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "title": "Thaharah (Bersuci)",
+    "description": "Kunci utama sahnya ibadah.",
+    "icon": "auto_stories",
+    "fileName": "thaharah.json"
+  },
+  {
+    "id": 2,
+    "title": "Shalat Fardhu",
+    "description": "Tiang agama dan penyejuk hati.",
+    "icon": "mosque",
+    "fileName": "shalat.json"
+  },
+  {
+    "id": 3,
+    "title": "Panduan Bacaan Shalat",
+    "description": "Bacaan lengkap dari takbir hingga salam.",
+    "icon": "menu_book",
+    "fileName": "bacaan_shalat.json"
+  },
+  {
+    "id": 4,
+    "title": "Shalat Sunnah & Berjamaah",
+    "description": "Penyempurna amalan wajib.",
+    "icon": "auto_awesome",
+    "fileName": "shalat_sunnah.json"
+  },
+  {
+    "id": 5,
+    "title": "Puasa (Shaum)",
+    "description": "Perisai diri dan melatih ketaqwaan.",
+    "icon": "self_improvement",
+    "fileName": "puasa.json"
+  },
+  {
+    "id": 6,
+    "title": "Zakat, Infaq & Wakaf",
+    "description": "Mensucikan harta dan jariyah sosial.",
+    "icon": "payments",
+    "fileName": "zakat.json"
+  },
+  {
+    "id": 7,
+    "title": "Haji & Umrah",
+    "description": "Perjalanan suci menuju Baitullah.",
+    "icon": "flight_takeoff",
+    "fileName": "haji.json"
+  },
+  {
+    "id": 8,
+    "title": "Muamalah (Ekonomi)",
+    "description": "Aturan berbisnis dan kejujuran rezeki.",
+    "icon": "storefront",
+    "fileName": "muamalah.json"
+  },
+  {
+    "id": 9,
+    "title": "Munakahat (Keluarga)",
+    "description": "Membangun keluarga sakinah.",
+    "icon": "favorite",
+    "fileName": "nikah.json"
+  },
+  {
+    "id": 10,
+    "title": "Fiqih Wanita",
+    "description": "Panduan Haid, Nifas & Istihadhah.",
+    "icon": "woman",
+    "fileName": "wanita.json"
+  },
+  {
+    "id": 11,
+    "title": "Makanan & Sembelihan",
+    "description": "Kehalalan apa yang kita konsumsi.",
+    "icon": "restaurant",
+    "fileName": "makanan.json"
+  },
+  {
+    "id": 12,
+    "title": "Fiqih Jenazah",
+    "description": "Kewajiban terakhir terhadap sesama muslim.",
+    "icon": "history_edu",
+    "fileName": "jenazah.json"
+  }
+]

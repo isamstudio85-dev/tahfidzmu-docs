@@ -10,7 +10,7 @@ import { db, storage } from "../firebase";
 type TenantStatus = "active" | "suspended";
 type TenantFilter = "all" | TenantStatus | "expired";
 type SubscriptionTier = "Trial" | "Premium Bulanan" | "Premium Tahunan";
-type ModuleKey = "quran" | "hadits" | "tajwid" | "tahsin" | "pondok_info" | "graduation";
+type ModuleKey = "quran" | "hadits" | "tajwid" | "tahsin" | "pondok_info" | "graduation" | "fiqih";
 const drawerTabs = [
   { key: "profil", label: "Profil" },
   { key: "akses", label: "Akses" },
@@ -54,13 +54,14 @@ type TenantForm = {
   activeModules: ModuleKey[];
 };
 
-const defaultModules: ModuleKey[] = ["quran", "hadits", "tajwid", "tahsin", "pondok_info", "graduation"];
+const defaultModules: ModuleKey[] = ["quran", "hadits", "tajwid", "tahsin", "pondok_info", "graduation", "fiqih"];
 
 const moduleOptions: Array<{ key: ModuleKey; title: string; description: string; locked?: boolean }> = [
   { key: "quran", title: "Quran", description: "Setoran dan hafalan Al-Quran.", locked: true },
   { key: "hadits", title: "Hadits", description: "Hafalan hadits pilihan." },
   { key: "tajwid", title: "Tajwid", description: "Materi hukum bacaan dan evaluasi." },
   { key: "tahsin", title: "Tahsin", description: "Perbaikan bacaan dan makharijul huruf." },
+  { key: "fiqih", title: "Fiqih", description: "Materi hafalan fiqih praktis sistematis." },
   { key: "pondok_info", title: "Pengetahuan Pondok", description: "Materi pengetahuan pondok yang perlu dihafal." },
   { key: "graduation", title: "Wisuda", description: "Ujian tasmi' dan wisuda." },
 ];

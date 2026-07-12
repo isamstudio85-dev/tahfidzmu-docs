@@ -7,6 +7,7 @@ import 'package:tahfidz_app/features/education/screens/hadits_screen.dart';
 import 'package:tahfidz_app/features/education/screens/quran_tadarus_screen.dart';
 import 'package:tahfidz_app/features/education/screens/educational_list_screen.dart';
 import 'package:tahfidz_app/features/education/screens/tahsin_list_screen.dart';
+import 'package:tahfidz_app/features/education/screens/pondok_knowledge_screen.dart';
 import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 import 'package:tahfidz_app/models/santri.dart';
@@ -142,9 +143,17 @@ class HafalanMenuSection extends StatelessWidget {
         (
           title: 'Hadits Pilihan',
           sub: 'Kumpulan hadits shahih',
-          icon: Icons.import_contacts_rounded,
-          color: Colors.orange,
+          icon: Icons.library_books_rounded,
+          color: Colors.orange.shade800,
           type: 'hadits'
+        ),
+      if (provider.isModuleActive('fiqih'))
+        (
+          title: 'Fiqih',
+          sub: 'Tuntunan ibadah lengkap',
+          icon: Icons.menu_book_rounded,
+          color: Colors.brown,
+          type: 'fiqih'
         ),
       if (provider.isModuleActive('tajwid'))
         (
@@ -161,6 +170,14 @@ class HafalanMenuSection extends StatelessWidget {
           icon: Icons.record_voice_over_rounded,
           color: Colors.deepPurple,
           type: 'tahsin'
+        ),
+      if (provider.isModuleActive('pondok_info'))
+        (
+          title: 'Pengetahuan Pondok',
+          sub: 'Materi internal pesantren',
+          icon: Icons.school_rounded,
+          color: Colors.blueGrey,
+          type: 'pondok_info'
         ),
     ];
 
@@ -182,6 +199,8 @@ class HafalanMenuSection extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const HaditsScreen()));
                   } else if (m.type == 'tahsin') {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const TahsinListScreen()));
+                  } else if (m.type == 'pondok_info') {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const PondokKnowledgeScreen()));
                   } else {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => EducationalListScreen(type: m.type)));
                   }

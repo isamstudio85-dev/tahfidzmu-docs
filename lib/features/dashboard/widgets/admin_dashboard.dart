@@ -46,6 +46,9 @@ class AdminDashboard extends StatelessWidget {
                 _buildAdminStats(context, isTablet),
                 _buildSubscriptionWarning(context),
                 const SizedBox(height: 24),
+
+                HafalanMenuSection(provider: provider),
+                const SizedBox(height: 24),
                 
                 if (isTablet)
                   Row(

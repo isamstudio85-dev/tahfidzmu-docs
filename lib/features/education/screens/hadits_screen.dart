@@ -312,17 +312,27 @@ class _HadithCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Arabic preview (first line)
+                    // Hadith Title
+                    Text(
+                      hadith.judul,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF4E342E),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // Arabic preview (snippet)
                     Text(
                       hadith.matanArab,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textDirection: TextDirection.rtl,
                       style: GoogleFonts.amiri(
-                        fontSize: 16,
-                        height: 1.6,
-                        color: const Color(0xFF1B5E20),
-                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: const Color(0xFF1B5E20).withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -367,7 +377,8 @@ class _HadithCard extends StatelessWidget {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-Color _temaColor(String tema) {
+Color _temaColor(String? tema) {
+  if (tema == null) return Colors.blueGrey;
   switch (tema) {
     case 'arbain':
       return const Color(0xFF2E5A27); // Standardize theme color to Olive Green
@@ -400,7 +411,8 @@ Color _temaColor(String tema) {
   }
 }
 
-IconData _temaIcon(String tema) {
+IconData _temaIcon(String? tema) {
+  if (tema == null) return Icons.circle_rounded;
   switch (tema) {
     case 'arbain':
       return Icons.menu_book_rounded;

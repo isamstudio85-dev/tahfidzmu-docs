@@ -332,7 +332,9 @@ class OrangTuaDashboard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              HafalanMenuSection(provider: context.read<AppProvider>()),
+              const SizedBox(height: 24),
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text(

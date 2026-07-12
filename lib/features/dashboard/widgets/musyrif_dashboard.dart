@@ -106,7 +106,9 @@ class MusyrifDashboard extends StatelessWidget {
                           ],
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 24),
+                      HafalanMenuSection(provider: provider),
+                      const SizedBox(height: 24),
                       
                       if (isTablet)
                         Row(

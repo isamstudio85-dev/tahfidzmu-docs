@@ -505,6 +505,18 @@ class _HafalanFiturList extends StatelessWidget {
             MaterialPageRoute(builder: (_) => const TahsinListScreen()),
           ),
         ),
+      if (provider.isModuleActive('fiqih'))
+        _buildTile(
+          Icons.menu_book_rounded,
+          'Fiqih',
+          Colors.brown,
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const EducationalListScreen(type: 'fiqih'),
+            ),
+          ),
+        ),
     ]);
   }
 }

@@ -1,0 +1,38 @@
+{
+  "title": "Zakat, Infaq & Wakaf",
+  "introduction": "Syariat harta dalam Islam mencakup kewajiban (Zakat) dan kesukarelaan (Infaq, Sedekah, Wakaf) guna mensucikan jiwa dan membangun peradaban.",
+  "sections": [
+    {
+      "name": "1. Definisi & Dalil",
+      "definition": "Zakat adalah kewajiban, Infaq adalah mengeluarkan harta untuk kebaikan, dan Sedekah mencakup segala bentuk kebaikan lahir batin.\n\nDalil Al-Quran:\nمَنْ ذَا الَّذِي يُقْرِضُ اللَّهَ قَرْضًا حَسَنًا فَيُضَاعِفَهُ لَهُ\n'Siapakah yang mau meminjamkan kepada Allah pinjaman yang baik, maka Allah akan melipatgandakan (balasan) pinjaman itu untuknya.' (QS. Al-Baqarah: 245)"
+    },
+    {
+      "name": "2. Ketentuan Zakat Fitrah",
+      "definition": "Wajib dikeluarkan bagi setiap muslim di akhir Ramadhan. Ukurannya adalah 1 Sha' (sekitar 2,5 kg atau 3,5 liter) makanan pokok daerah tersebut."
+    },
+    {
+      "name": "3. Ketentuan Zakat Mal",
+      "definition": "Harta yang wajib dizakati bila mencapai nishab dan haul:\n1. Emas & Perak (Tabungan).\n2. Hasil Perdagangan.\n3. Pertanian & Buah-buahan.\n4. Hewan Ternak (Kambing, Sapi, Unta).\n5. Rikaz (Harta karun/temuan)."
+    },
+    {
+      "name": "4. Infaq & Sedekah",
+      "definition": "Berbeda dengan zakat, Infaq tidak memiliki batasan nishab atau waktu. Ia boleh dikeluarkan kapan saja sebagai tanda syukur dan kedermawanan."
+    },
+    {
+      "name": "5. Wakaf (Sedekah Jariyah)",
+      "definition": "Menahan hak milik atas suatu harta yang bermanfaat dan menyalurkan manfaatnya untuk umat tanpa mengurangi pokok hartanya (seperti tanah untuk masjid/sekolah).\n\nDalil Wakaf:\nإِذَا مَاتَ الْإِنْسَانُ انْقَطَعَ عَنْهُ عَمَلُهُ إِلَّا مِنْ ثَلَاثَةٍ ... صَدَقَةٍ جَارِيَةٍ\n'Apabila manusia wafat, terputuslah amalnya kecuali tiga perkara: Sedekah jariyah (wakaf), ilmu bermanfaat, atau anak shalih.' (HR. Muslim)"
+    },
+    {
+      "name": "6. Rukhshah (Keringanan)",
+      "definition": "Kewajiban zakat gugur bagi mereka yang terlilit hutang hingga hartanya tidak mencapai nishab, atau mereka yang hartanya belum genap satu tahun kepemilikan (haul)."
+    },
+    {
+      "name": "7. Adab Pemberian",
+      "definition": "1. Ikhlas semata-mata karena Allah.\n2. Tidak mengungkit-ungkit pemberian (Mannan).\n3. Tidak menyakiti perasaan penerima (Adza).\n4. Memberikan barang yang masih layak dan disukai."
+    },
+    {
+      "name": "8. Hikmah",
+      "definition": "- Menghapus kesenjangan antara si kaya dan si miskin.\n- Memastikan harta berputar di masyarakat, tidak hanya di segelintir orang.\n- Menjadi tabungan pahala yang terus mengalir meskipun pemberinya sudah wafat (wakaf)."
+    }
+  ]
+}

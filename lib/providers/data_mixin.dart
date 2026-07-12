@@ -215,6 +215,20 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
       });
     }
     
+    getCollection('settings').doc('modules').snapshots().listen((doc) {
+      if (doc.exists) {
+        final active = doc.data()?['active'];
+        if (active is List) {
+          final provider = this as dynamic; // Accessing activeModules from mixin
+          try {
+            provider.updateActiveModules(List<String>.from(active.map((e) => e.toString())));
+          } catch (e) {
+            debugPrint("Module sync error: $e");
+          }
+        }
+      }
+    });
+
     getCollection('settings').doc('pesantren_info').get().then((doc) {
       if (doc.exists) {
         pesantrenInfo = PesantrenInfo.fromJson(doc.data()!);

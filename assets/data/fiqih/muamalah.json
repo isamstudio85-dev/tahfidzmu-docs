@@ -1,0 +1,38 @@
+{
+  "title": "Fiqih Muamalah (Ekonomi)",
+  "introduction": "Muamalah mengatur hubungan antarmanusia dalam urusan duniawi, khususnya perdagangan dan jasa.",
+  "sections": [
+    {
+      "name": "1. Definisi & Dalil",
+      "definition": "Aturan syariat mengenai tata cara interaksi manusia dalam mencari dan mengelola harta.\n\nDalil Al-Quran:\nوَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَا\n'Allah telah menghalalkan jual beli dan mengharamkan riba.' (QS. Al-Baqarah: 275)"
+    },
+    {
+      "name": "2. Rukun Jual Beli",
+      "definition": "Agar transaksi sah, harus terpenuhi 5 hal:\n1. Penjual (Bāi')\n2. Pembeli (Musytarī)\n3. Barang yang dijual (Ma'qūd 'Alaih)\n4. Harga (Thaman)\n5. Ijab Qabul (Serah terima/Akad)"
+    },
+    {
+      "name": "3. Etika Berbisnis Islam",
+      "definition": "1. Jujur (tidak mengurangi timbangan)\n2. Amanah (menjelaskan cacat barang jika ada)\n3. Tidak menimbun barang (Ihtikar) untuk menaikkan harga\n4. Memudahkan urusan penagihan hutang"
+    },
+    {
+      "name": "4. Transaksi Terlarang",
+      "definition": "1. Riba: Tambahan yang dipersyaratkan dalam hutang atau pertukaran barang tertentu.\n2. Gharar: Ketidakjelasan yang merugikan (penipuan).\n3. Maisir: Unsur perjudian atau spekulasi tinggi.\n4. Tadlis: Menyembunyikan cacat barang secara sengaja."
+    },
+    {
+      "name": "5. Mawani' (Penghalang Sahnya Akad)",
+      "definition": "1. Ikrah (Paksaan): Akad tidak sah jika dilakukan di bawah ancaman.\n2. Gila atau Belum Baligh: Pelaku akad harus sadar dan cakap secara hukum.\n3. Harta yang dilarang diperjualbelikan (seperti bangkai, babi, atau khamr)."
+    },
+    {
+      "name": "6. Rukhshah (Keringanan: Khiyar)",
+      "definition": "Hak untuk membatalkan atau melanjutkan akad guna menghindari kerugian:\n1. Khiyar Majelis: Selama masih berada di lokasi transaksi.\n2. Khiyar Syarat: Adanya masa garansi atau percobaan (misal 3 hari).\n3. Khiyar 'Aib: Hak mengembalikan barang jika ditemukan cacat tersembunyi."
+    },
+    {
+      "name": "7. Adab Hutang Piutang",
+      "definition": "- Wajib mencatat transaksi hutang (Al-Baqarah: 282)\n- Niat kuat untuk melunasi secepat mungkin\n- Pemberi hutang dilarang mengambil untung/bunga\n- Menghadirkan saksi untuk transaksi bernilai besar"
+    },
+    {
+      "name": "8. Hikmah Muamalah",
+      "definition": "- Menjamin keadilan dalam mencari rezeki\n- Mencegah eksploitasi manusia atas manusia lainnya\n- Menghindari pertikaian antaranggota masyarakat\n- Menciptakan sirkulasi harta yang berkah dan halal"
+    }
+  ]
+}
