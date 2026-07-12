@@ -587,7 +587,7 @@ export default function SuperAdminPesantrenPage() {
         ) : (
           <div className="grid gap-4 xl:grid-cols-2">
             {filteredItems.map((item) => (
-              <article key={item.id} className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-white/[0.03]">
+              <article key={item.id} className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-gray-800 dark:bg-gray-800/40">
                 {isExpired(item.activeUntil) && (
                   <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
                     <div className="font-semibold">Masa Aktif Habis</div>

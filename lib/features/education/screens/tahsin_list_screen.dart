@@ -16,6 +16,10 @@ class TahsinListScreen extends StatefulWidget {
 class _TahsinListScreenState extends State<TahsinListScreen> {
   List<dynamic> _categories = [];
   bool _isLoading = true;
+  
+  // WIDE MODE STATE
+  dynamic _selectedSection;
+  String? _selectedCategoryTitle;
 
   @override
   void initState() {
@@ -37,238 +41,186 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
+    final bool isWide = MediaQuery.of(context).size.width > 900;
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Belajar Tahsin')),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    Widget sidebar = ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      itemCount: _categories.length,
+      separatorBuilder: (ctx, i) => const Divider(color: Color(0xFFE5D5B8), height: 1),
+      itemBuilder: (ctx, i) {
+        return _CategoryAccordion(
+          category: _categories[i],
+          isWide: isWide,
+          selectedSection: _selectedSection,
+          onSectionTap: (catTitle, section) {
+            if (isWide) {
+              setState(() {
+                _selectedSection = section;
+                _selectedCategoryTitle = catTitle;
+              });
+            } else {
+              // Mobile handled inside CategoryAccordion
+            }
+          },
+        );
+      },
+    );
+
+    if (isWide) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFFDF9F0),
+        appBar: AppBar(
+          title: const Text('Tahsin & Makharijul Huruf'),
+          backgroundColor: const Color(0xFF2E5A27),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: Row(
+          children: [
+            // Master Sidebar
+            SizedBox(
+              width: 320,
+              child: Container(
+                decoration: const BoxDecoration(border: Border(right: BorderSide(color: Color(0xFFE5D5B8)))),
+                child: sidebar,
+              ),
+            ),
+            // Detail Content
+            Expanded(
+              child: _selectedSection == null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.play_circle_filled_rounded, size: 80, color: const Color(0xFF2E5A27).withValues(alpha: 0.1)),
+                          const SizedBox(height: 16),
+                          const Text('Pilih materi di samping untuk mulai belajar', style: TextStyle(color: Colors.grey)),
+                        ],
+                      ),
+                    )
+                  : TahsinDetailPlayScreen(
+                      key: ValueKey('vid_${_selectedSection['youtubeId']}'),
+                      sections: const [], // Not used in wide mode detail
+                      initialIndex: 0,
+                      categoryTitle: _selectedCategoryTitle ?? '',
+                      hideAppBar: true,
+                      wideModeSection: _selectedSection,
+                    ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
+      backgroundColor: const Color(0xFFFDF9F0),
       appBar: AppBar(
         title: const Text('Belajar Tahsin'),
-        backgroundColor: const Color(0xFF2E5A27), // Deep olive green
+        backgroundColor: const Color(0xFF2E5A27),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _categories.isEmpty
-              ? const Center(child: Text('Materi belum tersedia.'))
-              : ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  itemCount: _categories.length,
-                  separatorBuilder: (ctx, i) => const Divider(
-                    color: Color(0xFFE5D5B8),
-                    height: 1,
-                    thickness: 1.2,
-                  ),
-                  itemBuilder: (ctx, i) {
-                    final cat = _categories[i];
-                    final bool isPraktik = cat['title'] == 'Praktik Tilawah';
-                    
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFDF9F0),
-                        border: isPraktik 
-                            ? const Border(
-                                top: BorderSide(color: Color(0xFFE5D5B8), width: 1.2),
-                                bottom: BorderSide(color: Color(0xFFE5D5B8), width: 1.2),
-                              )
-                            : null,
-                      ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => TahsinSubListScreen(
-                              fileName: cat['fileName'] ?? 'bab_${cat['id'].toString().padLeft(3, '0')}.json',
-                              title: cat['title'],
-                            ),
-                          ),
-                        ),
-                        leading: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            _getIcon(cat['icon']),
-                            color: const Color(0xFF2E5A27),
-                            size: 22,
-                          ),
-                        ),
-                        title: Text(
-                          cat['title'],
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                            color: const Color(0xFF4E342E), // Soft Espresso
-                          ),
-                        ),
-                        subtitle: cat['description'] != null && cat['description'].isNotEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.only(top: 4),
-                                child: Text(
-                                  cat['description'],
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 11,
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                              )
-                            : null,
-                        trailing: const Icon(
-                          Icons.chevron_right_rounded,
-                          color: Color(0xFF2E5A27),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+      body: sidebar,
     );
   }
-
-  IconData _getIcon(String? iconName) {
-    switch (iconName) {
-      case 'record_voice_over':
-        return Icons.record_voice_over_rounded;
-      case 'auto_stories':
-        return Icons.auto_stories_rounded;
-      default:
-        return Icons.menu_book_rounded;
-    }
-  }
 }
 
-class TahsinSubListScreen extends StatefulWidget {
-  const TahsinSubListScreen({super.key, required this.fileName, required this.title});
-  final String fileName;
-  final String title;
+class _CategoryAccordion extends StatefulWidget {
+  const _CategoryAccordion({required this.category, required this.isWide, this.selectedSection, required this.onSectionTap});
+  final dynamic category;
+  final bool isWide;
+  final dynamic selectedSection;
+  final Function(String, dynamic) onSectionTap;
 
   @override
-  State<TahsinSubListScreen> createState() => _TahsinSubListScreenState();
+  State<_CategoryAccordion> createState() => _CategoryAccordionState();
 }
 
-class _TahsinSubListScreenState extends State<TahsinSubListScreen> {
-  dynamic _data;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSubItems();
-  }
+class _CategoryAccordionState extends State<_CategoryAccordion> {
+  bool _expanded = false;
+  List<dynamic> _sections = [];
+  bool _loadingSub = false;
 
   Future<void> _loadSubItems() async {
+    if (_sections.isNotEmpty) return;
+    setState(() => _loadingSub = true);
     try {
-      final String response = await rootBundle.loadString('assets/data/tahsin/${widget.fileName}');
+      final fileName = widget.category['fileName'] ?? 'bab_${widget.category['id'].toString().padLeft(3, '0')}.json';
+      final String response = await rootBundle.loadString('assets/data/tahsin/$fileName');
       final data = await json.decode(response);
-      setState(() {
-        _data = data;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _sections = data['sections'] ?? [];
+          _loadingSub = false;
+        });
+      }
     } catch (e) {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _loadingSub = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
-      appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: const Color(0xFF2E5A27), // Deep olive green
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _data == null
-              ? const Center(child: Text('Gagal memuat materi.'))
-              : ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  itemCount: (_data['sections'] as List).length,
-                  separatorBuilder: (ctx, i) => const Divider(
-                    color: Color(0xFFE5D5B8),
-                    height: 1,
-                    thickness: 1.2,
-                  ),
-                  itemBuilder: (ctx, i) {
-                    final section = _data['sections'][i];
-                    return Container(
-                      color: const Color(0xFFFDF9F0),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => TahsinDetailPlayScreen(
-                              sections: _data['sections'] as List<dynamic>,
-                              initialIndex: i,
-                              categoryTitle: widget.title,
-                            ),
+    return Column(
+      children: [
+        ListTile(
+          onTap: () {
+            setState(() => _expanded = !_expanded);
+            if (_expanded) _loadSubItems();
+          },
+          leading: Icon(
+            _expanded ? Icons.folder_open_rounded : Icons.folder_rounded,
+            color: const Color(0xFF2E5A27),
+            size: 20,
+          ),
+          title: Text(
+            widget.category['title'],
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: const Color(0xFF4E342E)),
+          ),
+          trailing: Icon(_expanded ? Icons.expand_less : Icons.expand_more, size: 18),
+        ),
+        if (_expanded)
+          if (_loadingSub)
+            const Padding(padding: EdgeInsets.all(8.0), child: LinearProgressIndicator(minHeight: 2))
+          else
+            ..._sections.map((s) {
+              final isSelected = widget.selectedSection?['name'] == s['name'];
+              return Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: ListTile(
+                  dense: true,
+                  selected: isSelected && widget.isWide,
+                  selectedTileColor: const Color(0xFFF4EAD4),
+                  onTap: () {
+                    if (widget.isWide) {
+                      widget.onSectionTap(widget.category['title'], s);
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => TahsinDetailPlayScreen(
+                            sections: _sections,
+                            initialIndex: _sections.indexOf(s),
+                            categoryTitle: widget.category['title'],
                           ),
                         ),
-                        leading: section['letters'] != null
-                            ? Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  section['letters'],
-                                  style: GoogleFonts.amiri(
-                                    fontSize: 20,
-                                    color: const Color(0xFF2E5A27),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              )
-                            : Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.play_circle_outline_rounded,
-                                  color: Color(0xFF2E5A27),
-                                  size: 20,
-                                ),
-                              ),
-                        title: Text(
-                          section['name'],
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                            color: const Color(0xFF4E342E), // Soft Espresso
-                          ),
-                        ),
-                        subtitle: section['definition'] != null
-                            ? Padding(
-                                padding: const EdgeInsets.only(top: 4),
-                                child: Text(
-                                  section['definition'],
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 11,
-                                    color: Colors.grey.shade600,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              )
-                            : null,
-                        trailing: const Icon(
-                          Icons.play_arrow_rounded,
-                          color: Color(0xFF2E5A27),
-                        ),
-                      ),
-                    );
+                      );
+                    }
                   },
+                  title: Text(s['name'], style: TextStyle(fontSize: 12, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                  leading: const Icon(Icons.play_circle_outline, size: 16),
                 ),
+              );
+            }),
+      ],
     );
   }
 }
@@ -279,10 +231,14 @@ class TahsinDetailPlayScreen extends StatefulWidget {
     required this.sections,
     required this.initialIndex,
     required this.categoryTitle,
+    this.hideAppBar = false,
+    this.wideModeSection,
   });
   final List<dynamic> sections;
   final int initialIndex;
   final String categoryTitle;
+  final bool hideAppBar;
+  final dynamic wideModeSection;
 
   @override
   State<TahsinDetailPlayScreen> createState() => _TahsinDetailPlayScreenState();
@@ -299,148 +255,74 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final section = widget.sections[_currentIndex];
-    final hasPrev = _currentIndex > 0;
-    final hasNext = _currentIndex < widget.sections.length - 1;
+    // If wideModeSection is provided, use it directly (Detail view mode)
+    final section = widget.wideModeSection ?? widget.sections[_currentIndex];
+    final hasPrev = !widget.hideAppBar && _currentIndex > 0;
+    final hasNext = !widget.hideAppBar && _currentIndex < widget.sections.length - 1;
     
     return Scaffold(
-      appBar: AppBar(
+      appBar: widget.hideAppBar ? null : AppBar(
         title: const Text('Belajar Tahsin'),
-        backgroundColor: const Color(0xFF2E5A27), // Deep olive green header
+        backgroundColor: const Color(0xFF2E5A27),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
+      backgroundColor: const Color(0xFFFDF9F0),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Category Tag
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: widget.categoryTitle == 'Praktik Tilawah' 
-                      ? const Color(0xFFFDF9F0) 
-                      : const Color(0xFF2E5A27).withValues(alpha: 0.1),
-                  border: widget.categoryTitle == 'Praktik Tilawah'
-                      ? const Border(
-                          top: BorderSide(color: Color(0xFFE5D5B8), width: 1.2),
-                          bottom: BorderSide(color: Color(0xFFE5D5B8), width: 1.2),
-                        )
-                      : null,
-                  borderRadius: widget.categoryTitle == 'Praktik Tilawah' 
-                      ? null 
-                      : BorderRadius.circular(20),
+              if (widget.hideAppBar) ...[
+                Text(
+                  section['name'],
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: const Color(0xFF2E5A27)),
                 ),
-                child: Text(
-                  widget.categoryTitle,
-                  textAlign: widget.categoryTitle == 'Praktik Tilawah' ? TextAlign.center : TextAlign.left,
-                  style: GoogleFonts.poppins(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF2E5A27),
+                const SizedBox(height: 8),
+                Text(widget.categoryTitle, style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w500)),
+                const SizedBox(height: 20),
+                const Divider(color: Color(0xFFE5D5B8)),
+                const SizedBox(height: 20),
+              ],
+              
+              if (!widget.hideAppBar) ...[
+                // NAVIGATION HEADER (Mobile Only)
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  decoration: BoxDecoration(color: const Color(0xFFF4EAD4), borderRadius: BorderRadius.circular(8), border: Border.all(color: const Color(0xFFE5D5B8))),
+                  child: Row(
+                    children: [
+                      IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: hasPrev ? const Color(0xFF2E5A27) : Colors.grey.shade400, size: 18), onPressed: hasPrev ? () => setState(() => _currentIndex--) : null),
+                      Expanded(child: Center(child: Text(section['name'], style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold, color: const Color(0xFF4E342E)), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis))),
+                      IconButton(icon: Icon(Icons.arrow_forward_ios_rounded, color: hasNext ? const Color(0xFF2E5A27) : Colors.grey.shade400, size: 18), onPressed: hasNext ? () => setState(() => _currentIndex++) : null),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              
-              // NAVIGATION HEADER BAR WITH ARROWS (Kitab Kuning Styled)
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF4EAD4), // Classic parchment backing
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFE5D5B8)),
-                ),
-                child: Row(
-                  children: [
-                    // Previous Button
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: hasPrev ? const Color(0xFF2E5A27) : Colors.grey.shade400,
-                        size: 18,
-                      ),
-                      onPressed: hasPrev
-                          ? () {
-                              setState(() {
-                                _currentIndex--;
-                              });
-                            }
-                          : null,
-                    ),
-                    
-                    // Centered Title
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          section['name'],
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF4E342E), // Dark Espresso
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                    
-                    // Next Button
-                    IconButton(
-                      icon: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: hasNext ? const Color(0xFF2E5A27) : Colors.grey.shade400,
-                        size: 18,
-                      ),
-                      onPressed: hasNext
-                          ? () {
-                              setState(() {
-                                _currentIndex++;
-                              });
-                            }
-                          : null,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-  
-              // Only load the player if the YouTube ID exists
-              if (section['youtubeId'] != null) ...[
-                LockedYoutubePlayer(key: ValueKey(section['youtubeId']), youtubeId: section['youtubeId']),
                 const SizedBox(height: 20),
               ],
   
-              const SizedBox(height: 12),
-              
-              // Video Credits and Copyright Card (Kitab Kuning aligned style)
+              if (section['youtubeId'] != null) ...[
+                LockedYoutubePlayer(key: ValueKey(section['youtubeId']), youtubeId: section['youtubeId']),
+                const SizedBox(height: 24),
+              ],
+
+              if (section['definition'] != null) ...[
+                const Text('PENJELASAN', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1, color: Color(0xFF2E5A27))),
+                const SizedBox(height: 10),
+                Text(section['definition'], style: GoogleFonts.poppins(fontSize: 14, height: 1.7, color: const Color(0xFF4E342E))),
+                const SizedBox(height: 24),
+              ],
+  
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFAF6EE),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFEDE8DF)),
-                ),
+                decoration: BoxDecoration(color: const Color(0xFFFAF6EE), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFEDE8DF))),
                 child: Column(
                   children: [
                     const Icon(Icons.copyright_rounded, color: Color(0xFF2E5A27), size: 20),
                     const SizedBox(height: 6),
-                    Text(
-                      'Sumber Video: YouTube Syeikh Hamdy Habeeb\nHak Cipta & Panduan sepenuhnya milik pemilik saluran video.',
-                      style: GoogleFonts.poppins(
-                        fontSize: 10,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
-                        height: 1.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                    Text('Sumber Video: YouTube Syeikh Hamdy Habeeb\nHak Cipta & Panduan sepenuhnya milik pemilik saluran video.', style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.w500, height: 1.5), textAlign: TextAlign.center),
                   ],
                 ),
               ),
@@ -478,8 +360,8 @@ class _LockedYoutubePlayerState extends State<LockedYoutubePlayer> {
       flags: const YoutubePlayerFlags(
         autoPlay: false,
         mute: false,
-        hideControls: true, // Sembunyikan kontrol asli
-        disableDragSeek: true, // Cegah geser manual
+        hideControls: true, 
+        disableDragSeek: true,
         loop: false,
         isLive: false,
         forceHD: false,
@@ -490,8 +372,7 @@ class _LockedYoutubePlayerState extends State<LockedYoutubePlayer> {
 
   Future<void> _checkConnectivity() async {
     try {
-      final result = await InternetAddress.lookup('google.com')
-          .timeout(const Duration(seconds: 3));
+      final result = await InternetAddress.lookup('google.com').timeout(const Duration(seconds: 3));
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         if (mounted) setState(() => _isOffline = false);
       }
@@ -504,16 +385,13 @@ class _LockedYoutubePlayerState extends State<LockedYoutubePlayer> {
     if (mounted) {
       setState(() {
         _isPlaying = _controller.value.isPlaying;
-        
         final current = _controller.value.position;
         final total = _controller.value.metaData.duration;
-        
         if (total.inSeconds > 0) {
           _progress = current.inSeconds / total.inSeconds;
         } else {
           _progress = 0.0;
         }
-
         _currentTime = _formatDuration(current);
         _totalTime = _formatDuration(total);
       });
@@ -539,45 +417,15 @@ class _LockedYoutubePlayerState extends State<LockedYoutubePlayer> {
       return AspectRatio(
         aspectRatio: 16 / 9,
         child: Container(
-          margin: const EdgeInsets.only(top: 12, bottom: 8),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade900,
-            borderRadius: BorderRadius.circular(16),
-          ),
+          decoration: BoxDecoration(color: Colors.grey.shade900, borderRadius: BorderRadius.circular(16)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.wifi_off_rounded,
-                color: Colors.white70,
-                size: 40,
-              ),
+              const Icon(Icons.wifi_off_rounded, color: Colors.white70, size: 40),
               const SizedBox(height: 12),
-              Text(
-                'Koneksi internet diperlukan\nuntuk memutar video panduan.',
-                style: GoogleFonts.poppins(
-                  color: Colors.white70,
-                  fontSize: 12,
-                  height: 1.5,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              Text('Koneksi internet diperlukan\nuntuk memutar video panduan.', style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12, height: 1.5), textAlign: TextAlign.center),
               const SizedBox(height: 12),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.refresh_rounded, size: 16),
-                label: const Text('Coba Lagi', style: TextStyle(fontSize: 12)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryGreen,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                onPressed: () {
-                  _checkConnectivity();
-                },
-              ),
+              ElevatedButton.icon(icon: const Icon(Icons.refresh_rounded, size: 16), label: const Text('Coba Lagi'), style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryGreen, foregroundColor: Colors.white), onPressed: () => _checkConnectivity()),
             ],
           ),
         ),
@@ -585,115 +433,33 @@ class _LockedYoutubePlayerState extends State<LockedYoutubePlayer> {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))]),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          // Pembungkus Video dengan IgnorePointer untuk Mencegah Interaksi Klik Langsung ke YouTube
           IgnorePointer(
             ignoring: true,
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: YoutubePlayer(
-                controller: _controller,
-                showVideoProgressIndicator: false,
-              ),
-            ),
+            child: AspectRatio(aspectRatio: 16 / 9, child: YoutubePlayer(controller: _controller, showVideoProgressIndicator: false)),
           ),
-          
-          // KONTROL CUSTOM KITA SENDIRI
           Container(
             color: Colors.grey.shade900,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
               children: [
-                // Progress Bar
                 Row(
                   children: [
-                    Text(
-                      _currentTime,
-                      style: const TextStyle(color: Colors.white70, fontSize: 11),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: LinearProgressIndicator(
-                          value: _progress,
-                          backgroundColor: Colors.white24,
-                          valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen),
-                          minHeight: 4,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                    Text(
-                      _totalTime,
-                      style: const TextStyle(color: Colors.white70, fontSize: 11),
-                    ),
+                    Text(_currentTime, style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                    Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: LinearProgressIndicator(value: _progress, backgroundColor: Colors.white24, valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen), minHeight: 4, borderRadius: BorderRadius.circular(2)))),
+                    Text(_totalTime, style: const TextStyle(color: Colors.white70, fontSize: 11)),
                   ],
                 ),
                 const SizedBox(height: 10),
-                // Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Mute / Unmute
-                    IconButton(
-                      icon: Icon(
-                        _isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          if (_isMuted) {
-                            _controller.unMute();
-                            _isMuted = false;
-                          } else {
-                            _controller.mute();
-                            _isMuted = true;
-                          }
-                        });
-                      },
-                    ),
-                    // Play / Pause
-                    CircleAvatar(
-                      backgroundColor: AppTheme.primaryGreen,
-                      radius: 22,
-                      child: IconButton(
-                        icon: Icon(
-                          _isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          if (_isPlaying) {
-                            _controller.pause();
-                          } else {
-                            _controller.play();
-                          }
-                        },
-                      ),
-                    ),
-                    // Replay / Reset
-                    IconButton(
-                      icon: const Icon(
-                        Icons.replay_rounded,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        _controller.seekTo(Duration.zero);
-                        _controller.play();
-                      },
-                    ),
+                    IconButton(icon: Icon(_isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded, color: Colors.white), onPressed: () => setState(() { if (_isMuted) { _controller.unMute(); _isMuted = false; } else { _controller.mute(); _isMuted = true; } })),
+                    CircleAvatar(backgroundColor: AppTheme.primaryGreen, radius: 22, child: IconButton(icon: Icon(_isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded, color: Colors.white), onPressed: () { if (_isPlaying) { _controller.pause(); } else { _controller.play(); } })),
+                    IconButton(icon: const Icon(Icons.replay_rounded, color: Colors.white), onPressed: () { _controller.seekTo(Duration.zero); _controller.play(); }),
                   ],
                 ),
               ],

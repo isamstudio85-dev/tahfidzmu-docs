@@ -46,23 +46,47 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
   bool _showDetailedErrors = false;
   bool _isSaving = false;
 
+  // WIDE MODE SEARCH
+  final TextEditingController _santriSearchCtrl = TextEditingController();
+  String _santriQuery = '';
+
   @override
   void initState() {
     super.initState();
     _isQuickMode = widget.isQuickModeInitial;
     _selectedSantri = widget.santri;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final provider = context.read<AppProvider>();
+      
+      // AUTO-SELECT FIRST STUDENT IF NONE PROVIDED
+      if (_selectedSantri == null) {
+        final list = provider.isMusyrif && provider.linkedMusyrif != null
+            ? provider.getSantriByMusyrif(provider.linkedMusyrif!.id)
+            : provider.santriList;
+        if (list.isNotEmpty) {
+          setState(() => _selectedSantri = list.first);
+        }
+      }
+
+      if (_selectedSantri != null) {
+        _applyContinuation(provider, _selectedSantri!);
+      }
+    });
+
     if (widget.initialSurah != null) {
       _selectedSurah = widget.initialSurah;
       _type = widget.initialType ?? SetoranType.ziyadah;
       _ayahStart = widget.initialAyahStart ?? 1;
       _ayahEnd = (_ayahStart + 9).clamp(_ayahStart, _selectedSurah!.numberOfAyahs);
-    } else if (widget.santri != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        final provider = context.read<AppProvider>();
-        _applyContinuation(provider, widget.santri!);
-      });
     }
+  }
+
+  @override
+  void dispose() {
+    _santriSearchCtrl.dispose();
+    super.dispose();
   }
 
   void _showSantriPicker() {
@@ -94,12 +118,7 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
                   title: Text(list[i].name),
                   onTap: () async {
                     final targetSantri = list[i];
-                    
-                    // SECURITY LOGIC: 
-                    // 1. If Quick Mode (Rekap): No scan needed (for anyone)
-                    // 2. If Interactive Mode: Must Scan QR (to prove presence)
                     final bool needsVerification = !_isQuickMode;
-                    
                     final verified = needsVerification 
                       ? await VerificationGate.show(context: context, expectedSantri: targetSantri)
                       : targetSantri;
@@ -144,6 +163,7 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
+    final bool isWide = MediaQuery.of(context).size.width > 900;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -169,80 +189,91 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
           ),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final bool isTablet = constraints.maxWidth > 700;
-          
-          if (isTablet) {
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: isWide 
+          ? Row(
               children: [
-                Expanded(
-                  flex: 4,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _sectionTitle('1. Pilih Santri'),
-                        const SizedBox(height: 10),
-                        _buildSantriSelector(),
-                        const SizedBox(height: 32),
-                        if (!_isQuickMode)
-                          const Center(child: Text('Mode Interaktif: Musyrif menandai ayat lewat Mushaf.', style: TextStyle(color: Colors.grey, fontSize: 11, fontStyle: FontStyle.italic)))
-                        else
-                          _buildQuickModeExplanation(),
-                      ],
-                    ),
+                // Left Column: Student List with Search
+                Container(
+                  width: 280, 
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border(right: BorderSide(color: Colors.grey.shade200, width: 1)),
                   ),
+                  child: _buildWideSantriList(provider),
                 ),
-                VerticalDivider(width: 1, color: Colors.grey.shade300),
+                // Right Column: Form Settings (Top Aligned)
                 Expanded(
-                  flex: 6,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _sectionTitle('2. Atur Sesi Setoran'),
-                        const SizedBox(height: 12),
-                        _buildTypePicker(),
-                        const SizedBox(height: 12),
-                        _buildSurahSelector(provider),
-                        const SizedBox(height: 12),
-                        _buildAyahRangeInput(),
-                        
-                        if (_isQuickMode) ...[
-                          const SizedBox(height: 24),
-                          _sectionTitle('3. Hasil Setoran (Manual)'),
-                          const SizedBox(height: 12),
-                          _buildErrorCounters(),
-                          const SizedBox(height: 16),
-                          _buildFluencyPicker(),
-                        ],
+                  child: Container(
+                    height: double.infinity,
+                    color: const Color(0xFFF8F9FA),
+                    alignment: Alignment.topLeft, 
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (_selectedSantri == null)
+                            const Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 100),
+                                child: Text('Sedang memuat data santri...', style: TextStyle(color: Colors.grey)),
+                              ),
+                            )
+                          else ...[
+                            _sectionTitle('Konfigurasi Setoran: ${_selectedSantri!.name}'),
+                            const SizedBox(height: 20),
+                            _buildTypePicker(),
+                            const SizedBox(height: 16),
+                            _buildSurahSelector(provider),
+                            const SizedBox(height: 16),
+                            _buildAyahRangeInput(),
+                            
+                            if (_isQuickMode) ...[
+                              const SizedBox(height: 32),
+                              _sectionTitle('Hasil Setoran (Manual)'),
+                              const SizedBox(height: 16),
+                              _buildAssessmentModeToggle(),
+                              const SizedBox(height: 16),
+                              if (_showDetailedErrors) ...[
+                                _buildErrorCounters(),
+                                const SizedBox(height: 16),
+                              ],
+                              _buildFluencyPicker(),
+                            ],
 
-                        const SizedBox(height: 40),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 64,
-                          child: FilledButton.icon(
-                            icon: Icon(_isQuickMode ? Icons.save_rounded : Icons.play_arrow_rounded, size: 28),
-                            label: Text(
-                              _isQuickMode ? 'SIMPAN HASIL SETORAN' : 'MULAI SIMAK SEKARANG', 
-                              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, letterSpacing: 1.0)
+                            const SizedBox(height: 48),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 600),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 64,
+                              child: FilledButton.icon(
+                                icon: Icon(_isQuickMode ? Icons.save_rounded : Icons.play_arrow_rounded, size: 28),
+                                label: Text(
+                                  _isQuickMode ? 'SIMPAN HASIL SETORAN' : 'MULAI SIMAK SEKARANG', 
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 1.0)
+                                ),
+                                onPressed: _canStart() && !_isSaving ? (_isQuickMode ? _saveQuickSetoran : _startSetoran) : null,
+                              ),
                             ),
-                            onPressed: _canStart() && !_isSaving ? (_isQuickMode ? _saveQuickSetoran : _startSetoran) : null,
                           ),
-                        ),
-                      ],
+                            const SizedBox(height: 16),
+                            Text(
+                              _isQuickMode 
+                                ? 'Mode Cepat: Cocok untuk merekap hasil setoran dari catatan fisik.' 
+                                : 'Mode Interaktif: Membuka mushaf digital untuk menyimak ayat.', 
+                              style: const TextStyle(color: Colors.grey, fontSize: 12, fontStyle: FontStyle.italic),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ],
-            );
-          }
-
-          return SingleChildScrollView(
+            )
+          : SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -298,31 +329,88 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
                 ),
               ],
             ),
-          );
-        },
-      ),
+          ),
     );
   }
 
-  Widget _buildQuickModeExplanation() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.orange.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
-      ),
-      child: const Column(
-        children: [
-          Icon(Icons.bolt_rounded, color: Colors.orange),
-          SizedBox(height: 8),
-          Text(
-            'Mode Cepat diaktifkan. Anda bisa langsung memasukkan jumlah kesalahan tanpa membuka Mushaf digital.',
-            style: TextStyle(fontSize: 11, color: Colors.orange, fontWeight: FontWeight.w600),
-            textAlign: TextAlign.center,
+  Widget _buildWideSantriList(AppProvider provider) {
+    final allList = provider.isMusyrif && provider.linkedMusyrif != null
+        ? provider.getSantriByMusyrif(provider.linkedMusyrif!.id)
+        : provider.santriList;
+    
+    final filteredList = _santriQuery.isEmpty 
+        ? allList 
+        : allList.where((s) => s.name.toLowerCase().contains(_santriQuery.toLowerCase()) || (s.nis?.contains(_santriQuery) ?? false)).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+          child: Text('Daftar Santri', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14)),
+        ),
+        
+        // QUICK SEARCH BOX
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: TextField(
+            controller: _santriSearchCtrl,
+            onChanged: (v) => setState(() => _santriQuery = v),
+            style: const TextStyle(fontSize: 13),
+            decoration: InputDecoration(
+              hintText: 'Cari nama/NIS...',
+              prefixIcon: const Icon(Icons.search, size: 18),
+              contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+              filled: true,
+              fillColor: Colors.grey.shade50,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+            ),
           ),
-        ],
-      ),
+        ),
+        const Divider(height: 1),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: filteredList.length,
+            separatorBuilder: (_, __) => Divider(height: 1, color: Colors.grey.shade50),
+            itemBuilder: (ctx, i) {
+              final s = filteredList[i];
+              final isSelected = _selectedSantri?.id == s.id;
+              return ListTile(
+                dense: true,
+                selected: isSelected,
+                selectedTileColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                leading: CircleAvatar(
+                  radius: 14,
+                  backgroundColor: AppTheme.primaryGreen.withValues(alpha: isSelected ? 0.2 : 0.05), 
+                  child: Text(s.name[0], style: const TextStyle(color: AppTheme.primaryGreen, fontSize: 11, fontWeight: FontWeight.bold))
+                ),
+                title: Text(
+                  s.name, 
+                  maxLines: 1, 
+                  overflow: TextOverflow.ellipsis, 
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? AppTheme.primaryGreen : Colors.black87
+                  )
+                ),
+                onTap: () async {
+                  final bool needsVerification = !_isQuickMode;
+                  final verified = needsVerification 
+                    ? await VerificationGate.show(context: context, expectedSantri: s)
+                    : s;
+
+                  if (verified != null && mounted) {
+                    setState(() => _selectedSantri = verified);
+                    _applyContinuation(context.read<AppProvider>(), verified);
+                  }
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -426,7 +514,6 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
           const Spacer(),
           _circleBtn(Icons.remove, () => onChanged(value - 1), color: color),
           
-          // Clickable value for quick picker
           InkWell(
             onTap: () => _showAyahPicker(label, value, max, onChanged),
             borderRadius: BorderRadius.circular(8),
@@ -659,10 +746,6 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
 
   void _startSetoran() async {
     final provider = context.read<AppProvider>();
-    
-    // SMART VERIFICATION:
-    // If student was already scanned (passed from Express Path), skip re-scan.
-    // If student was picked manually from list, force Scan QR to prove presence.
     final bool isAlreadyVerified = widget.santri?.id == _selectedSantri?.id;
 
     final verified = isAlreadyVerified 

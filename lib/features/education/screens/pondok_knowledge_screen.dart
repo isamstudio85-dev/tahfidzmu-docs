@@ -14,6 +14,8 @@ class PondokKnowledgeScreen extends StatefulWidget {
 }
 
 class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
+  int? _selectedIndex;
+
   // Hardcoded defaults are only used if the database has never been initialized.
   // Once the admin interacts (or initializes), it will save to Firestore.
   final List<Map<String, dynamic>> _initialDefaultSamples = [
@@ -49,6 +51,9 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
       if (provider.pondokKnowledgeList.isEmpty && !provider.isPondokKnowledgeInitialized) {
         provider.initializePondokKnowledge(_initialDefaultSamples);
       }
+      if (provider.pondokKnowledgeList.isNotEmpty) {
+        setState(() => _selectedIndex = 0);
+      }
     });
   }
 
@@ -67,6 +72,11 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
               final currentList = List<Map<String, dynamic>>.from(provider.pondokKnowledgeList);
               currentList.removeAt(index);
               provider.updatePondokKnowledge(currentList);
+              if (_selectedIndex == index) {
+                _selectedIndex = currentList.isNotEmpty ? 0 : null;
+              } else if (_selectedIndex != null && _selectedIndex! > index) {
+                _selectedIndex = _selectedIndex! - 1;
+              }
               Navigator.pop(ctx);
             },
             child: const Text('Hapus'),
@@ -81,6 +91,124 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
     final provider = context.watch<AppProvider>();
     final isAdmin = provider.isAdmin;
     final displayList = provider.pondokKnowledgeList;
+    final bool isWide = MediaQuery.of(context).size.width > 900;
+
+    if (_selectedIndex == null && displayList.isNotEmpty) {
+      _selectedIndex = 0;
+    }
+
+    Widget listWidget = displayList.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.info_outline_rounded, size: 64, color: Colors.grey.shade300),
+                const SizedBox(height: 16),
+                Text(
+                  'Belum ada informasi pondok.',
+                  style: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.bold),
+                ),
+                if (isAdmin) ...[
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PondokKnowledgeEditPage()),
+                    ),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Tambah Sekarang'),
+                  )
+                ]
+              ],
+            ),
+          )
+        : ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: displayList.length,
+            itemBuilder: (ctx, i) {
+              final item = displayList[i];
+              final isSelected = _selectedIndex == i;
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: isSelected && isWide ? AppTheme.primaryGreen.withValues(alpha: 0.1) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: isSelected && isWide ? AppTheme.primaryGreen : Colors.grey.shade100),
+                ),
+                child: ListTile(
+                  onTap: () {
+                    if (isWide) {
+                      setState(() => _selectedIndex = i);
+                    } else {
+                      // On mobile we might still want the ExpansionTile feel or just a detail page
+                      // For consistency, let's just update selected and the UI will show expansion
+                      setState(() => _selectedIndex = (_selectedIndex == i ? -1 : i));
+                    }
+                  },
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), shape: BoxShape.circle),
+                    child: const Icon(Icons.school_outlined, color: AppTheme.primaryGreen, size: 20),
+                  ),
+                  title: Text(
+                    item['title'] ?? '',
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                  ),
+                  subtitle: item['description'] != null && item['description'].toString().isNotEmpty
+                      ? Text(item['description'], style: TextStyle(fontSize: 10, color: Colors.grey.shade500))
+                      : null,
+                  trailing: !isWide && _selectedIndex == i ? const Icon(Icons.expand_less_rounded) : (isWide ? null : const Icon(Icons.expand_more_rounded)),
+                ),
+              );
+            },
+          );
+
+    if (isWide) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF8F9FA),
+        appBar: AppBar(
+          title: const Text('Tentang Pondok'),
+          actions: [
+            if (isAdmin)
+              IconButton(
+                icon: const Icon(Icons.add_circle_outline_rounded, color: Colors.white, size: 26),
+                tooltip: 'Tambah Informasi',
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PondokKnowledgeEditPage()),
+                ),
+              ),
+          ],
+        ),
+        body: Row(
+          children: [
+            SizedBox(
+              width: 320,
+              child: Container(
+                decoration: const BoxDecoration(
+                  border: Border(right: BorderSide(color: Color(0xFFEEEEEE), width: 1)),
+                ),
+                child: listWidget,
+              ),
+            ),
+            Expanded(
+              child: _selectedIndex == null || _selectedIndex! < 0 || _selectedIndex! >= displayList.length
+                  ? const Center(child: Text('Pilih informasi untuk melihat detail'))
+                  : _PondokDetailView(
+                      item: displayList[_selectedIndex!],
+                      isAdmin: isAdmin,
+                      onEdit: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => PondokKnowledgeEditPage(item: displayList[_selectedIndex!], index: _selectedIndex)),
+                      ),
+                      onDelete: () => _deleteItem(_selectedIndex!),
+                    ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -99,43 +227,14 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
         ],
       ),
       body: displayList.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.info_outline_rounded, size: 64, color: Colors.grey.shade300),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Belum ada informasi pondok.',
-                    style: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.bold),
-                  ),
-                  if (isAdmin) ...[
-                    const SizedBox(height: 12),
-                    FilledButton.icon(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const PondokKnowledgeEditPage()),
-                      ),
-                      icon: const Icon(Icons.add),
-                      label: const Text('Tambah Sekarang'),
-                    )
-                  ]
-                ],
-              ),
-            )
+          ? listWidget
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: displayList.length,
               itemBuilder: (ctx, i) {
                 final item = displayList[i];
-                final type = item['type'] ?? 'paragraph';
-                final isListType = type == 'bullet' || type == 'number';
-                final contentText = item['content'] ?? '';
-                final List<String> listItems = isListType 
-                    ? contentText.toString().split('\n').where((s) => s.trim().isNotEmpty).toList() 
-                    : [];
-                final hasImage = item['imagePath'] != null && item['imagePath'].toString().isNotEmpty;
-
+                final isExpanded = _selectedIndex == i;
+                
                 return Container(
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
@@ -151,114 +250,176 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
                     ],
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: ExpansionTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), shape: BoxShape.circle),
-                      child: const Icon(Icons.school_outlined, color: AppTheme.primaryGreen, size: 20),
-                    ),
-                    title: Text(
-                      item['title'] ?? '',
-                      style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
-                    ),
-                    subtitle: item['description'] != null && item['description'].toString().isNotEmpty
-                        ? Text(item['description'], style: TextStyle(fontSize: 10, color: Colors.grey.shade500))
-                        : null,
-                    trailing: isAdmin
-                        ? Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit_note_rounded, color: Colors.blue, size: 22),
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => PondokKnowledgeEditPage(item: item, index: i)),
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete_outline_rounded, color: Colors.red, size: 20),
-                                onPressed: () => _deleteItem(i),
-                              ),
-                            ],
-                          )
-                        : null,
+                  child: Column(
                     children: [
-                      const Divider(height: 1),
-                      if (hasImage)
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: item['imagePath'].toString().startsWith('http')
-                                ? Image.network(item['imagePath'], fit: BoxFit.cover, width: double.infinity, height: 180)
-                                : Image.file(File(item['imagePath']), fit: BoxFit.cover, width: double.infinity, height: 180, errorBuilder: (_,__,___) => const SizedBox()),
-                          ),
+                      ListTile(
+                        onTap: () => setState(() => _selectedIndex = isExpanded ? -1 : i),
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), shape: BoxShape.circle),
+                          child: const Icon(Icons.school_outlined, color: AppTheme.primaryGreen, size: 20),
                         ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: isListType
-                              ? Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: List.generate(listItems.length, (index) {
-                                    final line = listItems[index];
-                                    return Padding(
-                                      padding: const EdgeInsets.only(bottom: 8.0),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          if (type == 'bullet')
-                                            Container(
-                                              margin: const EdgeInsets.only(top: 6, right: 12),
-                                              width: 6, height: 6,
-                                              decoration: const BoxDecoration(color: AppTheme.primaryGreen, shape: BoxShape.circle),
-                                            )
-                                          else // 'number' list design
-                                            Container(
-                                              margin: const EdgeInsets.only(top: 1, right: 10),
-                                              width: 18, height: 18,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Text(
-                                                '${index + 1}',
-                                                style: const TextStyle(
-                                                  color: AppTheme.primaryGreen,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          Expanded(
-                                            child: Text(
-                                              line,
-                                              style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey.shade800, height: 1.5),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                                )
-                              : Text(
-                                  contentText,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12, 
-                                    color: Colors.grey.shade800, 
-                                    height: 1.6,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+                        title: Text(
+                          item['title'] ?? '',
+                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
                         ),
+                        subtitle: item['description'] != null && item['description'].toString().isNotEmpty
+                            ? Text(item['description'], style: TextStyle(fontSize: 10, color: Colors.grey.shade500))
+                            : null,
+                        trailing: Icon(isExpanded ? Icons.expand_less_rounded : Icons.expand_more_rounded),
                       ),
+                      if (isExpanded)
+                        _PondokDetailView(
+                          item: item,
+                          isAdmin: isAdmin,
+                          onEdit: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => PondokKnowledgeEditPage(item: item, index: i)),
+                          ),
+                          onDelete: () => _deleteItem(i),
+                          compact: true,
+                        ),
                     ],
                   ),
                 );
               },
             ),
+    );
+  }
+}
+
+class _PondokDetailView extends StatelessWidget {
+  const _PondokDetailView({required this.item, required this.isAdmin, required this.onEdit, required this.onDelete, this.compact = false});
+  final Map<String, dynamic> item;
+  final bool isAdmin;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final type = item['type'] ?? 'paragraph';
+    final isListType = type == 'bullet' || type == 'number';
+    final contentText = item['content'] ?? '';
+    final List<String> listItems = isListType 
+        ? contentText.toString().split('\n').where((s) => s.trim().isNotEmpty).toList() 
+        : [];
+    final hasImage = item['imagePath'] != null && item['imagePath'].toString().isNotEmpty;
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(compact ? 0 : 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!compact) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    item['title'] ?? '',
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.black87),
+                  ),
+                ),
+                if (isAdmin)
+                  Row(
+                    children: [
+                      IconButton(icon: const Icon(Icons.edit_note_rounded, color: Colors.blue), onPressed: onEdit),
+                      IconButton(icon: const Icon(Icons.delete_outline_rounded, color: Colors.red), onPressed: onDelete),
+                    ],
+                  ),
+              ],
+            ),
+            if (item['description'] != null)
+              Text(item['description'], style: TextStyle(fontSize: 13, color: Colors.grey.shade500)),
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 16),
+          ],
+          if (hasImage)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: item['imagePath'].toString().startsWith('http')
+                    ? Image.network(item['imagePath'], fit: BoxFit.cover, width: double.infinity, height: compact ? 180 : 300)
+                    : Image.file(File(item['imagePath']), fit: BoxFit.cover, width: double.infinity, height: compact ? 180 : 300, errorBuilder: (_,__,___) => const SizedBox()),
+              ),
+            ),
+          
+          if (isListType)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(listItems.length, (index) {
+                final line = listItems[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (type == 'bullet')
+                        Container(
+                          margin: const EdgeInsets.only(top: 8, right: 14),
+                          width: 8, height: 8,
+                          decoration: const BoxDecoration(color: AppTheme.primaryGreen, shape: BoxShape.circle),
+                        )
+                      else
+                        Container(
+                          margin: const EdgeInsets.only(top: 2, right: 12),
+                          width: 24, height: 24,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '${index + 1}',
+                            style: const TextStyle(
+                              color: AppTheme.primaryGreen,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      Expanded(
+                        child: Text(
+                          line,
+                          style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey.shade800, height: 1.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            )
+          else
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 0, vertical: compact ? 16 : 0),
+              child: Text(
+                contentText,
+                style: GoogleFonts.poppins(
+                  fontSize: 14, 
+                  color: Colors.grey.shade800, 
+                  height: 1.7,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          
+          if (compact && isAdmin)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton.icon(onPressed: onEdit, icon: const Icon(Icons.edit), label: const Text('Edit')),
+                  TextButton.icon(onPressed: onDelete, icon: const Icon(Icons.delete, color: Colors.red), label: const Text('Hapus', style: TextStyle(color: Colors.red))),
+                ],
+              ),
+            ),
+          const SizedBox(height: 40),
+        ],
+      ),
     );
   }
 }

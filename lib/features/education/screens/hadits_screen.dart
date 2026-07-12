@@ -13,6 +13,8 @@ class HaditsScreen extends StatefulWidget {
 }
 
 class _HaditsScreenState extends State<HaditsScreen> {
+  Hadith? _selectedHadith;
+
   Future<Map<String, List<Hadith>>> _loadThemesAndArbain() async {
     final byTema = await HadithService.getByTema();
     final arbain = await HadithService.getArbain();
@@ -27,40 +29,109 @@ class _HaditsScreenState extends State<HaditsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
-      appBar: AppBar(
-        title: const Text('Hadits Pilihan'),
-        backgroundColor: const Color(0xFF2E5A27), // Deep olive green
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: FutureBuilder<Map<String, List<Hadith>>>(
-        future: _loadThemesAndArbain(),
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError || !snap.hasData) {
-            return const Center(child: Text('Gagal memuat data hadits.'));
-          }
-          final combinedData = snap.data!;
-          return ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            itemCount: combinedData.length,
-            separatorBuilder: (ctx, i) => const Divider(
-              color: Color(0xFFE5D5B8),
-              height: 1,
-              thickness: 1.2,
-            ),
-            itemBuilder: (context, i) {
-              final tema = combinedData.keys.elementAt(i);
-              final hadiths = combinedData[tema]!;
-              return _TemaSection(tema: tema, hadiths: hadiths);
-            },
+    final bool isWide = MediaQuery.of(context).size.width > 900;
+
+    return FutureBuilder<Map<String, List<Hadith>>>(
+      future: _loadThemesAndArbain(),
+      builder: (context, snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Hadits Pilihan')),
+            body: const Center(child: CircularProgressIndicator()),
           );
-        },
-      ),
+        }
+        if (snap.hasError || !snap.hasData) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Hadits Pilihan')),
+            body: const Center(child: Text('Gagal memuat data hadits.')),
+          );
+        }
+
+        final combinedData = snap.data!;
+        
+        // Auto select first hadith if none selected in wide mode
+        if (isWide && _selectedHadith == null && combinedData.isNotEmpty) {
+          final firstTema = combinedData.keys.first;
+          if (combinedData[firstTema]!.isNotEmpty) {
+            _selectedHadith = combinedData[firstTema]!.first;
+          }
+        }
+
+        Widget listWidget = ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          itemCount: combinedData.length,
+          separatorBuilder: (ctx, i) => const Divider(
+            color: Color(0xFFE5D5B8),
+            height: 1,
+            thickness: 1.2,
+          ),
+          itemBuilder: (context, i) {
+            final tema = combinedData.keys.elementAt(i);
+            final hadiths = combinedData[tema]!;
+            return _TemaSection(
+              tema: tema, 
+              hadiths: hadiths,
+              isWide: isWide,
+              selectedHadith: _selectedHadith,
+              onHadithTap: (h) {
+                if (isWide) {
+                  setState(() => _selectedHadith = h);
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => HaditsDetailScreen(hadith: h)),
+                  );
+                }
+              },
+            );
+          },
+        );
+
+        if (isWide) {
+          return Scaffold(
+            backgroundColor: const Color(0xFFFDF9F0),
+            appBar: AppBar(
+              title: const Text('Hadits Pilihan'),
+              backgroundColor: const Color(0xFF2E5A27),
+              foregroundColor: Colors.white,
+              elevation: 0,
+            ),
+            body: Row(
+              children: [
+                SizedBox(
+                  width: 350,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      border: Border(right: BorderSide(color: Color(0xFFE5D5B8), width: 1)),
+                    ),
+                    child: listWidget,
+                  ),
+                ),
+                Expanded(
+                  child: _selectedHadith == null
+                      ? const Center(child: Text('Pilih hadits untuk melihat detail'))
+                      : HaditsDetailScreen(
+                          key: ValueKey('hadith_${_selectedHadith!.id}'),
+                          hadith: _selectedHadith!,
+                          hideAppBar: true,
+                        ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: const Color(0xFFFDF9F0),
+          appBar: AppBar(
+            title: const Text('Hadits Pilihan'),
+            backgroundColor: const Color(0xFF2E5A27),
+            foregroundColor: Colors.white,
+            elevation: 0,
+          ),
+          body: listWidget,
+        );
+      },
     );
   }
 }
@@ -68,16 +139,32 @@ class _HaditsScreenState extends State<HaditsScreen> {
 // ── Tema Section ───────────────────────────────────────────────────────────────
 
 class _TemaSection extends StatefulWidget {
-  const _TemaSection({required this.tema, required this.hadiths});
+  const _TemaSection({
+    required this.tema, 
+    required this.hadiths,
+    required this.isWide,
+    this.selectedHadith,
+    required this.onHadithTap,
+  });
   final String tema;
   final List<Hadith> hadiths;
+  final bool isWide;
+  final Hadith? selectedHadith;
+  final Function(Hadith) onHadithTap;
 
   @override
   State<_TemaSection> createState() => _TemaSectionState();
 }
 
 class _TemaSectionState extends State<_TemaSection> {
-  bool _expanded = false;
+  late bool _expanded;
+
+  @override
+  void initState() {
+    super.initState();
+    // Default closed even on wide screens to keep sidebar clean
+    _expanded = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -151,8 +238,13 @@ class _TemaSectionState extends State<_TemaSection> {
                   height: 1,
                   thickness: 0.8,
                 ),
-                itemBuilder: (context, i) =>
-                    _HadithCard(hadith: widget.hadiths[i], showArbainNo: isArbain),
+                itemBuilder: (context, i) => _HadithCard(
+                  hadith: widget.hadiths[i], 
+                  showArbainNo: isArbain,
+                  isWide: widget.isWide,
+                  isSelected: widget.selectedHadith?.id == widget.hadiths[i].id,
+                  onTap: () => widget.onHadithTap(widget.hadiths[i]),
+                ),
               ),
             ),
           ],
@@ -165,94 +257,108 @@ class _TemaSectionState extends State<_TemaSection> {
 // ── Hadith card ────────────────────────────────────────────────────────────────
 
 class _HadithCard extends StatelessWidget {
-  const _HadithCard({required this.hadith, required this.showArbainNo});
+  const _HadithCard({
+    required this.hadith, 
+    required this.showArbainNo,
+    required this.isWide,
+    required this.isSelected,
+    required this.onTap,
+  });
   final Hadith hadith;
   final bool showArbainNo;
+  final bool isWide;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => HaditsDetailScreen(hadith: hadith)),
+    return Container(
+      decoration: BoxDecoration(
+        color: isSelected && isWide ? const Color(0xFFF4EAD4) : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Number badge (Kitab Kuning Arabic Circle Style)
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFE5D5B8), width: 1),
-              ),
-              child: Center(
-                child: Text(
-                  showArbainNo && hadith.isArbain
-                      ? '${hadith.arbainNo}'
-                      : '${hadith.id}',
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11,
-                    color: const Color(0xFF2E5A27),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Number badge (Kitab Kuning Arabic Circle Style)
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFE5D5B8), width: 1),
+                ),
+                child: Center(
+                  child: Text(
+                    showArbainNo && hadith.isArbain
+                        ? '${hadith.arbainNo}'
+                        : '${hadith.id}',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                      color: const Color(0xFF2E5A27),
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Arabic preview (first line)
-                  Text(
-                    hadith.matanArab,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textDirection: TextDirection.rtl,
-                    style: GoogleFonts.amiri(
-                      fontSize: 16,
-                      height: 1.6,
-                      color: const Color(0xFF1B5E20),
-                      fontWeight: FontWeight.bold,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Arabic preview (first line)
+                    Text(
+                      hadith.matanArab,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textDirection: TextDirection.rtl,
+                      style: GoogleFonts.amiri(
+                        fontSize: 16,
+                        height: 1.6,
+                        color: const Color(0xFF1B5E20),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  // Perawi
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.person_outline_rounded,
-                        size: 13,
-                        color: Colors.grey.shade500,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          hadith.perawi,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey.shade600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                    const SizedBox(height: 6),
+                    // Perawi
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.person_outline_rounded,
+                          size: 13,
+                          color: Colors.grey.shade500,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            hadith.perawi,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey.shade600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: Color(0xFF2E5A27),
-              size: 18,
-            ),
-          ],
+              if (!isWide)
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: Color(0xFF2E5A27),
+                  size: 18,
+                ),
+            ],
+          ),
         ),
       ),
     );

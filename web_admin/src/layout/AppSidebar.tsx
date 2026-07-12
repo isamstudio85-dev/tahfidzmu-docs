@@ -60,6 +60,16 @@ const adminNavItems: NavItem[] = [
     name: "Info Pesantren",
     path: "/pesantren-info",
   },
+  {
+    icon: <PageIcon />,
+    name: "Monitoring Progres",
+    path: "/monitoring",
+  },
+  {
+    icon: <ListIcon />,
+    name: "Input Hafalan",
+    path: "/input-hafalan",
+  },
 ];
 
 const superAdminNavItems: NavItem[] = [

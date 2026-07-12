@@ -4,7 +4,7 @@ import { collection, doc, getDoc, getDocs, Timestamp } from "firebase/firestore"
 import { db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
 import PageMeta from "../../components/common/PageMeta";
-import { Users, GraduationCap, BookOpen, FolderOpen, Building2, School, ShieldCheck, CalendarDays, ChevronRight, Sparkles, Wallet } from "lucide-react";
+import { Users, GraduationCap, BookOpen, FolderOpen, Building2, School, ShieldCheck, CalendarDays, ChevronRight, Sparkles, Wallet, TrendingUp } from "lucide-react";
 
 type DashboardStats = {
   santri: number;
@@ -209,9 +209,9 @@ export default function Home() {
   ];
 
   const quickLinks: QuickLink[] = useMemo(() => ([
-    { title: "Info Pesantren", subtitle: "Profil lembaga dan modul aktif", path: "/pesantren-info", icon: Building2, color: "text-brand-500", bg: "bg-brand-50 dark:bg-brand-500/10" },
+    { title: "Input Hafalan", subtitle: "Rekap hafalan santri", path: "/input-hafalan", icon: BookOpen, color: "text-brand-500", bg: "bg-brand-50 dark:bg-brand-500/10" },
+    { title: "Monitoring Progres", subtitle: "Aktivitas & ranking harian", path: "/monitoring", icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
     { title: "Manajemen Wisuda", subtitle: "Agenda wisuda dan pendaftaran", path: "/wisuda", icon: School, color: "text-purple-600", bg: "bg-purple-50 dark:bg-purple-500/10" },
-    { title: "Data Halaqah", subtitle: "Kelola kelompok dan pembimbing", path: "/halaqah", icon: BookOpen, color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-500/10" },
     { title: "Data Santri", subtitle: "Akses cepat ke santri", path: "/santri", icon: Users, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-500/10" },
   ]), []);
 

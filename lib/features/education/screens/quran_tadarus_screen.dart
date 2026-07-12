@@ -20,6 +20,7 @@ class _QuranTadarusScreenState extends State<QuranTadarusScreen> {
   bool _loading = true;
   String? _error;
   final _searchCtrl = TextEditingController();
+  SurahInfo? _selectedSurah;
 
   @override
   void initState() {
@@ -41,6 +42,9 @@ class _QuranTadarusScreenState extends State<QuranTadarusScreen> {
         _all = list;
         _filtered = list;
         _loading = false;
+        if (_all.isNotEmpty) {
+          _selectedSurah = _all.first;
+        }
       });
     } catch (e) {
       setState(() {
@@ -67,6 +71,118 @@ class _QuranTadarusScreenState extends State<QuranTadarusScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWide = MediaQuery.of(context).size.width > 900;
+
+    Widget content = _loading
+        ? const Center(child: CircularProgressIndicator())
+        : _error != null
+        ? Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.wifi_off_rounded,
+                  size: 64,
+                  color: Colors.grey.shade300,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Gagal memuat data',
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
+                const SizedBox(height: 8),
+                FilledButton(
+                  onPressed: _load,
+                  child: const Text('Coba Lagi'),
+                ),
+              ],
+            ),
+          )
+        : Column(
+            children: [
+              // Search
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: TextField(
+                  controller: _searchCtrl,
+                  decoration: InputDecoration(
+                    hintText: 'Cari surah...',
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 16,
+                    ),
+                  ),
+                ),
+              ),
+              // List
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                  itemCount: _filtered.length,
+                  itemBuilder: (_, i) => _SurahTile(
+                    surah: _filtered[i],
+                    isWide: isWide,
+                    isSelected: _selectedSurah?.number == _filtered[i].number,
+                    onTap: () {
+                      if (isWide) {
+                        setState(() => _selectedSurah = _filtered[i]);
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => _SurahReaderScreen(info: _filtered[i])),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          );
+
+    if (isWide) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF5F5F0),
+        appBar: AppBar(
+          title: const Text('Al-Quran Digital'),
+          backgroundColor: AppTheme.primaryGreen,
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: Row(
+          children: [
+            SizedBox(
+              width: 320,
+              child: Container(
+                decoration: const BoxDecoration(
+                  border: Border(right: BorderSide(color: Color(0xFFE5E5E0), width: 1)),
+                ),
+                child: content,
+              ),
+            ),
+            Expanded(
+              child: _selectedSurah == null
+                  ? const Center(child: Text('Pilih surah untuk membaca'))
+                  : _SurahReaderScreen(
+                      key: ValueKey('surah_${_selectedSurah!.number}'),
+                      info: _selectedSurah!,
+                      hideAppBar: true,
+                    ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F0),
       appBar: AppBar(
@@ -80,67 +196,7 @@ class _QuranTadarusScreenState extends State<QuranTadarusScreen> {
           ],
         ),
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.wifi_off_rounded,
-                    size: 64,
-                    color: Colors.grey.shade300,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Gagal memuat data',
-                    style: TextStyle(color: Colors.grey.shade600),
-                  ),
-                  const SizedBox(height: 8),
-                  FilledButton(
-                    onPressed: _load,
-                    child: const Text('Coba Lagi'),
-                  ),
-                ],
-              ),
-            )
-          : Column(
-              children: [
-                // Search
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                  child: TextField(
-                    controller: _searchCtrl,
-                    decoration: InputDecoration(
-                      hintText: 'Cari surah...',
-                      prefixIcon: const Icon(Icons.search_rounded),
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                // List
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 4,
-                    ),
-                    itemCount: _filtered.length,
-                    itemBuilder: (_, i) => _SurahTile(surah: _filtered[i]),
-                  ),
-                ),
-              ],
-            ),
+      body: content,
     );
   }
 }
@@ -148,8 +204,11 @@ class _QuranTadarusScreenState extends State<QuranTadarusScreen> {
 // ── Surah list tile ────────────────────────────────────────────────────────────
 
 class _SurahTile extends StatelessWidget {
-  const _SurahTile({required this.surah});
+  const _SurahTile({required this.surah, required this.isWide, required this.isSelected, required this.onTap});
   final SurahInfo surah;
+  final bool isWide;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -158,13 +217,10 @@ class _SurahTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       elevation: 0,
-      color: Colors.white,
+      color: isSelected && isWide ? AppTheme.primaryGreen.withValues(alpha: 0.1) : Colors.white,
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => _SurahReaderScreen(info: surah)),
-        ),
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Row(
@@ -221,12 +277,14 @@ class _SurahTile extends StatelessWidget {
                 ),
                 textDirection: TextDirection.rtl,
               ),
-              const SizedBox(width: 4),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: Colors.grey.shade400,
-                size: 20,
-              ),
+              if (!isWide) ...[
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: Colors.grey.shade400,
+                  size: 20,
+                ),
+              ],
             ],
           ),
         ),
@@ -238,8 +296,9 @@ class _SurahTile extends StatelessWidget {
 // ── Surah reader ───────────────────────────────────────────────────────────────
 
 class _SurahReaderScreen extends StatefulWidget {
-  const _SurahReaderScreen({required this.info});
+  const _SurahReaderScreen({super.key, required this.info, this.hideAppBar = false});
   final SurahInfo info;
+  final bool hideAppBar;
 
   @override
   State<_SurahReaderScreen> createState() => _SurahReaderScreenState();
@@ -257,18 +316,31 @@ class _SurahReaderScreenState extends State<_SurahReaderScreen> {
     _load();
   }
 
+  @override
+  void didUpdateWidget(_SurahReaderScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.info.number != widget.info.number) {
+      _load();
+    }
+  }
+
   Future<void> _load() async {
+    setState(() => _loading = true);
     try {
       final s = await QuranService.getSurah(widget.info.number);
-      setState(() {
-        _surah = s;
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _surah = s;
+          _loading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _loading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _loading = false;
+        });
+      }
     }
   }
 
@@ -276,7 +348,7 @@ class _SurahReaderScreenState extends State<_SurahReaderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFFDE7),
-      appBar: AppBar(
+      appBar: widget.hideAppBar ? null : AppBar(
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         title: Column(
@@ -325,15 +397,34 @@ class _SurahReaderScreenState extends State<_SurahReaderScreen> {
                 ],
               ),
             )
-          : ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-              itemCount: _surah!.ayahs.length + 1,
-              itemBuilder: (_, i) {
-                if (i == 0) {
-                  return _buildBismillahHeader();
-                }
-                return _buildAyahCard(_surah!.ayahs[i - 1]);
-              },
+          : Stack(
+              children: [
+                ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                  itemCount: _surah!.ayahs.length + 1,
+                  itemBuilder: (_, i) {
+                    if (i == 0) {
+                      return _buildBismillahHeader();
+                    }
+                    return _buildAyahCard(_surah!.ayahs[i - 1]);
+                  },
+                ),
+                if (widget.hideAppBar)
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: FloatingActionButton.small(
+                      heroTag: 'toggle_translation_wide',
+                      backgroundColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                      elevation: 0,
+                      onPressed: () => setState(() => _showTranslation = !_showTranslation),
+                      child: Icon(
+                        _showTranslation ? Icons.translate_rounded : Icons.translate_outlined,
+                        color: AppTheme.primaryGreen,
+                      ),
+                    ),
+                  ),
+              ],
             ),
     );
   }

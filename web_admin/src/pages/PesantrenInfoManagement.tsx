@@ -15,6 +15,7 @@ type PesantrenInfo = {
   npsn: string;
   website: string;
   pimpinan: string;
+  qrSecurityEnabled?: boolean;
 };
 
 type ModuleKey = "quran" | "hadits" | "tajwid" | "tahsin" | "pondok_info" | "graduation";
@@ -98,6 +99,7 @@ export default function PesantrenInfoManagement() {
         npsn: String(data.npsn || ""),
         website: String(data.website || ""),
         pimpinan: String(data.pimpinan || ""),
+        qrSecurityEnabled: data.qrSecurityEnabled !== false, // Default true
       });
       if (Array.isArray(active) && active.length > 0) {
         const normalized = Array.from(new Set(["quran", ...active.filter((item): item is ModuleKey => typeof item === "string")])) as ModuleKey[];
@@ -153,6 +155,7 @@ export default function PesantrenInfoManagement() {
             npsn: form.npsn.trim(),
             website: form.website.trim(),
             pimpinan: form.pimpinan.trim(),
+            qrSecurityEnabled: form.qrSecurityEnabled ?? true,
           },
           { merge: true }
         ),
@@ -385,6 +388,34 @@ export default function PesantrenInfoManagement() {
 
                 {activeTab === "keamanan" && (
                   <section className="space-y-6">
+                    <div>
+                      <h3 className="text-sm font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                        <ShieldAlert size={16} className="text-brand-500" />
+                        Kebijakan Keamanan Aplikasi
+                      </h3>
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        Atur tingkat keamanan verifikasi kehadiran santri saat setoran hafalan.
+                      </p>
+                      <div className="mt-4">
+                        <label className="flex items-center justify-between rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-white/5 cursor-pointer">
+                          <div className="pr-4">
+                            <div className="font-semibold text-gray-800 dark:text-white">Wajib Scan QR Santri</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              Jika aktif, Musyrif wajib memindai kartu santri sebelum memulai sesi simak Al-Quran. (Sangat disarankan).
+                            </div>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={form.qrSecurityEnabled}
+                            onChange={(e) => setForm(prev => ({ ...prev, qrSecurityEnabled: e.target.checked }))}
+                            className="h-5 w-5 rounded border-gray-300 text-brand-500 focus:ring-brand-500"
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <hr className="border-gray-200 dark:border-gray-800" />
+
                     <div>
                       <h3 className="text-sm font-bold text-gray-800 dark:text-white flex items-center gap-2">
                         <Database size={16} className="text-brand-500" />

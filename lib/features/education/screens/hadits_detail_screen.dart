@@ -4,9 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tahfidz_app/models/hadith.dart';
 
 class HaditsDetailScreen extends StatelessWidget {
-  const HaditsDetailScreen({super.key, required this.hadith});
+  const HaditsDetailScreen({super.key, required this.hadith, this.hideAppBar = false});
 
   final Hadith hadith;
+  final bool hideAppBar;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class HaditsDetailScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
-      appBar: AppBar(
+      appBar: hideAppBar ? null : AppBar(
         title: Text(title),
         backgroundColor: const Color(0xFF2E5A27), // Deep olive green
         foregroundColor: Colors.white,
@@ -27,6 +28,19 @@ class HaditsDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (hideAppBar) ...[
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  color: const Color(0xFF2E5A27),
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Divider(color: Color(0xFFE5D5B8)),
+              const SizedBox(height: 16),
+            ],
             // ── Tema badge ────────────────────────────────────────────────
             Wrap(
               spacing: 8,
