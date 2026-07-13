@@ -12,6 +12,7 @@ import HalaqahManagement from "./pages/HalaqahManagement";
 import PengawasManagement from "./pages/PengawasManagement";
 import WisudaManagement from "./pages/WisudaManagement";
 import PesantrenInfoManagement from "./pages/PesantrenInfoManagement";
+import PondokKnowledgeManagement from "./pages/PondokKnowledgeManagement";
 import MonitoringProgres from "./pages/MonitoringProgres";
 import InputHafalan from "./pages/InputHafalan";
 import ProfileSettings from "./pages/ProfileSettings";
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="/kelas" element={<KelasManagement />} />
             <Route path="/halaqah" element={<HalaqahManagement />} />
             <Route path="/wisuda" element={<WisudaManagement />} />
+            <Route path="/pondok-materi" element={<PondokKnowledgeManagement />} />
             <Route path="/pesantren-info" element={<PesantrenInfoManagement />} />
             <Route path="/monitoring" element={<MonitoringProgres />} />
             <Route path="/input-hafalan" element={<InputHafalan />} />

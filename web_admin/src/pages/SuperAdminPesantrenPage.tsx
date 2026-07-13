@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Timestamp, collection, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { Timestamp, collection, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { AlertCircle, Building2, CalendarClock, CheckCircle2, Filter, Globe, Mail, Phone, Plus, Save, Search, ShieldAlert, X } from "lucide-react";
 import { useNavigate } from "react-router";

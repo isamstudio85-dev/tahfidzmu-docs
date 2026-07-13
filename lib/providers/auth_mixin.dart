@@ -66,4 +66,6 @@ mixin AuthMixin on ChangeNotifier {
       notifyListeners();
     }
   }
+
+  String normalizeLoginKey(String key) => key.trim().toLowerCase();
 }

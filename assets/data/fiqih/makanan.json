@@ -1,38 +1,38 @@
 {
-  "title": "Fiqih Makanan & Sembelihan",
-  "introduction": "Syariat mengatur apa yang kita konsumsi guna menjaga kesehatan jasmani dan kesucian rohani.",
+  "title": "Makanan, Minuman & Sembelihan",
+  "introduction": "Apa yang kita konsumsi berpengaruh pada terkabulnya doa dan kesehatan jiwa. Islam memberikan panduan ketat tentang kehalalan dan kebaikan asupan.",
   "sections": [
     {
-      "name": "1. Definisi & Dalil",
-      "definition": "Prinsip dasar makanan adalah halal (dibolehkan hukum) dan thayyib (baik bagi kesehatan).\n\nDalil Al-Quran:\nيَا أَيُّهَا النَّاسُ كُلُوا مِمَّا فِي الْأَرْضِ حَلَالًا طَيِّبًا\n'Hai sekalian manusia, makanlah yang halal lagi baik dari apa yang terdapat di bumi.' (QS. Al-Baqarah: 168)"
+      "name": "1. Prinsip Dasar Halalan Thayyiban",
+      "definition": "Muslim wajib mencari asupan yang Halal (secara hukum) dan Thayyib (baik/bergizi/tidak menjijikkan).\n\nDalil Al-Quran:\nيَا أَيُّهَا النَّاسُ كُلُوا مِمَّا فِي الْأَرْضِ حَلَالًا طَيِّبًا\n'Wahai manusia! Makanlah dari (makanan) yang halal dan baik yang terdapat di bumi.' (QS. Al-Baqarah: 168)"
     },
     {
-      "name": "2. Hewan Halal & Haram",
-      "definition": "Halal:\n1. Hewan ternak (Sapi, Kambing, Unta)\n2. Hewan air (Ikan, dll)\n3. Burung yang tidak berkuku tajam/buas\n\nHaram:\n1. Babi, Anjing, dan Bangkai\n2. Darah yang mengalir\n3. Hewan bertaring buas (Harimau, Serigala)\n4. Hewan yang diperintah dibunuh (Ular, Tikus)\n5. Hewan yang dilarang dibunuh (Semut, Lebah)"
+      "name": "2. Makanan & Minuman yang Haram",
+      "definition": "1. Bangkai (kecuali ikan dan belalang).\n2. Darah yang mengalir.\n3. Daging Babi.\n4. Hewan yang disembelih tanpa menyebut nama Allah.\n5. Khamr (minuman keras/memabukkan).\n6. Hewan bertaring atau burung berkuku tajam (predator)."
     },
     {
-      "name": "3. Rukun Sembelihan",
-      "definition": "Agar hewan darat halal dimakan, harus disembelih sesuai 4 rukun:\n1. Penyembelih (Muslim/Ahli Kitab, berakal)\n2. Hewan yang disembelih (Halal dan masih hidup)\n3. Alat sembelih (Tajam, bukan kuku/tulang)\n4. Tujuan penyembelihan (Karena Allah semata)"
+      "name": "3. Rukun Menyembelih Hewan",
+      "definition": "Agar hewan halal dimakan, harus memenuhi rukun sembelih:\n1. Penyembelih (Muslim/Ahli Kitab, berakal).\n2. Hewan yang Halal.\n3. Alat Sembelih (Tajam, bukan kuku/tulang).\n4. Niat & Membaca Basmalah."
     },
     {
-      "name": "4. Tata Cara Menyembelih",
-      "definition": "1. Membaca Basmalah (Bismillahi Allahu Akbar)\n2. Memutuskan saluran napas (Hulqum)\n3. Memutuskan saluran makanan (Mari')\n4. Disarankan juga memutus dua urat leher (Wadajain)"
+      "name": "4. Teknik Sembelih (Dzabh)",
+      "definition": "Wajib memutus dua urat leher: \n- Hulqum (saluran nafas).\n- Mari' (saluran makanan).\nSangat disarankan juga memutus Wadajain (dua urat nadi samping)."
     },
     {
-      "name": "5. Sunnah Sembelihan",
-      "definition": "1. Menghadapkan hewan ke arah Kiblat\n2. Menajamkan pisau (agar hewan tidak tersiksa)\n3. Menenangkan hewan sebelum disembelih\n4. Mempercepat proses penyembelihan"
+      "name": "5. Mawani' (Larangan Menyiksa Hewan)",
+      "definition": "Diharamkan memakan anggota tubuh hewan yang dipotong saat hewan tersebut masih hidup. Rasulullah SAW bersabda: 'Apa yang dipotong dari hewan yang masih hidup, maka ia adalah bangkai.' (HR. Abu Dawud)"
     },
     {
-      "name": "6. Aqiqah & Qurban",
-      "definition": "Aqiqah: Sembelihan tanda syukur atas kelahiran anak (Laki-laki 2 kambing, Perempuan 1 kambing).\nQurban: Sembelihan pada hari Idul Adha (10-13 Dzulhijjah) guna mendekatkan diri kepada Allah."
+      "name": "6. Rukhshah (Kondisi Darurat)",
+      "definition": "Diperbolehkan memakan yang haram secukupnya hanya untuk bertahan hidup jika benar-benar tidak ada pilihan lain dan nyawa terancam kelaparan hebat."
     },
     {
       "name": "7. Adab Makan & Minum",
-      "definition": "- Mencuci tangan sebelum makan\n- Menggunakan tangan kanan\n- Duduk dengan sopan (tidak sambil berdiri/berbaring)\n- Berhenti sebelum kenyang\n- Tidak mencela makanan yang tidak disukai"
+      "definition": "1. Mencuci tangan sebelum dan sesudah makan.\n2. Membaca Basmalah.\n3. Menggunakan tangan kanan.\n4. Mengambil makanan yang terdekat.\n5. Tidak mencela makanan.\n6. Berhenti sebelum kenyang."
     },
     {
-      "name": "8. Hikmah",
-      "definition": "- Menjamin kesehatan tubuh dari zat berbahaya\n- Menumbuhkan ketaatan kepada perintah Allah\n- Membentuk karakter sabar melalui pemilihan makanan\n- Memastikan doa lebih mudah dikabulkan (karena perut berisi yang halal)"
+      "name": "8. Hikmah Memilih yang Halal",
+      "definition": "- Menjaga kejernihan hati dan pikiran.\n- Memudahkan tubuh dalam melakukan ketaatan (ibadah).\n- Menjamin terkabulnya doa.\n- Menjaga kesehatan fisik dari zat-hal berbahaya."
     }
   ]
 }

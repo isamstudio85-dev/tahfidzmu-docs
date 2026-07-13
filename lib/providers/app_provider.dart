@@ -228,6 +228,7 @@ class AppProvider extends ChangeNotifier
       if (isAdmin) adminPhoto = userData['photoPath'] ?? '';
       await setupFirestoreListeners();
 
+      // UI Info for saved account
       final displayName = isOrangTua ? (linkedSantri?.name ?? u) : (isMusyrif ? (linkedMusyrif?.nama ?? u) : 'Admin');
       final photoPath = isOrangTua ? linkedSantri?.photoPath : (isMusyrif ? linkedMusyrif?.photoPath : null);
 

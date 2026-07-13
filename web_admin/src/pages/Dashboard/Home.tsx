@@ -4,7 +4,7 @@ import { collection, doc, getDoc, getDocs, Timestamp } from "firebase/firestore"
 import { db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
 import PageMeta from "../../components/common/PageMeta";
-import { Users, GraduationCap, BookOpen, FolderOpen, Building2, School, ShieldCheck, CalendarDays, ChevronRight, Sparkles, Wallet, TrendingUp } from "lucide-react";
+import { Users, GraduationCap, BookOpen, FolderOpen, School, ShieldCheck, CalendarDays, ChevronRight, Sparkles, Wallet, TrendingUp } from "lucide-react";
 
 type DashboardStats = {
   santri: number;

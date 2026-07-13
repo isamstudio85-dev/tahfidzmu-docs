@@ -1,38 +1,38 @@
 {
-  "title": "Fiqih Munakahat (Nikah)",
-  "introduction": "Pernikahan adalah akad suci yang menghalalkan hubungan antara laki-laki dan perempuan guna membangun keluarga sakinah.",
+  "title": "Munakahat (Fiqih Keluarga)",
+  "introduction": "Pernikahan adalah akad yang menghalalkan pergaulan antara laki-laki dan perempuan guna membentuk keluarga yang sakinah, mawaddah, dan warahmah.",
   "sections": [
     {
-      "name": "1. Definisi & Dalil",
-      "definition": "Nikah secara bahasa berarti mengumpulkan. Secara syara' adalah akad yang menggunakan lafadz nikah yang menghalalkan hubungan suami istri.\n\nDalil Al-Quran:\nوَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنْفُسِكُمْ أَزْوَاجًا لِتَسْكُنُوا إِلَيْهَا\n'Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya.' (QS. Ar-Rum: 21)"
+      "name": "1. Definisi & Dalil Nikah",
+      "definition": "Nikah secara bahasa berarti berkumpul. Secara syara' adalah akad yang mengandung kebolehan bersenang-senang (istimta') bagi suami istri.\n\nDalil Al-Quran:\nوَأَنْكِحُوا الْأَيَامَى مِنْكُمْ وَالصَّالِحِينَ مِنْ عِبَادِكُمْ\n'Dan kawinkanlah orang-orang yang sendirian di antara kamu, dan orang-orang yang layak (berkawin) dari hamba-hamba sahayamu.' (QS. An-Nur: 32)"
     },
     {
-      "name": "2. Rukun Nikah",
-      "definition": "Pernikahan dianggap sah secara syar'i jika memenuhi 5 rukun:\n1. Mempelai Laki-laki\n2. Mempelai Perempuan\n3. Wali (dari pihak perempuan)\n4. Dua orang saksi laki-laki yang adil\n5. Ijab dan Qabul (Serah terima akad)"
+      "name": "2. Hukum Menikah",
+      "definition": "- Sunnah: Bagi yang sudah memiliki keinginan dan kemampuan finansial.\n- Wajib: Bagi yang sudah mampu dan takut terjerumus zina jika tidak menikah.\n- Makruh: Bagi yang ingin menikah tapi belum memiliki nafkah lahir.\n- Haram: Jika niat menikah hanya untuk menyakiti atau menzalimi pasangan."
     },
     {
-      "name": "3. Mahar (Mas Kawin)",
-      "definition": "Pemberian wajib dari suami kepada istri. Tidak ada batas minimal atau maksimal, namun sebaik-baik mahar adalah yang memudahkan bagi suami.\n\nDalil Mahar:\nوَآتُوا النِّسَاءَ صَدُقَاتِهِنَّ نِحْلَةً\n'Berikanlah maskawin (mahar) kepada wanita (yang kamu nikahi) sebagai pemberian dengan penuh kerelaan.' (QS. An-Nisa: 4)"
+      "name": "3. Rukun Nikah",
+      "definition": "Pernikahan tidak sah kecuali memenuhi 5 hal:\n1. Calon Suami (Muslim, bukan mahram).\n2. Calon Istri (Muslimah/Ahli Kitab, bukan mahram).\n3. Wali (Ayah kandung atau yang berhak).\n4. Dua orang saksi laki-laki yang adil.\n5. Ijab & Qabul (Akad nikah)."
     },
     {
-      "name": "4. Mawani' (Penghalang Nikah)",
-      "definition": "Kondisi yang melarang seseorang dinikahi:\n1. Mahram Nasab (Ibu, anak kandung, saudara kandung)\n2. Mahram Radha'ah (Saudara sepersusuan)\n3. Mahram Mushaharah (Ibu mertua, anak tiri)\n4. Perbedaan agama (kecuali kasus tertentu menurut madzhab tertentu)\n5. Masih dalam masa Iddah"
+      "name": "4. Mahram (Wanita yang Haram Dinikahi)",
+      "definition": "- Sebab Nasab: Ibu, anak perempuan, saudara perempuan, dll.\n- Sebab Persusuan (Radha'ah).\n- Sebab Pernikahan (Mushaharah): Ibu mertua, menantu perempuan, anak tiri (jika ibunya sudah digauli)."
     },
     {
-      "name": "5. Hak & Kewajiban",
-      "definition": "Suami: Memberi nafkah lahir batin, membimbing agama, dan memperlakukan istri dengan baik.\nIstri: Taat kepada suami (dalam hal kebaikan), menjaga kehormatan diri dan harta suami, serta mengurus rumah tangga."
+      "name": "5. Hak & Kewajiban Suami Istri",
+      "definition": "- Kewajiban Suami: Memberi nafkah lahir (makan, pakaian, tempat tinggal) dan nafkah batin, serta membimbing agama.\n- Kewajiban Istri: Taat kepada suami selama tidak maksiat, menjaga kehormatan diri dan harta suami."
     },
     {
-      "name": "6. Sunnah-Sunnah Nikah",
-      "definition": "1. Khutbah Nikah sebelum akad\n2. Walimatul 'Urs (resepsi syukuran)\n3. Mengumumkan pernikahan (agar tidak fitnah)\n4. Memilih pasangan yang baik agamanya"
+      "name": "6. Talak & Ruju'",
+      "definition": "Talak adalah pelepasan ikatan pernikahan. Meskipun halal, talak adalah hal yang paling dibenci Allah. \n- Talak Raj'i: Bisa ruju' tanpa akad baru selama masa iddah.\n- Talak Ba'in: Harus dengan akad nikah baru."
     },
     {
-      "name": "7. Thalaq & Rujuk",
-      "definition": "Thalaq adalah pemutusan ikatan nikah. Meskipun halal, thalaq adalah perkara yang paling dibenci Allah. Rujuk adalah kembalinya suami kepada istri yang ditalaq (selama masa iddah raj'i)."
+      "name": "7. Adab Walimatul Ursy",
+      "definition": "1. Mengundang orang-orang shalih.\n2. Tidak bermaksud pamer (riya') atau bermewah-mewahan yang berlebihan.\n3. Tidak ada kemaksiatan atau percampuran laki-laki dan perempuan yang dilarang."
     },
     {
       "name": "8. Hikmah Pernikahan",
-      "definition": "- Menjaga kesucian diri dari zina\n- Mendapatkan keturunan yang shalih/shalihah\n- Menciptakan ketenangan jiwa (sakinah)\n- Menyatukan dua keluarga dalam ukhuwah"
+      "definition": "- Menjaga kesucian diri dari zina.\n- Menghasilkan keturunan yang shalih dan shalihah.\n- Menciptakan ketenangan jiwa (sakinah) dan kasih sayang (rahmah).\n- Menjalin silaturahmi yang kuat antar dua keluarga besar."
     }
   ]
 }

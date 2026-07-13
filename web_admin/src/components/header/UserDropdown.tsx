@@ -10,7 +10,6 @@ export default function UserDropdown() {
   const { profile, logout, isImpersonating, switchBackToSuperAdmin } = useAuth();
   const navigate = useNavigate();
   const displayName = profile?.name?.trim() || "Admin";
-  const initial = displayName.charAt(0).toUpperCase();
   const showPhoto = Boolean(profile?.photoPath && !imageFailed);
 
   function toggleDropdown() {

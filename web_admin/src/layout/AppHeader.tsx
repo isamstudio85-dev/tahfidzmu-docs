@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router";
 import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 import UserDropdown from "../components/header/UserDropdown";
-import tahfidzLogoIcon from "../../../assets/icons/logo-tahfidzmu.png";
 import { useAuth } from "../context/AuthContext";
 
 const AppHeader: React.FC = () => {

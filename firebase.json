@@ -6,6 +6,21 @@
   "storage": {
     "rules": "storage.rules"
   },
+  "hosting": {
+    "site": "tahfidzmu-db5d9",
+    "public": "web_admin/dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
   "flutter": {
     "platforms": {
       "android": {

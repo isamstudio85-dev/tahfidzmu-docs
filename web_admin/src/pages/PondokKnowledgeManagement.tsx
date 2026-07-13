@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Plus, Search, Trash2, Edit3, FileText, List, ListOrdered, Image as ImageIcon, X, Save, AlertCircle, Smartphone, CheckCircle2, ChevronRight } from "lucide-react";
+import { Plus, Search, Trash2, ChevronLeft, List, ListOrdered, Type, Image as ImageIcon, Save, Smartphone, CheckCircle, Edit2 } from "lucide-react";
 import { db, storage } from "../firebase";
 import { useAuth } from "../context/AuthContext";
 import PageMeta from "../components/common/PageMeta";
@@ -19,13 +19,13 @@ export default function PondokKnowledgeManagement() {
   const [items, setItems] = useState<PondokItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
-  // Studio State
   const [isEditing, setIsEditing] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showSavedToast, setShowSavedToast] = useState(false);
+
+  // Form State
   const [form, setForm] = useState<PondokItem>({
     title: "",
     content: "",
@@ -51,23 +51,20 @@ export default function PondokKnowledgeManagement() {
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
 
-  const handleCreateNew = () => {
+  const handleAddNew = () => {
     setForm({ title: "", content: "", description: "", type: "paragraph", imagePath: "" });
-    setImageFile(null); setImagePreview(null); setActiveIndex(null); setIsEditing(true); setSuccess(false);
+    setImagePreview(null); setImageFile(null); setActiveIndex(null); setIsEditing(true);
   };
 
-  const handleSelectEdit = (idx: number) => {
-    const item = items[idx];
-    setForm(item);
+  const handleEdit = (idx: number) => {
+    setForm(items[idx]);
+    setImagePreview(items[idx].imagePath || null);
     setActiveIndex(idx);
-    setImagePreview(item.imagePath || null);
-    setImageFile(null);
     setIsEditing(true);
-    setSuccess(false);
   };
 
   const handleSave = async () => {
-    if (!form.title.trim() || !form.content.trim()) { setError("Judul dan Isi wajib diisi"); return; }
+    if (!form.title.trim() || !form.content.trim()) { setError("Judul dan Konten tidak boleh kosong"); return; }
     setSaving(true);
     setError(null);
     try {
@@ -78,205 +75,193 @@ export default function PondokKnowledgeManagement() {
         finalImagePath = await getDownloadURL(up.ref);
       }
 
-      const cleanedContent = form.content.split('\n').filter(line => line.trim() !== "").join('\n');
+      const cleanedContent = form.content.split('\n').filter(l => l.trim() !== "").join('\n');
       const updatedItem = { ...form, content: cleanedContent, imagePath: finalImagePath };
       const newList = [...items];
 
-      if (activeIndex !== null) { newList[activeIndex] = updatedItem; }
-      else { newList.push(updatedItem); }
+      if (activeIndex !== null) newList[activeIndex] = updatedItem;
+      else newList.push(updatedItem);
 
-      await setDoc(doc(db, "pesantren", profile!.pesantrenId, "settings", "pondok_knowledge"), {
+      await setDoc(doc(db, "pesantren", profile!.pesantrenId as string, "settings", "pondok_knowledge"), {
         items: newList, initialized: true
       }, { merge: true });
 
       setItems(newList);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      setShowSavedToast(true);
+      setTimeout(() => setShowSavedToast(false), 2000);
+      setIsEditing(false);
     } catch (err: any) {
       setError(err.message);
     } finally { setSaving(false); }
   };
 
-  const handleDelete = async (idx: number, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDelete = async (idx: number) => {
     if (!window.confirm("Hapus materi ini?")) return;
     const newList = items.filter((_, i) => i !== idx);
     try {
-      await setDoc(doc(db, "pesantren", profile!.pesantrenId, "settings", "pondok_knowledge"), { items: newList }, { merge: true });
+      await setDoc(doc(db, "pesantren", profile!.pesantrenId as string, "settings", "pondok_knowledge"), { items: newList }, { merge: true });
       setItems(newList);
-      if (activeIndex === idx) setIsEditing(false);
     } catch (err) { alert("Gagal menghapus"); }
   };
 
   const filtered = items.filter(it => it.title.toLowerCase().includes(search.toLowerCase()));
 
-  return (
-    <div className="h-[calc(100vh-100px)] flex flex-col bg-gray-50/50 dark:bg-transparent -m-6 overflow-hidden">
-      <PageMeta title="Pondok Studio | TahfidzMU" description="Ruang kreatif pengelola materi pesantren." />
+  // Render the Listing UI
+  if (!isEditing) {
+    return (
+      <div className="space-y-8 animate-in fade-in duration-500">
+        <PageMeta title="Materi Pondok | Admin" description="Kelola profil dan materi hafalan pesantren." />
 
-      <div className="flex-1 flex overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="text-left">
+            <h2 className="text-3xl font-black text-gray-900 dark:text-white">Materi Pondok</h2>
+            <p className="text-gray-500 text-sm mt-1">Buat profil, sejarah, atau visi misi yang tampil di aplikasi santri.</p>
+          </div>
+          <button onClick={handleAddNew} className="flex items-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-2xl font-bold shadow-lg shadow-brand-500/20 transition-all active:scale-95">
+            <Plus size={20}/> Tambah Baru
+          </button>
+        </div>
 
-        {/* COLUMN 1: Material Explorer */}
-        <div className={`w-80 flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all ${isEditing ? 'hidden lg:flex' : 'flex w-full lg:w-80'}`}>
-           <div className="p-6 border-b border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl sticky top-0 z-10">
-              <h2 className="text-lg font-black text-gray-900 dark:text-white tracking-tight">EXPLORER</h2>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Daftar Materi Pondok</p>
+        <div className="relative">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari judul materi..." className="w-full pl-12 pr-4 py-4 bg-white dark:bg-white/5 border-none rounded-[2rem] shadow-sm focus:ring-2 focus:ring-brand-500/20 dark:text-white text-lg" />
+        </div>
 
-              <div className="mt-6 relative">
-                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                 <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari materi..." className="w-full pl-9 pr-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-xl text-xs outline-none focus:ring-2 focus:ring-brand-500/20 dark:text-white" />
+        {loading ? (
+          <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div></div>
+        ) : filtered.length === 0 ? (
+          <div className="py-20 text-center bg-gray-50 dark:bg-white/5 rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-gray-800">
+             <Plus size={48} className="mx-auto text-gray-300 mb-4" />
+             <p className="text-gray-400 font-bold">Belum ada materi. Mulai dengan membuat satu.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((it, i) => (
+              <div key={i} className="group bg-white dark:bg-gray-800 rounded-[2.5rem] p-6 shadow-sm hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 flex flex-col">
+                <div className="flex items-center justify-between mb-6">
+                   <div className={`p-3 rounded-2xl ${it.type === 'bullet' ? 'bg-blue-50 text-blue-500' : it.type === 'number' ? 'bg-purple-50 text-purple-500' : 'bg-emerald-50 text-emerald-500'}`}>
+                      {it.type === 'bullet' ? <List size={24}/> : it.type === 'number' ? <ListOrdered size={24}/> : <Type size={24}/>}
+                   </div>
+                   <div className="flex gap-1">
+                      <button onClick={() => handleEdit(i)} className="p-2 text-gray-400 hover:bg-gray-50 rounded-full transition-colors"><Edit2 size={18}/></button>
+                      <button onClick={() => handleDelete(i)} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"><Trash2 size={18}/></button>
+                   </div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 text-left">{it.title}</h3>
+                <p className="text-gray-500 text-sm line-clamp-2 mb-6 text-left flex-1">{it.description || it.content}</p>
+                {it.imagePath && <img src={it.imagePath} className="w-full h-32 object-cover rounded-3xl" alt=""/>}
               </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
-              <button onClick={handleCreateNew} className="w-full mt-4 flex items-center justify-center gap-2 py-3 bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-brand-500/20 transition-all active:scale-95">
-                 <Plus size={16}/> TAMBAH MATERI
+  // Render the "Writing Studio" UI (Full Screen Editor)
+  return (
+    <div className="fixed inset-0 z-[60] bg-[#FDF9F0] dark:bg-gray-950 flex flex-col animate-in slide-in-from-bottom duration-500">
+      <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col lg:flex-row overflow-hidden">
+
+        {/* LEFT: The Editor (Focused Column) */}
+        <div className="flex-1 flex flex-col bg-white dark:bg-gray-900 shadow-2xl lg:rounded-[3rem] lg:my-6 lg:ml-6 overflow-hidden">
+           {/* Header / Actions */}
+           <div className="px-8 py-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+              <button onClick={() => setIsEditing(false)} className="flex items-center gap-2 text-gray-500 hover:text-gray-900 font-bold text-sm">
+                <ChevronLeft size={20}/> KEMBALI
               </button>
+              <div className="flex items-center gap-4">
+                 {error && <span className="text-red-500 text-xs font-bold">{error}</span>}
+                 <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-8 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-full font-black text-[10px] tracking-widest shadow-lg shadow-brand-500/30 disabled:opacity-50">
+                    <Save size={16}/> {saving ? "MENYIMPAN..." : "PUBLIKASIKAN"}
+                 </button>
+              </div>
            </div>
 
-           <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-2">
-              {loading ? (
-                <div className="flex justify-center p-8"><div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div></div>
-              ) : filtered.length === 0 ? (
-                <div className="text-center py-12 px-6 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-3xl text-gray-300 italic text-xs">Belum ada materi</div>
-              ) : (
-                filtered.map((it, i) => (
-                  <div key={i} onClick={() => handleSelectEdit(i)} className={`group p-4 rounded-2xl cursor-pointer transition-all flex items-center gap-3 border ${activeIndex === i ? 'bg-brand-50 border-brand-200 dark:bg-brand-500/10 dark:border-brand-500/50' : 'bg-white dark:bg-gray-800 border-transparent hover:border-gray-200 dark:hover:border-gray-700'}`}>
-                    <div className={`p-2 rounded-xl ${activeIndex === i ? 'bg-brand-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'}`}>
-                      {it.type === 'bullet' ? <List size={14}/> : it.type === 'number' ? <ListOrdered size={14}/> : <FileText size={14}/>}
+           {/* Writing Area */}
+           <div className="flex-1 overflow-y-auto custom-scrollbar p-12 lg:p-20 text-left">
+              <div className="max-w-2xl mx-auto space-y-12">
+
+                 {/* Title & Description */}
+                 <div className="space-y-4">
+                    <input autoFocus value={form.title} onChange={e => setForm({...form, title: e.target.value})} placeholder="Judul Materi..." className="w-full bg-transparent border-none outline-none text-4xl font-black text-gray-900 dark:text-white placeholder:text-gray-100" />
+                    <input value={form.description} onChange={e => setForm({...form, description: e.target.value})} placeholder="Deskripsi ringkas (Sub-judul)..." className="w-full bg-transparent border-none outline-none text-lg text-gray-400 placeholder:text-gray-200" />
+                 </div>
+
+                 <div className="flex items-center gap-6 border-y border-gray-50 dark:border-gray-800 py-6">
+                    <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">FORMAT VISUAL</span>
+                    <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-2xl">
+                       {(['paragraph', 'bullet', 'number'] as const).map(t => (
+                         <button key={t} onClick={() => setForm({...form, type: t})} className={`px-5 py-2 rounded-xl text-[10px] font-bold transition-all ${form.type === t ? 'bg-white dark:bg-gray-700 text-brand-600 shadow-sm' : 'text-gray-400'}`}>
+                           {t.toUpperCase()}
+                         </button>
+                       ))}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className={`text-xs font-bold truncate ${activeIndex === i ? 'text-brand-700 dark:text-brand-400' : 'text-gray-700 dark:text-gray-200'}`}>{it.title}</h4>
-                      <p className="text-[10px] text-gray-400 truncate">{it.description || "Klik untuk mengedit"}</p>
-                    </div>
-                    <button onClick={(e) => handleDelete(i, e)} className="p-1.5 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-all"><Trash2 size={12}/></button>
-                  </div>
-                ))
-              )}
+                 </div>
+
+                 {/* Content */}
+                 <textarea required rows={12} value={form.content} onChange={e => setForm({...form, content: e.target.value})} placeholder="Tulis konten di sini. Setiap baris baru akan otomatis menjadi poin jika format List dipilih." className="w-full bg-transparent border-none outline-none text-xl leading-relaxed text-gray-700 dark:text-gray-300 placeholder:text-gray-100 resize-none font-serif" />
+
+                 {/* Image */}
+                 <div className="pt-10">
+                    <label className="block w-full h-48 border-4 border-dashed border-gray-100 dark:border-gray-800 rounded-[3rem] cursor-pointer hover:bg-gray-50 transition-all overflow-hidden group relative">
+                       {imagePreview ? (
+                         <>
+                           <img src={imagePreview} className="w-full h-full object-cover" alt=""/>
+                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold"><ImageIcon size={32}/></div>
+                         </>
+                       ) : (
+                         <div className="flex flex-col items-center justify-center h-full text-gray-300">
+                            <ImageIcon size={40} className="mb-2"/>
+                            <span className="text-xs font-bold uppercase tracking-widest">Unggah Foto Ilustrasi</span>
+                         </div>
+                       )}
+                       <input type="file" accept="image/*" onChange={e => {
+                         const file = e.target.files?.[0];
+                         if (file) { setImageFile(file); setImagePreview(URL.createObjectURL(file)); }
+                       }} className="hidden" />
+                    </label>
+                 </div>
+              </div>
            </div>
         </div>
 
-        {/* COLUMN 2: Designer Canvas (The Editor) */}
-        {isEditing ? (
-          <div className="flex-1 flex flex-col bg-white dark:bg-gray-950 overflow-hidden relative shadow-inner">
-            <div className="px-8 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
-               <div className="flex items-center gap-3">
-                  <button onClick={() => setIsEditing(false)} className="lg:hidden p-2 -ml-2 text-gray-400 hover:bg-gray-100 rounded-full"><X size={20}/></button>
-                  <h3 className="text-sm font-black text-gray-900 dark:text-white tracking-widest uppercase">{activeIndex !== null ? "Editor Materi" : "Kanvas Baru"}</h3>
-               </div>
-               <div className="flex items-center gap-4">
-                  {success && <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-bold animate-fade-in"><CheckCircle2 size={14}/> BERHASIL DISIMPAN</div>}
-                  <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 px-6 py-2 bg-brand-500 hover:bg-brand-600 text-white text-[10px] font-black tracking-widest rounded-full transition-all disabled:opacity-50 shadow-lg shadow-brand-500/25">
-                    <Save size={14}/> {saving ? "PROSES..." : "SAVE"}
-                  </button>
-               </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-12 custom-scrollbar flex justify-center">
-               <div className="w-full max-w-2xl space-y-10">
-                  {error && <div className="p-4 bg-red-50 border border-red-100 text-red-700 text-xs rounded-2xl flex items-center gap-3"><AlertCircle size={16}/> {error}</div>}
-
-                  {/* Visual Header Input */}
-                  <div className="space-y-4">
-                    <input value={form.title} onChange={e => setForm({...form, title: e.target.value})} placeholder="Ketik Judul Besar di Sini..." className="w-full bg-transparent text-3xl font-black text-gray-900 dark:text-white placeholder:text-gray-200 dark:placeholder:text-gray-800 outline-none border-none" />
-                    <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} placeholder="Tulis deskripsi singkat atau pengantar materi..." className="w-full bg-transparent text-sm text-gray-400 placeholder:text-gray-300 outline-none border-none resize-none h-12" />
-                  </div>
-
-                  <div className="h-px bg-gray-100 dark:bg-gray-800"></div>
-
-                  {/* Format Selector (Designer Style) */}
-                  <div className="flex items-center gap-8">
-                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Format Visual</span>
-                     <div className="flex gap-2">
-                        {(['paragraph', 'bullet', 'number'] as const).map(t => (
-                          <button key={t} onClick={() => setForm({...form, type: t})} className={`px-4 py-1.5 text-[10px] font-bold rounded-full border transition-all ${form.type === t ? 'bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-gray-900' : 'border-gray-200 text-gray-400 hover:border-gray-900'}`}>
-                             {t.toUpperCase()}
-                          </button>
-                        ))}
-                     </div>
-                  </div>
-
-                  {/* Main Content (Notion Style) */}
-                  <div className="relative group">
-                     <textarea required rows={15} value={form.content} onChange={e => setForm({...form, content: e.target.value})} placeholder="Tulis konten Anda di sini. Gunakan baris baru untuk memisahkan poin..." className="w-full bg-transparent text-gray-700 dark:text-gray-300 text-lg leading-relaxed placeholder:text-gray-100 dark:placeholder:text-gray-900 outline-none border-none resize-none font-serif" />
-                     <div className="absolute -left-6 top-1.5 text-gray-100 dark:text-gray-900"><ChevronRight size={24}/></div>
-                  </div>
-
-                  {/* Media Dropzone */}
-                  <div className="space-y-4 pt-10">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Ilustrasi Visual</span>
-                    <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-[2rem] cursor-pointer hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-all overflow-hidden relative group">
-                        {imagePreview ? (
-                          <>
-                            <img src={imagePreview} className="w-full h-full object-cover" alt=""/>
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><ImageIcon className="text-white" size={32}/></div>
-                          </>
-                        ) : (
-                          <div className="text-center p-6 flex flex-col items-center">
-                            <ImageIcon size={32} className="text-gray-200 mb-2"/>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Upload Photo</p>
-                          </div>
-                        )}
-                        <input type="file" accept="image/*" onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setImageFile(file);
-                            setImagePreview(URL.createObjectURL(file));
-                          }
-                        }} className="hidden"/>
-                    </label>
-                  </div>
-                  <div className="h-20"></div>
-               </div>
-            </div>
-          </div>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center bg-white dark:bg-gray-950">
-             <div className="p-10 border-2 border-dashed border-gray-100 dark:border-gray-900 rounded-[3rem] text-center max-w-sm">
-                <Edit3 size={48} className="mx-auto text-gray-100 mb-4" />
-                <h3 className="text-lg font-bold text-gray-300">STUDIO MATERIPONDOK</h3>
-                <p className="text-xs text-gray-400 mt-2 leading-relaxed uppercase tracking-widest">Pilih materi di samping atau buat baru untuk mulai mendesain konten pesantren Anda.</p>
-             </div>
-          </div>
-        )}
-
-        {/* COLUMN 3: Phone Sync Preview (The Result) */}
-        {isEditing && (
-          <div className="w-[450px] bg-gray-50 dark:bg-black/20 border-l border-gray-200 dark:border-gray-800 hidden xl:flex flex-col items-center justify-center p-8 relative overflow-hidden">
-             <div className="absolute top-0 right-0 p-8 text-[100px] font-black text-gray-200/20 select-none -z-10 tracking-tighter">PREVIEW</div>
-
-             <div className="relative">
-                {/* Phone Frame */}
-                <div className="w-[300px] h-[600px] bg-[#FDF9F0] border-[12px] border-slate-900 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
-                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-slate-900 rounded-b-2xl z-20"></div>
-                   <div className="bg-[#2E5A27] text-white pt-8 pb-4 px-6 text-xs font-black tracking-widest text-center">
-                      PENGETAHUAN PONDOK
-                   </div>
-                   <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                      <h4 className="text-[#2E5A27] font-black text-xl mb-1">{form.title || "Judul Materi"}</h4>
-                      <p className="text-gray-500 text-[10px] mb-4 italic leading-relaxed">{form.description || "Keterangan singkat"}</p>
-                      <div className="w-full h-px bg-[#E5D5B8] mb-5"></div>
-
-                      {imagePreview && <img src={imagePreview} className="w-full h-32 object-cover rounded-2xl mb-5 shadow-md" alt=""/>}
-
-                      <div className="space-y-4">
-                         {(form.content.split('\n').filter(l => l.trim() !== "")).map((line, i) => (
-                           <div key={i} className="flex gap-3 text-xs leading-relaxed">
-                             {form.type === 'bullet' && <div className="mt-2 w-1.5 h-1.5 rounded-full bg-[#2E5A27] shrink-0" />}
-                             {form.type === 'number' && <div className="w-6 h-6 rounded-full bg-[#2E5A27]/10 text-[#2E5A27] text-[10px] font-black flex items-center justify-center shrink-0">{i+1}</div>}
-                             <div className="text-[#4E342E] flex-1 font-medium">{line}</div>
-                           </div>
-                         ))}
-                      </div>
-                   </div>
-                </div>
-                {/* Smartphone Badge */}
-                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-gray-400 font-bold text-[10px] tracking-widest uppercase">
-                   <Smartphone size={14}/> Real-time Sync
-                </div>
-             </div>
-          </div>
-        )}
+        {/* RIGHT: Mobile Preview (Designer's Satisfaction) */}
+        <div className="hidden lg:flex w-[480px] flex-col items-center justify-center p-12">
+           <div className="relative">
+              {/* Device Mockup */}
+              <div className="w-[300px] h-[600px] bg-[#FDF9F0] border-[12px] border-slate-900 rounded-[3.5rem] shadow-2xl overflow-hidden flex flex-col">
+                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-20"></div>
+                 <div className="bg-[#2E5A27] text-white pt-8 pb-4 px-6 text-[10px] font-black tracking-widest text-center">TENTANG PONDOK</div>
+                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar text-left">
+                    <h4 className="text-[#2E5A27] font-black text-xl mb-1 leading-tight">{form.title || "Judul Utama"}</h4>
+                    <p className="text-gray-400 text-[10px] mb-4 italic">{form.description || "Sub-judul materi"}</p>
+                    <div className="w-full h-px bg-[#E5D5B8] mb-5"></div>
+                    {imagePreview && <img src={imagePreview} className="w-full h-32 object-cover rounded-2xl mb-5 shadow-sm" alt=""/>}
+                    <div className="space-y-4">
+                       {form.content.split('\n').filter(l => l.trim() !== "").map((line, i) => (
+                         <div key={i} className="flex gap-3 text-xs leading-relaxed">
+                           {form.type === 'bullet' && <div className="mt-2 w-1.5 h-1.5 rounded-full bg-[#2E5A27] shrink-0" />}
+                           {form.type === 'number' && <div className="w-5 h-5 rounded-full bg-[#2E5A27]/10 text-[#2E5A27] text-[10px] font-black flex items-center justify-center shrink-0">{i+1}</div>}
+                           <div className="text-[#4E342E] flex-1 font-medium">{line}</div>
+                         </div>
+                       ))}
+                    </div>
+                 </div>
+              </div>
+              <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-gray-400 text-[10px] font-black tracking-widest uppercase">
+                 <Smartphone size={14}/> Live Sync Active
+              </div>
+           </div>
+        </div>
 
       </div>
+
+      {showSavedToast && (
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-emerald-500 text-white px-8 py-4 rounded-full shadow-2xl font-bold animate-in fade-in slide-in-from-bottom-4">
+           <CheckCircle size={20}/> MATERI BERHASIL DIPUBLIKASIKAN
+        </div>
+      )}
     </div>
   );
 }

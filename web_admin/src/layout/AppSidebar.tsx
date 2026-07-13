@@ -56,6 +56,11 @@ const adminNavItems: NavItem[] = [
     path: "/wisuda",
   },
   {
+    icon: <TableIcon />,
+    name: "Materi Pondok",
+    path: "/pondok-materi",
+  },
+  {
     icon: <PageIcon />,
     name: "Info Pesantren",
     path: "/pesantren-info",

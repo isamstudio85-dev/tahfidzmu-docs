@@ -147,7 +147,6 @@ type SantriLite = {
 export default function InputHafalan() {
   const { profile } = useAuth();
   const [santriList, setSantriList] = useState<SantriLite[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const [selectedSantri, setSelectedSantri] = useState<SantriLite | null>(null);
   const [searchSantri, setSearchSantri] = useState("");
@@ -213,7 +212,6 @@ export default function InputHafalan() {
   }, [profile?.pesantrenId]);
 
   const loadData = async () => {
-    setLoading(true);
     try {
       const pid = profile?.pesantrenId;
       if (!pid) return;
@@ -225,8 +223,6 @@ export default function InputHafalan() {
 
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 

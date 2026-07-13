@@ -48,7 +48,7 @@ export default function HalaqahManagement() {
     try {
       const pid = profile.pesantrenId;
       const snap = await getDocs(collection(db, "pesantren", pid, "halaqah"));
-      setList(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setList(snap.docs.map((d) => ({ id: d.id, ...d.data() } as any)));
       const mSnap = await getDocs(collection(db, "pesantren", pid, "musyrif"));
       setMusyrifList(mSnap.docs.map((d) => ({ id: d.id, nama: d.data().nama })));
     } catch (err) { console.error(err); } finally { setLoading(false); }
@@ -159,7 +159,7 @@ export default function HalaqahManagement() {
                     {h.photoPath ? <img src={h.photoPath} alt={h.nama} className="w-12 h-12 rounded-xl object-cover" /> : <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-brand-50 text-brand-500 dark:bg-brand-500/10"><BookOpen size={22} /></div>}
                     <div>
                       <h4 className="font-bold text-gray-800 dark:text-white">{h.nama}</h4>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Musyrif: {getMusyrifName(h.musyrifId)}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Musyrif: {getMusyrifName(h.musyrifId || '')}</p>
                     </div>
                   </div>
                   <div className="flex gap-1">

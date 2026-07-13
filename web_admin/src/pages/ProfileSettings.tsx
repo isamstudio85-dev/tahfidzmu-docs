@@ -5,7 +5,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import PageMeta from "../components/common/PageMeta";
 import { useAuth } from "../context/AuthContext";
 import { db, storage } from "../firebase";
-import { Camera, Upload, X } from "lucide-react";
+import { Camera, X } from "lucide-react";
 import defaultAvatar from "../../../assets/images/avatar-default.png";
 
 export default function ProfileSettings() {
