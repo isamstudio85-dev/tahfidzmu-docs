@@ -54,21 +54,49 @@ class _MusyrifListScreenState extends State<MusyrifListScreen> with AutomaticKee
                 ),
               ),
               if (list.isEmpty)
-                _emptyStateNoExpanded(isAdmin, 'Belum ada musyrif.')
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async => await provider.setupFirestoreListeners(),
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverFillRemaining(
+                          child: _emptyStateNoExpanded(isAdmin, 'Belum ada musyrif.'),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               else if (filteredList.isEmpty)
-                const Expanded(child: Center(child: Text('Tidak ada musyrif yang cocok', style: TextStyle(color: Colors.grey))))
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async => await provider.setupFirestoreListeners(),
+                    child: const CustomScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverFillRemaining(
+                          child: Center(child: Text('Tidak ada musyrif yang cocok', style: TextStyle(color: Colors.grey))),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               else
                 Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
-                    itemCount: filteredList.length,
-                    itemBuilder: (_, i) => _MusyrifListItem(
-                      musyrif: filteredList[i],
-                      santriCount: provider.getSantriByMusyrif(filteredList[i].id).length,
-                      halaqahCount: provider.halaqahList.where((h) => h.musyrifId == filteredList[i].id).length,
-                      onReset: isAdmin ? () => _showResetPasswordDialog(context, provider, filteredList[i]) : null,
-                      onEdit: isAdmin ? () => _showFormDialog(context, filteredList[i]) : null,
-                      onDelete: isAdmin ? () => _confirmDelete(context, provider, filteredList[i]) : null,
+                  child: RefreshIndicator(
+                    onRefresh: () async => await provider.setupFirestoreListeners(),
+                    child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
+                      itemCount: filteredList.length,
+                      itemBuilder: (_, i) => _MusyrifListItem(
+                        musyrif: filteredList[i],
+                        santriCount: provider.getSantriByMusyrif(filteredList[i].id).length,
+                        halaqahCount: provider.halaqahList.where((h) => h.musyrifId == filteredList[i].id).length,
+                        onReset: isAdmin ? () => _showResetPasswordDialog(context, provider, filteredList[i]) : null,
+                        onEdit: isAdmin ? () => _showFormDialog(context, filteredList[i]) : null,
+                        onDelete: isAdmin ? () => _confirmDelete(context, provider, filteredList[i]) : null,
+                      ),
                     ),
                   ),
                 ),

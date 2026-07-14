@@ -143,25 +143,38 @@ class _VoucherList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (vouchers.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey.shade300),
-            const SizedBox(height: 16),
-            Text(
-              isHistory ? 'Belum ada riwayat penukaran' : 'Tidak ada voucher aktif saat ini',
-              style: const TextStyle(color: Colors.grey),
+      return RefreshIndicator(
+        onRefresh: () async => await context.read<AppProvider>().setupFirestoreListeners(),
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey.shade300),
+                    const SizedBox(height: 16),
+                    Text(
+                      isHistory ? 'Belum ada riwayat penukaran' : 'Tidak ada voucher aktif saat ini',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
       );
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: vouchers.length,
-      itemBuilder: (context, index) {
+    return RefreshIndicator(
+      onRefresh: () async => await context.read<AppProvider>().setupFirestoreListeners(),
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        itemCount: vouchers.length,
+        itemBuilder: (context, index) {
         final v = vouchers[index];
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
@@ -204,8 +217,9 @@ class _VoucherList extends StatelessWidget {
           ),
         );
       },
-    );
-  }
+    ),
+  );
+}
 
   void _confirmRedeemDirect(BuildContext context, VoucherTicket voucher) {
     final provider = context.read<AppProvider>();

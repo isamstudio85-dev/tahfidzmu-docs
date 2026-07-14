@@ -21,37 +21,51 @@ class HalaqahListScreen extends StatelessWidget {
         builder: (ctx, provider, _) {
           final list = provider.halaqahList;
           if (list.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.group_off_rounded, size: 64, color: Colors.grey.shade300),
-                  const SizedBox(height: 16),
-                  const Text('Belum ada halaqah', style: TextStyle(color: Colors.grey, fontSize: 16)),
-                  const SizedBox(height: 12),
-                  if (provider.isAdmin)
-                    FilledButton.icon(onPressed: () => _showForm(context, null), icon: const Icon(Icons.add), label: const Text('Tambah Halaqah')),
+            return RefreshIndicator(
+              onRefresh: () async => await provider.setupFirestoreListeners(),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.group_off_rounded, size: 64, color: Colors.grey.shade300),
+                          const SizedBox(height: 16),
+                          const Text('Belum ada halaqah', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                          const SizedBox(height: 12),
+                          if (provider.isAdmin)
+                            FilledButton.icon(onPressed: () => _showForm(context, null), icon: const Icon(Icons.add), label: const Text('Tambah Halaqah')),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );
           }
           final isAdmin = provider.isAdmin;
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: list.length,
-            itemBuilder: (_, i) {
-              final h = list[i];
-              final musyrif = provider.getMusyrifById(h.musyrifId);
-              final santriCount = provider.getSantriByHalaqah(h.id).length;
-              return _HalaqahCard(
-                halaqah: h,
-                musyrifNama: musyrif?.nama,
-                santriCount: santriCount,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => _HalaqahDetailScreen(halaqahId: h.id))),
-                onEdit: isAdmin ? () => _showForm(context, h) : null,
-                onDelete: isAdmin ? () => _confirmDelete(context, provider, h, santriCount) : null,
-              );
-            },
+          return RefreshIndicator(
+            onRefresh: () async => await provider.setupFirestoreListeners(),
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              itemCount: list.length,
+              itemBuilder: (_, i) {
+                final h = list[i];
+                final musyrif = provider.getMusyrifById(h.musyrifId);
+                final santriCount = provider.getSantriByHalaqah(h.id).length;
+                return _HalaqahCard(
+                  halaqah: h,
+                  musyrifNama: musyrif?.nama,
+                  santriCount: santriCount,
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => _HalaqahDetailScreen(halaqahId: h.id))),
+                  onEdit: isAdmin ? () => _showForm(context, h) : null,
+                  onDelete: isAdmin ? () => _confirmDelete(context, provider, h, santriCount) : null,
+                );
+              },
+            ),
           );
         },
       ),
