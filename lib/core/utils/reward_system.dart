@@ -54,6 +54,24 @@ class RewardSystem {
       value: 0xFF00FFFF,
       imagePath: 'assets/images/icon_neon_frame.jpg',
     ),
+    VirtualReward(
+      id: 'frame_pink',
+      name: 'Bingkai Mutiara Hijab',
+      description: 'Bingkai profil merah muda anggun (Khusus Santri Putri).',
+      cost: 400,
+      type: RewardType.frame,
+      value: 0xFFFFB6C1,
+      imagePath: 'assets/images/icon_pink_frame.jpg',
+    ),
+    VirtualReward(
+      id: 'frame_orchid',
+      name: 'Bingkai Orchid Syafiah',
+      description: 'Bingkai profil ungu anggun dan menenangkan.',
+      cost: 600,
+      type: RewardType.frame,
+      value: 0xFFBA55D3,
+      imagePath: 'assets/images/icon_orchid_frame.jpg',
+    ),
     
     // --- TITLES ---
     VirtualReward(
@@ -81,6 +99,24 @@ class RewardSystem {
       cost: 5000,
       type: RewardType.title,
       value: 'Sultan Hafidz',
+      imagePath: 'assets/images/icon_scroll_title.jpg',
+    ),
+    VirtualReward(
+      id: 'title_queen',
+      name: 'Gelar: Sayyidah Hafizhah',
+      description: 'Gelar kehormatan "Sayyidah Hafizhah" untuk putri.',
+      cost: 5000,
+      type: RewardType.title,
+      value: 'Sayyidah Hafizhah',
+      imagePath: 'assets/images/icon_scroll_title.jpg',
+    ),
+    VirtualReward(
+      id: 'title_expert_female',
+      name: 'Gelar: Mutiara Tajwid',
+      description: 'Gelar kehormatan "Mutiara Tajwid" untuk putri.',
+      cost: 800,
+      type: RewardType.title,
+      value: 'Mutiara Tajwid',
       imagePath: 'assets/images/icon_scroll_title.jpg',
     ),
 

@@ -332,7 +332,7 @@ class _EpicPortraitCards extends StatelessWidget {
                           shape: BoxShape.circle,
                           border: Border.all(color: color, width: 1.5),
                         ),
-                        child: AppAvatar(name: santri.name, radius: 24, imagePath: santri.photoPath, streakDays: santri.streakDays),
+                        child: AppAvatar(name: santri.name, radius: 24, imagePath: santri.photoPath, streakDays: santri.streakDays, jenisKelamin: santri.jenisKelamin),
                       ),
                       Positioned(
                         bottom: -2,
@@ -471,7 +471,7 @@ class _RankCard extends StatelessWidget {
               ),
             ),
             // Avatar
-            AppAvatar(name: santri.name, radius: 18, imagePath: santri.photoPath, streakDays: santri.streakDays),
+            AppAvatar(name: santri.name, radius: 18, imagePath: santri.photoPath, streakDays: santri.streakDays, jenisKelamin: santri.jenisKelamin),
             const SizedBox(width: 12),
             // Name
             Expanded(

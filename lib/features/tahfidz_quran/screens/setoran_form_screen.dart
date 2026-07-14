@@ -1211,7 +1211,7 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
       ),
       child: Row(
         children: [
-          AppAvatar(name: santri.name, radius: 24, imagePath: santri.photoPath, activeFrame: santri.activeFrame, streakDays: santri.streakDays),
+          AppAvatar(name: santri.name, radius: 24, imagePath: santri.photoPath, activeFrame: santri.activeFrame, streakDays: santri.streakDays, jenisKelamin: santri.jenisKelamin),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

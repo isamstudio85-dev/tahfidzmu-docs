@@ -208,6 +208,19 @@ class _RewardList extends StatelessWidget {
                           child: Image.asset(
                             reward.imagePath!,
                             fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Icon(
+                              reward.type == RewardType.frame 
+                                ? Icons.portrait_rounded 
+                                : (reward.type == RewardType.theme 
+                                    ? Icons.style_rounded 
+                                    : (reward.type == RewardType.physical ? (reward.icon ?? Icons.confirmation_number_rounded) : Icons.military_tech_rounded)),
+                              color: reward.type == RewardType.frame 
+                                ? Color(reward.value as int) 
+                                : (reward.type == RewardType.theme 
+                                    ? Colors.blue 
+                                    : (reward.type == RewardType.physical ? Colors.orange : AppTheme.gold)),
+                              size: 32,
+                            ),
                           ),
                         )
                       : Icon(

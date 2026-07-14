@@ -477,6 +477,7 @@ class OrangTuaDashboard extends StatelessWidget {
               foregroundColor: Colors.white,
               activeFrame: child.activeFrame,
               streakDays: child.streakDays,
+              jenisKelamin: child.jenisKelamin,
             ),
           ),
           const SizedBox(width: 16),

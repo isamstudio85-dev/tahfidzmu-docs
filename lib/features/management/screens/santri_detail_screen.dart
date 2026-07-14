@@ -102,7 +102,7 @@ class _SantriDetailScreenState extends State<SantriDetailScreen> {
       ),
       child: Row(
         children: [
-          AppAvatar(name: santri.name, radius: 36, imagePath: santri.photoPath, activeFrame: santri.activeFrame, streakDays: santri.streakDays),
+          AppAvatar(name: santri.name, radius: 36, imagePath: santri.photoPath, activeFrame: santri.activeFrame, streakDays: santri.streakDays, jenisKelamin: santri.jenisKelamin),
           const SizedBox(width: 20),
           Expanded(
             child: Column(

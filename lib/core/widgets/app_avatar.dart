@@ -9,11 +9,13 @@ import 'package:tahfidz_app/core/utils/reward_system.dart';
 /// Generates a DiceBear avatar URL seeded by the person's name.
 /// Each name always maps to the same avatar (deterministic).
 /// Uses the free DiceBear Avataaars Neutral style — no API key needed.
-String avatarUrl(String name, {int size = 128}) {
+String avatarUrl(String name, String? jenisKelamin, {int size = 128}) {
   final seed = Uri.encodeComponent(name.trim());
-  return 'https://api.dicebear.com/9.x/avataaars-neutral/png'
+  final top = jenisKelamin == 'P' ? 'hijabHeader' : 'shortHair,frizzle,curly,dreads,turban';
+  return 'https://api.dicebear.com/9.x/avataaars/png'
       '?seed=$seed'
       '&size=$size'
+      '&top=$top'
       '&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf'
       '&backgroundType=gradientLinear';
 }
@@ -33,6 +35,7 @@ class AppAvatar extends StatelessWidget {
     this.foregroundColor,
     this.activeFrame,
     this.streakDays = 0,
+    this.jenisKelamin,
   });
 
   /// Person's name — used to seed the AI avatar and derive initials.
@@ -58,6 +61,9 @@ class AppAvatar extends StatelessWidget {
 
   /// Streak days of memorization (shows fire overlay if >= 7).
   final int streakDays;
+
+  /// Gender L (Laki-laki) or P (Perempuan)
+  final String? jenisKelamin;
 
   String get _initials {
     final parts = name.trim().split(RegExp(r'\s+'));
@@ -120,8 +126,14 @@ class AppAvatar extends StatelessWidget {
         child: null,
       );
     } else {
-      // Fallback to initials with dynamic themed background (clean & premium)
-      avatar = fallback;
+      // Fallback to DiceBear with female hijab / male hairstyles (clean & premium)
+      final url = avatarUrl(name, jenisKelamin, size: (radius * 2).toInt());
+      avatar = CachedNetworkImage(
+        imageUrl: url,
+        imageBuilder: (context, imageProvider) => CircleAvatar(radius: radius, backgroundImage: imageProvider),
+        placeholder: (context, url) => fallback,
+        errorWidget: (context, url, error) => fallback,
+      );
     }
 
     final showFire = streakDays >= 7;
