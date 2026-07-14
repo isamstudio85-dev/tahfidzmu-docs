@@ -11,7 +11,6 @@ import 'package:tahfidz_app/features/management/screens/musyrif_list_screen.dart
 import 'package:tahfidz_app/features/management/screens/halaqah_list_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_ranking_list.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/laporan_screen.dart';
-import 'package:tahfidz_app/core/utils/demo_seeder_service.dart';
 import 'package:tahfidz_app/models/voucher_ticket.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/notification_bell.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
@@ -182,91 +181,57 @@ class AdminDashboard extends StatelessWidget {
   }
 
   Widget _buildBanner(BuildContext context) {
-    return GestureDetector(
-      onLongPress: () => _showDemoSeederDialog(context),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryGreen.withValues(alpha: 0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.primaryGreen.withValues(alpha: 0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Image.asset(
-              'assets/images/TahfidzMU-logo-white.png',
-              width: 60,
-              height: 60,
-              errorBuilder: (_, __, ___) => const Icon(
-                Icons.auto_stories_rounded,
-                size: 40,
-                color: Colors.white70,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'TahfidzMU',
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  Text(
-                    provider.pesantrenName,
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
-    );
-  }
-
-  void _showDemoSeederDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Mode Demo (Seeder)'),
-        content: const Text(
-          'Apakah Anda ingin mengisi database dengan data demo (24 Santri, Musyrif, Halaqah, & Setoran)? \n\n'
-          'Gunakan ini hanya untuk demo fitur Gamifikasi & Ranking agar data terlihat hidup.'
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
-          FilledButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Menanam data demo...'), behavior: SnackBarBehavior.floating),
-              );
-              await DemoSeederService.seedDemoData(provider);
-              if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Data demo berhasil ditanam!'), backgroundColor: Colors.green, behavior: SnackBarBehavior.floating),
-              );
-            },
-            child: const Text('Tanam Data'),
+      child: Row(
+        children: [
+          Image.asset(
+            'assets/images/TahfidzMU-logo-white.png',
+            width: 60,
+            height: 60,
+            errorBuilder: (_, __, ___) => const Icon(
+              Icons.auto_stories_rounded,
+              size: 40,
+              color: Colors.white70,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'TahfidzMU',
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  provider.pesantrenName,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ],
       ),
