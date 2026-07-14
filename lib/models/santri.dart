@@ -35,6 +35,18 @@ class Santri {
   final List<int>? juzCoveredByZiyadahField;
   final String? lastSetoranAtField;
 
+  // Gamification fields
+  final int totalXP;
+  final int streakDays;
+  final List<String> unlockedBadges;
+  
+  // Virtual Reward fields
+  final int totalCoins;
+  final List<String> unlockedItems; // IDs of purchased frames/titles
+  final String? activeFrame;      // ID of current profile frame
+  final String? activeTitle;      // Custom title shown on leaderboard
+  final String? activeTheme;      // ID of current profile card background theme
+
   // Backward-compat getters so old references still compile
   String? get nik => nis;
   String? get namaOrtu => namaOrangTua ?? namaAyah ?? namaIbu;
@@ -68,6 +80,14 @@ class Santri {
     this.estimatedJuzField,
     this.juzCoveredByZiyadahField,
     this.lastSetoranAtField,
+    this.totalXP = 0,
+    this.streakDays = 0,
+    this.unlockedBadges = const [],
+    this.totalCoins = 0,
+    this.unlockedItems = const [],
+    this.activeFrame,
+    this.activeTitle,
+    this.activeTheme,
   });
 
   bool get isAktif => status == 'aktif';
@@ -99,6 +119,14 @@ class Santri {
     double? estimatedJuzField,
     List<int>? juzCoveredByZiyadahField,
     String? lastSetoranAtField,
+    int? totalXP,
+    int? streakDays,
+    List<String>? unlockedBadges,
+    int? totalCoins,
+    List<String>? unlockedItems,
+    String? activeFrame,
+    String? activeTitle,
+    String? activeTheme,
     // old-name aliases
     String? nik,
     String? namaOrtu,
@@ -132,6 +160,14 @@ class Santri {
       estimatedJuzField: estimatedJuzField ?? this.estimatedJuzField,
       juzCoveredByZiyadahField: juzCoveredByZiyadahField ?? this.juzCoveredByZiyadahField,
       lastSetoranAtField: lastSetoranAtField ?? this.lastSetoranAtField,
+      totalXP: totalXP ?? this.totalXP,
+      streakDays: streakDays ?? this.streakDays,
+      unlockedBadges: unlockedBadges ?? this.unlockedBadges,
+      totalCoins: totalCoins ?? this.totalCoins,
+      unlockedItems: unlockedItems ?? this.unlockedItems,
+      activeFrame: activeFrame ?? this.activeFrame,
+      activeTitle: activeTitle ?? this.activeTitle,
+      activeTheme: activeTheme ?? this.activeTheme,
     );
   }
 
@@ -255,6 +291,14 @@ class Santri {
     'estimatedJuz': estimatedJuz,
     'juzCoveredByZiyadah': juzCoveredByZiyadah,
     'lastSetoranAt': lastSetoranAtField,
+    'totalXP': totalXP,
+    'streakDays': streakDays,
+    'unlockedBadges': unlockedBadges,
+    'totalCoins': totalCoins,
+    'unlockedItems': unlockedItems,
+    'activeFrame': activeFrame,
+    'activeTitle': activeTitle,
+    'activeTheme': activeTheme,
   };
 
   factory Santri.fromJson(Map<String, dynamic> json) => Santri(
@@ -298,5 +342,13 @@ class Santri {
             ?.map((e) => e as int)
             .toList(),
     lastSetoranAtField: json['lastSetoranAt'] as String?,
+    totalXP: json['totalXP'] as int? ?? 0,
+    streakDays: json['streakDays'] as int? ?? 0,
+    unlockedBadges: (json['unlockedBadges'] as List?)?.map((e) => e as String).toList() ?? [],
+    totalCoins: json['totalCoins'] as int? ?? 0,
+    unlockedItems: (json['unlockedItems'] as List?)?.map((e) => e as String).toList() ?? [],
+    activeFrame: json['activeFrame'] as String?,
+    activeTitle: json['activeTitle'] as String?,
+    activeTheme: json['activeTheme'] as String?,
   );
 }

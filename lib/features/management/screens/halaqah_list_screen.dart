@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tahfidz_app/models/halaqah_data.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/features/management/widgets/management_shared_widgets.dart';
 import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 import 'package:tahfidz_app/features/management/screens/halaqah_form_screen.dart';
 
@@ -96,56 +97,67 @@ class _HalaqahCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Column(
-          children: [
-            if (halaqah.photoPath != null)
-              Image.file(File(halaqah.photoPath!), height: 120, width: double.infinity, fit: BoxFit.cover, errorBuilder: (_,__,___) => const SizedBox.shrink()),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  if (halaqah.photoPath == null)
-                    Container(width: 44, height: 44, decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.groups_rounded, color: AppTheme.primaryGreen)),
-                  if (halaqah.photoPath == null) const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(halaqah.nama, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14)),
-                        Text(musyrifNama ?? 'Belum ada pembimbing', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                    child: Text('$santriCount Santri', style: const TextStyle(color: AppTheme.primaryGreen, fontSize: 10, fontWeight: FontWeight.bold)),
-                  ),
-                  if (onEdit != null || onDelete != null)
-                    PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert_rounded, color: Colors.grey, size: 20),
-                      onSelected: (val) { if (val == 'edit') onEdit?.call(); if (val == 'delete') onDelete?.call(); },
-                      itemBuilder: (ctx) => [
-                        if (onEdit != null)
-                          const PopupMenuItem(value: 'edit', child: Row(children: [Icon(Icons.edit_rounded, size: 18, color: Colors.blue), SizedBox(width: 8), Text('Edit')])),
-                        if (onDelete != null)
-                          const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete_outline_rounded, size: 18, color: Colors.red), SizedBox(width: 8), Text('Hapus')])),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-          ],
+    return GamifiedListItem(
+      onTap: onTap,
+      accentColor: AppTheme.primaryGreen,
+      leading: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.2), width: 1),
+          image: (halaqah.photoPath != null)
+              ? DecorationImage(image: FileImage(File(halaqah.photoPath!)), fit: BoxFit.cover)
+              : null,
         ),
+        child: (halaqah.photoPath == null)
+            ? const Center(
+                child: Icon(Icons.hub_rounded, color: AppTheme.primaryGreen, size: 24),
+              )
+            : null,
       ),
+      title: halaqah.nama,
+      subtitle: 'Musyrif: ${musyrifNama ?? "Belum Ditentukan"}',
+      stats: [
+        GamifiedStatItem(
+          icon: Icons.person_pin_rounded,
+          label: 'Musyrif',
+          value: musyrifNama != null ? '1' : '0',
+          color: Colors.blue,
+        ),
+        GamifiedStatItem(
+          icon: Icons.people_alt_rounded,
+          label: 'Santri',
+          value: '$santriCount',
+          color: AppTheme.gold,
+        ),
+      ],
+      trailing: (onEdit != null || onDelete != null)
+          ? PopupMenuButton<String>(
+              icon: const Icon(Icons.tune_rounded, size: 20, color: Colors.grey),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onSelected: (val) {
+                if (val == 'edit') onEdit?.call();
+                if (val == 'delete') onDelete?.call();
+              },
+              itemBuilder: (ctx) => [
+                if (onEdit != null) const PopupMenuItem(value: 'edit', child: _MenuAction(Icons.edit_rounded, 'Edit', Colors.blue)),
+                if (onDelete != null) const PopupMenuItem(value: 'delete', child: _MenuAction(Icons.delete_outline_rounded, 'Hapus', Colors.red)),
+              ],
+            )
+          : null,
     );
+  }
+}
+
+class _MenuAction extends StatelessWidget {
+  const _MenuAction(this.icon, this.label, this.color);
+  final IconData icon; final String label; final Color color;
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [Icon(icon, size: 18, color: color), const SizedBox(width: 10), Text(label)]);
   }
 }
 

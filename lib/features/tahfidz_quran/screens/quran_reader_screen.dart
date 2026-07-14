@@ -10,6 +10,8 @@ import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_reader_widgets.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/assessment_screen.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/widgets/tajwid_info_bar.dart';
+import 'package:tahfidz_app/features/education/screens/educational_list_screen.dart';
 
 class QuranReaderScreen extends StatefulWidget {
   const QuranReaderScreen({super.key, this.isReadOnly = false});
@@ -21,6 +23,8 @@ class QuranReaderScreen extends StatefulWidget {
 
 class _QuranReaderScreenState extends State<QuranReaderScreen> {
   final ScrollController _scrollController = ScrollController();
+  String? _tappedWord;
+  String? _tappedRule;
 
   @override
   void initState() {
@@ -57,20 +61,64 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
                 builder: (context, isSurahNull, child) {
                   if (isSurahNull) return const Center(child: CircularProgressIndicator());
                   
-                  return Column(
+                  return Stack(
                     children: [
-                      if (!widget.isReadOnly) const _LiveDashboardWrapper(),
-                      Expanded(
-                        child: _ReaderContentWrapper(
-                          isReadOnly: widget.isReadOnly,
-                          scrollController: _scrollController,
-                          onWordTap: (surahNum, ayahNum, wordIdx, word) {
-                          if (!widget.isReadOnly) {
-                            _onWordTap(context, context.read<AppProvider>(), surahNum, ayahNum, wordIdx, word);
-                          }
-                        },
-                        ),
+                      Column(
+                        children: [
+                          if (!widget.isReadOnly) const _LiveDashboardWrapper(),
+                          Expanded(
+                            child: _ReaderContentWrapper(
+                              isReadOnly: widget.isReadOnly,
+                              scrollController: _scrollController,
+                              onWordTap: (surahNum, ayahNum, wordIdx, word) {
+                                final provider = context.read<AppProvider>();
+                                final surah = provider.currentSurah;
+                                if (surah != null) {
+                                  try {
+                                    final ayah = surah.ayahs.firstWhere((a) => a.numberInSurah == ayahNum);
+                                    if (wordIdx >= 0 && wordIdx < ayah.wordsTajweed.length) {
+                                      final wordTaj = ayah.wordsTajweed[wordIdx];
+                                      if (wordTaj.rule != null) {
+                                        setState(() {
+                                          _tappedWord = wordTaj.word;
+                                          _tappedRule = _formatRuleName(wordTaj.rule!);
+                                        });
+                                      }
+                                    }
+                                  } catch (_) {}
+                                }
+                                if (!widget.isReadOnly) {
+                                  _onWordTap(context, provider, surahNum, ayahNum, wordIdx, word);
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
+                      if (_tappedWord != null && _tappedRule != null)
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: TajwidInfoBar(
+                            ruleName: _tappedRule!,
+                            word: _tappedWord!,
+                            onClose: () {
+                              setState(() {
+                                _tappedWord = null;
+                                _tappedRule = null;
+                              });
+                            },
+                            onLearnMore: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const EducationalListScreen(type: 'tajwid'),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                     ],
                   );
                 },
@@ -160,11 +208,60 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
     final key = ErrorMark.generateKey(surahNumber, ayahNumber, wordIndex);
     final current = provider.sessionErrors[key];
     if (current == null) {
-      provider.toggleError(surahNumber: surahNumber, ayahNumber: ayahNumber, wordIndex: wordIndex, word: word, errorType: ErrorType.tajwid);
+      final surah = provider.currentSurah;
+      String? ruleName;
+      if (surah != null) {
+        try {
+          final ayah = surah.ayahs.firstWhere((a) => a.numberInSurah == ayahNumber);
+          if (wordIndex >= 0 && wordIndex < ayah.wordsTajweed.length) {
+            final wordTaj = ayah.wordsTajweed[wordIndex];
+            if (wordTaj.rule != null) {
+              ruleName = _formatRuleName(wordTaj.rule!);
+            }
+          }
+        } catch (_) {}
+      }
+      provider.toggleError(
+        surahNumber: surahNumber,
+        ayahNumber: ayahNumber,
+        wordIndex: wordIndex,
+        word: word,
+        errorType: ErrorType.tajwid,
+        tajwidRuleName: ruleName,
+      );
     } else if (current.errorType == ErrorType.tajwid) {
-      provider.toggleError(surahNumber: surahNumber, ayahNumber: ayahNumber, wordIndex: wordIndex, word: word, errorType: ErrorType.makhroj);
+      provider.toggleError(
+        surahNumber: surahNumber,
+        ayahNumber: ayahNumber,
+        wordIndex: wordIndex,
+        word: word,
+        errorType: ErrorType.makhroj,
+        tajwidRuleName: current.tajwidRuleName,
+      );
     } else {
       provider.removeError(key);
+    }
+  }
+
+  String _formatRuleName(String rawRule) {
+    switch (rawRule) {
+      case 'ghunnah': return 'Ghunnah';
+      case 'idghaam_ghunnah': return 'Idgham Bighunnah';
+      case 'idghaam_no_ghunnah': return 'Idgham Bilaghunnah';
+      case 'ikhfa': return 'Ikhfa Haqiqi';
+      case 'ikhfa_shafawi': return 'Ikhfa Syafawi';
+      case 'iqlab': return 'Iqlab';
+      case 'izhar': return 'Izhar Halqi';
+      case 'izhar_shafawi': return 'Izhar Syafawi';
+      case 'qalqalah': return 'Qalqalah';
+      case 'madd_2': return 'Mad Tabi\'i';
+      case 'madd_246': return 'Mad Aridh Lissukun';
+      case 'madd_45': return 'Mad Jaiz/Wajib';
+      case 'madd_muttasil': return 'Mad Wajib Muttasil';
+      case 'madd_munfasil': return 'Mad Jaiz Munfasil';
+      case 'madd_6':
+      case 'madd_lazim': return 'Mad Lazim';
+      default: return rawRule.split('_').map((s) => s.isNotEmpty ? '${s[0].toUpperCase()}${s.substring(1)}' : '').join(' ');
     }
   }
 

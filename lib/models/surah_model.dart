@@ -25,18 +25,58 @@ class SurahInfo {
   String toString() => '$number. $englishName ($name)';
 }
 
+class WordTajweed {
+  final String word;
+  final String? rule;
+
+  const WordTajweed({
+    required this.word,
+    this.rule,
+  });
+
+  factory WordTajweed.fromJson(Map<String, dynamic> json) => WordTajweed(
+        word: json['word'] as String,
+        rule: json['rule'] as String?,
+      );
+}
+
 class AyahModel {
   final int number;
   final int numberInSurah;
   final String text; // Arabic text (Uthmani)
   final String? translation; // Indonesian translation (nullable)
+  final List<WordTajweed> wordsTajweed;
+  final int? pageNumber;
+  final int? startLine;
+  final int? endLine;
 
   const AyahModel({
     required this.number,
     required this.numberInSurah,
     required this.text,
     this.translation,
+    required this.wordsTajweed,
+    this.pageNumber,
+    this.startLine,
+    this.endLine,
   });
+
+  AyahModel copyWith({
+    int? pageNumber,
+    int? startLine,
+    int? endLine,
+  }) {
+    return AyahModel(
+      number: number,
+      numberInSurah: numberInSurah,
+      text: text,
+      translation: translation,
+      wordsTajweed: wordsTajweed,
+      pageNumber: pageNumber ?? this.pageNumber,
+      startLine: startLine ?? this.startLine,
+      endLine: endLine ?? this.endLine,
+    );
+  }
 
   /// Splits the ayah into clickable word tokens.
   /// Waqf marks (stand-alone non-letter symbols, e.g. ۚ ۖ ۝ ۞) are appended
@@ -74,6 +114,11 @@ class AyahModel {
         numberInSurah: json['numberInSurah'] as int,
         text: json['arabic'] as String,
         translation: json['translation'] as String?,
+        wordsTajweed: json['wordsTajweed'] != null
+            ? (json['wordsTajweed'] as List)
+                .map((x) => WordTajweed.fromJson(x as Map<String, dynamic>))
+                .toList()
+            : [],
       );
 }
 

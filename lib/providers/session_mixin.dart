@@ -21,6 +21,7 @@ mixin SessionMixin on ChangeNotifier {
   int activeSetoranAyahStart = 1;
   int activeSetoranAyahEnd = 7;
   int defaultSetoranAyahEnd = 7; // Store initial session end to allow toggle-back
+  String activeSetoranCalculationMethod = 'ayat';
   bool isTasmiSession = false;
   List<int> activeTasmiJuz = [];
   String activeTasmiYear = '';
@@ -39,6 +40,7 @@ mixin SessionMixin on ChangeNotifier {
     required SurahInfo surah,
     required int ayahStart,
     required int ayahEnd,
+    String calculationMethod = 'ayat',
   }) {
     activeSetoranSantri = santri;
     activeSetoranType = type;
@@ -46,6 +48,7 @@ mixin SessionMixin on ChangeNotifier {
     activeSetoranSurahName = surah.name;
     activeSetoranSurahEnglishName = surah.englishName;
     activeSetoranAyahStart = ayahStart;
+    activeSetoranCalculationMethod = calculationMethod;
     
     // Clamp ayahEnd to surah length
     final maxAyah = surah.numberOfAyahs;
@@ -136,6 +139,7 @@ mixin SessionMixin on ChangeNotifier {
     required int wordIndex,
     required String word,
     required ErrorType errorType,
+    String? tajwidRuleName,
   }) {
     final key = ErrorMark.generateKey(surahNumber, ayahNumber, wordIndex);
     if (sessionErrors.containsKey(key) && sessionErrors[key]!.errorType == errorType) {
@@ -148,6 +152,7 @@ mixin SessionMixin on ChangeNotifier {
         ayahNumber: ayahNumber,
         wordIndex: wordIndex,
         word: word,
+        tajwidRuleName: tajwidRuleName,
       );
     }
     notifyListeners();

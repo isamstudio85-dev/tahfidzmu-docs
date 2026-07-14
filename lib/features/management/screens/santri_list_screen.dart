@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/continuation_dialog.dart';
-import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:tahfidz_app/core/utils/gamification_utils.dart';
+import 'package:tahfidz_app/core/widgets/user_avatar_with_frame.dart';
+import 'package:tahfidz_app/features/management/widgets/management_shared_widgets.dart';
 import 'package:tahfidz_app/features/management/screens/santri_form_screen.dart';
+import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
 
 class SantriListScreen extends StatefulWidget {
   const SantriListScreen({super.key, this.hideAppBar = false, this.showOnlyMine});
@@ -59,26 +62,11 @@ class _SantriListScreenState extends State<SantriListScreen> with AutomaticKeepA
               // Search Bar
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        onChanged: (value) => setState(() => _query = value),
-                        decoration: InputDecoration(
-                          hintText: 'Cari nama, NIS, kelas...',
-                          prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                          filled: true,
-                          fillColor: Colors.grey.shade50,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade200)),
-                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade200)),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    _buildFilterButton(provider),
-                  ],
+                child: GamifiedSearchBar(
+                  controller: _searchController,
+                  onChanged: (value) => setState(() => _query = value),
+                  hintText: 'Cari nama, NIS, kelas...',
+                  trailing: _buildFilterButton(provider),
                 ),
               ),
 
@@ -136,11 +124,10 @@ class _SantriListScreenState extends State<SantriListScreen> with AutomaticKeepA
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: () async => await provider.setupFirestoreListeners(),
-                    child: ListView.separated(
+                    child: ListView.builder(
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemCount: filteredList.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5, color: Color(0xFFEEEEEE)),
                       itemBuilder: (_, i) => _SantriListItem(santri: filteredList[i]),
                     ),
                   ),
@@ -210,7 +197,7 @@ class _SantriListScreenState extends State<SantriListScreen> with AutomaticKeepA
   }
 
   void _showAddSantriDialog(BuildContext context) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => const SantriFormScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (_) => SantriFormScreen()));
   }
 }
 
@@ -225,98 +212,109 @@ class _SantriListItem extends StatelessWidget {
     final halaqah = provider.getHalaqahById(santri.halaqahId);
     final todayStatus = provider.getTodaySantriStatus(santri.id);
 
-    return InkWell(
+    final level = GamificationUtils.calculateLevel(santri.totalXP);
+    final progress = GamificationUtils.levelProgress(santri.totalXP);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return GamifiedListItem(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SantriDetailScreen(santriId: santri.id))),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), // More compact
-        child: Row(
-          children: [
-            // SQUIRCLE AVATAR
-            Container(
-              width: 36, // Slightly smaller
-              height: 36,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8), 
-                image: (santri.photoPath?.isNotEmpty ?? false)
-                    ? DecorationImage(image: NetworkImage(santri.photoPath!), fit: BoxFit.cover)
-                    : null,
-              ),
-              child: (santri.photoPath?.isEmpty ?? true)
-                  ? Center(
-                      child: Text(
-                        santri.name[0].toUpperCase(),
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.primaryGreen, fontSize: 12),
-                      ),
-                    )
-                  : null,
+      leading: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          UserAvatarWithFrame(
+            photoPath: santri.photoPath,
+            name: santri.name,
+            frameId: santri.activeFrame,
+            size: 56,
+          ),
+          if (todayStatus != null)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: _buildMiniStatusBadge(todayStatus),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    santri.name, 
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87), 
-                    maxLines: 1, 
-                    overflow: TextOverflow.ellipsis
-                  ),
-                  const SizedBox(height: 1), // Tighter
-                  Row(
-                    children: [
-                      if (santri.nis != null && santri.nis!.isNotEmpty) ...[
-                        Text(santri.nis!, style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontFamily: 'monospace')),
-                        const SizedBox(width: 6),
-                        Text('•', style: TextStyle(color: Colors.grey.shade300, fontSize: 10)),
-                        const SizedBox(width: 6),
-                      ],
-                      Flexible(
-                        child: Text(
-                          halaqah?.nama ?? 'Tanpa Halaqah', 
-                          style: TextStyle(color: AppTheme.primaryGreen.withValues(alpha: 0.7), fontSize: 10, fontWeight: FontWeight.w500), 
-                          maxLines: 1, 
-                          overflow: TextOverflow.ellipsis
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            if (todayStatus != null) ...[
-              _buildMiniStatusBadge(todayStatus),
-              const SizedBox(width: 8),
-            ],
-            if (canManage)
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.tune_rounded, size: 18, color: Colors.grey), // Changed from three dots
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                onSelected: (val) async {
-                  if (val == 'setoran') showSetoranOptions(context, santri);
-                  
-                  if (val == 'edit') Navigator.push(context, MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)));
-                  if (val == 'delete') _confirmDelete(context, provider, santri);
-                  if (val == 'reset') _showResetPasswordDialog(context, provider, santri);
-                },
-                itemBuilder: (ctx) => [
-                  const PopupMenuItem(value: 'setoran', child: _MenuAction(Icons.play_circle_fill_rounded, 'Mulai Setoran', AppTheme.primaryGreen)),
-                  const PopupMenuItem(value: 'edit', child: _MenuAction(Icons.edit_rounded, 'Edit Profile', Colors.blue)),
-                  const PopupMenuItem(value: 'reset', child: _MenuAction(Icons.lock_reset_rounded, 'Reset Sandi', Colors.orange)),
-                  const PopupMenuItem(value: 'delete', child: _MenuAction(Icons.delete_outline_rounded, 'Hapus', Colors.red)),
-                ],
-              )
-            else
-              IconButton(
-                icon: const Icon(Icons.play_circle_outline_rounded, color: AppTheme.primaryGreen, size: 24),
-                onPressed: () => showSetoranOptions(context, santri),
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-              ),
-          ],
-        ),
+        ],
       ),
+      title: santri.name,
+      subtitle: '${santri.nis ?? "NIS -"} • ${halaqah?.nama ?? "Tanpa Halaqah"}',
+      extraContent: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (santri.activeTitle != null) ...[
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppTheme.gold.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: AppTheme.gold.withValues(alpha: 0.2)),
+              ),
+              child: Text(
+                santri.activeTitle!,
+                style: GoogleFonts.poppins(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.gold,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 4,
+              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
+              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen),
+            ),
+          ),
+        ],
+      ),
+      stats: [
+        GamifiedStatItem(
+          icon: Icons.shield_rounded,
+          label: 'Level',
+          value: '$level',
+        ),
+        GamifiedStatItem(
+          icon: Icons.auto_awesome_rounded,
+          label: 'XP',
+          value: '${santri.totalXP}',
+          color: Colors.blue,
+        ),
+        GamifiedStatItem(
+          icon: Icons.stars_rounded,
+          label: 'Koin',
+          value: '${santri.totalCoins}',
+          color: AppTheme.gold,
+        ),
+      ],
+      trailing: canManage
+          ? PopupMenuButton<String>(
+              icon: const Icon(Icons.tune_rounded, size: 20, color: Colors.grey),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onSelected: (val) async {
+                if (val == 'setoran') showSetoranOptions(context, santri);
+                if (val == 'edit') Navigator.push(context, MaterialPageRoute(builder: (_) => SantriFormScreen(existing: santri)));
+                if (val == 'delete') _confirmDelete(context, provider, santri);
+                if (val == 'reset') _showResetPasswordDialog(context, provider, santri);
+              },
+              itemBuilder: (ctx) => [
+                const PopupMenuItem(value: 'setoran', child: _MenuAction(Icons.play_circle_fill_rounded, 'Mulai Setoran', AppTheme.primaryGreen)),
+                const PopupMenuItem(value: 'edit', child: _MenuAction(Icons.edit_rounded, 'Edit Profile', Colors.blue)),
+                const PopupMenuItem(value: 'reset', child: _MenuAction(Icons.lock_reset_rounded, 'Reset Sandi', Colors.orange)),
+                const PopupMenuItem(value: 'delete', child: _MenuAction(Icons.delete_outline_rounded, 'Hapus', Colors.red)),
+              ],
+            )
+          : IconButton(
+              icon: const Icon(Icons.play_circle_outline_rounded, color: AppTheme.primaryGreen, size: 24),
+              onPressed: () => showSetoranOptions(context, santri),
+              constraints: const BoxConstraints(),
+              padding: EdgeInsets.zero,
+            ),
     );
   }
 

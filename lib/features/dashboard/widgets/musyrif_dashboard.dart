@@ -11,6 +11,8 @@ import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:tahfidz_app/models/voucher_ticket.dart';
+import 'package:tahfidz_app/features/management/screens/redemption_center_screen.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/notification_bell.dart';
 import 'dashboard_shared_widgets.dart';
 
@@ -22,7 +24,7 @@ class MusyrifDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final musyrif = provider.linkedMusyrif;
     final myHalaqah = musyrif != null
-        ? provider.halaqahList.where((h) => h.musyrifId == musyrif.id).toList()
+        ? provider.halaqahList.where((h) => h.musyrifId == musyrif.id || (musyrif.isKoordinator && musyrif.managedHalaqahIds.contains(h.id))).toList()
         : <HalaqahData>[];
     final mySantri = musyrif != null
         ? provider.getSantriByMusyrif(musyrif.id)
@@ -35,20 +37,26 @@ class MusyrifDashboard extends StatelessWidget {
     }
     recent.sort((a, b) => b.$2.date.compareTo(a.$2.date));
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
       appBar: AppBar(
         leading: Padding(
-          padding: const EdgeInsets.only(left: 14.0, top: 10.0, bottom: 10.0),
+          padding: const EdgeInsets.all(10.0),
           child: Image.asset(
             'assets/images/TahfidzMU-logo-white.png',
             fit: BoxFit.contain,
           ),
         ),
-        titleSpacing: 8.0,
-        title: const Text('Dashboard'),
+        titleSpacing: 0,
+        title: Text(
+          'BERANDA MUSYRIF',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 16),
+        ),
+        centerTitle: true,
         actions: [
-          NotificationBell(),
+          const NotificationBell(),
           const SizedBox(width: 8),
         ],
       ),
@@ -69,62 +77,32 @@ class MusyrifDashboard extends StatelessWidget {
                       if (provider.isModuleActive('graduation') &&
                           provider.graduationEvents.any((e) => e.isPublished)) ...[
                         _buildGraduationBanner(context, provider),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 20),
                       ],
-                      const SectionTitle('Statistik Saya'),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          _mStatTile(
-                            '${myHalaqah.length}',
-                            'Halaqah',
-                            Icons.groups_rounded,
-                            AppTheme.gold,
-                          ),
-                          const SizedBox(width: 12),
-                          _mStatTile(
-                            '${mySantri.length}',
-                            'Santri',
-                            Icons.people_alt_rounded,
-                            AppTheme.primaryGreen,
-                          ),
-                          if (isTablet) ...[
-                            const SizedBox(width: 12),
-                            _mStatTile(
-                              '${recent.length}',
-                              'Total Setoran',
-                              Icons.history_edu_rounded,
-                              Colors.blue,
-                            ),
-                            const SizedBox(width: 12),
-                            _mStatTile(
-                              '${mySantri.fold(0, (sum, s) => sum + s.totalZiyadahAyahs)}',
-                              'Total Ayat',
-                              Icons.menu_book_rounded,
-                              Colors.purple,
-                            ),
-                          ],
-                        ],
-                      ),
+                      
+                      // --- COMPACT STATS HUD ---
+                      _buildCompactStats(myHalaqah.length, mySantri.length, recent.length, isDark),
+                      const SizedBox(height: 16),
+
+                      // --- ACTION HUD (MY ID & SCAN) ---
+                      _buildActionHUD(context, isDark),
                       const SizedBox(height: 24),
-                      HafalanMenuSection(provider: provider),
-                      const SizedBox(height: 24),
+
+                      const QuestCenterPortalCard(),
+                      const SizedBox(height: 32),
+
+                      // --- HALAQAH STATUS ---
+                      if (myHalaqah.isNotEmpty) ...[
+                        const SectionTitle('STATUS HALAQAH (KOMPETISI)'),
+                        const SizedBox(height: 12),
+                        _buildGuildStatus(provider, myHalaqah, isDark),
+                        const SizedBox(height: 32),
+                      ],
                       
                       if (isTablet)
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  // KARTU MUSYRIF DIGITAL
-                                  _buildDigitalCard(context),
-                                  const SizedBox(height: 16),
-                                  _buildScanButton(context),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 20),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,10 +122,6 @@ class MusyrifDashboard extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildDigitalCard(context),
-                            const SizedBox(height: 16),
-                            _buildScanButton(context),
-                            const SizedBox(height: 20),
                             if (provider.isModuleActive('graduation') && provider.graduationEvents.any((e) => e.isPublished)) ...[
                               _buildTasmiButton(context),
                               const SizedBox(height: 24),
@@ -157,7 +131,7 @@ class MusyrifDashboard extends StatelessWidget {
                             if (recent.isEmpty)
                               const EmptyState('Belum ada riwayat hafalan dari santri Anda.')
                             else
-                              ...recent.take(5).map((item) => RecentSetoranTile(santri: item.$1, record: item.$2)),
+                              ...recent.take(10).map((item) => RecentSetoranTile(santri: item.$1, record: item.$2)),
                           ],
                         ),
                       const SizedBox(height: 80),
@@ -172,70 +146,297 @@ class MusyrifDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildDigitalCard(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
+  Widget _buildBanner() {
+    final m = provider.linkedMusyrif;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryGreen.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => _showDigitalCardDialog(context),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+      child: Row(
+        children: [
+          AppAvatar(
+            name: m?.nama ?? 'Musyrif',
+            radius: 30,
+            imagePath: m?.photoPath,
+            backgroundColor: Colors.white24,
+            foregroundColor: Colors.white,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  m?.nama ?? 'Musyrif',
+                  style: GoogleFonts.poppins(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  m?.jabatan ?? 'Pembimbing',
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompactStats(int halaqahCount, int santriCount, int setoranCount, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade100),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _statItem(Icons.groups_rounded, '$halaqahCount', 'HALAQAH', AppTheme.gold, isDark),
+          _statItem(Icons.people_alt_rounded, '$santriCount', 'SANTRI', AppTheme.primaryGreen, isDark),
+          _statItem(Icons.history_edu_rounded, '$setoranCount', 'SETORAN', Colors.blueAccent, isDark),
+        ],
+      ),
+    );
+  }
+
+  Widget _statItem(IconData icon, String val, String label, Color color, bool isDark) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 4),
+        Text(val, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
+        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 8, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  Widget _buildActionHUD(BuildContext context, bool isDark) {
+    final pendingVouchers = provider.voucherList.where((v) => v.status == VoucherStatus.pending).length;
+
+    return Row(
+      children: [
+        // MY IDENTITY BUTTON
+        Expanded(
+          flex: 2,
+          child: _actionTile(
+            onTap: () => _showDigitalCardDialog(context),
+            icon: Icons.badge_rounded,
+            label: 'KARTU SAYA',
+            color: isDark ? Colors.white70 : Colors.black87,
+            isDark: isDark,
+          ),
+        ),
+        const SizedBox(width: 12),
+        // SCAN HERO BUTTON (PRIMARY)
+        Expanded(
+          flex: 3,
+          child: _actionTile(
+            onTap: () async {
+              final verifiedSantri = await VerificationGate.show(context: context);
+              if (verifiedSantri != null && context.mounted) {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => SetoranFormScreen(santri: verifiedSantri)));
+              }
+            },
+            icon: Icons.qr_code_scanner_rounded,
+            label: 'SCAN QR',
+            color: AppTheme.primaryGreen,
+            isPrimary: true,
+            isDark: isDark,
+          ),
+        ),
+        const SizedBox(width: 12),
+        // REDEMPTION BUTTON
+        Expanded(
+          flex: 2,
+          child: _actionTile(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RedemptionCenterScreen())),
+            icon: Icons.card_giftcard_rounded,
+            label: 'PENUKARAN',
+            color: Colors.orange,
+            isDark: isDark,
+            badge: pendingVouchers > 0 ? '$pendingVouchers' : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _actionTile({
+    required VoidCallback onTap,
+    required IconData icon,
+    required String label,
+    required Color color,
+    bool isPrimary = false,
+    required bool isDark,
+    String? badge,
+  }) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              color: isPrimary ? color : (isDark ? AppTheme.darkSurface : Colors.white),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isPrimary ? color : (isDark ? Colors.white10 : Colors.grey.shade200),
+                width: 1.5,
+              ),
+              boxShadow: isPrimary ? [BoxShadow(color: color.withValues(alpha: 0.2), blurRadius: 12, offset: const Offset(0, 4))] : null,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: isPrimary ? Colors.white : (isDark ? Colors.white : color), size: 20),
+                const SizedBox(height: 8),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      color: isPrimary ? Colors.white : (isDark ? Colors.white70 : color),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 10,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (badge != null)
+          Positioned(
+            right: -5,
+            top: -5,
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                badge,
+                style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildGuildStatus(AppProvider provider, List<HalaqahData> myHalaqah, bool isDark) {
+    // Reuse leaderboard logic to find current rank
+    final Map<String, int> guildXpMap = {};
+    for (var s in provider.santriList) {
+      if (s.halaqahId == null) continue;
+      guildXpMap[s.halaqahId!] = (guildXpMap[s.halaqahId] ?? 0) + s.totalXP;
+    }
+    
+    final allGuilds = provider.halaqahList.map((h) => (id: h.id, xp: guildXpMap[h.id] ?? 0)).toList();
+    allGuilds.sort((a, b) => b.xp.compareTo(a.xp));
+
+    // Show status for the first halaqah managed
+    final h = myHalaqah.first;
+    final int rank = allGuilds.indexWhere((g) => g.id == h.id) + 1;
+    final int totalXP = guildXpMap[h.id] ?? 0;
+    
+    // Find MVP in this halaqah
+    final mySantriListInGuild = provider.santriList.where((s) => s.halaqahId == h.id).toList();
+    mySantriListInGuild.sort((a, b) => b.totalXP.compareTo(a.totalXP));
+    final mvp = mySantriListInGuild.isNotEmpty ? mySantriListInGuild.first : null;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark ? [const Color(0xFF1E293B), const Color(0xFF0F172A)] : [Colors.white, const Color(0xFFF1F5F9)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
+      ),
+      child: Column(
+        children: [
+          Row(
             children: [
-              const Icon(Icons.qr_code_2_rounded, color: Colors.black87, size: 28),
+              // Guild Badge/Shield
+              Container(
+                width: 60, height: 60,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.shield_rounded, color: AppTheme.primaryGreen, size: 32),
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'KARTU MUSYRIF DIGITAL',
-                      style: GoogleFonts.poppins(color: Colors.green.shade800, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.5),
-                    ),
-                    const SizedBox(height: 4),
-                    Text('QR Code untuk akses cepat', style: TextStyle(color: Colors.grey.shade600, fontSize: 11)),
+                    Text(h.nama.toUpperCase(), style: GoogleFonts.poppins(fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 1, color: isDark ? Colors.white : Colors.black87)),
+                    Text('LEVEL HALAQAH: ${(totalXP / 1000).floor() + 1}', style: const TextStyle(color: AppTheme.gold, fontWeight: FontWeight.bold, fontSize: 10)),
                   ],
                 ),
               ),
-              const Icon(Icons.qr_code_rounded, color: Colors.green, size: 20),
+              // Rank Medal
+              Column(
+                children: [
+                  const Text('RANK', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.grey)),
+                  Text('#$rank', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: AppTheme.primaryGreen)),
+                ],
+              ),
             ],
           ),
-        ),
+          const SizedBox(height: 20),
+          const Divider(height: 1, color: Colors.white10),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _guildStat('TOTAL XP', '$totalXP', Colors.blueAccent),
+              if (mvp != null)
+                _guildStat('SANTRI TERBAIK', mvp.name.split(' ')[0].toUpperCase(), AppTheme.gold),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildScanButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 54,
-      child: FilledButton.icon(
-        style: FilledButton.styleFrom(backgroundColor: AppTheme.primaryGreen, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
-        onPressed: () async {
-          final verifiedSantri = await VerificationGate.show(context: context);
-          if (verifiedSantri != null && context.mounted) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => SetoranFormScreen(santri: verifiedSantri)));
-          }
-        },
-        icon: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 20),
-        label: const Text('SCAN QR SANTRI (MULAI SETORAN)', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13, letterSpacing: 0.5)),
-      ),
-    );
-  }
-
-  Widget _buildTasmiButton(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TasmiFormScreen())),
-        icon: const Icon(Icons.school_rounded),
-        label: const Text('Mulai Ujian Tasmi\''),
-        style: OutlinedButton.styleFrom(foregroundColor: Colors.purple, side: const BorderSide(color: Colors.purple)),
-      ),
+  Widget _guildStat(String label, String val, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 1)),
+        const SizedBox(height: 2),
+        Text(val, style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 13)),
+      ],
     );
   }
 
@@ -331,11 +532,11 @@ class MusyrifDashboard extends StatelessWidget {
         ),
         title: Text(
           event.title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
         ),
         subtitle: const Text(
           'Lihat informasi wisuda & hasil ujian',
-          style: TextStyle(fontSize: 11),
+          style: TextStyle(fontSize: 11, color: Colors.black54),
         ),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -356,85 +557,14 @@ class MusyrifDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildBanner() {
-    final m = provider.linkedMusyrif;
-    return Container(
+  Widget _buildTasmiButton(BuildContext context) {
+    return SizedBox(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          AppAvatar(
-            name: m?.nama ?? 'Musyrif',
-            radius: 30,
-            imagePath: m?.photoPath,
-            backgroundColor: Colors.white24,
-            foregroundColor: Colors.white,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  m?.nama ?? 'Musyrif',
-                  style: GoogleFonts.poppins(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  m?.jabatan ?? 'Pembimbing',
-                  style: const TextStyle(color: Colors.white70, fontSize: 13),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _mStatTile(String value, String label, IconData icon, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.1)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 8),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value,
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: color,
-                ),
-              ),
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                color: color.withValues(alpha: 0.7),
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
+      child: OutlinedButton.icon(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TasmiFormScreen())),
+        icon: const Icon(Icons.school_rounded),
+        label: const Text('MULAI UJIAN TASMI\''),
+        style: OutlinedButton.styleFrom(foregroundColor: Colors.purple, side: const BorderSide(color: Colors.purple)),
       ),
     );
   }

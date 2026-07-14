@@ -281,7 +281,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text('Ayat ${e.ayahNumber}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                      Text(type.label, style: TextStyle(fontSize: 10, color: type.color, fontWeight: FontWeight.bold)),
+                      Text(e.tajwidRuleName != null ? '${type.label} (${e.tajwidRuleName})' : type.label, style: TextStyle(fontSize: 10, color: type.color, fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ],

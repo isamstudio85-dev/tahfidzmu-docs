@@ -6,6 +6,7 @@ import 'package:tahfidz_app/features/management/screens/halaqah_list_screen.dart
 import 'package:tahfidz_app/features/management/screens/kelas_list_screen.dart';
 import 'package:tahfidz_app/features/management/screens/pesantren_screen.dart';
 import 'package:tahfidz_app/features/management/screens/graduation_event_list_screen.dart';
+import 'package:tahfidz_app/features/management/screens/diagnostic_screen.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 
 class ManajemenScreen extends StatelessWidget {
@@ -13,8 +14,9 @@ class ManajemenScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.watch<AppProvider>().themeMode == ThemeMode.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
       appBar: AppBar(
         title: const Text('Kelola Sistem'),
         backgroundColor: AppTheme.primaryGreen,
@@ -25,8 +27,9 @@ class ManajemenScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.symmetric(vertical: 12),
             children: [
-              _header('INFORMASI LEMBAGA'),
+              _header('INFORMASI LEMBAGA', isDark),
               _tile(
+                context,
                 icon: Icons.business_rounded,
                 title: 'Profil Pesantren',
                 subtitle: 'Nama, alamat, dan logo lembaga',
@@ -37,8 +40,9 @@ class ManajemenScreen extends StatelessWidget {
                 ),
               ),
 
-              _header('PENGATURAN TAHFIDZ'),
+              _header('PENGATURAN TAHFIDZ', isDark),
               _tile(
+                context,
                 icon: Icons.groups_rounded,
                 title: 'Kelola Halaqah',
                 subtitle: 'Atur kelompok dan pembimbing',
@@ -49,6 +53,7 @@ class ManajemenScreen extends StatelessWidget {
                 ),
               ),
               _tile(
+                context,
                 icon: Icons.meeting_room_rounded,
                 title: 'Kelola Kelas',
                 subtitle: 'Daftar kelas santri (cth: 7A, 8B)',
@@ -59,6 +64,7 @@ class ManajemenScreen extends StatelessWidget {
                 ),
               ),
               _tile(
+                context,
                 icon: Icons.school_rounded,
                 title: 'Manajemen Wisuda',
                 subtitle: 'Atur agenda Haflah & Ujian',
@@ -69,6 +75,7 @@ class ManajemenScreen extends StatelessWidget {
                 ),
               ),
               _tile(
+                context,
                 icon: Icons.tune_rounded,
                 title: 'Modul Hafalan',
                 subtitle: 'Aktifkan modul Quran/Hadits',
@@ -79,11 +86,12 @@ class ManajemenScreen extends StatelessWidget {
                 ),
               ),
               
-              _header('PENGATURAN APLIKASI'),
+              _header('PENGATURAN APLIKASI', isDark),
               _buildSecurityToggle(context, provider),
 
-              _header('FITUR LANJUTAN'),
+              _header('FITUR LANJUTAN', isDark),
               _tile(
+                context,
                 icon: Icons.cleaning_services_rounded,
                 title: 'Bersihkan Data Residual',
                 subtitle: 'Hapus sisa field percobaan (subjectId)',
@@ -91,6 +99,18 @@ class ManajemenScreen extends StatelessWidget {
                 onTap: () => _showSanitizeConfirmation(context, provider),
               ),
               _tile(
+                context,
+                icon: Icons.bug_report_outlined,
+                title: 'Diagnostik Sistem',
+                subtitle: 'Cek koneksi database & path',
+                color: Colors.indigo,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DiagnosticScreen()),
+                ),
+              ),
+              _tile(
+                context,
                 icon: Icons.delete_forever_rounded,
                 title: 'Reset Data',
                 subtitle: 'Hapus seluruh data pesantren',
@@ -105,7 +125,7 @@ class ManajemenScreen extends StatelessWidget {
     );
   }
 
-  Widget _header(String title) {
+  Widget _header(String title, bool isDark) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
@@ -113,20 +133,22 @@ class ManajemenScreen extends StatelessWidget {
         style: GoogleFonts.poppins(
           fontSize: 11,
           fontWeight: FontWeight.bold,
-          color: Colors.grey.shade400,
+          color: isDark ? Colors.white38 : Colors.grey.shade400,
           letterSpacing: 1.2,
         ),
       ),
     );
   }
 
-  Widget _tile({
+  Widget _tile(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
     required Color color,
     required VoidCallback onTap,
   }) {
+    final isDark = context.read<AppProvider>().themeMode == ThemeMode.dark;
     return Column(
       children: [
         InkWell(
@@ -150,28 +172,28 @@ class ManajemenScreen extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
-                          color: Colors.black87,
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                       Text(
                         subtitle,
                         style: TextStyle(
                           fontSize: 11,
-                          color: Colors.grey.shade500,
+                          color: isDark ? Colors.white38 : Colors.grey.shade500,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: Colors.grey.shade300, size: 20),
+                Icon(Icons.chevron_right_rounded, color: isDark ? Colors.white24 : Colors.grey.shade300, size: 20),
               ],
             ),
           ),
         ),
-        const Divider(height: 1, thickness: 0.5, indent: 72, endIndent: 16, color: Color(0xFFEEEEEE)),
+        Divider(height: 1, thickness: 0.5, indent: 72, endIndent: 16, color: isDark ? Colors.white10 : const Color(0xFFEEEEEE)),
       ],
     );
   }
@@ -246,28 +268,31 @@ class ManajemenScreen extends StatelessWidget {
 
   Widget _buildSecurityToggle(BuildContext context, AppProvider provider) {
     final bool isEnabled = provider.pesantrenInfo.qrSecurityEnabled;
+    final isDark = provider.themeMode == ThemeMode.dark;
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppTheme.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isEnabled ? Colors.green.shade100 : Colors.orange.shade100, width: 1.5),
+          border: Border.all(color: isEnabled ? (isDark ? Colors.green.withValues(alpha: 0.3) : Colors.green.shade100) : (isDark ? Colors.orange.withValues(alpha: 0.3) : Colors.orange.shade100), width: 1.5),
         ),
         child: SwitchListTile(
           value: isEnabled,
-          activeThumbColor: AppTheme.primaryGreen,
-          activeTrackColor: AppTheme.primaryGreen.withValues(alpha: 0.2),
           title: Text(
             'Wajib Scan QR Code',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13),
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold, 
+              fontSize: 13,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
           ),
           subtitle: Text(
             isEnabled 
               ? 'Keamanan aktif: Setoran & Koreksi wajib scan kartu.' 
               : 'Mode Uji Coba: Scan QR dinonaktifkan (bebas masuk).',
-            style: const TextStyle(fontSize: 10),
+            style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.black54),
           ),
           secondary: Container(
             padding: const EdgeInsets.all(8),

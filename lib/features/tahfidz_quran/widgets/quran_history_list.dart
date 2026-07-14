@@ -6,6 +6,7 @@ import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/models/setoran.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
+import 'package:tahfidz_app/features/management/widgets/management_shared_widgets.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/setoran_detail_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/continuation_dialog.dart';
 
@@ -31,7 +32,6 @@ class _QuranHistoryListState extends State<QuranHistoryList> with AutomaticKeepA
   @override
   bool get wantKeepAlive => true;
 
-  bool _isSearching = false;
   bool _onlyMyHalaqah = true; // Toggle between Musyrif's own halaqah and all students
   late TextEditingController _searchController;
 
@@ -53,7 +53,6 @@ class _QuranHistoryListState extends State<QuranHistoryList> with AutomaticKeepA
   void initState() {
     super.initState();
     _searchController = TextEditingController(text: widget.query);
-    _isSearching = widget.query.isNotEmpty;
   }
 
   @override
@@ -108,166 +107,62 @@ class _QuranHistoryListState extends State<QuranHistoryList> with AutomaticKeepA
 
         return Column(
           children: [
-            Container(
-              color: const Color(0xFFF8F9FA), // Ensure the header area has the right BG
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), 
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFEEEEEE)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                  child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
-                  child: _isSearching
-                      ? Row(
-                          key: const ValueKey('search_active'),
-                          children: [
-                            IconButton(
-                              constraints: const BoxConstraints(),
-                              padding: const EdgeInsets.all(8),
-                              icon: const Icon(Icons.arrow_back_rounded, color: AppTheme.primaryGreen),
-                              onPressed: () {
-                                setState(() {
-                                  _isSearching = false;
-                                  _searchController.clear();
-                                });
-                                widget.onQueryChanged('');
-                              },
-                            ),
-                            Expanded(
-                              child: SizedBox(
-                                height: 38,
-                                child: TextField(
-                                  controller: _searchController,
-                                  autofocus: true,
-                                  style: const TextStyle(fontSize: 13),
-                                  onChanged: widget.onQueryChanged,
-                                  decoration: InputDecoration(
-                                    hintText: 'Cari nama santri atau surah...',
-                                    hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-                                    prefixIcon: const Icon(Icons.search_rounded, size: 18, color: AppTheme.primaryGreen),
-                                    suffixIcon: _searchController.text.isNotEmpty
-                                        ? IconButton(
-                                            icon: const Icon(Icons.clear_rounded, size: 16),
-                                            onPressed: () {
-                                              _searchController.clear();
-                                              widget.onQueryChanged('');
-                                              setState(() {});
-                                            },
-                                          )
-                                        : null,
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(color: Colors.grey.shade300),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(color: Colors.grey.shade300),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      : Row(
-                          key: const ValueKey('stats_active'),
-                          children: [
-                            // --- STATS OVERVIEW ---
-                            if (!provider.isOrangTua) ...[
-                              Icon(Icons.check_circle_rounded, size: 14, color: AppTheme.primaryGreen),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Setor: $sudahSetoran',
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
-                              ),
-                              const SizedBox(width: 14),
-                              Icon(Icons.cancel_rounded, size: 14, color: Colors.red.shade700),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Belum: $belumSetoran',
-                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.red.shade700),
-                              ),
-                            ] else ...[
-                               const Icon(Icons.history_rounded, size: 18, color: AppTheme.primaryGreen),
-                               const SizedBox(width: 8),
-                               const Text(
-                                 'Riwayat Hafalan Anak',
-                                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
-                               ),
-                            ],
-                            
-                            const Spacer(),
-
-                            // --- TOGGLE SCOPE (MY HALAQAH VS ALL SANTRI) ---
-                            if (provider.isMusyrif)
-                              IconButton(
-                                constraints: const BoxConstraints(),
-                                padding: const EdgeInsets.all(8),
-                                icon: Icon(
-                                  _onlyMyHalaqah ? Icons.person_pin_rounded : Icons.people_outline_rounded,
-                                  color: _onlyMyHalaqah ? AppTheme.primaryGreen : Colors.grey.shade600,
-                                  size: 22,
-                                ),
-                                tooltip: _onlyMyHalaqah ? 'Halaqah Saya' : 'Semua Santri',
-                                onPressed: () {
-                                  setState(() {
-                                      _onlyMyHalaqah = !_onlyMyHalaqah;
-                                  });
-                                },
-                              ),
-                            
-                            // --- SEARCH ICON (TRIGGERS INLINE SEARCH FIELD) ---
-                            IconButton(
-                              constraints: const BoxConstraints(),
-                              padding: const EdgeInsets.all(8),
-                              icon: Icon(
-                                Icons.search_rounded, 
-                                color: widget.query.isNotEmpty ? AppTheme.primaryGreen : Colors.grey.shade600,
-                                size: 22,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _isSearching = true;
-                                });
-                              },
-                            ),
-                            
-                            // --- FILTER POPUP ---
-                            PopupMenuButton<SetoranType?>(
-                              icon: Icon(
-                                Icons.filter_list_rounded, 
-                                color: widget.filterType != null ? AppTheme.primaryGreen : Colors.grey.shade600,
-                                size: 22,
-                              ),
-                              onSelected: widget.onTypeChanged,
-                              itemBuilder: (ctx) => [
-                                const PopupMenuItem(value: null, child: Text('Semua')),
-                                const PopupMenuItem(value: SetoranType.ziyadah, child: Text('Ziyadah')),
-                                const PopupMenuItem(value: SetoranType.murojaah, child: Text('Muroja\'ah')),
-                              ],
-                            ),
-                          ],
+            // --- SEARCH & MINI STATS (MERGED) ---
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 36,
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: widget.onQueryChanged,
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                        decoration: InputDecoration(
+                          hintText: 'Cari...',
+                          prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primaryGreen, size: 18),
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: EdgeInsets.zero,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: Colors.grey.shade200),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: const BorderSide(color: AppTheme.primaryGreen, width: 1.5),
+                          ),
                         ),
-                ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  if (provider.isMusyrif) ...[
+                    _compactActionBtn(
+                      icon: _onlyMyHalaqah ? Icons.person_pin_rounded : Icons.people_outline_rounded,
+                      onTap: () => setState(() => _onlyMyHalaqah = !_onlyMyHalaqah),
+                      color: _onlyMyHalaqah ? AppTheme.primaryGreen : Colors.grey,
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                  _filterPopupCompact(widget.filterType, widget.onTypeChanged),
+                ],
               ),
             ),
+            
+            if (!provider.isOrangTua)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: Row(
+                  children: [
+                    _tinyStat('SETOR', '$sudahSetoran', AppTheme.primaryGreen),
+                    const SizedBox(width: 8),
+                    _tinyStat('BELUM', '$belumSetoran', Colors.red.shade400),
+                  ],
+                ),
+              ),
+
             if (filtered.isEmpty)
               Expanded(
                 child: RefreshIndicator(
@@ -348,6 +243,62 @@ class _QuranHistoryListState extends State<QuranHistoryList> with AutomaticKeepA
     );
   }
 
+  Widget _tinyStat(String label, String value, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
+        ),
+        child: Row(
+          children: [
+            Text(label, style: TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: color, letterSpacing: 0.5)),
+            const Spacer(),
+            Text(value, style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w900, color: color)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _compactActionBtn({required IconData icon, required VoidCallback onTap, required Color color}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.all(7),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, color: color, size: 18),
+      ),
+    );
+  }
+
+  Widget _filterPopupCompact(SetoranType? current, ValueChanged<SetoranType?> onSelected) {
+    final active = current != null;
+    final color = active ? AppTheme.primaryGreen : Colors.grey;
+    return PopupMenuButton<SetoranType?>(
+      icon: Container(
+        padding: const EdgeInsets.all(7),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(Icons.filter_list_rounded, color: color, size: 18),
+      ),
+      onSelected: onSelected,
+      itemBuilder: (ctx) => [
+        const PopupMenuItem(value: null, child: Text('Semua')),
+        const PopupMenuItem(value: SetoranType.ziyadah, child: Text('Ziyadah')),
+        const PopupMenuItem(value: SetoranType.murojaah, child: Text('Muroja\'ah')),
+      ],
+    );
+  }
+
   Widget _emptyState(IconData icon, String msg) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(icon, size: 64, color: Colors.grey.shade200), const SizedBox(height: 16), Text(msg, style: TextStyle(color: Colors.grey.shade400, fontWeight: FontWeight.w500))]));
 }
 
@@ -360,72 +311,58 @@ class QuranHistoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.read<AppProvider>();
     final bool isOrangTua = provider.isOrangTua;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      color: Colors.transparent, // Blends fully with page background
-      child: ListTile(
-        onTap: () {
-          if (isOrangTua) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => SetoranDetailScreen(santri: santri, record: record)));
-          } else {
-            showSetoranOptions(context, santri, record: record);
-          }
-        },
-        dense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-        leading: isOrangTua 
-          ? Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), shape: BoxShape.circle),
-              child: const Icon(Icons.menu_book_rounded, color: AppTheme.primaryGreen, size: 20),
-            )
-          : AppAvatar(name: santri.name, radius: 18, imagePath: santri.photoPath),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(
-                isOrangTua ? record.surahEnglishName : santri.name, 
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87), 
-                maxLines: 1, 
-                overflow: TextOverflow.ellipsis
-              )
+    return GamifiedListItem(
+      onTap: () {
+        if (isOrangTua) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => SetoranDetailScreen(santri: santri, record: record)));
+        } else {
+          showSetoranOptions(context, santri, record: record);
+        }
+      },
+      leading: isOrangTua 
+        ? Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(width: 8),
-            Text(_formatDate(record.date), style: TextStyle(fontSize: 9, color: Colors.grey.shade500)),
-          ],
+            child: const Icon(Icons.menu_book_rounded, color: AppTheme.primaryGreen, size: 22),
+          )
+        : AppAvatar(name: santri.name, radius: 22, imagePath: santri.photoPath),
+      title: isOrangTua ? record.surahEnglishName : santri.name,
+      subtitle: isOrangTua 
+          ? 'Ayat ${record.ayahStart}-${record.ayahEnd} • ${record.type.label}' 
+          : '${record.surahEnglishName} • Ayat ${record.ayahStart}-${record.ayahEnd}',
+      stats: [
+        GamifiedStatItem(
+          icon: Icons.star_rounded,
+          label: 'Skor',
+          value: record.finalScore.toStringAsFixed(0),
+          color: AppTheme.gold,
         ),
-        subtitle: Row(
-          children: [
-            Expanded(
-              child: Text(
-                isOrangTua 
-                  ? 'Ayat ${record.ayahStart}-${record.ayahEnd} • ${record.type.label}' 
-                  : '${record.surahEnglishName} • Ayat ${record.ayahStart}-${record.ayahEnd}', 
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade700), 
-                maxLines: 1, 
-                overflow: TextOverflow.ellipsis
-              )
-            ),
-            if (!isOrangTua) ...[
-              const SizedBox(width: 8),
-              _tag(record.type.label, record.type == SetoranType.ziyadah ? AppTheme.primaryGreen : Colors.purple),
-            ]
-          ],
+        GamifiedStatItem(
+          icon: Icons.history_edu_rounded,
+          label: 'Tipe',
+          value: record.type.label.toUpperCase(),
+          color: record.type == SetoranType.ziyadah ? AppTheme.primaryGreen : Colors.purple,
         ),
-        trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          constraints: const BoxConstraints(minWidth: 40),
-          decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-          child: Text(
-            record.finalScore.toStringAsFixed(0), 
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.primaryGreen),
-          ),
+        GamifiedStatItem(
+          icon: Icons.access_time_filled_rounded,
+          label: 'Waktu',
+          value: _formatTime(record.date),
+          color: Colors.blue,
         ),
+      ],
+      trailing: Text(
+        _formatDate(record.date),
+        style: TextStyle(fontSize: 9, color: isDark ? Colors.white24 : Colors.grey.shade400, fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  String _formatDate(DateTime d) => '${d.day} ${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][d.month-1]} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
-  Widget _tag(String label, Color color) => Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)), child: Text(label, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.bold)));
+  String _formatDate(DateTime d) => '${d.day} ${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][d.month-1]}';
+  String _formatTime(DateTime d) => '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 }

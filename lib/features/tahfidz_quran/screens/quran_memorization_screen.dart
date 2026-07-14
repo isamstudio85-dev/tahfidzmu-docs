@@ -46,6 +46,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     // Safety check for tab length changes (e.g. role change without restart)
     final int expectedLength = (provider.isAdmin || provider.isPengawas) ? 4 : 3;
@@ -58,32 +59,49 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
     final bool showPresensi = provider.isAdmin || provider.isPengawas;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
       appBar: AppBar(
         title: Text(
-          'Progres Tahfidz',
+          'PROGRES TAHFIDZ',
           style: GoogleFonts.poppins(
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w900,
             fontSize: 18,
+            letterSpacing: 1,
           ),
         ),
         backgroundColor: AppTheme.primaryGreen,
-        iconTheme: const IconThemeData(color: Colors.white),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          indicatorWeight: 4,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
-          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-          isScrollable: false,
-          tabs: [
-            const Tab(text: 'Riwayat'),
-            const Tab(text: 'Peringkat'),
-            const Tab(text: 'Laporan'),
-            if (showPresensi) const Tab(text: 'Presensi'),
-          ],
+        centerTitle: true,
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            height: 40,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+              labelColor: AppTheme.primaryGreen,
+              unselectedLabelColor: Colors.white.withValues(alpha: 0.8),
+              dividerColor: Colors.transparent,
+              labelPadding: EdgeInsets.zero,
+              labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 0.5),
+              tabs: [
+                const Tab(text: 'RIWAYAT'),
+                const Tab(text: 'RANKING'),
+                const Tab(text: 'LAPORAN'),
+                if (showPresensi) const Tab(text: 'PRESENSI'),
+              ],
+            ),
+          ),
         ),
       ),
       body: TabBarView(
@@ -251,5 +269,33 @@ class _LaporanStatistikTabState extends State<_LaporanStatistikTab> with Automat
     return true;
   }
 
-  Widget _emptyState(IconData icon, String msg) => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [Icon(icon, size: 64, color: Colors.grey.shade200), const SizedBox(height: 16), Text(msg, style: TextStyle(color: Colors.grey.shade400, fontWeight: FontWeight.w500))]));
+  Widget _emptyState(IconData icon, String msg) => Center(
+    child: Column(
+      mainAxisSize: MainAxisSize.min, 
+      children: [
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 64, color: Colors.grey.shade300),
+        ),
+        const SizedBox(height: 16), 
+        Text(
+          msg, 
+          style: GoogleFonts.poppins(
+            color: Colors.grey.shade400, 
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          )
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Statistik akan muncul setelah ada data setoran.',
+          style: TextStyle(color: Colors.grey, fontSize: 11),
+        ),
+      ]
+    )
+  );
 }

@@ -1,49 +1,193 @@
-﻿{
-    "number":  102,
-    "name":  "سُورَةُ التَّكَاثُرِ",
-    "englishName":  "At-Takaathur",
-    "numberOfAyahs":  8,
-    "revelationType":  "Meccan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ أَلْهَىٰكُمُ ٱلتَّكَاثُرُ",
-                      "translation":  "Bermegah-megahan telah melalaikan kamu,"
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "حَتَّىٰ زُرْتُمُ ٱلْمَقَابِرَ",
-                      "translation":  "sampai kamu masuk ke dalam kubur."
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "كَلَّا سَوْفَ تَعْلَمُونَ",
-                      "translation":  "Janganlah begitu, kelak kamu akan mengetahui (akibat perbuatanmu itu),"
-                  },
-                  {
-                      "numberInSurah":  4,
-                      "arabic":  "ثُمَّ كَلَّا سَوْفَ تَعْلَمُونَ",
-                      "translation":  "dan janganlah begitu, kelak kamu akan mengetahui."
-                  },
-                  {
-                      "numberInSurah":  5,
-                      "arabic":  "كَلَّا لَوْ تَعْلَمُونَ عِلْمَ ٱلْيَقِينِ",
-                      "translation":  "Janganlah begitu, jika kamu mengetahui dengan pengetahuan yang yakin,"
-                  },
-                  {
-                      "numberInSurah":  6,
-                      "arabic":  "لَتَرَوُنَّ ٱلْجَحِيمَ",
-                      "translation":  "niscaya kamu benar-benar akan melihat neraka Jahiim,"
-                  },
-                  {
-                      "numberInSurah":  7,
-                      "arabic":  "ثُمَّ لَتَرَوُنَّهَا عَيْنَ ٱلْيَقِينِ",
-                      "translation":  "dan sesungguhnya kamu benar-benar akan melihatnya dengan \u0027ainul yaqin."
-                  },
-                  {
-                      "numberInSurah":  8,
-                      "arabic":  "ثُمَّ لَتُسْـَٔلُنَّ يَوْمَئِذٍ عَنِ ٱلنَّعِيمِ",
-                      "translation":  "kemudian kamu pasti akan ditanyai pada hari itu tentang kenikmatan (yang kamu megah-megahkan di dunia itu)."
-                  }
-              ]
+{
+  "number": 102,
+  "name": "سُورَةُ التَّكَاثُرِ",
+  "englishName": "At-Takaathur",
+  "numberOfAyahs": 8,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ أَلْهَىٰكُمُ ٱلتَّكَاثُرُ",
+      "translation": "Bermegah-megahan telah melalaikan kamu,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "أَلْهَىٰكُمُ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلتَّكَاثُرُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "حَتَّىٰ زُرْتُمُ ٱلْمَقَابِرَ",
+      "translation": "sampai kamu masuk ke dalam kubur.",
+      "wordsTajweed": [
+        {
+          "word": "حَتَّىٰ",
+          "rule": null
+        },
+        {
+          "word": "زُرْتُمُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمَقَابِرَ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "كَلَّا سَوْفَ تَعْلَمُونَ",
+      "translation": "Janganlah begitu, kelak kamu akan mengetahui (akibat perbuatanmu itu),",
+      "wordsTajweed": [
+        {
+          "word": "كَلَّا",
+          "rule": null
+        },
+        {
+          "word": "سَوْفَ",
+          "rule": null
+        },
+        {
+          "word": "تَعْلَمُونَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "ثُمَّ كَلَّا سَوْفَ تَعْلَمُونَ",
+      "translation": "dan janganlah begitu, kelak kamu akan mengetahui.",
+      "wordsTajweed": [
+        {
+          "word": "ثُمَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "كَلَّا",
+          "rule": null
+        },
+        {
+          "word": "سَوْفَ",
+          "rule": null
+        },
+        {
+          "word": "تَعْلَمُونَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "كَلَّا لَوْ تَعْلَمُونَ عِلْمَ ٱلْيَقِينِ",
+      "translation": "Janganlah begitu, jika kamu mengetahui dengan pengetahuan yang yakin,",
+      "wordsTajweed": [
+        {
+          "word": "كَلَّا",
+          "rule": null
+        },
+        {
+          "word": "لَوْ",
+          "rule": null
+        },
+        {
+          "word": "تَعْلَمُونَ",
+          "rule": null
+        },
+        {
+          "word": "عِلْمَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْيَقِينِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "لَتَرَوُنَّ ٱلْجَحِيمَ",
+      "translation": "niscaya kamu benar-benar akan melihat neraka Jahiim,",
+      "wordsTajweed": [
+        {
+          "word": "لَتَرَوُنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْجَحِيمَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "ثُمَّ لَتَرَوُنَّهَا عَيْنَ ٱلْيَقِينِ",
+      "translation": "dan sesungguhnya kamu benar-benar akan melihatnya dengan 'ainul yaqin.",
+      "wordsTajweed": [
+        {
+          "word": "ثُمَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "لَتَرَوُنَّهَا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "عَيْنَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْيَقِينِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "ثُمَّ لَتُسْـَٔلُنَّ يَوْمَئِذٍ عَنِ ٱلنَّعِيمِ",
+      "translation": "kemudian kamu pasti akan ditanyai pada hari itu tentang kenikmatan (yang kamu megah-megahkan di dunia itu).",
+      "wordsTajweed": [
+        {
+          "word": "ثُمَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "لَتُسْـَٔلُنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "يَوْمَئِذٍ",
+          "rule": null
+        },
+        {
+          "word": "عَنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلنَّعِيمِ",
+          "rule": "ghunnah"
+        }
+      ]
+    }
+  ]
 }

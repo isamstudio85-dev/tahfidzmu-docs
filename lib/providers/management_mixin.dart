@@ -417,8 +417,9 @@ mixin ManagementMixin on ChangeNotifier, AuthMixin, DataMixin {
     notifyListeners();
   }
 
-  String normalizeLoginKey(String value) {
-    return value.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+  @override
+  String normalizeLoginKey(String key) {
+    return key.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
   }
 
   String digitsOnly(String value) {

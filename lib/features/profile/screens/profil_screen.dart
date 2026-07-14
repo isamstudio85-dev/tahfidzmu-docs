@@ -23,7 +23,9 @@ class ProfilScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
       appBar: AppBar(title: const Text('Profil Saya')),
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {
@@ -261,16 +263,20 @@ class _AdminProfilView extends StatelessWidget {
   Widget build(BuildContext context) {
     final email = provider.firebase.currentUser?.email ?? 'admin@tahfidzmu.com';
     final pesantrenId = provider.pesantrenId ?? 'utama';
+    final isDark = provider.themeMode == ThemeMode.dark;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         _buildHeader(
+          context,
           'Administrator',
           'Admin Utama',
           provider.adminPhoto,
           Colors.blue,
           onPhotoTap: onPhotoTap,
         ),
+        const SizedBox(height: 24),
+        _buildThemeSection(provider),
         const SizedBox(height: 24),
         _buildSection('INFORMASI AKUN', [
           ListTile(
@@ -286,10 +292,10 @@ class _AdminProfilView extends StatelessWidget {
             ),
             subtitle: Text(
               email,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: isDark ? Colors.white70 : Colors.black87,
               ),
             ),
           ),
@@ -306,32 +312,34 @@ class _AdminProfilView extends StatelessWidget {
             ),
             subtitle: Text(
               pesantrenId.toUpperCase(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: isDark ? Colors.white70 : Colors.black87,
               ),
             ),
           ),
-        ]),
+        ], isDark: isDark),
         const SizedBox(height: 16),
         _HafalanFiturList(provider: provider),
         const SizedBox(height: 16),
         _buildSection('AKUN & KEAMANAN', [
           _buildTile(
+            context,
             Icons.lock_outline_rounded,
             'Ganti Password',
             Colors.blueGrey,
             () => _showChangePasswordDialog(context),
           ),
           _buildTile(
+            context,
             Icons.privacy_tip_outlined,
             'Data & Privasi',
             Colors.blueGrey,
             () => _showDeleteAccountDialog(context),
           ),
-          _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
-        ]),
+          _buildTile(context, Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
+        ], isDark: isDark),
         const SizedBox(height: 24),
         const _AboutCard(),
       ],
@@ -353,10 +361,12 @@ class _MusyrifProfilView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final linked = provider.linkedMusyrif;
+    final isDark = provider.themeMode == ThemeMode.dark;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         _buildHeader(
+          context,
           linked?.nama ?? provider.musyrif,
           linked?.jabatan ?? provider.jabatan,
           linked?.photoPath ?? provider.musyrifPhoto,
@@ -365,23 +375,27 @@ class _MusyrifProfilView extends StatelessWidget {
           onPhotoTap: onPhotoTap,
         ),
         const SizedBox(height: 24),
+        _buildThemeSection(provider),
+        const SizedBox(height: 24),
         _HafalanFiturList(provider: provider),
         const SizedBox(height: 16),
         _buildSection('PENGATURAN', [
           _buildTile(
+            context,
             Icons.lock_outline_rounded,
             'Ganti Password',
             Colors.blueGrey,
             () => _showChangePasswordDialog(context),
           ),
           _buildTile(
+            context,
             Icons.privacy_tip_outlined,
             'Data & Privasi',
             Colors.blueGrey,
             () => _showDeleteAccountDialog(context),
           ),
-          _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
-        ]),
+          _buildTile(context, Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
+        ], isDark: isDark),
         const SizedBox(height: 24),
         const _AboutCard(),
       ],
@@ -405,41 +419,48 @@ class _OrangTuaProfilView extends StatelessWidget {
     final santri = provider.linkedSantri;
     final name = santri?.name ?? 'Wali Santri';
     final photo = santri?.photoPath;
+    final isDark = provider.themeMode == ThemeMode.dark;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         _buildHeader(
+          context,
           name,
           'Wali Santri (Orang Tua)',
           photo,
-          Colors.purple,
+          AppTheme.primaryGreen,
           onEdit: onEdit,
           onPhotoTap: onPhotoTap,
         ),
+        const SizedBox(height: 24),
+        _buildThemeSection(provider),
         const SizedBox(height: 24),
         _HafalanFiturList(provider: provider),
         const SizedBox(height: 16),
         _buildSection('PENGATURAN AKUN', [
           _buildTile(
+            context,
             Icons.swap_horiz_rounded,
             'Hubungkan Anak',
             Colors.purple,
             () => AccountSwitcher.show(context),
           ),
           _buildTile(
+            context,
             Icons.lock_outline_rounded,
             'Ganti Password',
             Colors.blueGrey,
             () => _showChangePasswordDialog(context),
           ),
           _buildTile(
+            context,
             Icons.privacy_tip_outlined,
             'Data & Privasi',
             Colors.blueGrey,
             () => _showDeleteAccountDialog(context),
           ),
-          _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
-        ]),
+          _buildTile(context, Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
+        ], isDark: isDark),
         const SizedBox(height: 24),
         const _AboutCard(),
       ],
@@ -453,9 +474,11 @@ class _HafalanFiturList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = provider.themeMode == ThemeMode.dark;
     return _buildSection('FITUR HAFALAN', [
       if (provider.isModuleActive('pondok_info'))
         _buildTile(
+          context,
           Icons.school_rounded,
           'Tentang Pondok',
           Colors.amber.shade800,
@@ -465,6 +488,7 @@ class _HafalanFiturList extends StatelessWidget {
           ),
         ),
       _buildTile(
+        context,
         Icons.menu_book_rounded,
         'Al-Quran Digital',
         Colors.teal,
@@ -475,6 +499,7 @@ class _HafalanFiturList extends StatelessWidget {
       ),
       if (provider.isModuleActive('hadits'))
         _buildTile(
+          context,
           Icons.import_contacts_rounded,
           'Hadits Pilihan',
           Colors.orange,
@@ -485,6 +510,7 @@ class _HafalanFiturList extends StatelessWidget {
         ),
       if (provider.isModuleActive('tajwid'))
         _buildTile(
+          context,
           Icons.auto_stories_rounded,
           'Ilmu Tajwid',
           Colors.blue,
@@ -497,6 +523,7 @@ class _HafalanFiturList extends StatelessWidget {
         ),
       if (provider.isModuleActive('tahsin'))
         _buildTile(
+          context,
           Icons.record_voice_over_rounded,
           'Belajar Tahsin',
           Colors.deepPurple,
@@ -507,6 +534,7 @@ class _HafalanFiturList extends StatelessWidget {
         ),
       if (provider.isModuleActive('fiqih'))
         _buildTile(
+          context,
           Icons.menu_book_rounded,
           'Fiqih',
           Colors.brown,
@@ -517,11 +545,12 @@ class _HafalanFiturList extends StatelessWidget {
             ),
           ),
         ),
-    ]);
+    ], isDark: isDark);
   }
 }
 
 Widget _buildHeader(
+  BuildContext context,
   String name,
   String subtitle,
   String? photo,
@@ -529,10 +558,11 @@ Widget _buildHeader(
   VoidCallback? onEdit,
   VoidCallback? onPhotoTap,
 }) {
+  final isDark = context.read<AppProvider>().themeMode == ThemeMode.dark;
   return Container(
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: isDark ? AppTheme.darkSurface : Colors.white,
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
@@ -585,13 +615,14 @@ Widget _buildHeader(
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               Text(
                 subtitle,
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                style: TextStyle(color: isDark ? Colors.white38 : Colors.grey.shade600, fontSize: 12),
               ),
             ],
           ),
@@ -606,7 +637,7 @@ Widget _buildHeader(
   );
 }
 
-Widget _buildSection(String title, List<Widget> tiles) {
+Widget _buildSection(String title, List<Widget> tiles, {bool isDark = false}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -614,18 +645,20 @@ Widget _buildSection(String title, List<Widget> tiles) {
         padding: const EdgeInsets.only(left: 8, bottom: 8),
         child: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.bold,
-            color: Colors.grey,
+            color: isDark ? Colors.white38 : Colors.grey,
             letterSpacing: 0.8,
           ),
         ),
       ),
       Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: isDark ? AppTheme.darkSurface : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.grey.withValues(alpha: 0.1)),
+          boxShadow: !isDark ? [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10)] : null,
         ),
         child: Column(children: tiles),
       ),
@@ -633,22 +666,56 @@ Widget _buildSection(String title, List<Widget> tiles) {
   );
 }
 
+Widget _buildThemeSection(AppProvider provider) {
+  final isDark = provider.themeMode == ThemeMode.dark;
+  return _buildSection('TAMPILAN', [
+    SwitchListTile(
+      value: isDark,
+      onChanged: (_) => provider.toggleTheme(),
+      title: Text(
+        'Mode Malam (Game Mode)', 
+        style: TextStyle(
+          fontSize: 13, 
+          fontWeight: FontWeight.bold, 
+          color: isDark ? Colors.white : Colors.black87
+        )
+      ),
+      subtitle: Text(
+        isDark ? 'Nuansa gelap ala RPG' : 'Nuansa terang yang bersih', 
+        style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.grey)
+      ),
+      secondary: Icon(
+        isDark ? Icons.nightlight_round : Icons.wb_sunny_rounded, 
+        color: isDark ? AppTheme.gold : Colors.orange
+      ),
+      activeThumbColor: AppTheme.primaryGreen,
+      dense: true,
+    ),
+  ], isDark: isDark);
+}
+
 Widget _buildTile(
+  BuildContext context,
   IconData icon,
   String label,
   Color color,
   VoidCallback onTap,
 ) {
+  final isDark = context.read<AppProvider>().themeMode == ThemeMode.dark;
   return ListTile(
     leading: Icon(icon, color: color, size: 22),
     title: Text(
       label,
-      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+      style: TextStyle(
+        fontSize: 14, 
+        fontWeight: FontWeight.w500,
+        color: isDark ? Colors.white : Colors.black87,
+      ),
     ),
-    trailing: const Icon(
+    trailing: Icon(
       Icons.chevron_right_rounded,
       size: 20,
-      color: Colors.grey,
+      color: isDark ? Colors.white24 : Colors.grey,
     ),
     onTap: onTap,
   );
@@ -864,10 +931,11 @@ class _AboutCard extends StatelessWidget {
   const _AboutCard();
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -893,17 +961,17 @@ class _AboutCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'TahfidzMU',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: Colors.black87,
+                      color: isDark ? Colors.white : Colors.black87,
                     ),
                   ),
                   Text(
                     'Versi 1.0.0',
-                    style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -914,7 +982,7 @@ class _AboutCard extends StatelessWidget {
             'TahfidzMU adalah aplikasi yang mengelola berbagai hafalan menjadi mudah, praktis, fleksibel, dan modern.',
             style: GoogleFonts.poppins(
               fontSize: 11,
-              color: Colors.grey.shade700,
+              color: isDark ? Colors.white54 : Colors.grey.shade700,
               height: 1.6,
             ),
           ),
@@ -925,7 +993,7 @@ class _AboutCard extends StatelessWidget {
               'Dikembangkan oleh iSam • Hak Cipta Dilindungi',
               style: TextStyle(
                 fontSize: 10,
-                color: Colors.grey.shade500,
+                color: isDark ? Colors.white24 : Colors.grey.shade500,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -951,10 +1019,12 @@ class _PengawasProfilView extends StatelessWidget {
     final name = linked?.nama ?? 'Pengawas';
     final title = linked?.jabatan ?? 'Pengawas';
     final photo = linked?.photoPath;
+    final isDark = provider.themeMode == ThemeMode.dark;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         _buildHeader(
+          context,
           name,
           title,
           photo,
@@ -966,19 +1036,21 @@ class _PengawasProfilView extends StatelessWidget {
         const SizedBox(height: 16),
         _buildSection('PENGATURAN', [
           _buildTile(
+            context,
             Icons.lock_outline_rounded,
             'Ganti Password',
             Colors.blueGrey,
             () => _showChangePasswordDialog(context),
           ),
           _buildTile(
+            context,
             Icons.privacy_tip_outlined,
             'Data & Privasi',
             Colors.blueGrey,
             () => _showDeleteAccountDialog(context),
           ),
-          _buildTile(Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
-        ]),
+          _buildTile(context, Icons.logout_rounded, 'Keluar', Colors.red, onLogout),
+        ], isDark: isDark),
         const SizedBox(height: 24),
         const _AboutCard(),
       ],

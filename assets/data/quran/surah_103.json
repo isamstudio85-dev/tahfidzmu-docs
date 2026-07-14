@@ -1,24 +1,102 @@
-﻿{
-    "number":  103,
-    "name":  "سُورَةُ العَصۡرِ",
-    "englishName":  "Al-Asr",
-    "numberOfAyahs":  3,
-    "revelationType":  "Meccan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلْعَصْرِ",
-                      "translation":  "Demi masa."
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "إِنَّ ٱلْإِنسَٰنَ لَفِى خُسْرٍ",
-                      "translation":  "Sesungguhnya manusia itu benar-benar dalam kerugian,"
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ وَتَوَاصَوْا۟ بِٱلْحَقِّ وَتَوَاصَوْا۟ بِٱلصَّبْرِ",
-                      "translation":  "kecuali orang-orang yang beriman dan mengerjakan amal saleh dan nasehat menasehati supaya mentaati kebenaran dan nasehat menasehati supaya menetapi kesabaran."
-                  }
-              ]
+{
+  "number": 103,
+  "name": "سُورَةُ العَصۡرِ",
+  "englishName": "Al-Asr",
+  "numberOfAyahs": 3,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلْعَصْرِ",
+      "translation": "Demi masa.",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلْعَصْرِ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "إِنَّ ٱلْإِنسَٰنَ لَفِى خُسْرٍ",
+      "translation": "Sesungguhnya manusia itu benar-benar dalam kerugian,",
+      "wordsTajweed": [
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "لَفِى",
+          "rule": null
+        },
+        {
+          "word": "خُسْرٍ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ وَتَوَاصَوْا۟ بِٱلْحَقِّ وَتَوَاصَوْا۟ بِٱلصَّبْرِ",
+      "translation": "kecuali orang-orang yang beriman dan mengerjakan amal saleh dan nasehat menasehati supaya mentaati kebenaran dan nasehat menasehati supaya menetapi kesabaran.",
+      "wordsTajweed": [
+        {
+          "word": "إِلَّا",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ءَامَنُوا۟",
+          "rule": null
+        },
+        {
+          "word": "وَعَمِلُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلصَّٰلِحَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَتَوَاصَوْا۟",
+          "rule": null
+        },
+        {
+          "word": "بِٱلْحَقِّ",
+          "rule": null
+        },
+        {
+          "word": "وَتَوَاصَوْا۟",
+          "rule": null
+        },
+        {
+          "word": "بِٱلصَّبْرِ",
+          "rule": "qalqalah"
+        }
+      ]
+    }
+  ]
 }

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/management/screens/santri_detail_screen.dart';
-import 'package:tahfidz_app/features/dashboard/widgets/notification_bell.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/tasmi/graduation_portal_screen.dart';
 import 'package:tahfidz_app/models/santri.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
@@ -20,17 +19,18 @@ class OrangTuaDashboard extends StatelessWidget {
     final setorans = child.setoranHistory.toList()
       ..sort((a, b) => b.date.compareTo(a.date));
     final avg = child.averageScore;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text('Beranda Santri'),
+        title: Text(
+          'BERANDA SANTRI',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 16),
+        ),
         backgroundColor: AppTheme.primaryGreen,
         foregroundColor: Colors.white,
-        actions: [
-          const NotificationBell(),
-          const SizedBox(width: 8),
-        ],
+        centerTitle: true,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -86,7 +86,13 @@ class OrangTuaDashboard extends StatelessWidget {
                   ],
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              
+              GamificationCard(santri: child),
+              const SizedBox(height: 24),
+
+              const QuestCenterPortalCard(),
+              const SizedBox(height: 32),
 
               if (isTablet)
                 Row(
@@ -195,11 +201,13 @@ class OrangTuaDashboard extends StatelessWidget {
   }
 
   Widget _buildDigitalCard(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       elevation: 0,
+      color: isDark ? AppTheme.darkSurface : Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
+        side: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -208,9 +216,9 @@ class OrangTuaDashboard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.qr_code_2_rounded,
-                color: Colors.black87,
+                color: isDark ? Colors.white : Colors.black87,
                 size: 28,
               ),
               const SizedBox(width: 16),
@@ -221,7 +229,7 @@ class OrangTuaDashboard extends StatelessWidget {
                     Text(
                       'KARTU SANTRI DIGITAL',
                       style: GoogleFonts.poppins(
-                        color: Colors.green.shade800,
+                        color: AppTheme.primaryGreen,
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
@@ -231,14 +239,14 @@ class OrangTuaDashboard extends StatelessWidget {
                     Text(
                       'QR Code untuk akses cepat',
                       style: TextStyle(
-                        color: Colors.grey.shade600,
+                        color: isDark ? Colors.white38 : Colors.grey.shade600,
                         fontSize: 11,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.qr_code_rounded, color: Colors.green, size: 20),
+              const Icon(Icons.qr_code_rounded, color: AppTheme.primaryGreen, size: 20),
             ],
           ),
         ),
@@ -333,8 +341,6 @@ class OrangTuaDashboard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              HafalanMenuSection(provider: context.read<AppProvider>()),
-              const SizedBox(height: 24),
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text(
@@ -420,22 +426,58 @@ class OrangTuaDashboard extends StatelessWidget {
   }
 
   Widget _buildBanner(BuildContext context) {
+    final activeTheme = child.activeTheme;
+    String? bannerImagePath;
+    if (activeTheme == 'theme_ramadan') {
+      bannerImagePath = 'assets/images/banner_store_ramadan.jpg';
+    } else if (activeTheme == 'theme_desert') {
+      bannerImagePath = 'assets/images/banner_store_desert.jpg';
+    }
+
+    final hasFrame = child.activeFrame != null;
+    final Color glowColor = child.activeFrame == 'frame_gold' 
+        ? AppTheme.gold 
+        : (child.activeFrame == 'frame_emerald' ? const Color(0xFF50C878) : (child.activeFrame == 'frame_neon' ? Colors.cyan : Colors.transparent));
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF6A1B9A), Color(0xFF9C27B0)],
-        ),
+        gradient: bannerImagePath == null
+            ? const LinearGradient(
+                colors: [Color(0xFF6A1B9A), Color(0xFF9C27B0)],
+              )
+            : null,
+        image: bannerImagePath != null
+            ? DecorationImage(
+                image: AssetImage(bannerImagePath),
+                fit: BoxFit.cover,
+              )
+            : null,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         children: [
-          AppAvatar(
-            name: child.name,
-            radius: 32,
-            imagePath: child.photoPath,
-            backgroundColor: Colors.white24,
-            foregroundColor: Colors.white,
+          Container(
+            padding: EdgeInsets.all(hasFrame ? 3.0 : 0.0),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: hasFrame ? [
+                BoxShadow(
+                  color: glowColor.withValues(alpha: 0.6),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                )
+              ] : null,
+              border: hasFrame ? Border.all(color: glowColor, width: 2) : null,
+            ),
+            child: AppAvatar(
+              name: child.name,
+              radius: 32,
+              imagePath: child.photoPath,
+              backgroundColor: Colors.white24,
+              foregroundColor: Colors.white,
+              activeFrame: child.activeFrame,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -506,44 +548,45 @@ class OrangTuaDashboard extends StatelessWidget {
   }
 
   Widget _oStat(IconData icon, String label, String value, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.1)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 8),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value,
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: color,
+    return Builder(builder: (context) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      return Expanded(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: isDark ? 0.1 : 0.05),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: color.withValues(alpha: isDark ? 0.2 : 0.1)),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color, size: 24),
+              const SizedBox(height: 8),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  value,
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : color,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                color: color.withValues(alpha: 0.7),
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isDark ? Colors.white54 : color.withValues(alpha: 0.7),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildTodayPresenceCard(BuildContext context, String? status) {
@@ -601,13 +644,15 @@ class OrangTuaDashboard extends StatelessWidget {
       }
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Card(
       elevation: 0,
+      color: isDark ? AppTheme.darkSurface : color.withValues(alpha: 0.03),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: color.withValues(alpha: 0.2), width: 1.5),
+        side: BorderSide(color: isDark ? color.withValues(alpha: 0.3) : color.withValues(alpha: 0.2), width: 1.5),
       ),
-      color: color.withValues(alpha: 0.03),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -631,7 +676,7 @@ class OrangTuaDashboard extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
-                      color: Colors.grey.shade500,
+                      color: isDark ? Colors.white38 : Colors.grey.shade500,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -640,13 +685,13 @@ class OrangTuaDashboard extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: color,
+                      color: isDark ? Colors.white : color,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.grey.shade600),
                   ),
                 ],
               ),

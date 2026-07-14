@@ -1,29 +1,121 @@
-﻿{
-    "number":  106,
-    "name":  "سُورَةُ قُرَيۡشٍ",
-    "englishName":  "Quraish",
-    "numberOfAyahs":  4,
-    "revelationType":  "Meccan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ لِإِيلَٰفِ قُرَيْشٍ",
-                      "translation":  "Karena kebiasaan orang-orang Quraisy,"
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "إِۦلَٰفِهِمْ رِحْلَةَ ٱلشِّتَآءِ وَٱلصَّيْفِ",
-                      "translation":  "(yaitu) kebiasaan mereka bepergian pada musim dingin dan musim panas."
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "فَلْيَعْبُدُوا۟ رَبَّ هَٰذَا ٱلْبَيْتِ",
-                      "translation":  "Maka hendaklah mereka menyembah Tuhan Pemilik rumah ini (Ka\u0027bah)."
-                  },
-                  {
-                      "numberInSurah":  4,
-                      "arabic":  "ٱلَّذِىٓ أَطْعَمَهُم مِّن جُوعٍۢ وَءَامَنَهُم مِّنْ خَوْفٍۭ",
-                      "translation":  "Yang telah memberi makanan kepada mereka untuk menghilangkan lapar dan mengamankan mereka dari ketakutan."
-                  }
-              ]
+{
+  "number": 106,
+  "name": "سُورَةُ قُرَيۡشٍ",
+  "englishName": "Quraish",
+  "numberOfAyahs": 4,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ لِإِيلَٰفِ قُرَيْشٍ",
+      "translation": "Karena kebiasaan orang-orang Quraisy,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "لِإِيلَٰفِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "قُرَيْشٍ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "إِۦلَٰفِهِمْ رِحْلَةَ ٱلشِّتَآءِ وَٱلصَّيْفِ",
+      "translation": "(yaitu) kebiasaan mereka bepergian pada musim dingin dan musim panas.",
+      "wordsTajweed": [
+        {
+          "word": "إِۦلَٰفِهِمْ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "رِحْلَةَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلشِّتَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "وَٱلصَّيْفِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "فَلْيَعْبُدُوا۟ رَبَّ هَٰذَا ٱلْبَيْتِ",
+      "translation": "Maka hendaklah mereka menyembah Tuhan Pemilik rumah ini (Ka'bah).",
+      "wordsTajweed": [
+        {
+          "word": "فَلْيَعْبُدُوا۟",
+          "rule": null
+        },
+        {
+          "word": "رَبَّ",
+          "rule": null
+        },
+        {
+          "word": "هَٰذَا",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلْبَيْتِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "ٱلَّذِىٓ أَطْعَمَهُم مِّن جُوعٍۢ وَءَامَنَهُم مِّنْ خَوْفٍۭ",
+      "translation": "Yang telah memberi makanan kepada mereka untuk menghilangkan lapar dan mengamankan mereka dari ketakutan.",
+      "wordsTajweed": [
+        {
+          "word": "ٱلَّذِىٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَطْعَمَهُم",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "مِّن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "جُوعٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَءَامَنَهُم",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّنْ",
+          "rule": null
+        },
+        {
+          "word": "خَوْفٍۭ",
+          "rule": "madd_246"
+        }
+      ]
+    }
+  ]
 }

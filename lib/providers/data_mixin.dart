@@ -13,6 +13,7 @@ import '../models/tasmi_record.dart';
 import '../models/pengawas_data.dart';
 import '../models/presensi_halaqah.dart';
 import '../models/app_notification.dart';
+import '../models/voucher_ticket.dart';
 import 'auth_mixin.dart';
 
 mixin DataMixin on ChangeNotifier, AuthMixin {
@@ -43,6 +44,7 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
   List<PengawasData> pengawasList = [];
   List<PresensiHalaqah> presensiList = [];
   List<AppNotification> notificationList = [];
+  List<VoucherTicket> voucherList = [];
   List<Map<String, dynamic>> pondokKnowledgeList = [];
   bool isPondokKnowledgeInitialized = false;
   
@@ -71,8 +73,9 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     final halaqahCompleter = Completer();
     final musyrifCompleter = Completer();
     final kelasCompleter = Completer();
+    final voucherCompleter = Completer();
     
-    completers.addAll([santriCompleter, halaqahCompleter, musyrifCompleter, kelasCompleter]);
+    completers.addAll([santriCompleter, halaqahCompleter, musyrifCompleter, kelasCompleter, voucherCompleter]);
 
     // ── 1. Unified Santri & Halaqah Subscription (Global for Ranking) ──────
     // To show ranking to everyone, we must fetch all santri and halaqahs.
@@ -80,40 +83,81 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
 
     // 1.1 All Santri (Basic Info)
     santriSub = getCollection('santri').snapshots().listen((snap) {
-      final allSantri = snap.docs.map((doc) => Santri.fromJson(doc.data())).toList();
-      
-      if (isOrangTua) {
-        // Keep santriList populated for ranking, but attach deep listener only to child
-        santriList = allSantri;
-        if (linkedSantriId != null) {
-          _listenToSingleSantriSubcollections(linkedSantriId!);
+      try {
+        final allSantri = snap.docs.map((doc) {
+          try {
+            return Santri.fromJson(doc.data());
+          } catch (e) {
+            debugPrint("Error parsing santri doc ${doc.id}: $e");
+            return null;
+          }
+        }).whereType<Santri>().toList();
+        
+        if (isOrangTua) {
+          // Keep santriList populated for ranking, but attach deep listener only to child
+          santriList = allSantri;
+          if (linkedSantriId != null) {
+            _listenToSingleSantriSubcollections(linkedSantriId!);
+          }
+        } else if (isMusyrif) {
+          // Keep santriList populated for ranking, but attach deep listeners only to halaqah
+          santriList = allSantri;
+          final myHalaqahIds = halaqahList.map((h) => h.id).toList();
+          if (myHalaqahIds.isNotEmpty) {
+            final mySantriList = allSantri.where((s) => myHalaqahIds.contains(s.halaqahId)).toList();
+            _listenToMultipleSantriSubcollections(mySantriList);
+          }
+        } else {
+          // Admin: listen to everything deep
+          _listenToMultipleSantriSubcollections(allSantri);
         }
-      } else if (isMusyrif) {
-        // Keep santriList populated for ranking, but attach deep listeners only to halaqah
-        santriList = allSantri;
-        final myHalaqahIds = halaqahList.map((h) => h.id).toList();
-        if (myHalaqahIds.isNotEmpty) {
-          final mySantriList = allSantri.where((s) => myHalaqahIds.contains(s.halaqahId)).toList();
-          _listenToMultipleSantriSubcollections(mySantriList);
-        }
-      } else {
-        // Admin: listen to everything deep
-        _listenToMultipleSantriSubcollections(allSantri);
+      } catch (e) {
+        debugPrint("Critical error in santri listener: $e");
       }
       
       if (!santriCompleter.isCompleted) santriCompleter.complete();
       notifyListeners();
     }, onError: (e) {
+      debugPrint("Santri Sub Error: $e");
       if (!santriCompleter.isCompleted) santriCompleter.complete();
     });
 
     // 1.2 All Halaqahs (For Ranking & Statistics)
     halaqahSub = getCollection('halaqah').snapshots().listen((snap) {
-      halaqahList = snap.docs.map((doc) => HalaqahData.fromJson(doc.data())).toList();
+      try {
+        halaqahList = snap.docs.map((doc) {
+          try {
+            return HalaqahData.fromJson(doc.data());
+          } catch (e) {
+            debugPrint("Error parsing halaqah doc ${doc.id}: $e");
+            return null;
+          }
+        }).whereType<HalaqahData>().toList();
+      } catch (e) {
+        debugPrint("Critical error in halaqah listener: $e");
+      }
       if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
       notifyListeners();
     }, onError: (e) {
+      debugPrint("Halaqah Sub Error: $e");
       if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
+    });
+
+    // 1.3 Voucher Tickets
+    getCollection('vouchers').snapshots().listen((snap) {
+      try {
+        voucherList = snap.docs
+            .map((doc) => VoucherTicket.fromJson(doc.data()))
+            .toList();
+        voucherList.sort((a, b) => b.purchaseDate.compareTo(a.purchaseDate));
+      } catch (e) {
+        debugPrint("Error parsing vouchers: $e");
+      }
+      if (!voucherCompleter.isCompleted) voucherCompleter.complete();
+      notifyListeners();
+    }, onError: (e) {
+      debugPrint("Voucher Sub Error: $e");
+      if (!voucherCompleter.isCompleted) voucherCompleter.complete();
     });
 
     // ── 2. Role-specific recent activity ────────────────────────────────────
@@ -155,18 +199,43 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
 
     // ── 2. Other Global Subscriptions ─────────────────────────────────────────
     musyrifSub = getCollection('musyrif').snapshots().listen((snap) {
-      musyrifList = snap.docs.map((doc) => MusyrifData.fromJson(doc.data())).toList();
+      try {
+        musyrifList = snap.docs.map((doc) {
+          try {
+            return MusyrifData.fromJson(doc.data());
+          } catch (e) {
+            debugPrint("Error parsing musyrif doc ${doc.id}: $e");
+            return null;
+          }
+        }).whereType<MusyrifData>().toList();
+        debugPrint("Musyrif list updated: ${musyrifList.length} items (PID: $pesantrenId, Path: ${getCollection('musyrif').path})");
+      } catch (e) {
+        debugPrint("Critical error in musyrif listener: $e");
+      }
       if (!musyrifCompleter.isCompleted) musyrifCompleter.complete();
       notifyListeners();
     }, onError: (e) {
+      debugPrint("Musyrif Sub Error: $e");
       if (!musyrifCompleter.isCompleted) musyrifCompleter.complete();
     });
 
     kelasSub = getCollection('kelas').snapshots().listen((snap) {
-      kelasList = snap.docs.map((doc) => KelasData.fromJson(doc.data())).toList();
+      try {
+        kelasList = snap.docs.map((doc) {
+          try {
+            return KelasData.fromJson(doc.data());
+          } catch (e) {
+            debugPrint("Error parsing kelas doc ${doc.id}: $e");
+            return null;
+          }
+        }).whereType<KelasData>().toList();
+      } catch (e) {
+        debugPrint("Critical error in kelas listener: $e");
+      }
       if (!kelasCompleter.isCompleted) kelasCompleter.complete();
       notifyListeners();
     }, onError: (e) {
+      debugPrint("Kelas Sub Error: $e");
       if (!kelasCompleter.isCompleted) kelasCompleter.complete();
     });
 
@@ -256,6 +325,10 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     } catch (e) {
       debugPrint("setupFirestoreListeners wait initial data timed out: $e");
     }
+  }
+
+  void startListeningToSingleSantri(String sId) {
+    _listenToSingleSantriSubcollections(sId);
   }
 
   void _listenToSingleSantriSubcollections(String sId) {

@@ -1,399 +1,1975 @@
-﻿{
-    "number":  55,
-    "name":  "سُورَةُ الرَّحۡمَٰن",
-    "englishName":  "Ar-Rahmaan",
-    "numberOfAyahs":  78,
-    "revelationType":  "Medinan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ٱلرَّحْمَٰنُ",
-                      "translation":  "(Tuhan) Yang Maha Pemurah,"
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "عَلَّمَ ٱلْقُرْءَانَ",
-                      "translation":  "Yang telah mengajarkan al Quran."
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "خَلَقَ ٱلْإِنسَٰنَ",
-                      "translation":  "Dia menciptakan manusia."
-                  },
-                  {
-                      "numberInSurah":  4,
-                      "arabic":  "عَلَّمَهُ ٱلْبَيَانَ",
-                      "translation":  "Mengajarnya pandai berbicara."
-                  },
-                  {
-                      "numberInSurah":  5,
-                      "arabic":  "ٱلشَّمْسُ وَٱلْقَمَرُ بِحُسْبَانٍۢ",
-                      "translation":  "Matahari dan bulan (beredar) menurut perhitungan."
-                  },
-                  {
-                      "numberInSurah":  6,
-                      "arabic":  "وَٱلنَّجْمُ وَٱلشَّجَرُ يَسْجُدَانِ",
-                      "translation":  "Dan tumbuh-tumbuhan dan pohon-pohonan kedua-duanya tunduk kepada-Nya."
-                  },
-                  {
-                      "numberInSurah":  7,
-                      "arabic":  "وَٱلسَّمَآءَ رَفَعَهَا وَوَضَعَ ٱلْمِيزَانَ",
-                      "translation":  "Dan Allah telah meninggikan langit dan Dia meletakkan neraca (keadilan)."
-                  },
-                  {
-                      "numberInSurah":  8,
-                      "arabic":  "أَلَّا تَطْغَوْا۟ فِى ٱلْمِيزَانِ",
-                      "translation":  "Supaya kamu jangan melampaui batas tentang neraca itu."
-                  },
-                  {
-                      "numberInSurah":  9,
-                      "arabic":  "وَأَقِيمُوا۟ ٱلْوَزْنَ بِٱلْقِسْطِ وَلَا تُخْسِرُوا۟ ٱلْمِيزَانَ",
-                      "translation":  "Dan tegakkanlah timbangan itu dengan adil dan janganlah kamu mengurangi neraca itu."
-                  },
-                  {
-                      "numberInSurah":  10,
-                      "arabic":  "وَٱلْأَرْضَ وَضَعَهَا لِلْأَنَامِ",
-                      "translation":  "Dan Allah telah meratakan bumi untuk makhluk(Nya)."
-                  },
-                  {
-                      "numberInSurah":  11,
-                      "arabic":  "فِيهَا فَٰكِهَةٌۭ وَٱلنَّخْلُ ذَاتُ ٱلْأَكْمَامِ",
-                      "translation":  "Di bumi itu ada buah-buahan dan pohon kurma yang mempunyai kelopak mayang."
-                  },
-                  {
-                      "numberInSurah":  12,
-                      "arabic":  "وَٱلْحَبُّ ذُو ٱلْعَصْفِ وَٱلرَّيْحَانُ",
-                      "translation":  "Dan biji-bijian yang berkulit dan bunga-bunga yang harum baunya."
-                  },
-                  {
-                      "numberInSurah":  13,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  14,
-                      "arabic":  "خَلَقَ ٱلْإِنسَٰنَ مِن صَلْصَٰلٍۢ كَٱلْفَخَّارِ",
-                      "translation":  "Dia menciptakan manusia dari tanah kering seperti tembikar,"
-                  },
-                  {
-                      "numberInSurah":  15,
-                      "arabic":  "وَخَلَقَ ٱلْجَآنَّ مِن مَّارِجٍۢ مِّن نَّارٍۢ",
-                      "translation":  "dan Dia menciptakan jin dari nyala api."
-                  },
-                  {
-                      "numberInSurah":  16,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  17,
-                      "arabic":  "رَبُّ ٱلْمَشْرِقَيْنِ وَرَبُّ ٱلْمَغْرِبَيْنِ",
-                      "translation":  "Tuhan yang memelihara kedua tempat terbit matahari dan Tuhan yang memelihara kedua tempat terbenamnya"
-                  },
-                  {
-                      "numberInSurah":  18,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  19,
-                      "arabic":  "مَرَجَ ٱلْبَحْرَيْنِ يَلْتَقِيَانِ",
-                      "translation":  "Dia membiarkan dua lautan mengalir yang keduanya kemudian bertemu,"
-                  },
-                  {
-                      "numberInSurah":  20,
-                      "arabic":  "بَيْنَهُمَا بَرْزَخٌۭ لَّا يَبْغِيَانِ",
-                      "translation":  "antara keduanya ada batas yang tidak dilampaui masing-masing."
-                  },
-                  {
-                      "numberInSurah":  21,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  22,
-                      "arabic":  "يَخْرُجُ مِنْهُمَا ٱللُّؤْلُؤُ وَٱلْمَرْجَانُ",
-                      "translation":  "Dari keduanya keluar mutiara dan marjan."
-                  },
-                  {
-                      "numberInSurah":  23,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  24,
-                      "arabic":  "وَلَهُ ٱلْجَوَارِ ٱلْمُنشَـَٔاتُ فِى ٱلْبَحْرِ كَٱلْأَعْلَٰمِ",
-                      "translation":  "Dan kepunyaan-Nya lah bahtera-bahtera yang tinggi layarnya di lautan laksana gunung-gunung."
-                  },
-                  {
-                      "numberInSurah":  25,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  26,
-                      "arabic":  "كُلُّ مَنْ عَلَيْهَا فَانٍۢ",
-                      "translation":  "Semua yang ada di bumi itu akan binasa."
-                  },
-                  {
-                      "numberInSurah":  27,
-                      "arabic":  "وَيَبْقَىٰ وَجْهُ رَبِّكَ ذُو ٱلْجَلَٰلِ وَٱلْإِكْرَامِ",
-                      "translation":  "Dan tetap kekal Dzat Tuhanmu yang mempunyai kebesaran dan kemuliaan."
-                  },
-                  {
-                      "numberInSurah":  28,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  29,
-                      "arabic":  "يَسْـَٔلُهُۥ مَن فِى ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ ۚ كُلَّ يَوْمٍ هُوَ فِى شَأْنٍۢ",
-                      "translation":  "Semua yang ada di langit dan bumi selalu meminta kepada-Nya. Setiap waktu Dia dalam kesibukan."
-                  },
-                  {
-                      "numberInSurah":  30,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Rabb-mu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  31,
-                      "arabic":  "سَنَفْرُغُ لَكُمْ أَيُّهَ ٱلثَّقَلَانِ",
-                      "translation":  "Kami akan memperhatikan sepenuhnya kepadamu hai manusia dan jin."
-                  },
-                  {
-                      "numberInSurah":  32,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  33,
-                      "arabic":  "يَٰمَعْشَرَ ٱلْجِنِّ وَٱلْإِنسِ إِنِ ٱسْتَطَعْتُمْ أَن تَنفُذُوا۟ مِنْ أَقْطَارِ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ فَٱنفُذُوا۟ ۚ لَا تَنفُذُونَ إِلَّا بِسُلْطَٰنٍۢ",
-                      "translation":  "Hai jama\u0027ah jin dan manusia, jika kamu sanggup menembus (melintasi) penjuru langit dan bumi, maka lintasilah, kamu tidak dapat menembusnya kecuali dengan kekuatan."
-                  },
-                  {
-                      "numberInSurah":  34,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  35,
-                      "arabic":  "يُرْسَلُ عَلَيْكُمَا شُوَاظٌۭ مِّن نَّارٍۢ وَنُحَاسٌۭ فَلَا تَنتَصِرَانِ",
-                      "translation":  "Kepada kamu, (jin dan manusia) dilepaskan nyala api dan cairan tembaga maka kamu tidak dapat menyelamatkan diri (dari padanya)."
-                  },
-                  {
-                      "numberInSurah":  36,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  37,
-                      "arabic":  "فَإِذَا ٱنشَقَّتِ ٱلسَّمَآءُ فَكَانَتْ وَرْدَةًۭ كَٱلدِّهَانِ",
-                      "translation":  "Maka apabila langit telah terbelah dan menjadi merah mawar seperti (kilapan) minyak."
-                  },
-                  {
-                      "numberInSurah":  38,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  39,
-                      "arabic":  "فَيَوْمَئِذٍۢ لَّا يُسْـَٔلُ عَن ذَنۢبِهِۦٓ إِنسٌۭ وَلَا جَآنٌّۭ",
-                      "translation":  "Pada waktu itu manusia dan jin tidak ditanya tentang dosanya."
-                  },
-                  {
-                      "numberInSurah":  40,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  41,
-                      "arabic":  "يُعْرَفُ ٱلْمُجْرِمُونَ بِسِيمَٰهُمْ فَيُؤْخَذُ بِٱلنَّوَٰصِى وَٱلْأَقْدَامِ",
-                      "translation":  "Orang-orang yang berdosa dikenal dengan tanda-tandannya, lalu dipegang ubun-ubun dan kaki mereka."
-                  },
-                  {
-                      "numberInSurah":  42,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  43,
-                      "arabic":  "هَٰذِهِۦ جَهَنَّمُ ٱلَّتِى يُكَذِّبُ بِهَا ٱلْمُجْرِمُونَ",
-                      "translation":  "Inilah neraka Jahannam yang didustakan oleh orang-orang berdosa."
-                  },
-                  {
-                      "numberInSurah":  44,
-                      "arabic":  "يَطُوفُونَ بَيْنَهَا وَبَيْنَ حَمِيمٍ ءَانٍۢ",
-                      "translation":  "Mereka berkeliling di antaranya dan di antara air mendidih yang memuncak panasnya."
-                  },
-                  {
-                      "numberInSurah":  45,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  46,
-                      "arabic":  "وَلِمَنْ خَافَ مَقَامَ رَبِّهِۦ جَنَّتَانِ",
-                      "translation":  "Dan bagi orang yang takut akan saat menghadap Tuhannya ada dua surga."
-                  },
-                  {
-                      "numberInSurah":  47,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?,"
-                  },
-                  {
-                      "numberInSurah":  48,
-                      "arabic":  "ذَوَاتَآ أَفْنَانٍۢ",
-                      "translation":  "kedua surga itu mempunyai pohon-pohonan dan buah-buahan."
-                  },
-                  {
-                      "numberInSurah":  49,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  50,
-                      "arabic":  "فِيهِمَا عَيْنَانِ تَجْرِيَانِ",
-                      "translation":  "Di dalam kedua surga itu ada dua buah mata air yang mengalir"
-                  },
-                  {
-                      "numberInSurah":  51,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  52,
-                      "arabic":  "فِيهِمَا مِن كُلِّ فَٰكِهَةٍۢ زَوْجَانِ",
-                      "translation":  "Di dalam kedua surga itu terdapat segala macam buah-buahan yang berpasangan."
-                  },
-                  {
-                      "numberInSurah":  53,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  54,
-                      "arabic":  "مُتَّكِـِٔينَ عَلَىٰ فُرُشٍۭ بَطَآئِنُهَا مِنْ إِسْتَبْرَقٍۢ ۚ وَجَنَى ٱلْجَنَّتَيْنِ دَانٍۢ",
-                      "translation":  "Mereka bertelekan di atas permadani yang sebelah dalamnya dari sutera. Dan buah-buahan di kedua surga itu dapat (dipetik) dari dekat."
-                  },
-                  {
-                      "numberInSurah":  55,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  56,
-                      "arabic":  "فِيهِنَّ قَٰصِرَٰتُ ٱلطَّرْفِ لَمْ يَطْمِثْهُنَّ إِنسٌۭ قَبْلَهُمْ وَلَا جَآنٌّۭ",
-                      "translation":  "Di dalam surga itu ada bidadari-bidadari yang sopan menundukkan pandangannya, tidak pernah disentuh oleh manusia sebelum mereka (penghuni-penghuni surga yang menjadi suami mereka), dan tidak pula oleh jin."
-                  },
-                  {
-                      "numberInSurah":  57,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  58,
-                      "arabic":  "كَأَنَّهُنَّ ٱلْيَاقُوتُ وَٱلْمَرْجَانُ",
-                      "translation":  "Seakan-akan bidadari itu permata yakut dan marjan."
-                  },
-                  {
-                      "numberInSurah":  59,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  60,
-                      "arabic":  "هَلْ جَزَآءُ ٱلْإِحْسَٰنِ إِلَّا ٱلْإِحْسَٰنُ",
-                      "translation":  "Tidak ada balasan kebaikan kecuali kebaikan (pula)."
-                  },
-                  {
-                      "numberInSurah":  61,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  62,
-                      "arabic":  "وَمِن دُونِهِمَا جَنَّتَانِ",
-                      "translation":  "Dan selain dari dua surga itu ada dua surga lagi"
-                  },
-                  {
-                      "numberInSurah":  63,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  64,
-                      "arabic":  "مُدْهَآمَّتَانِ",
-                      "translation":  "Kedua surga itu (kelihatan) hijau tua warnanya."
-                  },
-                  {
-                      "numberInSurah":  65,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  66,
-                      "arabic":  "فِيهِمَا عَيْنَانِ نَضَّاخَتَانِ",
-                      "translation":  "Di dalam kedua surga itu ada dua buah mata air yang memancar."
-                  },
-                  {
-                      "numberInSurah":  67,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  68,
-                      "arabic":  "فِيهِمَا فَٰكِهَةٌۭ وَنَخْلٌۭ وَرُمَّانٌۭ",
-                      "translation":  "Di dalam keduanya (ada macam-macam) buah-buahan dan kurma serta delima."
-                  },
-                  {
-                      "numberInSurah":  69,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  70,
-                      "arabic":  "فِيهِنَّ خَيْرَٰتٌ حِسَانٌۭ",
-                      "translation":  "Di dalam surga itu ada bidadari-bidadari yang baik-baik lagi cantik-cantik."
-                  },
-                  {
-                      "numberInSurah":  71,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  72,
-                      "arabic":  "حُورٌۭ مَّقْصُورَٰتٌۭ فِى ٱلْخِيَامِ",
-                      "translation":  "(Bidadari-bidadari) yang jelita, putih bersih, dipingit dalam rumah."
-                  },
-                  {
-                      "numberInSurah":  73,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  74,
-                      "arabic":  "لَمْ يَطْمِثْهُنَّ إِنسٌۭ قَبْلَهُمْ وَلَا جَآنٌّۭ",
-                      "translation":  "Mereka tidak pernah disentuh oleh manusia sebelum mereka (penghuni-penghuni surga yang menjadi suami mereka), dan tidak pula oleh jin."
-                  },
-                  {
-                      "numberInSurah":  75,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  76,
-                      "arabic":  "مُتَّكِـِٔينَ عَلَىٰ رَفْرَفٍ خُضْرٍۢ وَعَبْقَرِىٍّ حِسَانٍۢ",
-                      "translation":  "Mereka bertelekan pada bantal-bantal yang hijau dan permadani-permadani yang indah."
-                  },
-                  {
-                      "numberInSurah":  77,
-                      "arabic":  "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
-                      "translation":  "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?"
-                  },
-                  {
-                      "numberInSurah":  78,
-                      "arabic":  "تَبَٰرَكَ ٱسْمُ رَبِّكَ ذِى ٱلْجَلَٰلِ وَٱلْإِكْرَامِ",
-                      "translation":  "Maha Agung nama Tuhanmu Yang Mempunyai Kebesaran dan Karunia."
-                  }
-              ]
+{
+  "number": 55,
+  "name": "سُورَةُ الرَّحۡمَٰن",
+  "englishName": "Ar-Rahmaan",
+  "numberOfAyahs": 78,
+  "revelationType": "Medinan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ٱلرَّحْمَٰنُ",
+      "translation": "(Tuhan) Yang Maha Pemurah,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "عَلَّمَ ٱلْقُرْءَانَ",
+      "translation": "Yang telah mengajarkan al Quran.",
+      "wordsTajweed": [
+        {
+          "word": "عَلَّمَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقُرْءَانَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "خَلَقَ ٱلْإِنسَٰنَ",
+      "translation": "Dia menciptakan manusia.",
+      "wordsTajweed": [
+        {
+          "word": "خَلَقَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "عَلَّمَهُ ٱلْبَيَانَ",
+      "translation": "Mengajarnya pandai berbicara.",
+      "wordsTajweed": [
+        {
+          "word": "عَلَّمَهُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْبَيَانَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "ٱلشَّمْسُ وَٱلْقَمَرُ بِحُسْبَانٍۢ",
+      "translation": "Matahari dan bulan (beredar) menurut perhitungan.",
+      "wordsTajweed": [
+        {
+          "word": "ٱلشَّمْسُ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلْقَمَرُ",
+          "rule": null
+        },
+        {
+          "word": "بِحُسْبَانٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "وَٱلنَّجْمُ وَٱلشَّجَرُ يَسْجُدَانِ",
+      "translation": "Dan tumbuh-tumbuhan dan pohon-pohonan kedua-duanya tunduk kepada-Nya.",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلنَّجْمُ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَٱلشَّجَرُ",
+          "rule": null
+        },
+        {
+          "word": "يَسْجُدَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "وَٱلسَّمَآءَ رَفَعَهَا وَوَضَعَ ٱلْمِيزَانَ",
+      "translation": "Dan Allah telah meninggikan langit dan Dia meletakkan neraca (keadilan).",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلسَّمَآءَ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَفَعَهَا",
+          "rule": null
+        },
+        {
+          "word": "وَوَضَعَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمِيزَانَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "أَلَّا تَطْغَوْا۟ فِى ٱلْمِيزَانِ",
+      "translation": "Supaya kamu jangan melampaui batas tentang neraca itu.",
+      "wordsTajweed": [
+        {
+          "word": "أَلَّا",
+          "rule": null
+        },
+        {
+          "word": "تَطْغَوْا۟",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمِيزَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 9,
+      "arabic": "وَأَقِيمُوا۟ ٱلْوَزْنَ بِٱلْقِسْطِ وَلَا تُخْسِرُوا۟ ٱلْمِيزَانَ",
+      "translation": "Dan tegakkanlah timbangan itu dengan adil dan janganlah kamu mengurangi neraca itu.",
+      "wordsTajweed": [
+        {
+          "word": "وَأَقِيمُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلْوَزْنَ",
+          "rule": null
+        },
+        {
+          "word": "بِٱلْقِسْطِ",
+          "rule": null
+        },
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "تُخْسِرُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمِيزَانَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 10,
+      "arabic": "وَٱلْأَرْضَ وَضَعَهَا لِلْأَنَامِ",
+      "translation": "Dan Allah telah meratakan bumi untuk makhluk(Nya).",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلْأَرْضَ",
+          "rule": null
+        },
+        {
+          "word": "وَضَعَهَا",
+          "rule": null
+        },
+        {
+          "word": "لِلْأَنَامِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 11,
+      "arabic": "فِيهَا فَٰكِهَةٌۭ وَٱلنَّخْلُ ذَاتُ ٱلْأَكْمَامِ",
+      "translation": "Di bumi itu ada buah-buahan dan pohon kurma yang mempunyai kelopak mayang.",
+      "wordsTajweed": [
+        {
+          "word": "فِيهَا",
+          "rule": null
+        },
+        {
+          "word": "فَٰكِهَةٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَٱلنَّخْلُ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ذَاتُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَكْمَامِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 12,
+      "arabic": "وَٱلْحَبُّ ذُو ٱلْعَصْفِ وَٱلرَّيْحَانُ",
+      "translation": "Dan biji-bijian yang berkulit dan bunga-bunga yang harum baunya.",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلْحَبُّ",
+          "rule": null
+        },
+        {
+          "word": "ذُو",
+          "rule": null
+        },
+        {
+          "word": "ٱلْعَصْفِ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلرَّيْحَانُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 13,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 14,
+      "arabic": "خَلَقَ ٱلْإِنسَٰنَ مِن صَلْصَٰلٍۢ كَٱلْفَخَّارِ",
+      "translation": "Dia menciptakan manusia dari tanah kering seperti tembikar,",
+      "wordsTajweed": [
+        {
+          "word": "خَلَقَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "صَلْصَٰلٍۢ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَٱلْفَخَّارِ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 15,
+      "arabic": "وَخَلَقَ ٱلْجَآنَّ مِن مَّارِجٍۢ مِّن نَّارٍۢ",
+      "translation": "dan Dia menciptakan jin dari nyala api.",
+      "wordsTajweed": [
+        {
+          "word": "وَخَلَقَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجَآنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "مِن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَّارِجٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "نَّارٍۢ",
+          "rule": "idghaam_ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 16,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 17,
+      "arabic": "رَبُّ ٱلْمَشْرِقَيْنِ وَرَبُّ ٱلْمَغْرِبَيْنِ",
+      "translation": "Tuhan yang memelihara kedua tempat terbit matahari dan Tuhan yang memelihara kedua tempat terbenamnya",
+      "wordsTajweed": [
+        {
+          "word": "رَبُّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمَشْرِقَيْنِ",
+          "rule": null
+        },
+        {
+          "word": "وَرَبُّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمَغْرِبَيْنِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 18,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 19,
+      "arabic": "مَرَجَ ٱلْبَحْرَيْنِ يَلْتَقِيَانِ",
+      "translation": "Dia membiarkan dua lautan mengalir yang keduanya kemudian bertemu,",
+      "wordsTajweed": [
+        {
+          "word": "مَرَجَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْبَحْرَيْنِ",
+          "rule": null
+        },
+        {
+          "word": "يَلْتَقِيَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 20,
+      "arabic": "بَيْنَهُمَا بَرْزَخٌۭ لَّا يَبْغِيَانِ",
+      "translation": "antara keduanya ada batas yang tidak dilampaui masing-masing.",
+      "wordsTajweed": [
+        {
+          "word": "بَيْنَهُمَا",
+          "rule": null
+        },
+        {
+          "word": "بَرْزَخٌۭ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لَّا",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "يَبْغِيَانِ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 21,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 22,
+      "arabic": "يَخْرُجُ مِنْهُمَا ٱللُّؤْلُؤُ وَٱلْمَرْجَانُ",
+      "translation": "Dari keduanya keluar mutiara dan marjan.",
+      "wordsTajweed": [
+        {
+          "word": "يَخْرُجُ",
+          "rule": null
+        },
+        {
+          "word": "مِنْهُمَا",
+          "rule": null
+        },
+        {
+          "word": "ٱللُّؤْلُؤُ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلْمَرْجَانُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 23,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 24,
+      "arabic": "وَلَهُ ٱلْجَوَارِ ٱلْمُنشَـَٔاتُ فِى ٱلْبَحْرِ كَٱلْأَعْلَٰمِ",
+      "translation": "Dan kepunyaan-Nya lah bahtera-bahtera yang tinggi layarnya di lautan laksana gunung-gunung.",
+      "wordsTajweed": [
+        {
+          "word": "وَلَهُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجَوَارِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمُنشَـَٔاتُ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْبَحْرِ",
+          "rule": null
+        },
+        {
+          "word": "كَٱلْأَعْلَٰمِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 25,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 26,
+      "arabic": "كُلُّ مَنْ عَلَيْهَا فَانٍۢ",
+      "translation": "Semua yang ada di bumi itu akan binasa.",
+      "wordsTajweed": [
+        {
+          "word": "كُلُّ",
+          "rule": null
+        },
+        {
+          "word": "مَنْ",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْهَا",
+          "rule": null
+        },
+        {
+          "word": "فَانٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 27,
+      "arabic": "وَيَبْقَىٰ وَجْهُ رَبِّكَ ذُو ٱلْجَلَٰلِ وَٱلْإِكْرَامِ",
+      "translation": "Dan tetap kekal Dzat Tuhanmu yang mempunyai kebesaran dan kemuliaan.",
+      "wordsTajweed": [
+        {
+          "word": "وَيَبْقَىٰ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "وَجْهُ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "رَبِّكَ",
+          "rule": null
+        },
+        {
+          "word": "ذُو",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجَلَٰلِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَٱلْإِكْرَامِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 28,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 29,
+      "arabic": "يَسْـَٔلُهُۥ مَن فِى ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ ۚ كُلَّ يَوْمٍ هُوَ فِى شَأْنٍۢ",
+      "translation": "Semua yang ada di langit dan bumi selalu meminta kepada-Nya. Setiap waktu Dia dalam kesibukan.",
+      "wordsTajweed": [
+        {
+          "word": "يَسْـَٔلُهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فِى",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱلسَّمَٰوَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَٱلْأَرْضِ ۚ",
+          "rule": null
+        },
+        {
+          "word": "كُلَّ",
+          "rule": null
+        },
+        {
+          "word": "يَوْمٍ",
+          "rule": null
+        },
+        {
+          "word": "هُوَ",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "شَأْنٍۢ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 30,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Rabb-mu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 31,
+      "arabic": "سَنَفْرُغُ لَكُمْ أَيُّهَ ٱلثَّقَلَانِ",
+      "translation": "Kami akan memperhatikan sepenuhnya kepadamu hai manusia dan jin.",
+      "wordsTajweed": [
+        {
+          "word": "سَنَفْرُغُ",
+          "rule": null
+        },
+        {
+          "word": "لَكُمْ",
+          "rule": null
+        },
+        {
+          "word": "أَيُّهَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلثَّقَلَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 32,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 33,
+      "arabic": "يَٰمَعْشَرَ ٱلْجِنِّ وَٱلْإِنسِ إِنِ ٱسْتَطَعْتُمْ أَن تَنفُذُوا۟ مِنْ أَقْطَارِ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ فَٱنفُذُوا۟ ۚ لَا تَنفُذُونَ إِلَّا بِسُلْطَٰنٍۢ",
+      "translation": "Hai jama'ah jin dan manusia, jika kamu sanggup menembus (melintasi) penjuru langit dan bumi, maka lintasilah, kamu tidak dapat menembusnya kecuali dengan kekuatan.",
+      "wordsTajweed": [
+        {
+          "word": "يَٰمَعْشَرَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلْجِنِّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَٱلْإِنسِ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "إِنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱسْتَطَعْتُمْ",
+          "rule": null
+        },
+        {
+          "word": "أَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "تَنفُذُوا۟",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "مِنْ",
+          "rule": null
+        },
+        {
+          "word": "أَقْطَارِ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "ٱلسَّمَٰوَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَٱلْأَرْضِ",
+          "rule": null
+        },
+        {
+          "word": "فَٱنفُذُوا۟ ۚ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "لَا",
+          "rule": null
+        },
+        {
+          "word": "تَنفُذُونَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "إِلَّا",
+          "rule": null
+        },
+        {
+          "word": "بِسُلْطَٰنٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 34,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 35,
+      "arabic": "يُرْسَلُ عَلَيْكُمَا شُوَاظٌۭ مِّن نَّارٍۢ وَنُحَاسٌۭ فَلَا تَنتَصِرَانِ",
+      "translation": "Kepada kamu, (jin dan manusia) dilepaskan nyala api dan cairan tembaga maka kamu tidak dapat menyelamatkan diri (dari padanya).",
+      "wordsTajweed": [
+        {
+          "word": "يُرْسَلُ",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْكُمَا",
+          "rule": null
+        },
+        {
+          "word": "شُوَاظٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "نَّارٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَنُحَاسٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَلَا",
+          "rule": null
+        },
+        {
+          "word": "تَنتَصِرَانِ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 36,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 37,
+      "arabic": "فَإِذَا ٱنشَقَّتِ ٱلسَّمَآءُ فَكَانَتْ وَرْدَةًۭ كَٱلدِّهَانِ",
+      "translation": "Maka apabila langit telah terbelah dan menjadi merah mawar seperti (kilapan) minyak.",
+      "wordsTajweed": [
+        {
+          "word": "فَإِذَا",
+          "rule": null
+        },
+        {
+          "word": "ٱنشَقَّتِ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱلسَّمَآءُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "فَكَانَتْ",
+          "rule": null
+        },
+        {
+          "word": "وَرْدَةًۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَٱلدِّهَانِ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 38,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 39,
+      "arabic": "فَيَوْمَئِذٍۢ لَّا يُسْـَٔلُ عَن ذَنۢبِهِۦٓ إِنسٌۭ وَلَا جَآنٌّۭ",
+      "translation": "Pada waktu itu manusia dan jin tidak ditanya tentang dosanya.",
+      "wordsTajweed": [
+        {
+          "word": "فَيَوْمَئِذٍۢ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لَّا",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "يُسْـَٔلُ",
+          "rule": null
+        },
+        {
+          "word": "عَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ذَنۢبِهِۦٓ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "إِنسٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "جَآنٌّۭ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 40,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 41,
+      "arabic": "يُعْرَفُ ٱلْمُجْرِمُونَ بِسِيمَٰهُمْ فَيُؤْخَذُ بِٱلنَّوَٰصِى وَٱلْأَقْدَامِ",
+      "translation": "Orang-orang yang berdosa dikenal dengan tanda-tandannya, lalu dipegang ubun-ubun dan kaki mereka.",
+      "wordsTajweed": [
+        {
+          "word": "يُعْرَفُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمُجْرِمُونَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "بِسِيمَٰهُمْ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "فَيُؤْخَذُ",
+          "rule": null
+        },
+        {
+          "word": "بِٱلنَّوَٰصِى",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَٱلْأَقْدَامِ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 42,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 43,
+      "arabic": "هَٰذِهِۦ جَهَنَّمُ ٱلَّتِى يُكَذِّبُ بِهَا ٱلْمُجْرِمُونَ",
+      "translation": "Inilah neraka Jahannam yang didustakan oleh orang-orang berdosa.",
+      "wordsTajweed": [
+        {
+          "word": "هَٰذِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "جَهَنَّمُ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلَّتِى",
+          "rule": null
+        },
+        {
+          "word": "يُكَذِّبُ",
+          "rule": null
+        },
+        {
+          "word": "بِهَا",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمُجْرِمُونَ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 44,
+      "arabic": "يَطُوفُونَ بَيْنَهَا وَبَيْنَ حَمِيمٍ ءَانٍۢ",
+      "translation": "Mereka berkeliling di antaranya dan di antara air mendidih yang memuncak panasnya.",
+      "wordsTajweed": [
+        {
+          "word": "يَطُوفُونَ",
+          "rule": null
+        },
+        {
+          "word": "بَيْنَهَا",
+          "rule": null
+        },
+        {
+          "word": "وَبَيْنَ",
+          "rule": null
+        },
+        {
+          "word": "حَمِيمٍ",
+          "rule": null
+        },
+        {
+          "word": "ءَانٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 45,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 46,
+      "arabic": "وَلِمَنْ خَافَ مَقَامَ رَبِّهِۦ جَنَّتَانِ",
+      "translation": "Dan bagi orang yang takut akan saat menghadap Tuhannya ada dua surga.",
+      "wordsTajweed": [
+        {
+          "word": "وَلِمَنْ",
+          "rule": null
+        },
+        {
+          "word": "خَافَ",
+          "rule": null
+        },
+        {
+          "word": "مَقَامَ",
+          "rule": null
+        },
+        {
+          "word": "رَبِّهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "جَنَّتَانِ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 47,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?,",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 48,
+      "arabic": "ذَوَاتَآ أَفْنَانٍۢ",
+      "translation": "kedua surga itu mempunyai pohon-pohonan dan buah-buahan.",
+      "wordsTajweed": [
+        {
+          "word": "ذَوَاتَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَفْنَانٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 49,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 50,
+      "arabic": "فِيهِمَا عَيْنَانِ تَجْرِيَانِ",
+      "translation": "Di dalam kedua surga itu ada dua buah mata air yang mengalir",
+      "wordsTajweed": [
+        {
+          "word": "فِيهِمَا",
+          "rule": null
+        },
+        {
+          "word": "عَيْنَانِ",
+          "rule": null
+        },
+        {
+          "word": "تَجْرِيَانِ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 51,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 52,
+      "arabic": "فِيهِمَا مِن كُلِّ فَٰكِهَةٍۢ زَوْجَانِ",
+      "translation": "Di dalam kedua surga itu terdapat segala macam buah-buahan yang berpasangan.",
+      "wordsTajweed": [
+        {
+          "word": "فِيهِمَا",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كُلِّ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَٰكِهَةٍۢ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "زَوْجَانِ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 53,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 54,
+      "arabic": "مُتَّكِـِٔينَ عَلَىٰ فُرُشٍۭ بَطَآئِنُهَا مِنْ إِسْتَبْرَقٍۢ ۚ وَجَنَى ٱلْجَنَّتَيْنِ دَانٍۢ",
+      "translation": "Mereka bertelekan di atas permadani yang sebelah dalamnya dari sutera. Dan buah-buahan di kedua surga itu dapat (dipetik) dari dekat.",
+      "wordsTajweed": [
+        {
+          "word": "مُتَّكِـِٔينَ",
+          "rule": null
+        },
+        {
+          "word": "عَلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "فُرُشٍۭ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بَطَآئِنُهَا",
+          "rule": "iqlab"
+        },
+        {
+          "word": "مِنْ",
+          "rule": null
+        },
+        {
+          "word": "إِسْتَبْرَقٍۢ ۚ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَجَنَى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجَنَّتَيْنِ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "دَانٍۢ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 55,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 56,
+      "arabic": "فِيهِنَّ قَٰصِرَٰتُ ٱلطَّرْفِ لَمْ يَطْمِثْهُنَّ إِنسٌۭ قَبْلَهُمْ وَلَا جَآنٌّۭ",
+      "translation": "Di dalam surga itu ada bidadari-bidadari yang sopan menundukkan pandangannya, tidak pernah disentuh oleh manusia sebelum mereka (penghuni-penghuni surga yang menjadi suami mereka), dan tidak pula oleh jin.",
+      "wordsTajweed": [
+        {
+          "word": "فِيهِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "قَٰصِرَٰتُ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلطَّرْفِ",
+          "rule": null
+        },
+        {
+          "word": "لَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَطْمِثْهُنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنسٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "قَبْلَهُمْ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "جَآنٌّۭ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 57,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 58,
+      "arabic": "كَأَنَّهُنَّ ٱلْيَاقُوتُ وَٱلْمَرْجَانُ",
+      "translation": "Seakan-akan bidadari itu permata yakut dan marjan.",
+      "wordsTajweed": [
+        {
+          "word": "كَأَنَّهُنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْيَاقُوتُ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلْمَرْجَانُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 59,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 60,
+      "arabic": "هَلْ جَزَآءُ ٱلْإِحْسَٰنِ إِلَّا ٱلْإِحْسَٰنُ",
+      "translation": "Tidak ada balasan kebaikan kecuali kebaikan (pula).",
+      "wordsTajweed": [
+        {
+          "word": "هَلْ",
+          "rule": null
+        },
+        {
+          "word": "جَزَآءُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "ٱلْإِحْسَٰنِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "إِلَّا",
+          "rule": null
+        },
+        {
+          "word": "ٱلْإِحْسَٰنُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 61,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 62,
+      "arabic": "وَمِن دُونِهِمَا جَنَّتَانِ",
+      "translation": "Dan selain dari dua surga itu ada dua surga lagi",
+      "wordsTajweed": [
+        {
+          "word": "وَمِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "دُونِهِمَا",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "جَنَّتَانِ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 63,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 64,
+      "arabic": "مُدْهَآمَّتَانِ",
+      "translation": "Kedua surga itu (kelihatan) hijau tua warnanya.",
+      "wordsTajweed": [
+        {
+          "word": "مُدْهَآمَّتَانِ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 65,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 66,
+      "arabic": "فِيهِمَا عَيْنَانِ نَضَّاخَتَانِ",
+      "translation": "Di dalam kedua surga itu ada dua buah mata air yang memancar.",
+      "wordsTajweed": [
+        {
+          "word": "فِيهِمَا",
+          "rule": null
+        },
+        {
+          "word": "عَيْنَانِ",
+          "rule": null
+        },
+        {
+          "word": "نَضَّاخَتَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 67,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 68,
+      "arabic": "فِيهِمَا فَٰكِهَةٌۭ وَنَخْلٌۭ وَرُمَّانٌۭ",
+      "translation": "Di dalam keduanya (ada macam-macam) buah-buahan dan kurma serta delima.",
+      "wordsTajweed": [
+        {
+          "word": "فِيهِمَا",
+          "rule": null
+        },
+        {
+          "word": "فَٰكِهَةٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَنَخْلٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَرُمَّانٌۭ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 69,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 70,
+      "arabic": "فِيهِنَّ خَيْرَٰتٌ حِسَانٌۭ",
+      "translation": "Di dalam surga itu ada bidadari-bidadari yang baik-baik lagi cantik-cantik.",
+      "wordsTajweed": [
+        {
+          "word": "فِيهِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "خَيْرَٰتٌ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "حِسَانٌۭ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 71,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 72,
+      "arabic": "حُورٌۭ مَّقْصُورَٰتٌۭ فِى ٱلْخِيَامِ",
+      "translation": "(Bidadari-bidadari) yang jelita, putih bersih, dipingit dalam rumah.",
+      "wordsTajweed": [
+        {
+          "word": "حُورٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَّقْصُورَٰتٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْخِيَامِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 73,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 74,
+      "arabic": "لَمْ يَطْمِثْهُنَّ إِنسٌۭ قَبْلَهُمْ وَلَا جَآنٌّۭ",
+      "translation": "Mereka tidak pernah disentuh oleh manusia sebelum mereka (penghuni-penghuni surga yang menjadi suami mereka), dan tidak pula oleh jin.",
+      "wordsTajweed": [
+        {
+          "word": "لَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَطْمِثْهُنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنسٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "قَبْلَهُمْ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "جَآنٌّۭ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 75,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 76,
+      "arabic": "مُتَّكِـِٔينَ عَلَىٰ رَفْرَفٍ خُضْرٍۢ وَعَبْقَرِىٍّ حِسَانٍۢ",
+      "translation": "Mereka bertelekan pada bantal-bantal yang hijau dan permadani-permadani yang indah.",
+      "wordsTajweed": [
+        {
+          "word": "مُتَّكِـِٔينَ",
+          "rule": null
+        },
+        {
+          "word": "عَلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "رَفْرَفٍ",
+          "rule": null
+        },
+        {
+          "word": "خُضْرٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَعَبْقَرِىٍّ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "حِسَانٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 77,
+      "arabic": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+      "translation": "Maka nikmat Tuhan kamu yang manakah yang kamu dustakan?",
+      "wordsTajweed": [
+        {
+          "word": "فَبِأَىِّ",
+          "rule": null
+        },
+        {
+          "word": "ءَالَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "رَبِّكُمَا",
+          "rule": null
+        },
+        {
+          "word": "تُكَذِّبَانِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 78,
+      "arabic": "تَبَٰرَكَ ٱسْمُ رَبِّكَ ذِى ٱلْجَلَٰلِ وَٱلْإِكْرَامِ",
+      "translation": "Maha Agung nama Tuhanmu Yang Mempunyai Kebesaran dan Karunia.",
+      "wordsTajweed": [
+        {
+          "word": "تَبَٰرَكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱسْمُ",
+          "rule": null
+        },
+        {
+          "word": "رَبِّكَ",
+          "rule": null
+        },
+        {
+          "word": "ذِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجَلَٰلِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَٱلْإِكْرَامِ",
+          "rule": "madd_246"
+        }
+      ]
+    }
+  ]
 }

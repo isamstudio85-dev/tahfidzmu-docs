@@ -1,274 +1,3836 @@
-﻿{
-    "number":  42,
-    "name":  "سُورَةُ الشُّورَىٰ",
-    "englishName":  "Ash-Shura",
-    "numberOfAyahs":  53,
-    "revelationType":  "Meccan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ حمٓ",
-                      "translation":  "Haa Miim."
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "عٓسٓقٓ",
-                      "translation":  "\u0027Ain Siin Qaaf."
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "كَذَٰلِكَ يُوحِىٓ إِلَيْكَ وَإِلَى ٱلَّذِينَ مِن قَبْلِكَ ٱللَّهُ ٱلْعَزِيزُ ٱلْحَكِيمُ",
-                      "translation":  "Demikianlah Allah Yang Maha Perkasa lagi Maha Bijaksana, mewahyukan kepada kamu dan kepada orang-orang sebelum kamu."
-                  },
-                  {
-                      "numberInSurah":  4,
-                      "arabic":  "لَهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۖ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
-                      "translation":  "Kepunyaan-Nya-lah apa yang ada di langit dan apa yang ada di bumi. Dan Dialah yang Maha Tinggi lagi Maha Besar."
-                  },
-                  {
-                      "numberInSurah":  5,
-                      "arabic":  "تَكَادُ ٱلسَّمَٰوَٰتُ يَتَفَطَّرْنَ مِن فَوْقِهِنَّ ۚ وَٱلْمَلَٰٓئِكَةُ يُسَبِّحُونَ بِحَمْدِ رَبِّهِمْ وَيَسْتَغْفِرُونَ لِمَن فِى ٱلْأَرْضِ ۗ أَلَآ إِنَّ ٱللَّهَ هُوَ ٱلْغَفُورُ ٱلرَّحِيمُ",
-                      "translation":  "Hampir saja langit itu pecah dari sebelah atas (karena kebesaran Tuhan) dan malaikat-malaikat bertasbih serta memuji Tuhan-nya dan memohonkan ampun bagi orang-orang yang ada di bumi. Ingatlah, bahwa sesungguhnya Allah Dialah Yang Maha Pengampun lagi Penyayang."
-                  },
-                  {
-                      "numberInSurah":  6,
-                      "arabic":  "وَٱلَّذِينَ ٱتَّخَذُوا۟ مِن دُونِهِۦٓ أَوْلِيَآءَ ٱللَّهُ حَفِيظٌ عَلَيْهِمْ وَمَآ أَنتَ عَلَيْهِم بِوَكِيلٍۢ",
-                      "translation":  "Dan orang-orang yang mengambil pelindung-pelindung selain Allah, Allah mengawasi (perbuatan) mereka; dan kamu (ya Muhammad) bukanlah orang yang diserahi mengawasi mereka."
-                  },
-                  {
-                      "numberInSurah":  7,
-                      "arabic":  "وَكَذَٰلِكَ أَوْحَيْنَآ إِلَيْكَ قُرْءَانًا عَرَبِيًّۭا لِّتُنذِرَ أُمَّ ٱلْقُرَىٰ وَمَنْ حَوْلَهَا وَتُنذِرَ يَوْمَ ٱلْجَمْعِ لَا رَيْبَ فِيهِ ۚ فَرِيقٌۭ فِى ٱلْجَنَّةِ وَفَرِيقٌۭ فِى ٱلسَّعِيرِ",
-                      "translation":  "Demikianlah Kami wahyukan kepadamu Al Quran dalam bahasa Arab, supaya kamu memberi peringatan kepada ummul Qura (penduduk Mekah) dan penduduk (negeri-negeri) sekelilingnya serta memberi peringatan (pula) tentang hari berkumpul (kiamat) yang tidak ada keraguan padanya. Segolongan masuk surga, dan segolongan masuk Jahannam."
-                  },
-                  {
-                      "numberInSurah":  8,
-                      "arabic":  "وَلَوْ شَآءَ ٱللَّهُ لَجَعَلَهُمْ أُمَّةًۭ وَٰحِدَةًۭ وَلَٰكِن يُدْخِلُ مَن يَشَآءُ فِى رَحْمَتِهِۦ ۚ وَٱلظَّٰلِمُونَ مَا لَهُم مِّن وَلِىٍّۢ وَلَا نَصِيرٍ",
-                      "translation":  "Dan kalau Allah menghendaki niscaya Allah menjadikan mereka satu umat (saja), tetapi Dia memasukkan orang-orang yang dikehendaki-Nya ke dalam rahmat-Nya. Dan orang-orang yang zalim tidak ada bagi mereka seorang pelindungpun dan tidak pula seorang penolong."
-                  },
-                  {
-                      "numberInSurah":  9,
-                      "arabic":  "أَمِ ٱتَّخَذُوا۟ مِن دُونِهِۦٓ أَوْلِيَآءَ ۖ فَٱللَّهُ هُوَ ٱلْوَلِىُّ وَهُوَ يُحْىِ ٱلْمَوْتَىٰ وَهُوَ عَلَىٰ كُلِّ شَىْءٍۢ قَدِيرٌۭ",
-                      "translation":  "Atau patutkah mereka mengambil pelindung-pelindung selain Allah? Maka Allah, Dialah pelindung (yang sebenarnya) dan Dia menghidupkan orang-orang yang mati, dan Dia adalah Maha Kuasa atas segala sesuatu."
-                  },
-                  {
-                      "numberInSurah":  10,
-                      "arabic":  "وَمَا ٱخْتَلَفْتُمْ فِيهِ مِن شَىْءٍۢ فَحُكْمُهُۥٓ إِلَى ٱللَّهِ ۚ ذَٰلِكُمُ ٱللَّهُ رَبِّى عَلَيْهِ تَوَكَّلْتُ وَإِلَيْهِ أُنِيبُ",
-                      "translation":  "Tentang sesuatu apapun kamu berselisih, maka putusannya (terserah) kepada Allah. (Yang mempunyai sifat-sifat demikian) itulah Allah Tuhanku. Kepada-Nya lah aku bertawakkal dan kepada-Nya-lah aku kembali."
-                  },
-                  {
-                      "numberInSurah":  11,
-                      "arabic":  "فَاطِرُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ ۚ جَعَلَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَٰجًۭا وَمِنَ ٱلْأَنْعَٰمِ أَزْوَٰجًۭا ۖ يَذْرَؤُكُمْ فِيهِ ۚ لَيْسَ كَمِثْلِهِۦ شَىْءٌۭ ۖ وَهُوَ ٱلسَّمِيعُ ٱلْبَصِيرُ",
-                      "translation":  "(Dia) Pencipta langit dan bumi. Dia menjadikan bagi kamu dari jenis kamu sendiri pasangan-pasangan dan dari jenis binatang ternak pasangan-pasangan (pula), dijadikan-Nya kamu berkembang biak dengan jalan itu. Tidak ada sesuatupun yang serupa dengan Dia, dan Dialah yang Maha Mendengar dan Melihat."
-                  },
-                  {
-                      "numberInSurah":  12,
-                      "arabic":  "لَهُۥ مَقَالِيدُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ ۖ يَبْسُطُ ٱلرِّزْقَ لِمَن يَشَآءُ وَيَقْدِرُ ۚ إِنَّهُۥ بِكُلِّ شَىْءٍ عَلِيمٌۭ",
-                      "translation":  "Kepunyaan-Nya-lah perbendaharaan langit dan bumi; Dia melapangkan rezeki bagi siapa yang dikehendaki-Nya dan menyempitkan(nya). Sesungguhnya Dia Maha Mengetahui segala sesuatu."
-                  },
-                  {
-                      "numberInSurah":  13,
-                      "arabic":  "۞ شَرَعَ لَكُم مِّنَ ٱلدِّينِ مَا وَصَّىٰ بِهِۦ نُوحًۭا وَٱلَّذِىٓ أَوْحَيْنَآ إِلَيْكَ وَمَا وَصَّيْنَا بِهِۦٓ إِبْرَٰهِيمَ وَمُوسَىٰ وَعِيسَىٰٓ ۖ أَنْ أَقِيمُوا۟ ٱلدِّينَ وَلَا تَتَفَرَّقُوا۟ فِيهِ ۚ كَبُرَ عَلَى ٱلْمُشْرِكِينَ مَا تَدْعُوهُمْ إِلَيْهِ ۚ ٱللَّهُ يَجْتَبِىٓ إِلَيْهِ مَن يَشَآءُ وَيَهْدِىٓ إِلَيْهِ مَن يُنِيبُ",
-                      "translation":  "Dia telah mensyari\u0027atkan bagi kamu tentang agama apa yang telah diwasiatkan-Nya kepada Nuh dan apa yang telah Kami wahyukan kepadamu dan apa yang telah Kami wasiatkan kepada Ibrahim, Musa dan Isa yaitu: Tegakkanlah agama dan janganlah kamu berpecah belah tentangnya. Amat berat bagi orang-orang musyrik agama yang kamu seru mereka kepadanya. Allah menarik kepada agama itu orang yang dikehendaki-Nya dan memberi petunjuk kepada (agama)-Nya orang yang kembali (kepada-Nya)."
-                  },
-                  {
-                      "numberInSurah":  14,
-                      "arabic":  "وَمَا تَفَرَّقُوٓا۟ إِلَّا مِنۢ بَعْدِ مَا جَآءَهُمُ ٱلْعِلْمُ بَغْيًۢا بَيْنَهُمْ ۚ وَلَوْلَا كَلِمَةٌۭ سَبَقَتْ مِن رَّبِّكَ إِلَىٰٓ أَجَلٍۢ مُّسَمًّۭى لَّقُضِىَ بَيْنَهُمْ ۚ وَإِنَّ ٱلَّذِينَ أُورِثُوا۟ ٱلْكِتَٰبَ مِنۢ بَعْدِهِمْ لَفِى شَكٍّۢ مِّنْهُ مُرِيبٍۢ",
-                      "translation":  "Dan mereka (ahli kitab) tidak berpecah belah, kecuali setelah datang pada mereka ilmu pengetahuan, karena kedengkian di antara mereka. Kalau tidaklah karena sesuatu ketetapan yang telah ada dari Tuhanmu dahulunya (untuk menangguhkan azab) sampai kepada waktu yang ditentukan, pastilah mereka telah dibinasakan. Dan sesungguhnya orang-orang yang diwariskan kepada mereka Al-Kitab (Taurat dan Injil) sesudah mereka, benar-benar berada dalam keraguan yang menggoncangkan tentang kitab itu."
-                  },
-                  {
-                      "numberInSurah":  15,
-                      "arabic":  "فَلِذَٰلِكَ فَٱدْعُ ۖ وَٱسْتَقِمْ كَمَآ أُمِرْتَ ۖ وَلَا تَتَّبِعْ أَهْوَآءَهُمْ ۖ وَقُلْ ءَامَنتُ بِمَآ أَنزَلَ ٱللَّهُ مِن كِتَٰبٍۢ ۖ وَأُمِرْتُ لِأَعْدِلَ بَيْنَكُمُ ۖ ٱللَّهُ رَبُّنَا وَرَبُّكُمْ ۖ لَنَآ أَعْمَٰلُنَا وَلَكُمْ أَعْمَٰلُكُمْ ۖ لَا حُجَّةَ بَيْنَنَا وَبَيْنَكُمُ ۖ ٱللَّهُ يَجْمَعُ بَيْنَنَا ۖ وَإِلَيْهِ ٱلْمَصِيرُ",
-                      "translation":  "Maka karena itu serulah (mereka kepada agama ini) dan tetaplah sebagai mana diperintahkan kepadamu dan janganlah mengikuti hawa nafsu mereka dan katakanlah: \"Aku beriman kepada semua Kitab yang diturunkan Allah dan aku diperintahkan supaya berlaku adil diantara kamu. Allah-lah Tuhan kami dan Tuhan kamu. Bagi kami amal-amal kami dan bagi kamu amal-amal kamu. Tidak ada pertengkaran antara kami dan kamu, Allah mengumpulkan antara kita dan kepada-Nya-lah kembali (kita)\"."
-                  },
-                  {
-                      "numberInSurah":  16,
-                      "arabic":  "وَٱلَّذِينَ يُحَآجُّونَ فِى ٱللَّهِ مِنۢ بَعْدِ مَا ٱسْتُجِيبَ لَهُۥ حُجَّتُهُمْ دَاحِضَةٌ عِندَ رَبِّهِمْ وَعَلَيْهِمْ غَضَبٌۭ وَلَهُمْ عَذَابٌۭ شَدِيدٌ",
-                      "translation":  "Dan orang-orang yang membantah (agama) Allah sesudah agama itu diterima maka bantahan mereka itu sia-sia saja, di sisi Tuhan mereka. Mereka mendapat kemurkaan (Allah) dan bagi mereka azab yang sangat keras."
-                  },
-                  {
-                      "numberInSurah":  17,
-                      "arabic":  "ٱللَّهُ ٱلَّذِىٓ أَنزَلَ ٱلْكِتَٰبَ بِٱلْحَقِّ وَٱلْمِيزَانَ ۗ وَمَا يُدْرِيكَ لَعَلَّ ٱلسَّاعَةَ قَرِيبٌۭ",
-                      "translation":  "Allah-lah yang menurunkan kitab dengan (membawa) kebenaran dan (menurunkan) neraca (keadilan). Dan tahukah kamu, boleh jadi hari kiamat itu (sudah) dekat?"
-                  },
-                  {
-                      "numberInSurah":  18,
-                      "arabic":  "يَسْتَعْجِلُ بِهَا ٱلَّذِينَ لَا يُؤْمِنُونَ بِهَا ۖ وَٱلَّذِينَ ءَامَنُوا۟ مُشْفِقُونَ مِنْهَا وَيَعْلَمُونَ أَنَّهَا ٱلْحَقُّ ۗ أَلَآ إِنَّ ٱلَّذِينَ يُمَارُونَ فِى ٱلسَّاعَةِ لَفِى ضَلَٰلٍۭ بَعِيدٍ",
-                      "translation":  "Orang-orang yang tidak beriman kepada hari kiamat meminta supaya hari itu segera didatangkan dan orang-orang yang beriman merasa takut kepadanya dan mereka yakin bahwa kiamat itu adalah benar (akan terjadi). Ketahuilah bahwa sesungguhnya orang-orang yang membantah tentang terjadinya kiamat itu benar-benar dalam kesesatan yang jauh."
-                  },
-                  {
-                      "numberInSurah":  19,
-                      "arabic":  "ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ",
-                      "translation":  "Allah Maha lembut terhadap hamba-hamba-Nya; Dia memberi rezeki kepada yang di kehendaki-Nya dan Dialah Yang Maha Kuat lagi Maha Perkasa."
-                  },
-                  {
-                      "numberInSurah":  20,
-                      "arabic":  "مَن كَانَ يُرِيدُ حَرْثَ ٱلْءَاخِرَةِ نَزِدْ لَهُۥ فِى حَرْثِهِۦ ۖ وَمَن كَانَ يُرِيدُ حَرْثَ ٱلدُّنْيَا نُؤْتِهِۦ مِنْهَا وَمَا لَهُۥ فِى ٱلْءَاخِرَةِ مِن نَّصِيبٍ",
-                      "translation":  "Barang siapa yang menghendaki keuntungan di akhirat akan Kami tambah keuntungan itu baginya dan barang siapa yang menghendaki keuntungan di dunia Kami berikan kepadanya sebagian dari keuntungan dunia dan tidak ada baginya suatu bahagianpun di akhirat."
-                  },
-                  {
-                      "numberInSurah":  21,
-                      "arabic":  "أَمْ لَهُمْ شُرَكَٰٓؤُا۟ شَرَعُوا۟ لَهُم مِّنَ ٱلدِّينِ مَا لَمْ يَأْذَنۢ بِهِ ٱللَّهُ ۚ وَلَوْلَا كَلِمَةُ ٱلْفَصْلِ لَقُضِىَ بَيْنَهُمْ ۗ وَإِنَّ ٱلظَّٰلِمِينَ لَهُمْ عَذَابٌ أَلِيمٌۭ",
-                      "translation":  "Apakah mereka mempunyai sembahan-sembahan selain Allah yang mensyariatkan untuk mereka agama yang tidak diizinkan Allah? Sekiranya tak ada ketetapan yang menentukan (dari Allah) tentulah mereka telah dibinasakan. Dan sesungguhnya orang-orang yang zalim itu akan memperoleh azab yang amat pedih."
-                  },
-                  {
-                      "numberInSurah":  22,
-                      "arabic":  "تَرَى ٱلظَّٰلِمِينَ مُشْفِقِينَ مِمَّا كَسَبُوا۟ وَهُوَ وَاقِعٌۢ بِهِمْ ۗ وَٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ فِى رَوْضَاتِ ٱلْجَنَّاتِ ۖ لَهُم مَّا يَشَآءُونَ عِندَ رَبِّهِمْ ۚ ذَٰلِكَ هُوَ ٱلْفَضْلُ ٱلْكَبِيرُ",
-                      "translation":  "Kamu lihat orang-orang yang zalim sangat ketakutan karena kejahatan-kejahatan yang telah mereka kerjakan, sedang siksaan menimpa mereka. Dan orang-orang yang beriman serta mengerjakan amal saleh (berada) di dalam taman-taman surga, mereka memperoleh apa yang mereka kehendaki di sisi Tuhan mereka. Yang demikian itu adalah karunia yang besar."
-                  },
-                  {
-                      "numberInSurah":  23,
-                      "arabic":  "ذَٰلِكَ ٱلَّذِى يُبَشِّرُ ٱللَّهُ عِبَادَهُ ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ ۗ قُل لَّآ أَسْـَٔلُكُمْ عَلَيْهِ أَجْرًا إِلَّا ٱلْمَوَدَّةَ فِى ٱلْقُرْبَىٰ ۗ وَمَن يَقْتَرِفْ حَسَنَةًۭ نَّزِدْ لَهُۥ فِيهَا حُسْنًا ۚ إِنَّ ٱللَّهَ غَفُورٌۭ شَكُورٌ",
-                      "translation":  "Itulah (karunia) yang (dengan itu) Allah menggembirakan hamba-hamba-Nya yang beriman dan mengerjakan amal yang saleh. Katakanlah: \"Aku tidak meminta kepadamu sesuatu upahpun atas seruanku kecuali kasih sayang dalam kekeluargaan\". Dan siapa yang mengerjakan kebaikan akan Kami tambahkan baginya kebaikan pada kebaikannya itu. Sesungguhnya Allah Maha Pengampun lagi Maha Mensyukuri."
-                  },
-                  {
-                      "numberInSurah":  24,
-                      "arabic":  "أَمْ يَقُولُونَ ٱفْتَرَىٰ عَلَى ٱللَّهِ كَذِبًۭا ۖ فَإِن يَشَإِ ٱللَّهُ يَخْتِمْ عَلَىٰ قَلْبِكَ ۗ وَيَمْحُ ٱللَّهُ ٱلْبَٰطِلَ وَيُحِقُّ ٱلْحَقَّ بِكَلِمَٰتِهِۦٓ ۚ إِنَّهُۥ عَلِيمٌۢ بِذَاتِ ٱلصُّدُورِ",
-                      "translation":  "Bahkan mereka mengatakan: \"Dia (Muhammad) telah mengada-adakan dusta terhadap Allah\". Maka jika Allah menghendaki niscaya Dia mengunci mati hatimu; dan Allah menghapuskan yang batil dan membenarkan yang hak dengan kalimat-kalimat-Nya (Al Quran). Sesungguhnya Dia Maha Mengetahui segala isi hati."
-                  },
-                  {
-                      "numberInSurah":  25,
-                      "arabic":  "وَهُوَ ٱلَّذِى يَقْبَلُ ٱلتَّوْبَةَ عَنْ عِبَادِهِۦ وَيَعْفُوا۟ عَنِ ٱلسَّيِّـَٔاتِ وَيَعْلَمُ مَا تَفْعَلُونَ",
-                      "translation":  "Dan Dialah yang menerima taubat dari hamba-hamba-Nya dan memaafkan kesalahan-kesalahan dan mengetahui apa yang kamu kerjakan,"
-                  },
-                  {
-                      "numberInSurah":  26,
-                      "arabic":  "وَيَسْتَجِيبُ ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ وَيَزِيدُهُم مِّن فَضْلِهِۦ ۚ وَٱلْكَٰفِرُونَ لَهُمْ عَذَابٌۭ شَدِيدٌۭ",
-                      "translation":  "dan Dia memperkenankan (doa) orang-orang yang beriman serta mengerjakan amal yang saleh dan menambah (pahala) kepada mereka dari karunia-Nya. Dan orang-orang yang kafir bagi mereka azab yang sangat keras."
-                  },
-                  {
-                      "numberInSurah":  27,
-                      "arabic":  "۞ وَلَوْ بَسَطَ ٱللَّهُ ٱلرِّزْقَ لِعِبَادِهِۦ لَبَغَوْا۟ فِى ٱلْأَرْضِ وَلَٰكِن يُنَزِّلُ بِقَدَرٍۢ مَّا يَشَآءُ ۚ إِنَّهُۥ بِعِبَادِهِۦ خَبِيرٌۢ بَصِيرٌۭ",
-                      "translation":  "Dan jikalau Allah melapangkan rezeki kepada hamba-hamba-Nya tentulah mereka akan melampaui batas di muka bumi, tetapi Allah menurunkan apa yang dikehendaki-Nya dengan ukuran. Sesungguhnya Dia Maha Mengetahui (keadaan) hamba-hamba-Nya lagi Maha Melihat."
-                  },
-                  {
-                      "numberInSurah":  28,
-                      "arabic":  "وَهُوَ ٱلَّذِى يُنَزِّلُ ٱلْغَيْثَ مِنۢ بَعْدِ مَا قَنَطُوا۟ وَيَنشُرُ رَحْمَتَهُۥ ۚ وَهُوَ ٱلْوَلِىُّ ٱلْحَمِيدُ",
-                      "translation":  "Dan Dialah Yang menurunkan hujan sesudah mereka berputus asa dan menyebarkan rahmat-Nya. Dan Dialah Yang Maha Pelindung lagi Maha Terpuji."
-                  },
-                  {
-                      "numberInSurah":  29,
-                      "arabic":  "وَمِنْ ءَايَٰتِهِۦ خَلْقُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ وَمَا بَثَّ فِيهِمَا مِن دَآبَّةٍۢ ۚ وَهُوَ عَلَىٰ جَمْعِهِمْ إِذَا يَشَآءُ قَدِيرٌۭ",
-                      "translation":  "Di antara (ayat-ayat) tanda-tanda-Nya ialah menciptakan langit dan bumi dan makhluk-makhluk yang melata Yang Dia sebarkan pada keduanya. Dan Dia Maha Kuasa mengumpulkan semuanya apabila dikehendaki-Nya."
-                  },
-                  {
-                      "numberInSurah":  30,
-                      "arabic":  "وَمَآ أَصَٰبَكُم مِّن مُّصِيبَةٍۢ فَبِمَا كَسَبَتْ أَيْدِيكُمْ وَيَعْفُوا۟ عَن كَثِيرٍۢ",
-                      "translation":  "Dan apa saja musibah yang menimpa kamu maka adalah disebabkan oleh perbuatan tanganmu sendiri, dan Allah memaafkan sebagian besar (dari kesalahan-kesalahanmu)."
-                  },
-                  {
-                      "numberInSurah":  31,
-                      "arabic":  "وَمَآ أَنتُم بِمُعْجِزِينَ فِى ٱلْأَرْضِ ۖ وَمَا لَكُم مِّن دُونِ ٱللَّهِ مِن وَلِىٍّۢ وَلَا نَصِيرٍۢ",
-                      "translation":  "Dan kamu tidak dapat melepaskan diri (dari azab Allah) di muka bumi, dan kamu tidak memperoleh seorang pelindung dan tidak pula penolong selain Allah."
-                  },
-                  {
-                      "numberInSurah":  32,
-                      "arabic":  "وَمِنْ ءَايَٰتِهِ ٱلْجَوَارِ فِى ٱلْبَحْرِ كَٱلْأَعْلَٰمِ",
-                      "translation":  "Dan di antara tanda-tanda kekuasaan-Nya ialah kapal-kapal di tengah (yang berlayar) di laut seperti gunung-gunung."
-                  },
-                  {
-                      "numberInSurah":  33,
-                      "arabic":  "إِن يَشَأْ يُسْكِنِ ٱلرِّيحَ فَيَظْلَلْنَ رَوَاكِدَ عَلَىٰ ظَهْرِهِۦٓ ۚ إِنَّ فِى ذَٰلِكَ لَءَايَٰتٍۢ لِّكُلِّ صَبَّارٍۢ شَكُورٍ",
-                      "translation":  "Jika Dia menghendaki, Dia akan menenangkan angin, maka jadilah kapal-kapal itu terhenti di permukaan laut. Sesungguhnya pada yang demikian itu terdapat tanda-tanda (kekuasaannya) bagi setiap orang yang banyak bersabar dan banyak bersyukur,"
-                  },
-                  {
-                      "numberInSurah":  34,
-                      "arabic":  "أَوْ يُوبِقْهُنَّ بِمَا كَسَبُوا۟ وَيَعْفُ عَن كَثِيرٍۢ",
-                      "translation":  "atau kapal-kapal itu dibinasakan-Nya karena perbuatan mereka atau Dia memberi maaf sebagian besar (dari mereka)."
-                  },
-                  {
-                      "numberInSurah":  35,
-                      "arabic":  "وَيَعْلَمَ ٱلَّذِينَ يُجَٰدِلُونَ فِىٓ ءَايَٰتِنَا مَا لَهُم مِّن مَّحِيصٍۢ",
-                      "translation":  "Dan supaya orang-orang yang membantah ayat-ayat (kekuasaan) Kami mengetahui bahwa mereka sekali-kali tidak akan memperoleh jalan ke luar (dari siksaan)."
-                  },
-                  {
-                      "numberInSurah":  36,
-                      "arabic":  "فَمَآ أُوتِيتُم مِّن شَىْءٍۢ فَمَتَٰعُ ٱلْحَيَوٰةِ ٱلدُّنْيَا ۖ وَمَا عِندَ ٱللَّهِ خَيْرٌۭ وَأَبْقَىٰ لِلَّذِينَ ءَامَنُوا۟ وَعَلَىٰ رَبِّهِمْ يَتَوَكَّلُونَ",
-                      "translation":  "Maka sesuatu yang diberikan kepadamu, itu adalah kenikmatan hidup di dunia; dan yang ada pada sisi Allah lebih baik dan lebih kekal bagi orang-orang yang beriman, dan hanya kepada Tuhan mereka, mereka bertawakkal."
-                  },
-                  {
-                      "numberInSurah":  37,
-                      "arabic":  "وَٱلَّذِينَ يَجْتَنِبُونَ كَبَٰٓئِرَ ٱلْإِثْمِ وَٱلْفَوَٰحِشَ وَإِذَا مَا غَضِبُوا۟ هُمْ يَغْفِرُونَ",
-                      "translation":  "Dan (bagi) orang-orang yang menjauhi dosa-dosa besar dan perbuatan-perbuatan keji, dan apabila mereka marah mereka memberi maaf."
-                  },
-                  {
-                      "numberInSurah":  38,
-                      "arabic":  "وَٱلَّذِينَ ٱسْتَجَابُوا۟ لِرَبِّهِمْ وَأَقَامُوا۟ ٱلصَّلَوٰةَ وَأَمْرُهُمْ شُورَىٰ بَيْنَهُمْ وَمِمَّا رَزَقْنَٰهُمْ يُنفِقُونَ",
-                      "translation":  "Dan (bagi) orang-orang yang menerima (mematuhi) seruan Tuhannya dan mendirikan shalat, sedang urusan mereka (diputuskan) dengan musyawarat antara mereka; dan mereka menafkahkan sebagian dari rezeki yang Kami berikan kepada mereka."
-                  },
-                  {
-                      "numberInSurah":  39,
-                      "arabic":  "وَٱلَّذِينَ إِذَآ أَصَابَهُمُ ٱلْبَغْىُ هُمْ يَنتَصِرُونَ",
-                      "translation":  "Dan ( bagi) orang-orang yang apabila mereka diperlakukan dengan zalim mereka membela diri."
-                  },
-                  {
-                      "numberInSurah":  40,
-                      "arabic":  "وَجَزَٰٓؤُا۟ سَيِّئَةٍۢ سَيِّئَةٌۭ مِّثْلُهَا ۖ فَمَنْ عَفَا وَأَصْلَحَ فَأَجْرُهُۥ عَلَى ٱللَّهِ ۚ إِنَّهُۥ لَا يُحِبُّ ٱلظَّٰلِمِينَ",
-                      "translation":  "Dan balasan suatu kejahatan adalah kejahatan yang serupa, maka barang siapa memaafkan dan berbuat baik maka pahalanya atas (tanggungan) Allah. Sesungguhnya Dia tidak menyukai orang-orang yang zalim."
-                  },
-                  {
-                      "numberInSurah":  41,
-                      "arabic":  "وَلَمَنِ ٱنتَصَرَ بَعْدَ ظُلْمِهِۦ فَأُو۟لَٰٓئِكَ مَا عَلَيْهِم مِّن سَبِيلٍ",
-                      "translation":  "Dan sesungguhnya orang-orang yang membela diri sesudah teraniaya, tidak ada satu dosapun terhadap mereka."
-                  },
-                  {
-                      "numberInSurah":  42,
-                      "arabic":  "إِنَّمَا ٱلسَّبِيلُ عَلَى ٱلَّذِينَ يَظْلِمُونَ ٱلنَّاسَ وَيَبْغُونَ فِى ٱلْأَرْضِ بِغَيْرِ ٱلْحَقِّ ۚ أُو۟لَٰٓئِكَ لَهُمْ عَذَابٌ أَلِيمٌۭ",
-                      "translation":  "Sesungguhnya dosa itu atas orang-orang yang berbuat zalim kepada manusia dan melampaui batas di muka bumi tanpa hak. Mereka itu mendapat azab yang pedih."
-                  },
-                  {
-                      "numberInSurah":  43,
-                      "arabic":  "وَلَمَن صَبَرَ وَغَفَرَ إِنَّ ذَٰلِكَ لَمِنْ عَزْمِ ٱلْأُمُورِ",
-                      "translation":  "Tetapi orang yang bersabar dan memaafkan, sesungguhnya (perbuatan) yang demikian itu termasuk hal-hal yang diutamakan."
-                  },
-                  {
-                      "numberInSurah":  44,
-                      "arabic":  "وَمَن يُضْلِلِ ٱللَّهُ فَمَا لَهُۥ مِن وَلِىٍّۢ مِّنۢ بَعْدِهِۦ ۗ وَتَرَى ٱلظَّٰلِمِينَ لَمَّا رَأَوُا۟ ٱلْعَذَابَ يَقُولُونَ هَلْ إِلَىٰ مَرَدٍّۢ مِّن سَبِيلٍۢ",
-                      "translation":  "Dan siapa yang disesatkan Allah maka tidak ada baginya seorang pemimpinpun sesudah itu. Dan kamu akan melihat orang-orang yang zalim ketika mereka melihat azab berkata: \"Adakah kiranya jalan untuk kembali (ke dunia)?\""
-                  },
-                  {
-                      "numberInSurah":  45,
-                      "arabic":  "وَتَرَىٰهُمْ يُعْرَضُونَ عَلَيْهَا خَٰشِعِينَ مِنَ ٱلذُّلِّ يَنظُرُونَ مِن طَرْفٍ خَفِىٍّۢ ۗ وَقَالَ ٱلَّذِينَ ءَامَنُوٓا۟ إِنَّ ٱلْخَٰسِرِينَ ٱلَّذِينَ خَسِرُوٓا۟ أَنفُسَهُمْ وَأَهْلِيهِمْ يَوْمَ ٱلْقِيَٰمَةِ ۗ أَلَآ إِنَّ ٱلظَّٰلِمِينَ فِى عَذَابٍۢ مُّقِيمٍۢ",
-                      "translation":  "Dan kamu akan melihat mereka dihadapkan ke neraka dalam keadaan tunduk karena (merasa) hina, mereka melihat dengan pandangan yang lesu. Dan orang-orang yang beriman berkata: \"Sesungguhnya orang-orang yang merugi ialah orang-orang yang kehilangan diri mereka sendiri dan (kehilangan) keluarga mereka pada hari kiamat. Ingatlah, sesungguhnya orang-orang yang zalim itu berada dalam azab yang kekal."
-                  },
-                  {
-                      "numberInSurah":  46,
-                      "arabic":  "وَمَا كَانَ لَهُم مِّنْ أَوْلِيَآءَ يَنصُرُونَهُم مِّن دُونِ ٱللَّهِ ۗ وَمَن يُضْلِلِ ٱللَّهُ فَمَا لَهُۥ مِن سَبِيلٍ",
-                      "translation":  "Dan mereka sekali-kali tidak mempunyai pelindung-pelindung yang dapat menolong mereka selain Allah. Dan siapa yang disesatkan Allah maka tidaklah ada baginya satu jalanpun (untuk mendapat petunjuk)."
-                  },
-                  {
-                      "numberInSurah":  47,
-                      "arabic":  "ٱسْتَجِيبُوا۟ لِرَبِّكُم مِّن قَبْلِ أَن يَأْتِىَ يَوْمٌۭ لَّا مَرَدَّ لَهُۥ مِنَ ٱللَّهِ ۚ مَا لَكُم مِّن مَّلْجَإٍۢ يَوْمَئِذٍۢ وَمَا لَكُم مِّن نَّكِيرٍۢ",
-                      "translation":  "Patuhilah seruan Tuhanmu sebelum datang dari Allah suatu hari yang tidak dapat ditolak kedatangannya. Kamu tidak memperoleh tempat berlindung pada hari itu dan tidak (pula) dapat mengingkari (dosa-dosamu)."
-                  },
-                  {
-                      "numberInSurah":  48,
-                      "arabic":  "فَإِنْ أَعْرَضُوا۟ فَمَآ أَرْسَلْنَٰكَ عَلَيْهِمْ حَفِيظًا ۖ إِنْ عَلَيْكَ إِلَّا ٱلْبَلَٰغُ ۗ وَإِنَّآ إِذَآ أَذَقْنَا ٱلْإِنسَٰنَ مِنَّا رَحْمَةًۭ فَرِحَ بِهَا ۖ وَإِن تُصِبْهُمْ سَيِّئَةٌۢ بِمَا قَدَّمَتْ أَيْدِيهِمْ فَإِنَّ ٱلْإِنسَٰنَ كَفُورٌۭ",
-                      "translation":  "Jika mereka berpaling maka Kami tidak mengutus kamu sebagai pengawas bagi mereka. Kewajibanmu tidak lain hanyalah menyampaikan (risalah). Sesungguhnya apabila Kami merasakan kepada manusia sesuatu rahmat dari Kami dia bergembira ria karena rahmat itu. Dan jika mereka ditimpa kesusahan disebabkan perbuatan tangan mereka sendiri (niscaya mereka ingkar) karena sesungguhnya manusia itu amat ingkar (kepada nikmat)."
-                  },
-                  {
-                      "numberInSurah":  49,
-                      "arabic":  "لِّلَّهِ مُلْكُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ ۚ يَخْلُقُ مَا يَشَآءُ ۚ يَهَبُ لِمَن يَشَآءُ إِنَٰثًۭا وَيَهَبُ لِمَن يَشَآءُ ٱلذُّكُورَ",
-                      "translation":  "Kepunyaan Allah-lah kerajaan langit dan bumi, Dia menciptakan apa yang Dia kehendaki. Dia memberikan anak-anak perempuan kepada siapa yang Dia kehendaki dan memberikan anak-anak lelaki kepada siapa yang Dia kehendaki,"
-                  },
-                  {
-                      "numberInSurah":  50,
-                      "arabic":  "أَوْ يُزَوِّجُهُمْ ذُكْرَانًۭا وَإِنَٰثًۭا ۖ وَيَجْعَلُ مَن يَشَآءُ عَقِيمًا ۚ إِنَّهُۥ عَلِيمٌۭ قَدِيرٌۭ",
-                      "translation":  "atau Dia menganugerahkan kedua jenis laki-laki dan perempuan (kepada siapa) yang dikehendaki-Nya, dan Dia menjadikan mandul siapa yang Dia kehendaki. Sesungguhnya Dia Maha Mengetahui lagi Maha Kuasa."
-                  },
-                  {
-                      "numberInSurah":  51,
-                      "arabic":  "۞ وَمَا كَانَ لِبَشَرٍ أَن يُكَلِّمَهُ ٱللَّهُ إِلَّا وَحْيًا أَوْ مِن وَرَآئِ حِجَابٍ أَوْ يُرْسِلَ رَسُولًۭا فَيُوحِىَ بِإِذْنِهِۦ مَا يَشَآءُ ۚ إِنَّهُۥ عَلِىٌّ حَكِيمٌۭ",
-                      "translation":  "Dan tidak mungkin bagi seorang manusiapun bahwa Allah berkata-kata dengan dia kecuali dengan perantaraan wahyu atau dibelakang tabir atau dengan mengutus seorang utusan (malaikat) lalu diwahyukan kepadanya dengan seizin-Nya apa yang Dia kehendaki. Sesungguhnya Dia Maha Tinggi lagi Maha Bijaksana."
-                  },
-                  {
-                      "numberInSurah":  52,
-                      "arabic":  "وَكَذَٰلِكَ أَوْحَيْنَآ إِلَيْكَ رُوحًۭا مِّنْ أَمْرِنَا ۚ مَا كُنتَ تَدْرِى مَا ٱلْكِتَٰبُ وَلَا ٱلْإِيمَٰنُ وَلَٰكِن جَعَلْنَٰهُ نُورًۭا نَّهْدِى بِهِۦ مَن نَّشَآءُ مِنْ عِبَادِنَا ۚ وَإِنَّكَ لَتَهْدِىٓ إِلَىٰ صِرَٰطٍۢ مُّسْتَقِيمٍۢ",
-                      "translation":  "Dan demikianlah Kami wahyukan kepadamu wahyu (Al Quran) dengan perintah Kami. Sebelumnya kamu tidaklah mengetahui apakah Al Kitab (Al Quran) dan tidak pula mengetahui apakah iman itu, tetapi Kami menjadikan Al Quran itu cahaya, yang Kami tunjuki dengan dia siapa yang kami kehendaki di antara hamba-hamba Kami. Dan sesungguhnya kamu benar-benar memberi petunjuk kepada jalan yang lurus."
-                  },
-                  {
-                      "numberInSurah":  53,
-                      "arabic":  "صِرَٰطِ ٱللَّهِ ٱلَّذِى لَهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ أَلَآ إِلَى ٱللَّهِ تَصِيرُ ٱلْأُمُورُ",
-                      "translation":  "(Yaitu) jalan Allah yang kepunyaan-Nya segala apa yang ada di langit dan apa yang ada di bumi. Ingatlah, bahwa kepada Allah-lah kembali semua urusan."
-                  }
-              ]
+{
+  "number": 42,
+  "name": "سُورَةُ الشُّورَىٰ",
+  "englishName": "Ash-Shura",
+  "numberOfAyahs": 53,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ حمٓ",
+      "translation": "Haa Miim.",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "حمٓ",
+          "rule": "madd_6"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "عٓسٓقٓ",
+      "translation": "'Ain Siin Qaaf.",
+      "wordsTajweed": [
+        {
+          "word": "عٓسٓقٓ",
+          "rule": "madd_6"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "كَذَٰلِكَ يُوحِىٓ إِلَيْكَ وَإِلَى ٱلَّذِينَ مِن قَبْلِكَ ٱللَّهُ ٱلْعَزِيزُ ٱلْحَكِيمُ",
+      "translation": "Demikianlah Allah Yang Maha Perkasa lagi Maha Bijaksana, mewahyukan kepada kamu dan kepada orang-orang sebelum kamu.",
+      "wordsTajweed": [
+        {
+          "word": "كَذَٰلِكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "يُوحِىٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِلَيْكَ",
+          "rule": null
+        },
+        {
+          "word": "وَإِلَى",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "قَبْلِكَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْعَزِيزُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْحَكِيمُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "لَهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۖ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
+      "translation": "Kepunyaan-Nya-lah apa yang ada di langit dan apa yang ada di bumi. Dan Dialah yang Maha Tinggi lagi Maha Besar.",
+      "wordsTajweed": [
+        {
+          "word": "لَهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّمَٰوَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَرْضِ ۖ",
+          "rule": null
+        },
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْعَلِىُّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْعَظِيمُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "تَكَادُ ٱلسَّمَٰوَٰتُ يَتَفَطَّرْنَ مِن فَوْقِهِنَّ ۚ وَٱلْمَلَٰٓئِكَةُ يُسَبِّحُونَ بِحَمْدِ رَبِّهِمْ وَيَسْتَغْفِرُونَ لِمَن فِى ٱلْأَرْضِ ۗ أَلَآ إِنَّ ٱللَّهَ هُوَ ٱلْغَفُورُ ٱلرَّحِيمُ",
+      "translation": "Hampir saja langit itu pecah dari sebelah atas (karena kebesaran Tuhan) dan malaikat-malaikat bertasbih serta memuji Tuhan-nya dan memohonkan ampun bagi orang-orang yang ada di bumi. Ingatlah, bahwa sesungguhnya Allah Dialah Yang Maha Pengampun lagi Penyayang.",
+      "wordsTajweed": [
+        {
+          "word": "تَكَادُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّمَٰوَٰتُ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "يَتَفَطَّرْنَ",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَوْقِهِنَّ ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَٱلْمَلَٰٓئِكَةُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "يُسَبِّحُونَ",
+          "rule": null
+        },
+        {
+          "word": "بِحَمْدِ",
+          "rule": null
+        },
+        {
+          "word": "رَبِّهِمْ",
+          "rule": null
+        },
+        {
+          "word": "وَيَسْتَغْفِرُونَ",
+          "rule": null
+        },
+        {
+          "word": "لِمَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَرْضِ ۗ",
+          "rule": null
+        },
+        {
+          "word": "أَلَآ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱللَّهَ",
+          "rule": null
+        },
+        {
+          "word": "هُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْغَفُورُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "وَٱلَّذِينَ ٱتَّخَذُوا۟ مِن دُونِهِۦٓ أَوْلِيَآءَ ٱللَّهُ حَفِيظٌ عَلَيْهِمْ وَمَآ أَنتَ عَلَيْهِم بِوَكِيلٍۢ",
+      "translation": "Dan orang-orang yang mengambil pelindung-pelindung selain Allah, Allah mengawasi (perbuatan) mereka; dan kamu (ya Muhammad) bukanlah orang yang diserahi mengawasi mereka.",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ٱتَّخَذُوا۟",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "دُونِهِۦٓ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "أَوْلِيَآءَ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "حَفِيظٌ",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْهِمْ",
+          "rule": null
+        },
+        {
+          "word": "وَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَنتَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "عَلَيْهِم",
+          "rule": "ikhfa_shafawi"
+        },
+        {
+          "word": "بِوَكِيلٍۢ",
+          "rule": "ikhfa_shafawi"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "وَكَذَٰلِكَ أَوْحَيْنَآ إِلَيْكَ قُرْءَانًا عَرَبِيًّۭا لِّتُنذِرَ أُمَّ ٱلْقُرَىٰ وَمَنْ حَوْلَهَا وَتُنذِرَ يَوْمَ ٱلْجَمْعِ لَا رَيْبَ فِيهِ ۚ فَرِيقٌۭ فِى ٱلْجَنَّةِ وَفَرِيقٌۭ فِى ٱلسَّعِيرِ",
+      "translation": "Demikianlah Kami wahyukan kepadamu Al Quran dalam bahasa Arab, supaya kamu memberi peringatan kepada ummul Qura (penduduk Mekah) dan penduduk (negeri-negeri) sekelilingnya serta memberi peringatan (pula) tentang hari berkumpul (kiamat) yang tidak ada keraguan padanya. Segolongan masuk surga, dan segolongan masuk Jahannam.",
+      "wordsTajweed": [
+        {
+          "word": "وَكَذَٰلِكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "أَوْحَيْنَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِلَيْكَ",
+          "rule": null
+        },
+        {
+          "word": "قُرْءَانًا",
+          "rule": null
+        },
+        {
+          "word": "عَرَبِيًّۭا",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لِّتُنذِرَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "أُمَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْقُرَىٰ",
+          "rule": null
+        },
+        {
+          "word": "وَمَنْ",
+          "rule": null
+        },
+        {
+          "word": "حَوْلَهَا",
+          "rule": null
+        },
+        {
+          "word": "وَتُنذِرَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "يَوْمَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجَمْعِ",
+          "rule": null
+        },
+        {
+          "word": "لَا",
+          "rule": null
+        },
+        {
+          "word": "رَيْبَ",
+          "rule": null
+        },
+        {
+          "word": "فِيهِ ۚ",
+          "rule": null
+        },
+        {
+          "word": "فَرِيقٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجَنَّةِ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَفَرِيقٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّعِيرِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "وَلَوْ شَآءَ ٱللَّهُ لَجَعَلَهُمْ أُمَّةًۭ وَٰحِدَةًۭ وَلَٰكِن يُدْخِلُ مَن يَشَآءُ فِى رَحْمَتِهِۦ ۚ وَٱلظَّٰلِمُونَ مَا لَهُم مِّن وَلِىٍّۢ وَلَا نَصِيرٍ",
+      "translation": "Dan kalau Allah menghendaki niscaya Allah menjadikan mereka satu umat (saja), tetapi Dia memasukkan orang-orang yang dikehendaki-Nya ke dalam rahmat-Nya. Dan orang-orang yang zalim tidak ada bagi mereka seorang pelindungpun dan tidak pula seorang penolong.",
+      "wordsTajweed": [
+        {
+          "word": "وَلَوْ",
+          "rule": null
+        },
+        {
+          "word": "شَآءَ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "لَجَعَلَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "أُمَّةًۭ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَٰحِدَةًۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَلَٰكِن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يُدْخِلُ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "مَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَشَآءُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "رَحْمَتِهِۦ ۚ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَٱلظَّٰلِمُونَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "لَهُم",
+          "rule": null
+        },
+        {
+          "word": "مِّن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَلِىٍّۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "نَصِيرٍ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 9,
+      "arabic": "أَمِ ٱتَّخَذُوا۟ مِن دُونِهِۦٓ أَوْلِيَآءَ ۖ فَٱللَّهُ هُوَ ٱلْوَلِىُّ وَهُوَ يُحْىِ ٱلْمَوْتَىٰ وَهُوَ عَلَىٰ كُلِّ شَىْءٍۢ قَدِيرٌۭ",
+      "translation": "Atau patutkah mereka mengambil pelindung-pelindung selain Allah? Maka Allah, Dialah pelindung (yang sebenarnya) dan Dia menghidupkan orang-orang yang mati, dan Dia adalah Maha Kuasa atas segala sesuatu.",
+      "wordsTajweed": [
+        {
+          "word": "أَمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱتَّخَذُوا۟",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "دُونِهِۦٓ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "أَوْلِيَآءَ ۖ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "فَٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "هُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْوَلِىُّ",
+          "rule": null
+        },
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "يُحْىِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمَوْتَىٰ",
+          "rule": null
+        },
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "عَلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "كُلِّ",
+          "rule": null
+        },
+        {
+          "word": "شَىْءٍۢ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "قَدِيرٌۭ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 10,
+      "arabic": "وَمَا ٱخْتَلَفْتُمْ فِيهِ مِن شَىْءٍۢ فَحُكْمُهُۥٓ إِلَى ٱللَّهِ ۚ ذَٰلِكُمُ ٱللَّهُ رَبِّى عَلَيْهِ تَوَكَّلْتُ وَإِلَيْهِ أُنِيبُ",
+      "translation": "Tentang sesuatu apapun kamu berselisih, maka putusannya (terserah) kepada Allah. (Yang mempunyai sifat-sifat demikian) itulah Allah Tuhanku. Kepada-Nya lah aku bertawakkal dan kepada-Nya-lah aku kembali.",
+      "wordsTajweed": [
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "ٱخْتَلَفْتُمْ",
+          "rule": null
+        },
+        {
+          "word": "فِيهِ",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَىْءٍۢ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَحُكْمُهُۥٓ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "إِلَى",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ ۚ",
+          "rule": null
+        },
+        {
+          "word": "ذَٰلِكُمُ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "رَبِّى",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْهِ",
+          "rule": null
+        },
+        {
+          "word": "تَوَكَّلْتُ",
+          "rule": null
+        },
+        {
+          "word": "وَإِلَيْهِ",
+          "rule": null
+        },
+        {
+          "word": "أُنِيبُ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 11,
+      "arabic": "فَاطِرُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ ۚ جَعَلَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَٰجًۭا وَمِنَ ٱلْأَنْعَٰمِ أَزْوَٰجًۭا ۖ يَذْرَؤُكُمْ فِيهِ ۚ لَيْسَ كَمِثْلِهِۦ شَىْءٌۭ ۖ وَهُوَ ٱلسَّمِيعُ ٱلْبَصِيرُ",
+      "translation": "(Dia) Pencipta langit dan bumi. Dia menjadikan bagi kamu dari jenis kamu sendiri pasangan-pasangan dan dari jenis binatang ternak pasangan-pasangan (pula), dijadikan-Nya kamu berkembang biak dengan jalan itu. Tidak ada sesuatupun yang serupa dengan Dia, dan Dialah yang Maha Mendengar dan Melihat.",
+      "wordsTajweed": [
+        {
+          "word": "فَاطِرُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّمَٰوَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَٱلْأَرْضِ ۚ",
+          "rule": null
+        },
+        {
+          "word": "جَعَلَ",
+          "rule": null
+        },
+        {
+          "word": "لَكُم",
+          "rule": null
+        },
+        {
+          "word": "مِّنْ",
+          "rule": null
+        },
+        {
+          "word": "أَنفُسِكُمْ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "أَزْوَٰجًۭا",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَمِنَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَنْعَٰمِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "أَزْوَٰجًۭا ۖ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَذْرَؤُكُمْ",
+          "rule": null
+        },
+        {
+          "word": "فِيهِ ۚ",
+          "rule": null
+        },
+        {
+          "word": "لَيْسَ",
+          "rule": null
+        },
+        {
+          "word": "كَمِثْلِهِۦ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "شَىْءٌۭ ۖ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّمِيعُ",
+          "rule": "madd_246"
+        },
+        {
+          "word": "ٱلْبَصِيرُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 12,
+      "arabic": "لَهُۥ مَقَالِيدُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ ۖ يَبْسُطُ ٱلرِّزْقَ لِمَن يَشَآءُ وَيَقْدِرُ ۚ إِنَّهُۥ بِكُلِّ شَىْءٍ عَلِيمٌۭ",
+      "translation": "Kepunyaan-Nya-lah perbendaharaan langit dan bumi; Dia melapangkan rezeki bagi siapa yang dikehendaki-Nya dan menyempitkan(nya). Sesungguhnya Dia Maha Mengetahui segala sesuatu.",
+      "wordsTajweed": [
+        {
+          "word": "لَهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مَقَالِيدُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّمَٰوَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَٱلْأَرْضِ ۖ",
+          "rule": null
+        },
+        {
+          "word": "يَبْسُطُ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "ٱلرِّزْقَ",
+          "rule": null
+        },
+        {
+          "word": "لِمَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَشَآءُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "وَيَقْدِرُ ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّهُۥ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "بِكُلِّ",
+          "rule": null
+        },
+        {
+          "word": "شَىْءٍ",
+          "rule": null
+        },
+        {
+          "word": "عَلِيمٌۭ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 13,
+      "arabic": "۞ شَرَعَ لَكُم مِّنَ ٱلدِّينِ مَا وَصَّىٰ بِهِۦ نُوحًۭا وَٱلَّذِىٓ أَوْحَيْنَآ إِلَيْكَ وَمَا وَصَّيْنَا بِهِۦٓ إِبْرَٰهِيمَ وَمُوسَىٰ وَعِيسَىٰٓ ۖ أَنْ أَقِيمُوا۟ ٱلدِّينَ وَلَا تَتَفَرَّقُوا۟ فِيهِ ۚ كَبُرَ عَلَى ٱلْمُشْرِكِينَ مَا تَدْعُوهُمْ إِلَيْهِ ۚ ٱللَّهُ يَجْتَبِىٓ إِلَيْهِ مَن يَشَآءُ وَيَهْدِىٓ إِلَيْهِ مَن يُنِيبُ",
+      "translation": "Dia telah mensyari'atkan bagi kamu tentang agama apa yang telah diwasiatkan-Nya kepada Nuh dan apa yang telah Kami wahyukan kepadamu dan apa yang telah Kami wasiatkan kepada Ibrahim, Musa dan Isa yaitu: Tegakkanlah agama dan janganlah kamu berpecah belah tentangnya. Amat berat bagi orang-orang musyrik agama yang kamu seru mereka kepadanya. Allah menarik kepada agama itu orang yang dikehendaki-Nya dan memberi petunjuk kepada (agama)-Nya orang yang kembali (kepada-Nya).",
+      "wordsTajweed": [
+        {
+          "word": "شَرَعَ",
+          "rule": null
+        },
+        {
+          "word": "لَكُم",
+          "rule": null
+        },
+        {
+          "word": "مِّنَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلدِّينِ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "وَصَّىٰ",
+          "rule": null
+        },
+        {
+          "word": "بِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "نُوحًۭا",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَٱلَّذِىٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَوْحَيْنَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِلَيْكَ",
+          "rule": null
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "وَصَّيْنَا",
+          "rule": null
+        },
+        {
+          "word": "بِهِۦٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِبْرَٰهِيمَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "وَمُوسَىٰ",
+          "rule": null
+        },
+        {
+          "word": "وَعِيسَىٰٓ ۖ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَنْ",
+          "rule": null
+        },
+        {
+          "word": "أَقِيمُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلدِّينَ",
+          "rule": null
+        },
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "تَتَفَرَّقُوا۟",
+          "rule": null
+        },
+        {
+          "word": "فِيهِ ۚ",
+          "rule": null
+        },
+        {
+          "word": "كَبُرَ",
+          "rule": null
+        },
+        {
+          "word": "عَلَى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمُشْرِكِينَ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "تَدْعُوهُمْ",
+          "rule": null
+        },
+        {
+          "word": "إِلَيْهِ ۚ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "يَجْتَبِىٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِلَيْهِ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَن",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "يَشَآءُ",
+          "rule": null
+        },
+        {
+          "word": "وَيَهْدِىٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِلَيْهِ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَن",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "يُنِيبُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 14,
+      "arabic": "وَمَا تَفَرَّقُوٓا۟ إِلَّا مِنۢ بَعْدِ مَا جَآءَهُمُ ٱلْعِلْمُ بَغْيًۢا بَيْنَهُمْ ۚ وَلَوْلَا كَلِمَةٌۭ سَبَقَتْ مِن رَّبِّكَ إِلَىٰٓ أَجَلٍۢ مُّسَمًّۭى لَّقُضِىَ بَيْنَهُمْ ۚ وَإِنَّ ٱلَّذِينَ أُورِثُوا۟ ٱلْكِتَٰبَ مِنۢ بَعْدِهِمْ لَفِى شَكٍّۢ مِّنْهُ مُرِيبٍۢ",
+      "translation": "Dan mereka (ahli kitab) tidak berpecah belah, kecuali setelah datang pada mereka ilmu pengetahuan, karena kedengkian di antara mereka. Kalau tidaklah karena sesuatu ketetapan yang telah ada dari Tuhanmu dahulunya (untuk menangguhkan azab) sampai kepada waktu yang ditentukan, pastilah mereka telah dibinasakan. Dan sesungguhnya orang-orang yang diwariskan kepada mereka Al-Kitab (Taurat dan Injil) sesudah mereka, benar-benar berada dalam keraguan yang menggoncangkan tentang kitab itu.",
+      "wordsTajweed": [
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "تَفَرَّقُوٓا۟",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِلَّا",
+          "rule": null
+        },
+        {
+          "word": "مِنۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بَعْدِ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "جَآءَهُمُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "ٱلْعِلْمُ",
+          "rule": null
+        },
+        {
+          "word": "بَغْيًۢا",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بَيْنَهُمْ ۚ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "وَلَوْلَا",
+          "rule": null
+        },
+        {
+          "word": "كَلِمَةٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "سَبَقَتْ",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "رَّبِّكَ",
+          "rule": null
+        },
+        {
+          "word": "إِلَىٰٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَجَلٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مُّسَمًّۭى",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "لَّقُضِىَ",
+          "rule": null
+        },
+        {
+          "word": "بَيْنَهُمْ ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَإِنَّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "أُورِثُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلْكِتَٰبَ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "مِنۢ",
+          "rule": null
+        },
+        {
+          "word": "بَعْدِهِمْ",
+          "rule": null
+        },
+        {
+          "word": "لَفِى",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "شَكٍّۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّنْهُ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "مُرِيبٍۢ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 15,
+      "arabic": "فَلِذَٰلِكَ فَٱدْعُ ۖ وَٱسْتَقِمْ كَمَآ أُمِرْتَ ۖ وَلَا تَتَّبِعْ أَهْوَآءَهُمْ ۖ وَقُلْ ءَامَنتُ بِمَآ أَنزَلَ ٱللَّهُ مِن كِتَٰبٍۢ ۖ وَأُمِرْتُ لِأَعْدِلَ بَيْنَكُمُ ۖ ٱللَّهُ رَبُّنَا وَرَبُّكُمْ ۖ لَنَآ أَعْمَٰلُنَا وَلَكُمْ أَعْمَٰلُكُمْ ۖ لَا حُجَّةَ بَيْنَنَا وَبَيْنَكُمُ ۖ ٱللَّهُ يَجْمَعُ بَيْنَنَا ۖ وَإِلَيْهِ ٱلْمَصِيرُ",
+      "translation": "Maka karena itu serulah (mereka kepada agama ini) dan tetaplah sebagai mana diperintahkan kepadamu dan janganlah mengikuti hawa nafsu mereka dan katakanlah: \"Aku beriman kepada semua Kitab yang diturunkan Allah dan aku diperintahkan supaya berlaku adil diantara kamu. Allah-lah Tuhan kami dan Tuhan kamu. Bagi kami amal-amal kami dan bagi kamu amal-amal kamu. Tidak ada pertengkaran antara kami dan kamu, Allah mengumpulkan antara kita dan kepada-Nya-lah kembali (kita)\".",
+      "wordsTajweed": [
+        {
+          "word": "فَلِذَٰلِكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "فَٱدْعُ ۖ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "وَٱسْتَقِمْ",
+          "rule": null
+        },
+        {
+          "word": "كَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أُمِرْتَ ۖ",
+          "rule": null
+        },
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "تَتَّبِعْ",
+          "rule": null
+        },
+        {
+          "word": "أَهْوَآءَهُمْ ۖ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "وَقُلْ",
+          "rule": null
+        },
+        {
+          "word": "ءَامَنتُ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "بِمَآ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "أَنزَلَ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "مِن",
+          "rule": "madd_2"
+        },
+        {
+          "word": "كِتَٰبٍۢ ۖ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَأُمِرْتُ",
+          "rule": null
+        },
+        {
+          "word": "لِأَعْدِلَ",
+          "rule": null
+        },
+        {
+          "word": "بَيْنَكُمُ ۖ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "رَبُّنَا",
+          "rule": null
+        },
+        {
+          "word": "وَرَبُّكُمْ ۖ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "لَنَآ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "أَعْمَٰلُنَا",
+          "rule": null
+        },
+        {
+          "word": "وَلَكُمْ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "أَعْمَٰلُكُمْ ۖ",
+          "rule": null
+        },
+        {
+          "word": "لَا",
+          "rule": null
+        },
+        {
+          "word": "حُجَّةَ",
+          "rule": null
+        },
+        {
+          "word": "بَيْنَنَا",
+          "rule": null
+        },
+        {
+          "word": "وَبَيْنَكُمُ ۖ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "يَجْمَعُ",
+          "rule": null
+        },
+        {
+          "word": "بَيْنَنَا ۖ",
+          "rule": null
+        },
+        {
+          "word": "وَإِلَيْهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمَصِيرُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 16,
+      "arabic": "وَٱلَّذِينَ يُحَآجُّونَ فِى ٱللَّهِ مِنۢ بَعْدِ مَا ٱسْتُجِيبَ لَهُۥ حُجَّتُهُمْ دَاحِضَةٌ عِندَ رَبِّهِمْ وَعَلَيْهِمْ غَضَبٌۭ وَلَهُمْ عَذَابٌۭ شَدِيدٌ",
+      "translation": "Dan orang-orang yang membantah (agama) Allah sesudah agama itu diterima maka bantahan mereka itu sia-sia saja, di sisi Tuhan mereka. Mereka mendapat kemurkaan (Allah) dan bagi mereka azab yang sangat keras.",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "يُحَآجُّونَ",
+          "rule": "madd_6"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "مِنۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بَعْدِ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "ٱسْتُجِيبَ",
+          "rule": null
+        },
+        {
+          "word": "لَهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "حُجَّتُهُمْ",
+          "rule": null
+        },
+        {
+          "word": "دَاحِضَةٌ",
+          "rule": null
+        },
+        {
+          "word": "عِندَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "رَبِّهِمْ",
+          "rule": null
+        },
+        {
+          "word": "وَعَلَيْهِمْ",
+          "rule": null
+        },
+        {
+          "word": "غَضَبٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَلَهُمْ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "عَذَابٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَدِيدٌ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 17,
+      "arabic": "ٱللَّهُ ٱلَّذِىٓ أَنزَلَ ٱلْكِتَٰبَ بِٱلْحَقِّ وَٱلْمِيزَانَ ۗ وَمَا يُدْرِيكَ لَعَلَّ ٱلسَّاعَةَ قَرِيبٌۭ",
+      "translation": "Allah-lah yang menurunkan kitab dengan (membawa) kebenaran dan (menurunkan) neraca (keadilan). Dan tahukah kamu, boleh jadi hari kiamat itu (sudah) dekat?",
+      "wordsTajweed": [
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِىٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَنزَلَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱلْكِتَٰبَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "بِٱلْحَقِّ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلْمِيزَانَ ۗ",
+          "rule": null
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "يُدْرِيكَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "لَعَلَّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّاعَةَ",
+          "rule": null
+        },
+        {
+          "word": "قَرِيبٌۭ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 18,
+      "arabic": "يَسْتَعْجِلُ بِهَا ٱلَّذِينَ لَا يُؤْمِنُونَ بِهَا ۖ وَٱلَّذِينَ ءَامَنُوا۟ مُشْفِقُونَ مِنْهَا وَيَعْلَمُونَ أَنَّهَا ٱلْحَقُّ ۗ أَلَآ إِنَّ ٱلَّذِينَ يُمَارُونَ فِى ٱلسَّاعَةِ لَفِى ضَلَٰلٍۭ بَعِيدٍ",
+      "translation": "Orang-orang yang tidak beriman kepada hari kiamat meminta supaya hari itu segera didatangkan dan orang-orang yang beriman merasa takut kepadanya dan mereka yakin bahwa kiamat itu adalah benar (akan terjadi). Ketahuilah bahwa sesungguhnya orang-orang yang membantah tentang terjadinya kiamat itu benar-benar dalam kesesatan yang jauh.",
+      "wordsTajweed": [
+        {
+          "word": "يَسْتَعْجِلُ",
+          "rule": null
+        },
+        {
+          "word": "بِهَا",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "لَا",
+          "rule": null
+        },
+        {
+          "word": "يُؤْمِنُونَ",
+          "rule": null
+        },
+        {
+          "word": "بِهَا ۖ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ءَامَنُوا۟",
+          "rule": null
+        },
+        {
+          "word": "مُشْفِقُونَ",
+          "rule": null
+        },
+        {
+          "word": "مِنْهَا",
+          "rule": null
+        },
+        {
+          "word": "وَيَعْلَمُونَ",
+          "rule": null
+        },
+        {
+          "word": "أَنَّهَا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْحَقُّ ۗ",
+          "rule": null
+        },
+        {
+          "word": "أَلَآ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "يُمَارُونَ",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّاعَةِ",
+          "rule": null
+        },
+        {
+          "word": "لَفِى",
+          "rule": null
+        },
+        {
+          "word": "ضَلَٰلٍۭ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بَعِيدٍ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 19,
+      "arabic": "ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ",
+      "translation": "Allah Maha lembut terhadap hamba-hamba-Nya; Dia memberi rezeki kepada yang di kehendaki-Nya dan Dialah Yang Maha Kuat lagi Maha Perkasa.",
+      "wordsTajweed": [
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "لَطِيفٌۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بِعِبَادِهِۦ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "يَرْزُقُ",
+          "rule": null
+        },
+        {
+          "word": "مَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَشَآءُ ۖ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقَوِىُّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْعَزِيزُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 20,
+      "arabic": "مَن كَانَ يُرِيدُ حَرْثَ ٱلْءَاخِرَةِ نَزِدْ لَهُۥ فِى حَرْثِهِۦ ۖ وَمَن كَانَ يُرِيدُ حَرْثَ ٱلدُّنْيَا نُؤْتِهِۦ مِنْهَا وَمَا لَهُۥ فِى ٱلْءَاخِرَةِ مِن نَّصِيبٍ",
+      "translation": "Barang siapa yang menghendaki keuntungan di akhirat akan Kami tambah keuntungan itu baginya dan barang siapa yang menghendaki keuntungan di dunia Kami berikan kepadanya sebagian dari keuntungan dunia dan tidak ada baginya suatu bahagianpun di akhirat.",
+      "wordsTajweed": [
+        {
+          "word": "مَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَانَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "يُرِيدُ",
+          "rule": null
+        },
+        {
+          "word": "حَرْثَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْءَاخِرَةِ",
+          "rule": null
+        },
+        {
+          "word": "نَزِدْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "لَهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "حَرْثِهِۦ ۖ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَمَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَانَ",
+          "rule": null
+        },
+        {
+          "word": "يُرِيدُ",
+          "rule": null
+        },
+        {
+          "word": "حَرْثَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلدُّنْيَا",
+          "rule": null
+        },
+        {
+          "word": "نُؤْتِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مِنْهَا",
+          "rule": null
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "لَهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْءَاخِرَةِ",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "نَّصِيبٍ",
+          "rule": "idghaam_ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 21,
+      "arabic": "أَمْ لَهُمْ شُرَكَٰٓؤُا۟ شَرَعُوا۟ لَهُم مِّنَ ٱلدِّينِ مَا لَمْ يَأْذَنۢ بِهِ ٱللَّهُ ۚ وَلَوْلَا كَلِمَةُ ٱلْفَصْلِ لَقُضِىَ بَيْنَهُمْ ۗ وَإِنَّ ٱلظَّٰلِمِينَ لَهُمْ عَذَابٌ أَلِيمٌۭ",
+      "translation": "Apakah mereka mempunyai sembahan-sembahan selain Allah yang mensyariatkan untuk mereka agama yang tidak diizinkan Allah? Sekiranya tak ada ketetapan yang menentukan (dari Allah) tentulah mereka telah dibinasakan. Dan sesungguhnya orang-orang yang zalim itu akan memperoleh azab yang amat pedih.",
+      "wordsTajweed": [
+        {
+          "word": "أَمْ",
+          "rule": null
+        },
+        {
+          "word": "لَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "شُرَكَٰٓؤُا۟",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "شَرَعُوا۟",
+          "rule": null
+        },
+        {
+          "word": "لَهُم",
+          "rule": null
+        },
+        {
+          "word": "مِّنَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلدِّينِ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "لَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَأْذَنۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بِهِ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "ٱللَّهُ ۚ",
+          "rule": null
+        },
+        {
+          "word": "وَلَوْلَا",
+          "rule": null
+        },
+        {
+          "word": "كَلِمَةُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْفَصْلِ",
+          "rule": null
+        },
+        {
+          "word": "لَقُضِىَ",
+          "rule": null
+        },
+        {
+          "word": "بَيْنَهُمْ ۗ",
+          "rule": null
+        },
+        {
+          "word": "وَإِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلظَّٰلِمِينَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "لَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "عَذَابٌ",
+          "rule": null
+        },
+        {
+          "word": "أَلِيمٌۭ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 22,
+      "arabic": "تَرَى ٱلظَّٰلِمِينَ مُشْفِقِينَ مِمَّا كَسَبُوا۟ وَهُوَ وَاقِعٌۢ بِهِمْ ۗ وَٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ فِى رَوْضَاتِ ٱلْجَنَّاتِ ۖ لَهُم مَّا يَشَآءُونَ عِندَ رَبِّهِمْ ۚ ذَٰلِكَ هُوَ ٱلْفَضْلُ ٱلْكَبِيرُ",
+      "translation": "Kamu lihat orang-orang yang zalim sangat ketakutan karena kejahatan-kejahatan yang telah mereka kerjakan, sedang siksaan menimpa mereka. Dan orang-orang yang beriman serta mengerjakan amal saleh (berada) di dalam taman-taman surga, mereka memperoleh apa yang mereka kehendaki di sisi Tuhan mereka. Yang demikian itu adalah karunia yang besar.",
+      "wordsTajweed": [
+        {
+          "word": "تَرَى",
+          "rule": null
+        },
+        {
+          "word": "ٱلظَّٰلِمِينَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مُشْفِقِينَ",
+          "rule": null
+        },
+        {
+          "word": "مِمَّا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "كَسَبُوا۟",
+          "rule": null
+        },
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "وَاقِعٌۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بِهِمْ ۗ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "وَٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ءَامَنُوا۟",
+          "rule": null
+        },
+        {
+          "word": "وَعَمِلُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلصَّٰلِحَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "رَوْضَاتِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجَنَّاتِ ۖ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "لَهُم",
+          "rule": null
+        },
+        {
+          "word": "مَّا",
+          "rule": null
+        },
+        {
+          "word": "يَشَآءُونَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "عِندَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "رَبِّهِمْ ۚ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ذَٰلِكَ",
+          "rule": null
+        },
+        {
+          "word": "هُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْفَضْلُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْكَبِيرُ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 23,
+      "arabic": "ذَٰلِكَ ٱلَّذِى يُبَشِّرُ ٱللَّهُ عِبَادَهُ ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ ۗ قُل لَّآ أَسْـَٔلُكُمْ عَلَيْهِ أَجْرًا إِلَّا ٱلْمَوَدَّةَ فِى ٱلْقُرْبَىٰ ۗ وَمَن يَقْتَرِفْ حَسَنَةًۭ نَّزِدْ لَهُۥ فِيهَا حُسْنًا ۚ إِنَّ ٱللَّهَ غَفُورٌۭ شَكُورٌ",
+      "translation": "Itulah (karunia) yang (dengan itu) Allah menggembirakan hamba-hamba-Nya yang beriman dan mengerjakan amal yang saleh. Katakanlah: \"Aku tidak meminta kepadamu sesuatu upahpun atas seruanku kecuali kasih sayang dalam kekeluargaan\". Dan siapa yang mengerjakan kebaikan akan Kami tambahkan baginya kebaikan pada kebaikannya itu. Sesungguhnya Allah Maha Pengampun lagi Maha Mensyukuri.",
+      "wordsTajweed": [
+        {
+          "word": "ذَٰلِكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلَّذِى",
+          "rule": null
+        },
+        {
+          "word": "يُبَشِّرُ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "عِبَادَهُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ءَامَنُوا۟",
+          "rule": null
+        },
+        {
+          "word": "وَعَمِلُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلصَّٰلِحَٰتِ ۗ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "قُل",
+          "rule": null
+        },
+        {
+          "word": "لَّآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَسْـَٔلُكُمْ",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْهِ",
+          "rule": null
+        },
+        {
+          "word": "أَجْرًا",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "إِلَّا",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمَوَدَّةَ",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقُرْبَىٰ ۗ",
+          "rule": null
+        },
+        {
+          "word": "وَمَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَقْتَرِفْ",
+          "rule": null
+        },
+        {
+          "word": "حَسَنَةًۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "نَّزِدْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "لَهُۥ",
+          "rule": null
+        },
+        {
+          "word": "فِيهَا",
+          "rule": null
+        },
+        {
+          "word": "حُسْنًا ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهَ",
+          "rule": null
+        },
+        {
+          "word": "غَفُورٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَكُورٌ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 24,
+      "arabic": "أَمْ يَقُولُونَ ٱفْتَرَىٰ عَلَى ٱللَّهِ كَذِبًۭا ۖ فَإِن يَشَإِ ٱللَّهُ يَخْتِمْ عَلَىٰ قَلْبِكَ ۗ وَيَمْحُ ٱللَّهُ ٱلْبَٰطِلَ وَيُحِقُّ ٱلْحَقَّ بِكَلِمَٰتِهِۦٓ ۚ إِنَّهُۥ عَلِيمٌۢ بِذَاتِ ٱلصُّدُورِ",
+      "translation": "Bahkan mereka mengatakan: \"Dia (Muhammad) telah mengada-adakan dusta terhadap Allah\". Maka jika Allah menghendaki niscaya Dia mengunci mati hatimu; dan Allah menghapuskan yang batil dan membenarkan yang hak dengan kalimat-kalimat-Nya (Al Quran). Sesungguhnya Dia Maha Mengetahui segala isi hati.",
+      "wordsTajweed": [
+        {
+          "word": "أَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَقُولُونَ",
+          "rule": null
+        },
+        {
+          "word": "ٱفْتَرَىٰ",
+          "rule": null
+        },
+        {
+          "word": "عَلَى",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "كَذِبًۭا ۖ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَإِن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَشَإِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "يَخْتِمْ",
+          "rule": null
+        },
+        {
+          "word": "عَلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "قَلْبِكَ ۗ",
+          "rule": null
+        },
+        {
+          "word": "وَيَمْحُ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْبَٰطِلَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَيُحِقُّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْحَقَّ",
+          "rule": null
+        },
+        {
+          "word": "بِكَلِمَٰتِهِۦٓ ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "عَلِيمٌۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بِذَاتِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلصُّدُورِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 25,
+      "arabic": "وَهُوَ ٱلَّذِى يَقْبَلُ ٱلتَّوْبَةَ عَنْ عِبَادِهِۦ وَيَعْفُوا۟ عَنِ ٱلسَّيِّـَٔاتِ وَيَعْلَمُ مَا تَفْعَلُونَ",
+      "translation": "Dan Dialah yang menerima taubat dari hamba-hamba-Nya dan memaafkan kesalahan-kesalahan dan mengetahui apa yang kamu kerjakan,",
+      "wordsTajweed": [
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِى",
+          "rule": null
+        },
+        {
+          "word": "يَقْبَلُ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "ٱلتَّوْبَةَ",
+          "rule": null
+        },
+        {
+          "word": "عَنْ",
+          "rule": null
+        },
+        {
+          "word": "عِبَادِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَيَعْفُوا۟",
+          "rule": null
+        },
+        {
+          "word": "عَنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّيِّـَٔاتِ",
+          "rule": null
+        },
+        {
+          "word": "وَيَعْلَمُ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "تَفْعَلُونَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 26,
+      "arabic": "وَيَسْتَجِيبُ ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ وَيَزِيدُهُم مِّن فَضْلِهِۦ ۚ وَٱلْكَٰفِرُونَ لَهُمْ عَذَابٌۭ شَدِيدٌۭ",
+      "translation": "dan Dia memperkenankan (doa) orang-orang yang beriman serta mengerjakan amal yang saleh dan menambah (pahala) kepada mereka dari karunia-Nya. Dan orang-orang yang kafir bagi mereka azab yang sangat keras.",
+      "wordsTajweed": [
+        {
+          "word": "وَيَسْتَجِيبُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ءَامَنُوا۟",
+          "rule": null
+        },
+        {
+          "word": "وَعَمِلُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلصَّٰلِحَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَيَزِيدُهُم",
+          "rule": null
+        },
+        {
+          "word": "مِّن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَضْلِهِۦ ۚ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "وَٱلْكَٰفِرُونَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "لَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "عَذَابٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَدِيدٌۭ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 27,
+      "arabic": "۞ وَلَوْ بَسَطَ ٱللَّهُ ٱلرِّزْقَ لِعِبَادِهِۦ لَبَغَوْا۟ فِى ٱلْأَرْضِ وَلَٰكِن يُنَزِّلُ بِقَدَرٍۢ مَّا يَشَآءُ ۚ إِنَّهُۥ بِعِبَادِهِۦ خَبِيرٌۢ بَصِيرٌۭ",
+      "translation": "Dan jikalau Allah melapangkan rezeki kepada hamba-hamba-Nya tentulah mereka akan melampaui batas di muka bumi, tetapi Allah menurunkan apa yang dikehendaki-Nya dengan ukuran. Sesungguhnya Dia Maha Mengetahui (keadaan) hamba-hamba-Nya lagi Maha Melihat.",
+      "wordsTajweed": [
+        {
+          "word": "وَلَوْ",
+          "rule": null
+        },
+        {
+          "word": "بَسَطَ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرِّزْقَ",
+          "rule": null
+        },
+        {
+          "word": "لِعِبَادِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "لَبَغَوْا۟",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَرْضِ",
+          "rule": null
+        },
+        {
+          "word": "وَلَٰكِن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يُنَزِّلُ",
+          "rule": null
+        },
+        {
+          "word": "بِقَدَرٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَّا",
+          "rule": null
+        },
+        {
+          "word": "يَشَآءُ ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "بِعِبَادِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "خَبِيرٌۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بَصِيرٌۭ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 28,
+      "arabic": "وَهُوَ ٱلَّذِى يُنَزِّلُ ٱلْغَيْثَ مِنۢ بَعْدِ مَا قَنَطُوا۟ وَيَنشُرُ رَحْمَتَهُۥ ۚ وَهُوَ ٱلْوَلِىُّ ٱلْحَمِيدُ",
+      "translation": "Dan Dialah Yang menurunkan hujan sesudah mereka berputus asa dan menyebarkan rahmat-Nya. Dan Dialah Yang Maha Pelindung lagi Maha Terpuji.",
+      "wordsTajweed": [
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِى",
+          "rule": null
+        },
+        {
+          "word": "يُنَزِّلُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْغَيْثَ",
+          "rule": null
+        },
+        {
+          "word": "مِنۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بَعْدِ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "قَنَطُوا۟",
+          "rule": null
+        },
+        {
+          "word": "وَيَنشُرُ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "رَحْمَتَهُۥ ۚ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْوَلِىُّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْحَمِيدُ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 29,
+      "arabic": "وَمِنْ ءَايَٰتِهِۦ خَلْقُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ وَمَا بَثَّ فِيهِمَا مِن دَآبَّةٍۢ ۚ وَهُوَ عَلَىٰ جَمْعِهِمْ إِذَا يَشَآءُ قَدِيرٌۭ",
+      "translation": "Di antara (ayat-ayat) tanda-tanda-Nya ialah menciptakan langit dan bumi dan makhluk-makhluk yang melata Yang Dia sebarkan pada keduanya. Dan Dia Maha Kuasa mengumpulkan semuanya apabila dikehendaki-Nya.",
+      "wordsTajweed": [
+        {
+          "word": "وَمِنْ",
+          "rule": null
+        },
+        {
+          "word": "ءَايَٰتِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "خَلْقُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّمَٰوَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَٱلْأَرْضِ",
+          "rule": null
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "بَثَّ",
+          "rule": null
+        },
+        {
+          "word": "فِيهِمَا",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "دَآبَّةٍۢ ۚ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "عَلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "جَمْعِهِمْ",
+          "rule": null
+        },
+        {
+          "word": "إِذَا",
+          "rule": null
+        },
+        {
+          "word": "يَشَآءُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "قَدِيرٌۭ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 30,
+      "arabic": "وَمَآ أَصَٰبَكُم مِّن مُّصِيبَةٍۢ فَبِمَا كَسَبَتْ أَيْدِيكُمْ وَيَعْفُوا۟ عَن كَثِيرٍۢ",
+      "translation": "Dan apa saja musibah yang menimpa kamu maka adalah disebabkan oleh perbuatan tanganmu sendiri, dan Allah memaafkan sebagian besar (dari kesalahan-kesalahanmu).",
+      "wordsTajweed": [
+        {
+          "word": "وَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَصَٰبَكُم",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مِّن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مُّصِيبَةٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "فَبِمَا",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَسَبَتْ",
+          "rule": null
+        },
+        {
+          "word": "أَيْدِيكُمْ",
+          "rule": null
+        },
+        {
+          "word": "وَيَعْفُوا۟",
+          "rule": null
+        },
+        {
+          "word": "عَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَثِيرٍۢ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 31,
+      "arabic": "وَمَآ أَنتُم بِمُعْجِزِينَ فِى ٱلْأَرْضِ ۖ وَمَا لَكُم مِّن دُونِ ٱللَّهِ مِن وَلِىٍّۢ وَلَا نَصِيرٍۢ",
+      "translation": "Dan kamu tidak dapat melepaskan diri (dari azab Allah) di muka bumi, dan kamu tidak memperoleh seorang pelindung dan tidak pula penolong selain Allah.",
+      "wordsTajweed": [
+        {
+          "word": "وَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَنتُم",
+          "rule": "ikhfa_shafawi"
+        },
+        {
+          "word": "بِمُعْجِزِينَ",
+          "rule": "ikhfa_shafawi"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَرْضِ ۖ",
+          "rule": null
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "لَكُم",
+          "rule": null
+        },
+        {
+          "word": "مِّن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "دُونِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَلِىٍّۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "نَصِيرٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 32,
+      "arabic": "وَمِنْ ءَايَٰتِهِ ٱلْجَوَارِ فِى ٱلْبَحْرِ كَٱلْأَعْلَٰمِ",
+      "translation": "Dan di antara tanda-tanda kekuasaan-Nya ialah kapal-kapal di tengah (yang berlayar) di laut seperti gunung-gunung.",
+      "wordsTajweed": [
+        {
+          "word": "وَمِنْ",
+          "rule": null
+        },
+        {
+          "word": "ءَايَٰتِهِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلْجَوَارِ",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْبَحْرِ",
+          "rule": null
+        },
+        {
+          "word": "كَٱلْأَعْلَٰمِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 33,
+      "arabic": "إِن يَشَأْ يُسْكِنِ ٱلرِّيحَ فَيَظْلَلْنَ رَوَاكِدَ عَلَىٰ ظَهْرِهِۦٓ ۚ إِنَّ فِى ذَٰلِكَ لَءَايَٰتٍۢ لِّكُلِّ صَبَّارٍۢ شَكُورٍ",
+      "translation": "Jika Dia menghendaki, Dia akan menenangkan angin, maka jadilah kapal-kapal itu terhenti di permukaan laut. Sesungguhnya pada yang demikian itu terdapat tanda-tanda (kekuasaannya) bagi setiap orang yang banyak bersabar dan banyak bersyukur,",
+      "wordsTajweed": [
+        {
+          "word": "إِن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَشَأْ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يُسْكِنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرِّيحَ",
+          "rule": null
+        },
+        {
+          "word": "فَيَظْلَلْنَ",
+          "rule": null
+        },
+        {
+          "word": "رَوَاكِدَ",
+          "rule": null
+        },
+        {
+          "word": "عَلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "ظَهْرِهِۦٓ ۚ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ذَٰلِكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "لَءَايَٰتٍۢ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لِّكُلِّ",
+          "rule": null
+        },
+        {
+          "word": "صَبَّارٍۢ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَكُورٍ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 34,
+      "arabic": "أَوْ يُوبِقْهُنَّ بِمَا كَسَبُوا۟ وَيَعْفُ عَن كَثِيرٍۢ",
+      "translation": "atau kapal-kapal itu dibinasakan-Nya karena perbuatan mereka atau Dia memberi maaf sebagian besar (dari mereka).",
+      "wordsTajweed": [
+        {
+          "word": "أَوْ",
+          "rule": null
+        },
+        {
+          "word": "يُوبِقْهُنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "بِمَا",
+          "rule": null
+        },
+        {
+          "word": "كَسَبُوا۟",
+          "rule": null
+        },
+        {
+          "word": "وَيَعْفُ",
+          "rule": null
+        },
+        {
+          "word": "عَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَثِيرٍۢ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 35,
+      "arabic": "وَيَعْلَمَ ٱلَّذِينَ يُجَٰدِلُونَ فِىٓ ءَايَٰتِنَا مَا لَهُم مِّن مَّحِيصٍۢ",
+      "translation": "Dan supaya orang-orang yang membantah ayat-ayat (kekuasaan) Kami mengetahui bahwa mereka sekali-kali tidak akan memperoleh jalan ke luar (dari siksaan).",
+      "wordsTajweed": [
+        {
+          "word": "وَيَعْلَمَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "يُجَٰدِلُونَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "فِىٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "ءَايَٰتِنَا",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "لَهُم",
+          "rule": null
+        },
+        {
+          "word": "مِّن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَّحِيصٍۢ",
+          "rule": "idghaam_ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 36,
+      "arabic": "فَمَآ أُوتِيتُم مِّن شَىْءٍۢ فَمَتَٰعُ ٱلْحَيَوٰةِ ٱلدُّنْيَا ۖ وَمَا عِندَ ٱللَّهِ خَيْرٌۭ وَأَبْقَىٰ لِلَّذِينَ ءَامَنُوا۟ وَعَلَىٰ رَبِّهِمْ يَتَوَكَّلُونَ",
+      "translation": "Maka sesuatu yang diberikan kepadamu, itu adalah kenikmatan hidup di dunia; dan yang ada pada sisi Allah lebih baik dan lebih kekal bagi orang-orang yang beriman, dan hanya kepada Tuhan mereka, mereka bertawakkal.",
+      "wordsTajweed": [
+        {
+          "word": "فَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أُوتِيتُم",
+          "rule": null
+        },
+        {
+          "word": "مِّن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَىْءٍۢ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَمَتَٰعُ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱلْحَيَوٰةِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلدُّنْيَا ۖ",
+          "rule": null
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "عِندَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "خَيْرٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَأَبْقَىٰ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "لِلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ءَامَنُوا۟",
+          "rule": null
+        },
+        {
+          "word": "وَعَلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "رَبِّهِمْ",
+          "rule": null
+        },
+        {
+          "word": "يَتَوَكَّلُونَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 37,
+      "arabic": "وَٱلَّذِينَ يَجْتَنِبُونَ كَبَٰٓئِرَ ٱلْإِثْمِ وَٱلْفَوَٰحِشَ وَإِذَا مَا غَضِبُوا۟ هُمْ يَغْفِرُونَ",
+      "translation": "Dan (bagi) orang-orang yang menjauhi dosa-dosa besar dan perbuatan-perbuatan keji, dan apabila mereka marah mereka memberi maaf.",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "يَجْتَنِبُونَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "كَبَٰٓئِرَ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "ٱلْإِثْمِ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلْفَوَٰحِشَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَإِذَا",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "غَضِبُوا۟",
+          "rule": null
+        },
+        {
+          "word": "هُمْ",
+          "rule": null
+        },
+        {
+          "word": "يَغْفِرُونَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 38,
+      "arabic": "وَٱلَّذِينَ ٱسْتَجَابُوا۟ لِرَبِّهِمْ وَأَقَامُوا۟ ٱلصَّلَوٰةَ وَأَمْرُهُمْ شُورَىٰ بَيْنَهُمْ وَمِمَّا رَزَقْنَٰهُمْ يُنفِقُونَ",
+      "translation": "Dan (bagi) orang-orang yang menerima (mematuhi) seruan Tuhannya dan mendirikan shalat, sedang urusan mereka (diputuskan) dengan musyawarat antara mereka; dan mereka menafkahkan sebagian dari rezeki yang Kami berikan kepada mereka.",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ٱسْتَجَابُوا۟",
+          "rule": null
+        },
+        {
+          "word": "لِرَبِّهِمْ",
+          "rule": null
+        },
+        {
+          "word": "وَأَقَامُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلصَّلَوٰةَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَأَمْرُهُمْ",
+          "rule": null
+        },
+        {
+          "word": "شُورَىٰ",
+          "rule": null
+        },
+        {
+          "word": "بَيْنَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "وَمِمَّا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "رَزَقْنَٰهُمْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "يُنفِقُونَ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 39,
+      "arabic": "وَٱلَّذِينَ إِذَآ أَصَابَهُمُ ٱلْبَغْىُ هُمْ يَنتَصِرُونَ",
+      "translation": "Dan ( bagi) orang-orang yang apabila mereka diperlakukan dengan zalim mereka membela diri.",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "إِذَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَصَابَهُمُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْبَغْىُ",
+          "rule": null
+        },
+        {
+          "word": "هُمْ",
+          "rule": null
+        },
+        {
+          "word": "يَنتَصِرُونَ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 40,
+      "arabic": "وَجَزَٰٓؤُا۟ سَيِّئَةٍۢ سَيِّئَةٌۭ مِّثْلُهَا ۖ فَمَنْ عَفَا وَأَصْلَحَ فَأَجْرُهُۥ عَلَى ٱللَّهِ ۚ إِنَّهُۥ لَا يُحِبُّ ٱلظَّٰلِمِينَ",
+      "translation": "Dan balasan suatu kejahatan adalah kejahatan yang serupa, maka barang siapa memaafkan dan berbuat baik maka pahalanya atas (tanggungan) Allah. Sesungguhnya Dia tidak menyukai orang-orang yang zalim.",
+      "wordsTajweed": [
+        {
+          "word": "وَجَزَٰٓؤُا۟",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "سَيِّئَةٍۢ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "سَيِّئَةٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّثْلُهَا ۖ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "فَمَنْ",
+          "rule": null
+        },
+        {
+          "word": "عَفَا",
+          "rule": null
+        },
+        {
+          "word": "وَأَصْلَحَ",
+          "rule": null
+        },
+        {
+          "word": "فَأَجْرُهُۥ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "عَلَى",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "لَا",
+          "rule": null
+        },
+        {
+          "word": "يُحِبُّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلظَّٰلِمِينَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 41,
+      "arabic": "وَلَمَنِ ٱنتَصَرَ بَعْدَ ظُلْمِهِۦ فَأُو۟لَٰٓئِكَ مَا عَلَيْهِم مِّن سَبِيلٍ",
+      "translation": "Dan sesungguhnya orang-orang yang membela diri sesudah teraniaya, tidak ada satu dosapun terhadap mereka.",
+      "wordsTajweed": [
+        {
+          "word": "وَلَمَنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱنتَصَرَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "بَعْدَ",
+          "rule": null
+        },
+        {
+          "word": "ظُلْمِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "فَأُو۟لَٰٓئِكَ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْهِم",
+          "rule": null
+        },
+        {
+          "word": "مِّن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "سَبِيلٍ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 42,
+      "arabic": "إِنَّمَا ٱلسَّبِيلُ عَلَى ٱلَّذِينَ يَظْلِمُونَ ٱلنَّاسَ وَيَبْغُونَ فِى ٱلْأَرْضِ بِغَيْرِ ٱلْحَقِّ ۚ أُو۟لَٰٓئِكَ لَهُمْ عَذَابٌ أَلِيمٌۭ",
+      "translation": "Sesungguhnya dosa itu atas orang-orang yang berbuat zalim kepada manusia dan melampaui batas di muka bumi tanpa hak. Mereka itu mendapat azab yang pedih.",
+      "wordsTajweed": [
+        {
+          "word": "إِنَّمَا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلسَّبِيلُ",
+          "rule": null
+        },
+        {
+          "word": "عَلَى",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "يَظْلِمُونَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلنَّاسَ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَيَبْغُونَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَرْضِ",
+          "rule": null
+        },
+        {
+          "word": "بِغَيْرِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْحَقِّ ۚ",
+          "rule": null
+        },
+        {
+          "word": "أُو۟لَٰٓئِكَ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "لَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "عَذَابٌ",
+          "rule": null
+        },
+        {
+          "word": "أَلِيمٌۭ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 43,
+      "arabic": "وَلَمَن صَبَرَ وَغَفَرَ إِنَّ ذَٰلِكَ لَمِنْ عَزْمِ ٱلْأُمُورِ",
+      "translation": "Tetapi orang yang bersabar dan memaafkan, sesungguhnya (perbuatan) yang demikian itu termasuk hal-hal yang diutamakan.",
+      "wordsTajweed": [
+        {
+          "word": "وَلَمَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "صَبَرَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "وَغَفَرَ",
+          "rule": null
+        },
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ذَٰلِكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "لَمِنْ",
+          "rule": null
+        },
+        {
+          "word": "عَزْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأُمُورِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 44,
+      "arabic": "وَمَن يُضْلِلِ ٱللَّهُ فَمَا لَهُۥ مِن وَلِىٍّۢ مِّنۢ بَعْدِهِۦ ۗ وَتَرَى ٱلظَّٰلِمِينَ لَمَّا رَأَوُا۟ ٱلْعَذَابَ يَقُولُونَ هَلْ إِلَىٰ مَرَدٍّۢ مِّن سَبِيلٍۢ",
+      "translation": "Dan siapa yang disesatkan Allah maka tidak ada baginya seorang pemimpinpun sesudah itu. Dan kamu akan melihat orang-orang yang zalim ketika mereka melihat azab berkata: \"Adakah kiranya jalan untuk kembali (ke dunia)?\"",
+      "wordsTajweed": [
+        {
+          "word": "وَمَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يُضْلِلِ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "فَمَا",
+          "rule": null
+        },
+        {
+          "word": "لَهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مِن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَلِىٍّۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّنۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بَعْدِهِۦ ۗ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَتَرَى",
+          "rule": null
+        },
+        {
+          "word": "ٱلظَّٰلِمِينَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "لَمَّا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "رَأَوُا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلْعَذَابَ",
+          "rule": null
+        },
+        {
+          "word": "يَقُولُونَ",
+          "rule": null
+        },
+        {
+          "word": "هَلْ",
+          "rule": null
+        },
+        {
+          "word": "إِلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "مَرَدٍّۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "سَبِيلٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 45,
+      "arabic": "وَتَرَىٰهُمْ يُعْرَضُونَ عَلَيْهَا خَٰشِعِينَ مِنَ ٱلذُّلِّ يَنظُرُونَ مِن طَرْفٍ خَفِىٍّۢ ۗ وَقَالَ ٱلَّذِينَ ءَامَنُوٓا۟ إِنَّ ٱلْخَٰسِرِينَ ٱلَّذِينَ خَسِرُوٓا۟ أَنفُسَهُمْ وَأَهْلِيهِمْ يَوْمَ ٱلْقِيَٰمَةِ ۗ أَلَآ إِنَّ ٱلظَّٰلِمِينَ فِى عَذَابٍۢ مُّقِيمٍۢ",
+      "translation": "Dan kamu akan melihat mereka dihadapkan ke neraka dalam keadaan tunduk karena (merasa) hina, mereka melihat dengan pandangan yang lesu. Dan orang-orang yang beriman berkata: \"Sesungguhnya orang-orang yang merugi ialah orang-orang yang kehilangan diri mereka sendiri dan (kehilangan) keluarga mereka pada hari kiamat. Ingatlah, sesungguhnya orang-orang yang zalim itu berada dalam azab yang kekal.",
+      "wordsTajweed": [
+        {
+          "word": "وَتَرَىٰهُمْ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "يُعْرَضُونَ",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْهَا",
+          "rule": null
+        },
+        {
+          "word": "خَٰشِعِينَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مِنَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلذُّلِّ",
+          "rule": null
+        },
+        {
+          "word": "يَنظُرُونَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "طَرْفٍ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "خَفِىٍّۢ ۗ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَقَالَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ءَامَنُوٓا۟",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْخَٰسِرِينَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "خَسِرُوٓا۟",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَنفُسَهُمْ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "وَأَهْلِيهِمْ",
+          "rule": null
+        },
+        {
+          "word": "يَوْمَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقِيَٰمَةِ ۗ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "أَلَآ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلظَّٰلِمِينَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "عَذَابٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مُّقِيمٍۢ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 46,
+      "arabic": "وَمَا كَانَ لَهُم مِّنْ أَوْلِيَآءَ يَنصُرُونَهُم مِّن دُونِ ٱللَّهِ ۗ وَمَن يُضْلِلِ ٱللَّهُ فَمَا لَهُۥ مِن سَبِيلٍ",
+      "translation": "Dan mereka sekali-kali tidak mempunyai pelindung-pelindung yang dapat menolong mereka selain Allah. Dan siapa yang disesatkan Allah maka tidaklah ada baginya satu jalanpun (untuk mendapat petunjuk).",
+      "wordsTajweed": [
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "كَانَ",
+          "rule": null
+        },
+        {
+          "word": "لَهُم",
+          "rule": null
+        },
+        {
+          "word": "مِّنْ",
+          "rule": null
+        },
+        {
+          "word": "أَوْلِيَآءَ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "يَنصُرُونَهُم",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "مِّن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "دُونِ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱللَّهِ ۗ",
+          "rule": null
+        },
+        {
+          "word": "وَمَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يُضْلِلِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "فَمَا",
+          "rule": null
+        },
+        {
+          "word": "لَهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "سَبِيلٍ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 47,
+      "arabic": "ٱسْتَجِيبُوا۟ لِرَبِّكُم مِّن قَبْلِ أَن يَأْتِىَ يَوْمٌۭ لَّا مَرَدَّ لَهُۥ مِنَ ٱللَّهِ ۚ مَا لَكُم مِّن مَّلْجَإٍۢ يَوْمَئِذٍۢ وَمَا لَكُم مِّن نَّكِيرٍۢ",
+      "translation": "Patuhilah seruan Tuhanmu sebelum datang dari Allah suatu hari yang tidak dapat ditolak kedatangannya. Kamu tidak memperoleh tempat berlindung pada hari itu dan tidak (pula) dapat mengingkari (dosa-dosamu).",
+      "wordsTajweed": [
+        {
+          "word": "ٱسْتَجِيبُوا۟",
+          "rule": null
+        },
+        {
+          "word": "لِرَبِّكُم",
+          "rule": null
+        },
+        {
+          "word": "مِّن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "قَبْلِ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "أَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَأْتِىَ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَوْمٌۭ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لَّا",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "مَرَدَّ",
+          "rule": null
+        },
+        {
+          "word": "لَهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مِنَ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ ۚ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "لَكُم",
+          "rule": null
+        },
+        {
+          "word": "مِّن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَّلْجَإٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَوْمَئِذٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "لَكُم",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "نَّكِيرٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 48,
+      "arabic": "فَإِنْ أَعْرَضُوا۟ فَمَآ أَرْسَلْنَٰكَ عَلَيْهِمْ حَفِيظًا ۖ إِنْ عَلَيْكَ إِلَّا ٱلْبَلَٰغُ ۗ وَإِنَّآ إِذَآ أَذَقْنَا ٱلْإِنسَٰنَ مِنَّا رَحْمَةًۭ فَرِحَ بِهَا ۖ وَإِن تُصِبْهُمْ سَيِّئَةٌۢ بِمَا قَدَّمَتْ أَيْدِيهِمْ فَإِنَّ ٱلْإِنسَٰنَ كَفُورٌۭ",
+      "translation": "Jika mereka berpaling maka Kami tidak mengutus kamu sebagai pengawas bagi mereka. Kewajibanmu tidak lain hanyalah menyampaikan (risalah). Sesungguhnya apabila Kami merasakan kepada manusia sesuatu rahmat dari Kami dia bergembira ria karena rahmat itu. Dan jika mereka ditimpa kesusahan disebabkan perbuatan tangan mereka sendiri (niscaya mereka ingkar) karena sesungguhnya manusia itu amat ingkar (kepada nikmat).",
+      "wordsTajweed": [
+        {
+          "word": "فَإِنْ",
+          "rule": null
+        },
+        {
+          "word": "أَعْرَضُوا۟",
+          "rule": null
+        },
+        {
+          "word": "فَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَرْسَلْنَٰكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "عَلَيْهِمْ",
+          "rule": null
+        },
+        {
+          "word": "حَفِيظًا ۖ",
+          "rule": null
+        },
+        {
+          "word": "إِنْ",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْكَ",
+          "rule": null
+        },
+        {
+          "word": "إِلَّا",
+          "rule": null
+        },
+        {
+          "word": "ٱلْبَلَٰغُ ۗ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَإِنَّآ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِذَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَذَقْنَا",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "مِنَّا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "رَحْمَةًۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَرِحَ",
+          "rule": null
+        },
+        {
+          "word": "بِهَا ۖ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "وَإِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "تُصِبْهُمْ",
+          "rule": null
+        },
+        {
+          "word": "سَيِّئَةٌۢ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بِمَا",
+          "rule": null
+        },
+        {
+          "word": "قَدَّمَتْ",
+          "rule": null
+        },
+        {
+          "word": "أَيْدِيهِمْ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "فَإِنَّ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَفُورٌۭ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 49,
+      "arabic": "لِّلَّهِ مُلْكُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضِ ۚ يَخْلُقُ مَا يَشَآءُ ۚ يَهَبُ لِمَن يَشَآءُ إِنَٰثًۭا وَيَهَبُ لِمَن يَشَآءُ ٱلذُّكُورَ",
+      "translation": "Kepunyaan Allah-lah kerajaan langit dan bumi, Dia menciptakan apa yang Dia kehendaki. Dia memberikan anak-anak perempuan kepada siapa yang Dia kehendaki dan memberikan anak-anak lelaki kepada siapa yang Dia kehendaki,",
+      "wordsTajweed": [
+        {
+          "word": "لِّلَّهِ",
+          "rule": null
+        },
+        {
+          "word": "مُلْكُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّمَٰوَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَٱلْأَرْضِ ۚ",
+          "rule": null
+        },
+        {
+          "word": "يَخْلُقُ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "يَشَآءُ ۚ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "يَهَبُ",
+          "rule": null
+        },
+        {
+          "word": "لِمَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَشَآءُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "إِنَٰثًۭا",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَيَهَبُ",
+          "rule": null
+        },
+        {
+          "word": "لِمَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَشَآءُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "ٱلذُّكُورَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 50,
+      "arabic": "أَوْ يُزَوِّجُهُمْ ذُكْرَانًۭا وَإِنَٰثًۭا ۖ وَيَجْعَلُ مَن يَشَآءُ عَقِيمًا ۚ إِنَّهُۥ عَلِيمٌۭ قَدِيرٌۭ",
+      "translation": "atau Dia menganugerahkan kedua jenis laki-laki dan perempuan (kepada siapa) yang dikehendaki-Nya, dan Dia menjadikan mandul siapa yang Dia kehendaki. Sesungguhnya Dia Maha Mengetahui lagi Maha Kuasa.",
+      "wordsTajweed": [
+        {
+          "word": "أَوْ",
+          "rule": null
+        },
+        {
+          "word": "يُزَوِّجُهُمْ",
+          "rule": null
+        },
+        {
+          "word": "ذُكْرَانًۭا",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَإِنَٰثًۭا ۖ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَيَجْعَلُ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يَشَآءُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "عَقِيمًا ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "عَلِيمٌۭ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "قَدِيرٌۭ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 51,
+      "arabic": "۞ وَمَا كَانَ لِبَشَرٍ أَن يُكَلِّمَهُ ٱللَّهُ إِلَّا وَحْيًا أَوْ مِن وَرَآئِ حِجَابٍ أَوْ يُرْسِلَ رَسُولًۭا فَيُوحِىَ بِإِذْنِهِۦ مَا يَشَآءُ ۚ إِنَّهُۥ عَلِىٌّ حَكِيمٌۭ",
+      "translation": "Dan tidak mungkin bagi seorang manusiapun bahwa Allah berkata-kata dengan dia kecuali dengan perantaraan wahyu atau dibelakang tabir atau dengan mengutus seorang utusan (malaikat) lalu diwahyukan kepadanya dengan seizin-Nya apa yang Dia kehendaki. Sesungguhnya Dia Maha Tinggi lagi Maha Bijaksana.",
+      "wordsTajweed": [
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "كَانَ",
+          "rule": null
+        },
+        {
+          "word": "لِبَشَرٍ",
+          "rule": null
+        },
+        {
+          "word": "أَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "يُكَلِّمَهُ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "إِلَّا",
+          "rule": null
+        },
+        {
+          "word": "وَحْيًا",
+          "rule": null
+        },
+        {
+          "word": "أَوْ",
+          "rule": null
+        },
+        {
+          "word": "مِن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَرَآئِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "حِجَابٍ",
+          "rule": null
+        },
+        {
+          "word": "أَوْ",
+          "rule": null
+        },
+        {
+          "word": "يُرْسِلَ",
+          "rule": null
+        },
+        {
+          "word": "رَسُولًۭا",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَيُوحِىَ",
+          "rule": null
+        },
+        {
+          "word": "بِإِذْنِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "يَشَآءُ ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِنَّهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "عَلِىٌّ",
+          "rule": null
+        },
+        {
+          "word": "حَكِيمٌۭ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 52,
+      "arabic": "وَكَذَٰلِكَ أَوْحَيْنَآ إِلَيْكَ رُوحًۭا مِّنْ أَمْرِنَا ۚ مَا كُنتَ تَدْرِى مَا ٱلْكِتَٰبُ وَلَا ٱلْإِيمَٰنُ وَلَٰكِن جَعَلْنَٰهُ نُورًۭا نَّهْدِى بِهِۦ مَن نَّشَآءُ مِنْ عِبَادِنَا ۚ وَإِنَّكَ لَتَهْدِىٓ إِلَىٰ صِرَٰطٍۢ مُّسْتَقِيمٍۢ",
+      "translation": "Dan demikianlah Kami wahyukan kepadamu wahyu (Al Quran) dengan perintah Kami. Sebelumnya kamu tidaklah mengetahui apakah Al Kitab (Al Quran) dan tidak pula mengetahui apakah iman itu, tetapi Kami menjadikan Al Quran itu cahaya, yang Kami tunjuki dengan dia siapa yang kami kehendaki di antara hamba-hamba Kami. Dan sesungguhnya kamu benar-benar memberi petunjuk kepada jalan yang lurus.",
+      "wordsTajweed": [
+        {
+          "word": "وَكَذَٰلِكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "أَوْحَيْنَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِلَيْكَ",
+          "rule": null
+        },
+        {
+          "word": "رُوحًۭا",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّنْ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "أَمْرِنَا ۚ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "كُنتَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "تَدْرِى",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "ٱلْكِتَٰبُ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "ٱلْإِيمَٰنُ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَلَٰكِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "جَعَلْنَٰهُ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "نُورًۭا",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "نَّهْدِى",
+          "rule": null
+        },
+        {
+          "word": "بِهِۦ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "نَّشَآءُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "مِنْ",
+          "rule": null
+        },
+        {
+          "word": "عِبَادِنَا ۚ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَإِنَّكَ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "لَتَهْدِىٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِلَىٰ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "صِرَٰطٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مُّسْتَقِيمٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 53,
+      "arabic": "صِرَٰطِ ٱللَّهِ ٱلَّذِى لَهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ أَلَآ إِلَى ٱللَّهِ تَصِيرُ ٱلْأُمُورُ",
+      "translation": "(Yaitu) jalan Allah yang kepunyaan-Nya segala apa yang ada di langit dan apa yang ada di bumi. Ingatlah, bahwa kepada Allah-lah kembali semua urusan.",
+      "wordsTajweed": [
+        {
+          "word": "صِرَٰطِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِى",
+          "rule": null
+        },
+        {
+          "word": "لَهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلسَّمَٰوَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَرْضِ ۗ",
+          "rule": null
+        },
+        {
+          "word": "أَلَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِلَى",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "تَصِيرُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأُمُورُ",
+          "rule": "madd_246"
+        }
+      ]
+    }
+  ]
 }

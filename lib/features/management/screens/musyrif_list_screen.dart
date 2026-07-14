@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:tahfidz_app/models/musyrif_data.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/management/screens/musyrif_form_screen.dart';
 import 'package:tahfidz_app/features/management/screens/musyrif_detail_screen.dart';
+import 'package:tahfidz_app/features/management/widgets/management_shared_widgets.dart';
+import 'package:tahfidz_app/core/widgets/user_avatar_with_frame.dart';
 
 class MusyrifListScreen extends StatefulWidget {
   const MusyrifListScreen({super.key, this.hideAppBar = false});
@@ -46,18 +47,10 @@ class _MusyrifListScreenState extends State<MusyrifListScreen> with AutomaticKee
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: TextField(
+                child: GamifiedSearchBar(
                   controller: _searchController,
                   onChanged: (value) => setState(() => _query = value),
-                  decoration: InputDecoration(
-                    hintText: 'Cari nama, NIP, jabatan...',
-                    prefixIcon: const Icon(Icons.search_rounded, size: 20),
-                    filled: true,
-                    fillColor: Colors.grey.shade50,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade200)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade200)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  ),
+                  hintText: 'Cari nama, NIP, jabatan...',
                 ),
               ),
               if (list.isEmpty)
@@ -66,10 +59,9 @@ class _MusyrifListScreenState extends State<MusyrifListScreen> with AutomaticKee
                 const Expanded(child: Center(child: Text('Tidak ada musyrif yang cocok', style: TextStyle(color: Colors.grey))))
               else
                 Expanded(
-                  child: ListView.separated(
+                  child: ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 80),
                     itemCount: filteredList.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1, thickness: 0.5, color: Color(0xFFEEEEEE)),
                     itemBuilder: (_, i) => _MusyrifListItem(
                       musyrif: filteredList[i],
                       santriCount: provider.getSantriByMusyrif(filteredList[i].id).length,
@@ -180,85 +172,52 @@ class _MusyrifListItem extends StatelessWidget {
   const _MusyrifListItem({required this.musyrif, required this.santriCount, required this.halaqahCount, this.onEdit, this.onDelete, this.onReset});
   final MusyrifData musyrif; final int santriCount; final int halaqahCount;
   final VoidCallback? onEdit; final VoidCallback? onDelete; final VoidCallback? onReset;
+  
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final accentColor = const Color(0xFF1565C0);
+    return GamifiedListItem(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => MusyrifDetailScreen(musyrifId: musyrif.id))),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16), // More compact
-        child: Row(
-          children: [
-            // SQUIRCLE AVATAR
-            Container(
-              width: 36, // Smaller
-              height: 36,
-              decoration: BoxDecoration(
-                color: const Color(0xFF1565C0).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-                image: (musyrif.photoPath?.isNotEmpty ?? false)
-                    ? DecorationImage(image: NetworkImage(musyrif.photoPath!), fit: BoxFit.cover)
-                    : null,
-              ),
-              child: (musyrif.photoPath?.isEmpty ?? true)
-                  ? Center(
-                      child: Text(
-                        musyrif.nama[0].toUpperCase(),
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1565C0), fontSize: 12),
-                      ),
-                    )
-                  : null,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(musyrif.nama, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87), maxLines: 1, overflow: TextOverflow.ellipsis),
-                  Text('${musyrif.jabatan} • ${musyrif.nip ?? '-'}', style: TextStyle(color: Colors.grey.shade500, fontSize: 10), maxLines: 1, overflow: TextOverflow.ellipsis),
-                ],
-              ),
-            ),
-            Row(
-              children: [
-                _miniBadge(Icons.groups_rounded, '$halaqahCount', AppTheme.primaryGreen),
-                const SizedBox(width: 4),
-                _miniBadge(Icons.people_alt_rounded, '$santriCount', const Color(0xFF1565C0)),
-              ],
-            ),
-            if (onEdit != null || onDelete != null || onReset != null)
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.tune_rounded, size: 18, color: Colors.grey), // Changed
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                onSelected: (val) {
-                  if (val == 'edit') onEdit?.call();
-                  if (val == 'delete') onDelete?.call();
-                  if (val == 'reset') onReset?.call();
-                },
-                itemBuilder: (ctx) => [
-                  if (onEdit != null) const PopupMenuItem(value: 'edit', child: _MenuAction(Icons.edit_rounded, 'Edit', AppTheme.primaryGreen)),
-                  if (onReset != null) const PopupMenuItem(value: 'reset', child: _MenuAction(Icons.lock_reset_rounded, 'Reset Sandi', Colors.orange)),
-                  if (onDelete != null) const PopupMenuItem(value: 'delete', child: _MenuAction(Icons.delete_outline_rounded, 'Hapus', Colors.red)),
-                ],
-              ),
-          ],
+      accentColor: accentColor,
+      leading: UserAvatarWithFrame(
+        photoPath: musyrif.photoPath,
+        name: musyrif.nama,
+        size: 48,
+        fallbackColor: accentColor,
+      ),
+      title: musyrif.nama,
+      subtitle: '${musyrif.jabatan} • ${musyrif.nip ?? "NIP -"}',
+      stats: [
+        GamifiedStatItem(
+          icon: Icons.groups_rounded,
+          label: 'Halaqah',
+          value: '$halaqahCount',
+          color: AppTheme.primaryGreen,
         ),
-      ),
-    );
-  }
-
-  Widget _miniBadge(IconData icon, String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 10, color: color),
-          const SizedBox(width: 4),
-          Text(label, style: TextStyle(fontSize: 9, color: color, fontWeight: FontWeight.bold)),
-        ],
-      ),
+        GamifiedStatItem(
+          icon: Icons.people_alt_rounded,
+          label: 'Santri',
+          value: '$santriCount',
+          color: accentColor,
+        ),
+      ],
+      trailing: (onEdit != null || onDelete != null || onReset != null)
+          ? PopupMenuButton<String>(
+              icon: const Icon(Icons.tune_rounded, size: 20, color: Colors.grey),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              onSelected: (val) {
+                if (val == 'edit') onEdit?.call();
+                if (val == 'delete') onDelete?.call();
+                if (val == 'reset') onReset?.call();
+              },
+              itemBuilder: (ctx) => [
+                if (onEdit != null) const PopupMenuItem(value: 'edit', child: _MenuAction(Icons.edit_rounded, 'Edit', AppTheme.primaryGreen)),
+                if (onReset != null) const PopupMenuItem(value: 'reset', child: _MenuAction(Icons.lock_reset_rounded, 'Reset Sandi', Colors.orange)),
+                if (onDelete != null) const PopupMenuItem(value: 'delete', child: _MenuAction(Icons.delete_outline_rounded, 'Hapus', Colors.red)),
+              ],
+            )
+          : null,
     );
   }
 }

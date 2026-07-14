@@ -104,6 +104,7 @@ class AyahBlock extends StatelessWidget {
     this.onToggleFailed,
     this.onMarkEnd,
     this.isReadOnly = false,
+    this.showTajwid = true,
   });
 
   final AyahModel ayah;
@@ -117,6 +118,7 @@ class AyahBlock extends StatelessWidget {
   final VoidCallback? onToggleFailed;
   final VoidCallback? onMarkEnd;
   final bool isReadOnly;
+  final bool showTajwid;
 
   @override
   Widget build(BuildContext context) {
@@ -131,131 +133,146 @@ class AyahBlock extends StatelessWidget {
                 ? Colors.red.shade400
                 : const Color(0xFFE5D5B8))); // Neutral gold divider
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        border: Border(
-          bottom: BorderSide(
-            color: lineBorderColor,
-            width: isEndAyah || isPassed || isFailed ? 2.0 : 1.2,
-          ),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: isEndAyah
-                          ? Colors.orange.withValues(alpha: 0.15)
-                          : (isPassed
-                              ? Colors.green.withValues(alpha: 0.15)
-                              : (isFailed
-                                  ? Colors.red.withValues(alpha: 0.15)
-                                  : const Color(0xFF2E5A27).withValues(alpha: 0.1))),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      'Ayat ${ayah.numberInSurah}${isEndAyah ? ' (Batas)' : ''}',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: isEndAyah
-                            ? Colors.orange.shade800
-                            : (isPassed ? Colors.green.shade800 : (isFailed ? Colors.red.shade800 : const Color(0xFF2E5A27))),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              if (!isReadOnly)
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.03),
-                        blurRadius: 4,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _actionBtn(
-                        isEndAyah ? Icons.flag_rounded : Icons.outlined_flag_rounded,
-                        isEndAyah ? Colors.orange : Colors.grey.shade400,
-                        onMarkEnd,
-                        isActive: isEndAyah,
-                      ),
-                      const SizedBox(width: 2),
-                      _actionBtn(
-                        Icons.check_circle_rounded, 
-                        isPassed ? Colors.green : Colors.grey.shade400, 
-                        onTogglePassed,
-                        isActive: isPassed,
-                      ),
-                      const SizedBox(width: 2),
-                      _actionBtn(
-                        Icons.cancel_rounded, 
-                        isFailed ? Colors.red : Colors.grey.shade400, 
-                        onToggleFailed,
-                        isActive: isFailed,
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Directionality(
-            textDirection: TextDirection.rtl,
-            child: Wrap(
-              spacing: 6,
-              runSpacing: 8,
-              alignment: WrapAlignment.start,
-              children: [
-                for (int i = 0; i < words.length; i++)
-                  WordWidget(
-                    word: words[i],
-                    errorMark:
-                        sessionErrors[ErrorMark.generateKey(
-                          surahNumber,
-                          ayah.numberInSurah,
-                          i,
-                        )],
-                    onTap: isReadOnly ? null : () => onWordTap(i, words[i]),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Text(
-                    '﴿${toArabicNumeral(ayah.numberInSurah)}﴾',
-                    style: GoogleFonts.amiri(
-                      fontSize: 22,
-                      color: const Color(0xFF2E5A27).withValues(alpha: 0.8),
-                      height: 2.2,
-                    ),
-                    textDirection: TextDirection.rtl,
-                  ),
-                ),
-              ],
+    final Color lineBgColor = isEndAyah
+        ? Colors.orange.shade50.withValues(alpha: 0.3)
+        : (isPassed
+            ? Colors.green.shade50.withValues(alpha: 0.3)
+            : (isFailed
+                ? Colors.red.shade50.withValues(alpha: 0.3)
+                : Colors.transparent));
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: isReadOnly ? null : onTogglePassed,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        decoration: BoxDecoration(
+          color: lineBgColor,
+          border: Border(
+            bottom: BorderSide(
+              color: lineBorderColor,
+              width: isEndAyah || isPassed || isFailed ? 2.0 : 1.2,
             ),
           ),
-        ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isEndAyah
+                            ? Colors.orange.withValues(alpha: 0.15)
+                            : (isPassed
+                                ? Colors.green.withValues(alpha: 0.15)
+                                : (isFailed
+                                    ? Colors.red.withValues(alpha: 0.15)
+                                    : const Color(0xFF2E5A27).withValues(alpha: 0.1))),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'Ayat ${ayah.numberInSurah}${isEndAyah ? ' (Batas)' : ''}',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: isEndAyah
+                              ? Colors.orange.shade800
+                              : (isPassed ? Colors.green.shade800 : (isFailed ? Colors.red.shade800 : const Color(0xFF2E5A27))),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (!isReadOnly)
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade200),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.03),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _actionBtn(
+                          isEndAyah ? Icons.flag_rounded : Icons.outlined_flag_rounded,
+                          isEndAyah ? Colors.orange : Colors.grey.shade400,
+                          onMarkEnd,
+                          isActive: isEndAyah,
+                        ),
+                        const SizedBox(width: 2),
+                        _actionBtn(
+                          Icons.check_circle_rounded, 
+                          isPassed ? Colors.green : Colors.grey.shade400, 
+                          onTogglePassed,
+                          isActive: isPassed,
+                        ),
+                        const SizedBox(width: 2),
+                        _actionBtn(
+                          Icons.cancel_rounded, 
+                          isFailed ? Colors.red : Colors.grey.shade400, 
+                          onToggleFailed,
+                          isActive: isFailed,
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            // Words list row
+            Directionality(
+              textDirection: TextDirection.rtl,
+              child: Wrap(
+                spacing: 6,
+                runSpacing: 8,
+                alignment: WrapAlignment.start,
+                children: [
+                  for (int i = 0; i < words.length; i++)
+                    WordWidget(
+                      word: words[i],
+                      errorMark:
+                          sessionErrors[ErrorMark.generateKey(
+                            surahNumber,
+                            ayah.numberInSurah,
+                            i,
+                          )],
+                      onTap: () => onWordTap(i, words[i]),
+                      showTajwid: showTajwid,
+                      wordTajweed: i < ayah.wordsTajweed.length ? ayah.wordsTajweed[i] : null,
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(
+                      '﴿${toArabicNumeral(ayah.numberInSurah)}﴾',
+                      style: GoogleFonts.amiri(
+                        fontSize: 22,
+                        color: const Color(0xFF2E5A27).withValues(alpha: 0.8),
+                        height: 2.2,
+                      ),
+                      textDirection: TextDirection.rtl,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -11,6 +11,9 @@ import 'package:tahfidz_app/features/management/screens/musyrif_list_screen.dart
 import 'package:tahfidz_app/features/management/screens/halaqah_list_screen.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_ranking_list.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/screens/laporan_screen.dart';
+import 'package:tahfidz_app/core/utils/demo_seeder_service.dart';
+import 'package:tahfidz_app/models/voucher_ticket.dart';
+import 'package:tahfidz_app/features/management/screens/redemption_center_screen.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/notification_bell.dart';
 
 class AdminDashboard extends StatelessWidget {
@@ -19,12 +22,15 @@ class AdminDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
       appBar: AppBar(
         title: Text(
-          provider.isPengawas ? 'Dashboard Pengawas' : 'Dashboard Admin',
+          provider.isPengawas ? 'BERANDA PENGAWAS' : 'BERANDA ADMIN',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 16),
         ),
+        centerTitle: true,
         actions: [const NotificationBell(), const SizedBox(width: 8)],
       ),
       body: LayoutBuilder(
@@ -47,8 +53,8 @@ class AdminDashboard extends StatelessWidget {
                 _buildSubscriptionWarning(context),
                 const SizedBox(height: 24),
 
-                HafalanMenuSection(provider: provider),
-                const SizedBox(height: 24),
+                const QuestCenterPortalCard(),
+                const SizedBox(height: 32),
                 
                 if (isTablet)
                   Row(
@@ -101,6 +107,7 @@ class AdminDashboard extends StatelessWidget {
   }
 
   Widget _buildGraduationBanner(BuildContext context, AppProvider provider) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final activeEvents = provider.graduationEvents
         .where((e) => e.isPublished)
         .toList();
@@ -110,7 +117,7 @@ class AdminDashboard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppTheme.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.purple.withValues(alpha: 0.2)),
         boxShadow: [
@@ -168,57 +175,91 @@ class AdminDashboard extends StatelessWidget {
   }
 
   Widget _buildBanner(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return GestureDetector(
+      onLongPress: () => _showDemoSeederDialog(context),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryGreen.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryGreen.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            'assets/images/TahfidzMU-logo-white.png',
-            width: 60,
-            height: 60,
-            errorBuilder: (_, __, ___) => const Icon(
-              Icons.auto_stories_rounded,
-              size: 40,
-              color: Colors.white70,
+        child: Row(
+          children: [
+            Image.asset(
+              'assets/images/TahfidzMU-logo-white.png',
+              width: 60,
+              height: 60,
+              errorBuilder: (_, __, ___) => const Icon(
+                Icons.auto_stories_rounded,
+                size: 40,
+                color: Colors.white70,
+              ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'TahfidzMU',
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'TahfidzMU',
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                Text(
-                  provider.pesantrenName,
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                  Text(
+                    provider.pesantrenName,
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showDemoSeederDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Mode Demo (Seeder)'),
+        content: const Text(
+          'Apakah Anda ingin mengisi database dengan data demo (24 Santri, Musyrif, Halaqah, & Setoran)? \n\n'
+          'Gunakan ini hanya untuk demo fitur Gamifikasi & Ranking agar data terlihat hidup.'
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Batal')),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Menanam data demo...'), behavior: SnackBarBehavior.floating),
+              );
+              await DemoSeederService.seedDemoData(provider);
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Data demo berhasil ditanam!'), backgroundColor: Colors.green, behavior: SnackBarBehavior.floating),
+              );
+            },
+            child: const Text('Tanam Data'),
           ),
         ],
       ),
@@ -295,56 +336,83 @@ class AdminDashboard extends StatelessWidget {
   }
 
   Widget _buildAdminStats(BuildContext context, bool isTablet) {
-    return Row(
+    final pendingVouchers = provider.voucherList.where((v) => v.status == VoucherStatus.pending).length;
+
+    return Column(
       children: [
-        _statTile(
-          '${provider.santriList.length}',
-          'Santri',
-          Icons.people_alt_rounded,
-          Colors.blue,
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const SantriListScreen()),
-          ),
+        Row(
+          children: [
+            _statTile(
+              context,
+              '${provider.santriList.length}',
+              'Santri',
+              Icons.people_alt_rounded,
+              Colors.blue,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SantriListScreen()),
+              ),
+            ),
+            const SizedBox(width: 12),
+            _statTile(
+              context,
+              '${provider.musyrifList.length}',
+              'Musyrif',
+              Icons.person_pin_rounded,
+              Colors.green,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MusyrifListScreen()),
+              ),
+            ),
+            const SizedBox(width: 12),
+            _statTile(
+              context,
+              '${provider.halaqahList.length}',
+              'Halaqah',
+              Icons.groups_rounded,
+              Colors.purple,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const HalaqahListScreen()),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 12),
-        _statTile(
-          '${provider.musyrifList.length}',
-          'Musyrif',
-          Icons.person_pin_rounded,
-          Colors.green,
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const MusyrifListScreen()),
-          ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _statTile(
+              context,
+              '$pendingVouchers',
+              'Voucher Pending',
+              Icons.card_giftcard_rounded,
+              Colors.orange,
+              () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const RedemptionCenterScreen()),
+              ),
+            ),
+            if (isTablet) ...[
+              const SizedBox(width: 12),
+              _statTile(
+                context,
+                '${provider.santriList.fold(0, (acc, s) => acc + s.setoranHistory.length)}',
+                'Total Setoran',
+                Icons.history_edu_rounded,
+                Colors.blueGrey,
+                () {},
+              ),
+            ],
+          ],
         ),
-        const SizedBox(width: 12),
-        _statTile(
-          '${provider.halaqahList.length}',
-          'Halaqah',
-          Icons.groups_rounded,
-          Colors.purple,
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const HalaqahListScreen()),
-          ),
-        ),
-        if (isTablet) ...[
-          const SizedBox(width: 12),
-          _statTile(
-            '${provider.santriList.fold(0, (acc, s) => acc + s.setoranHistory.length)}',
-            'Total Setoran',
-            Icons.history_edu_rounded,
-            Colors.orange,
-            () {},
-          ),
-        ],
       ],
     );
   }
 
   Widget _buildLiveMonitor(BuildContext context) {
     final Query query = provider.getCollection('active_sessions');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return StreamBuilder<QuerySnapshot>(
       stream: query.snapshots(),
@@ -362,9 +430,9 @@ class AdminDashboard extends StatelessWidget {
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              color: isDark ? AppTheme.darkSurface : Colors.grey.shade50,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
             ),
             child: const Center(
               child: Row(
@@ -399,9 +467,9 @@ class AdminDashboard extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 10),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: Colors.green.shade100, width: 1.5),
+                side: BorderSide(color: isDark ? Colors.green.withValues(alpha: 0.2) : Colors.green.shade100, width: 1.5),
               ),
-              color: Colors.green.shade50.withValues(alpha: 0.3),
+              color: isDark ? Colors.green.withValues(alpha: 0.05) : Colors.green.shade50.withValues(alpha: 0.3),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -508,21 +576,23 @@ class AdminDashboard extends StatelessWidget {
   }
 
   Widget _statTile(
+    BuildContext context,
     String value,
     String label,
     IconData icon,
     Color color,
     VoidCallback onTap,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: Card(
         margin: EdgeInsets.zero,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: color.withValues(alpha: 0.1)),
+          side: BorderSide(color: color.withValues(alpha: isDark ? 0.2 : 0.1)),
         ),
-        color: color.withValues(alpha: 0.05),
+        color: color.withValues(alpha: isDark ? 0.1 : 0.05),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: onTap,
@@ -539,14 +609,14 @@ class AdminDashboard extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: color,
+                      color: isDark ? Colors.white : color,
                     ),
                   ),
                 ),
                 Text(
                   label,
                   style: TextStyle(
-                    color: color.withValues(alpha: 0.7),
+                    color: isDark ? Colors.white54 : color.withValues(alpha: 0.7),
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                   ),
@@ -560,15 +630,16 @@ class AdminDashboard extends StatelessWidget {
   }
 
   Widget _buildTodayPresensiMonitor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final halaqahs = provider.halaqahList;
     if (halaqahs.isEmpty) {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey.shade50,
+          color: isDark ? AppTheme.darkSurface : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
         ),
         child: const Center(
           child: Text(
@@ -604,13 +675,13 @@ class AdminDashboard extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
-              color: isSubmitted ? Colors.green.shade100 : Colors.grey.shade200,
+              color: isSubmitted ? Colors.green.withValues(alpha: isDark ? 0.4 : 0.2) : (isDark ? Colors.white10 : Colors.grey.shade200),
               width: 1.5,
             ),
           ),
           color: isSubmitted
-              ? Colors.green.shade50.withValues(alpha: 0.2)
-              : Colors.grey.shade50.withValues(alpha: 0.5),
+              ? Colors.green.withValues(alpha: isDark ? 0.05 : 0.02)
+              : (isDark ? AppTheme.darkSurface : Colors.grey.shade50.withValues(alpha: 0.5)),
           child: Padding(
             padding: const EdgeInsets.all(14.0),
             child: Row(
@@ -620,16 +691,16 @@ class AdminDashboard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isSubmitted
                         ? Colors.green.withValues(alpha: 0.1)
-                        : Colors.black87, // Dark Background
+                        : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black87),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     isSubmitted
                         ? Icons.check_circle_rounded
-                        : Icons.groups_rounded, // Better represents a halaqah group
+                        : Icons.groups_rounded,
                     color: isSubmitted
                         ? Colors.green.shade700
-                        : Colors.white, // White Icon on Dark BG
+                        : (isDark ? Colors.white54 : Colors.white),
                     size: 22,
                   ),
                 ),
@@ -643,7 +714,7 @@ class AdminDashboard extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
-                          color: isSubmitted ? Colors.black87 : Colors.grey.shade600,
+                          color: isSubmitted ? (isDark ? Colors.white : Colors.black87) : Colors.grey.shade600,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -651,7 +722,7 @@ class AdminDashboard extends StatelessWidget {
                         'Musyrif: ${musyrif?.nama ?? 'Tanpa Musyrif'}',
                         style: TextStyle(
                           fontSize: 11,
-                          color: isSubmitted ? Colors.grey.shade600 : Colors.grey.shade400,
+                          color: isDark ? Colors.white38 : Colors.grey.shade500,
                         ),
                       ),
                     ],
@@ -662,16 +733,16 @@ class AdminDashboard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade50,
+                      color: Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.green.shade100),
+                      border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
                     ),
                     child: Text(
                       '${presensi.waktuSubmit.hour.toString().padLeft(2, '0')}:${presensi.waktuSubmit.minute.toString().padLeft(2, '0')} WIB',
                       style: GoogleFonts.poppins(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: Colors.green.shade700,
+                        color: Colors.green,
                       ),
                     ),
                   )

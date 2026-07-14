@@ -31,6 +31,8 @@ class SetoranRecord {
   final int fluencyRating; // 1–5
   final DateTime date;
   final double finalScore;
+  final int? totalLines;
+  final String calculationMethod;
 
   const SetoranRecord({
     required this.id,
@@ -47,6 +49,8 @@ class SetoranRecord {
     required this.fluencyRating,
     required this.date,
     required this.finalScore,
+    this.totalLines,
+    this.calculationMethod = 'ayat',
   });
 
   int get tajwidErrorCount =>
@@ -98,6 +102,8 @@ class SetoranRecord {
     'fluencyRating': fluencyRating,
     'date': date.toIso8601String(),
     'finalScore': finalScore,
+    'totalLines': totalLines,
+    'calculationMethod': calculationMethod,
   };
 
   factory SetoranRecord.fromJson(Map<String, dynamic> json) => SetoranRecord(
@@ -117,6 +123,8 @@ class SetoranRecord {
     fluencyRating: json['fluencyRating'] as int,
     date: _parseDate(json['date']),
     finalScore: (json['finalScore'] as num).toDouble(),
+    totalLines: json['totalLines'] as int?,
+    calculationMethod: json['calculationMethod'] as String? ?? 'ayat',
   );
 }
 

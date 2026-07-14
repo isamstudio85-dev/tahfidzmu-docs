@@ -102,7 +102,7 @@ class SetoranDetailScreen extends StatelessWidget {
               icon: Icons.map_rounded,
               title: '${record.surahEnglishName} (${record.surahName})',
               subtitle:
-                  '${record.ayahRange} • ${record.juzLabel} • ${record.type.label}',
+                  '${record.ayahRange}${record.totalLines != null ? " (${record.totalLines} baris)" : ""} • ${record.juzLabel} • ${record.type.label}',
             ),
             const SizedBox(height: 20),
             _sectionTitle('Hasil Simak Ayat'),
@@ -467,7 +467,7 @@ class _ErrorTile extends StatelessWidget {
           backgroundColor: type.bgColor,
           child: Icon(type.icon, color: type.color, size: 18),
         ),
-        title: Text('${type.label} • Ayat ${error.ayahNumber}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+        title: Text(error.tajwidRuleName != null ? '${type.label} (${error.tajwidRuleName}) • Ayat ${error.ayahNumber}' : '${type.label} • Ayat ${error.ayahNumber}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
         subtitle: Text('Kata: ${error.word} • ${type.description}', style: const TextStyle(fontSize: 11)),
       ),
     );

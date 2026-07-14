@@ -93,8 +93,10 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = widget.manageModulesOnly ? 'Kelola Modul' : 'Profil Pesantren';
     return Scaffold(
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
       appBar: AppBar(
         title: Text(title),
         actions: [
@@ -119,7 +121,7 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
                           child: Container(
                             width: 100, height: 100,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: isDark ? AppTheme.darkSurface : Colors.white,
                               shape: BoxShape.circle,
                               border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.2), width: 2),
                               boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
@@ -168,13 +170,13 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
                 if (widget.manageModulesOnly) ...[
                   _section('Modul Hafalan & Pengetahuan'),
                   const SizedBox(height: 12),
-                  _moduleSwitch(provider, 'Quran', 'Hafalan & Setoran Al-Quran', Icons.menu_book_rounded, true),
-                  _moduleSwitch(provider, 'Hadits', 'Hafalan hadits-hadits pilihan', Icons.import_contacts_rounded, provider.isModuleActive('hadits'), onTap: () => provider.toggleModule('hadits')),
-                  _moduleSwitch(provider, 'Tajwid', 'Panduan hukum bacaan Al-Quran', Icons.auto_stories_rounded, provider.isModuleActive('tajwid'), onTap: () => provider.toggleModule('tajwid')),
-                  _moduleSwitch(provider, 'Tahsin', 'Panduan fasih & makharijul huruf', Icons.record_voice_over_rounded, provider.isModuleActive('tahsin'), onTap: () => provider.toggleModule('tahsin')),
-                  _moduleSwitch(provider, 'Fiqih', 'Tuntunan ibadah lengkap & sistematis', Icons.menu_book_rounded, provider.isModuleActive('fiqih'), onTap: () => provider.toggleModule('fiqih')),
-                  _moduleSwitch(provider, 'Pengetahuan Pondok', 'Materi pengetahuan pondok yang harus dihafal', Icons.lightbulb_outline_rounded, provider.isModuleActive('pondok_info'), onTap: () => provider.toggleModule('pondok_info')),
-                  _moduleSwitch(provider, 'Wisuda & Ujian Tasmi\'', 'Pendaftaran ujian tasmi\' dan kelulusan wisuda', Icons.school_rounded, provider.isModuleActive('graduation'), onTap: () => provider.toggleModule('graduation')),
+                  _moduleSwitch(provider, 'Quran', 'Hafalan & Setoran Al-Quran', Icons.menu_book_rounded, true, isDark: isDark),
+                  _moduleSwitch(provider, 'Hadits', 'Hafalan hadits-hadits pilihan', Icons.import_contacts_rounded, provider.isModuleActive('hadits'), onTap: () => provider.toggleModule('hadits'), isDark: isDark),
+                  _moduleSwitch(provider, 'Tajwid', 'Panduan hukum bacaan Al-Quran', Icons.auto_stories_rounded, provider.isModuleActive('tajwid'), onTap: () => provider.toggleModule('tajwid'), isDark: isDark),
+                  _moduleSwitch(provider, 'Tahsin', 'Panduan fasih & makharijul huruf', Icons.record_voice_over_rounded, provider.isModuleActive('tahsin'), onTap: () => provider.toggleModule('tahsin'), isDark: isDark),
+                  _moduleSwitch(provider, 'Fiqih', 'Tuntunan ibadah lengkap & sistematis', Icons.menu_book_rounded, provider.isModuleActive('fiqih'), onTap: () => provider.toggleModule('fiqih'), isDark: isDark),
+                  _moduleSwitch(provider, 'Pengetahuan Pondok', 'Materi pengetahuan pondok yang harus dihafal', Icons.lightbulb_outline_rounded, provider.isModuleActive('pondok_info'), onTap: () => provider.toggleModule('pondok_info'), isDark: isDark),
+                  _moduleSwitch(provider, 'Wisuda & Ujian Tasmi\'', 'Pendaftaran ujian tasmi\' dan kelulusan wisuda', Icons.school_rounded, provider.isModuleActive('graduation'), onTap: () => provider.toggleModule('graduation'), isDark: isDark),
                 ],
                 const SizedBox(height: 32),
                 if (!widget.manageModulesOnly)
@@ -189,14 +191,21 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
 
   Widget _section(String t) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(t, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.primaryGreen)), const Divider()]);
 
-  Widget _moduleSwitch(AppProvider p, String title, String sub, IconData icon, bool val, {VoidCallback? onTap}) {
+  Widget _moduleSwitch(AppProvider p, String title, String sub, IconData icon, bool val, {VoidCallback? onTap, required bool isDark}) {
     return Card(
-      elevation: 0, margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.grey.shade200)),
+      elevation: 0, 
+      margin: const EdgeInsets.only(bottom: 8),
+      color: isDark ? AppTheme.darkSurface : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12), 
+        side: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200)
+      ),
       child: SwitchListTile(
-        value: val, onChanged: onTap != null ? (_) => onTap() : null,
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        subtitle: Text(sub, style: const TextStyle(fontSize: 12)),
+        value: val, 
+        onChanged: onTap != null ? (_) => onTap() : null,
+        activeColor: AppTheme.primaryGreen,
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
+        subtitle: Text(sub, style: TextStyle(fontSize: 12, color: isDark ? Colors.white38 : Colors.grey.shade600)),
         secondary: Icon(icon, color: AppTheme.primaryGreen),
       ),
     );

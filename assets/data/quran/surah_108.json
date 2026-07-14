@@ -1,24 +1,86 @@
-﻿{
-    "number":  108,
-    "name":  "سُورَةُ الكَوۡثَرِ",
-    "englishName":  "Al-Kawthar",
-    "numberOfAyahs":  3,
-    "revelationType":  "Meccan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ إِنَّآ أَعْطَيْنَٰكَ ٱلْكَوْثَرَ",
-                      "translation":  "Sesungguhnya Kami telah memberikan kepadamu nikmat yang banyak."
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "فَصَلِّ لِرَبِّكَ وَٱنْحَرْ",
-                      "translation":  "Maka dirikanlah shalat karena Tuhanmu; dan berkorbanlah."
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "إِنَّ شَانِئَكَ هُوَ ٱلْأَبْتَرُ",
-                      "translation":  "Sesungguhnya orang-orang yang membenci kamu dialah yang terputus."
-                  }
-              ]
+{
+  "number": 108,
+  "name": "سُورَةُ الكَوۡثَرِ",
+  "englishName": "Al-Kawthar",
+  "numberOfAyahs": 3,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ إِنَّآ أَعْطَيْنَٰكَ ٱلْكَوْثَرَ",
+      "translation": "Sesungguhnya Kami telah memberikan kepadamu nikmat yang banyak.",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "إِنَّآ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "أَعْطَيْنَٰكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلْكَوْثَرَ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "فَصَلِّ لِرَبِّكَ وَٱنْحَرْ",
+      "translation": "Maka dirikanlah shalat karena Tuhanmu; dan berkorbanlah.",
+      "wordsTajweed": [
+        {
+          "word": "فَصَلِّ",
+          "rule": null
+        },
+        {
+          "word": "لِرَبِّكَ",
+          "rule": null
+        },
+        {
+          "word": "وَٱنْحَرْ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "إِنَّ شَانِئَكَ هُوَ ٱلْأَبْتَرُ",
+      "translation": "Sesungguhnya orang-orang yang membenci kamu dialah yang terputus.",
+      "wordsTajweed": [
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "شَانِئَكَ",
+          "rule": null
+        },
+        {
+          "word": "هُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَبْتَرُ",
+          "rule": "qalqalah"
+        }
+      ]
+    }
+  ]
 }

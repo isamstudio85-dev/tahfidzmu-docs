@@ -1,34 +1,152 @@
-﻿{
-    "number":  113,
-    "name":  "سُورَةُ الفَلَقِ",
-    "englishName":  "Al-Falaq",
-    "numberOfAyahs":  5,
-    "revelationType":  "Meccan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ",
-                      "translation":  "Katakanlah: \"Aku berlindung kepada Tuhan Yang Menguasai subuh,"
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "مِن شَرِّ مَا خَلَقَ",
-                      "translation":  "dari kejahatan makhluk-Nya,"
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
-                      "translation":  "dan dari kejahatan malam apabila telah gelap gulita,"
-                  },
-                  {
-                      "numberInSurah":  4,
-                      "arabic":  "وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ",
-                      "translation":  "dan dari kejahatan wanita-wanita tukang sihir yang menghembus pada buhul-buhul,"
-                  },
-                  {
-                      "numberInSurah":  5,
-                      "arabic":  "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
-                      "translation":  "dan dari kejahatan pendengki bila ia dengki\"."
-                  }
-              ]
+{
+  "number": 113,
+  "name": "سُورَةُ الفَلَقِ",
+  "englishName": "Al-Falaq",
+  "numberOfAyahs": 5,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ",
+      "translation": "Katakanlah: \"Aku berlindung kepada Tuhan Yang Menguasai subuh,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "قُلْ",
+          "rule": null
+        },
+        {
+          "word": "أَعُوذُ",
+          "rule": null
+        },
+        {
+          "word": "بِرَبِّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْفَلَقِ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "مِن شَرِّ مَا خَلَقَ",
+      "translation": "dari kejahatan makhluk-Nya,",
+      "wordsTajweed": [
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَرِّ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "خَلَقَ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ",
+      "translation": "dan dari kejahatan malam apabila telah gelap gulita,",
+      "wordsTajweed": [
+        {
+          "word": "وَمِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَرِّ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "غَاسِقٍ",
+          "rule": null
+        },
+        {
+          "word": "إِذَا",
+          "rule": null
+        },
+        {
+          "word": "وَقَبَ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "وَمِن شَرِّ ٱلنَّفَّٰثَٰتِ فِى ٱلْعُقَدِ",
+      "translation": "dan dari kejahatan wanita-wanita tukang sihir yang menghembus pada buhul-buhul,",
+      "wordsTajweed": [
+        {
+          "word": "وَمِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَرِّ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱلنَّفَّٰثَٰتِ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْعُقَدِ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+      "translation": "dan dari kejahatan pendengki bila ia dengki\".",
+      "wordsTajweed": [
+        {
+          "word": "وَمِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَرِّ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "حَاسِدٍ",
+          "rule": null
+        },
+        {
+          "word": "إِذَا",
+          "rule": null
+        },
+        {
+          "word": "حَسَدَ",
+          "rule": "qalqalah"
+        }
+      ]
+    }
+  ]
 }

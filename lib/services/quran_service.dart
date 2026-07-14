@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../models/surah_model.dart';
@@ -9,6 +9,7 @@ class QuranService {
 
   static final Map<int, SurahDetail> _surahCache = {};
   static List<SurahInfo>? _listCache;
+  static Map<String, List<dynamic>>? _lineMapping;
 
   // Surah list
   static Future<List<SurahInfo>> getSurahList() async {
@@ -28,6 +29,18 @@ class QuranService {
     return data.map((s) => SurahInfo.fromJson(s as Map<String, dynamic>)).toList();
   }
 
+  static Future<Map<String, List<dynamic>>> _getLineMapping() async {
+    if (_lineMapping != null) return _lineMapping!;
+    try {
+      final raw = await rootBundle.loadString('$_assetDir/quran_line_mapping.json');
+      _lineMapping = Map<String, List<dynamic>>.from(jsonDecode(raw) as Map);
+      return _lineMapping!;
+    } catch (e) {
+      debugPrint("Error loading quran line mapping: $e");
+      return {};
+    }
+  }
+
   // Single surah
   static Future<SurahDetail> getSurah(int number) async {
     if (_surahCache.containsKey(number)) return _surahCache[number]!;
@@ -36,8 +49,30 @@ class QuranService {
       final padded = number.toString().padLeft(3, '0');
       final raw = await rootBundle.loadString('$_assetDir/surah_$padded.json');
       final surah = await compute(_parseSurahDetail, raw);
-      _surahCache[number] = surah;
-      return surah;
+      
+      final mapping = await _getLineMapping();
+      final updatedAyahs = surah.ayahs.map((ayah) {
+        final key = '${surah.number}:${ayah.numberInSurah}';
+        final mapData = mapping[key];
+        if (mapData != null && mapData.length == 3) {
+          return ayah.copyWith(
+            pageNumber: mapData[0] as int,
+            startLine: mapData[1] as int,
+            endLine: mapData[2] as int,
+          );
+        }
+        return ayah;
+      }).toList();
+
+      final updatedSurah = SurahDetail(
+        number: surah.number,
+        name: surah.name,
+        englishName: surah.englishName,
+        ayahs: updatedAyahs,
+      );
+
+      _surahCache[number] = updatedSurah;
+      return updatedSurah;
     } catch (e) {
       debugPrint("Error loading surah $number: $e");
       rethrow;
@@ -52,5 +87,6 @@ class QuranService {
   static void clearCache() {
     _surahCache.clear();
     _listCache = null;
+    _lineMapping = null;
   }
 }

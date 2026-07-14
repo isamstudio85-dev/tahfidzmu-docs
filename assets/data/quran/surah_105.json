@@ -1,34 +1,152 @@
-﻿{
-    "number":  105,
-    "name":  "سُورَةُ الفِيلِ",
-    "englishName":  "Al-Fil",
-    "numberOfAyahs":  5,
-    "revelationType":  "Meccan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَٰبِ ٱلْفِيلِ",
-                      "translation":  "Apakah kamu tidak memperhatikan bagaimana Tuhanmu telah bertindak terhadap tentara bergajah?"
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "أَلَمْ يَجْعَلْ كَيْدَهُمْ فِى تَضْلِيلٍۢ",
-                      "translation":  "Bukankah Dia telah menjadikan tipu daya mereka (untuk menghancurkan Ka\u0027bah) itu sia-sia?"
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ",
-                      "translation":  "dan Dia mengirimkan kapada mereka burung yang berbondong-bondong,"
-                  },
-                  {
-                      "numberInSurah":  4,
-                      "arabic":  "تَرْمِيهِم بِحِجَارَةٍۢ مِّن سِجِّيلٍۢ",
-                      "translation":  "yang melempari mereka dengan batu (berasal) dari tanah yang terbakar,"
-                  },
-                  {
-                      "numberInSurah":  5,
-                      "arabic":  "فَجَعَلَهُمْ كَعَصْفٍۢ مَّأْكُولٍۭ",
-                      "translation":  "lalu Dia menjadikan mereka seperti daun-daun yang dimakan (ulat)."
-                  }
-              ]
+{
+  "number": 105,
+  "name": "سُورَةُ الفِيلِ",
+  "englishName": "Al-Fil",
+  "numberOfAyahs": 5,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَٰبِ ٱلْفِيلِ",
+      "translation": "Apakah kamu tidak memperhatikan bagaimana Tuhanmu telah bertindak terhadap tentara bergajah?",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "أَلَمْ",
+          "rule": null
+        },
+        {
+          "word": "تَرَ",
+          "rule": null
+        },
+        {
+          "word": "كَيْفَ",
+          "rule": null
+        },
+        {
+          "word": "فَعَلَ",
+          "rule": null
+        },
+        {
+          "word": "رَبُّكَ",
+          "rule": null
+        },
+        {
+          "word": "بِأَصْحَٰبِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلْفِيلِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "أَلَمْ يَجْعَلْ كَيْدَهُمْ فِى تَضْلِيلٍۢ",
+      "translation": "Bukankah Dia telah menjadikan tipu daya mereka (untuk menghancurkan Ka'bah) itu sia-sia?",
+      "wordsTajweed": [
+        {
+          "word": "أَلَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَجْعَلْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "كَيْدَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "تَضْلِيلٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ",
+      "translation": "dan Dia mengirimkan kapada mereka burung yang berbondong-bondong,",
+      "wordsTajweed": [
+        {
+          "word": "وَأَرْسَلَ",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْهِمْ",
+          "rule": null
+        },
+        {
+          "word": "طَيْرًا",
+          "rule": null
+        },
+        {
+          "word": "أَبَابِيلَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "تَرْمِيهِم بِحِجَارَةٍۢ مِّن سِجِّيلٍۢ",
+      "translation": "yang melempari mereka dengan batu (berasal) dari tanah yang terbakar,",
+      "wordsTajweed": [
+        {
+          "word": "تَرْمِيهِم",
+          "rule": "ikhfa_shafawi"
+        },
+        {
+          "word": "بِحِجَارَةٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "سِجِّيلٍۢ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "فَجَعَلَهُمْ كَعَصْفٍۢ مَّأْكُولٍۭ",
+      "translation": "lalu Dia menjadikan mereka seperti daun-daun yang dimakan (ulat).",
+      "wordsTajweed": [
+        {
+          "word": "فَجَعَلَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "كَعَصْفٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَّأْكُولٍۭ",
+          "rule": "idghaam_ghunnah"
+        }
+      ]
+    }
+  ]
 }

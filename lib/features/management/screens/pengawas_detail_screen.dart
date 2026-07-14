@@ -5,7 +5,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:tahfidz_app/models/pengawas_data.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/features/management/screens/pengawas_form_screen.dart';
+import 'package:tahfidz_app/features/management/widgets/management_shared_widgets.dart';
 
 class PengawasDetailScreen extends StatelessWidget {
   const PengawasDetailScreen({super.key, required this.pengawasId});
@@ -13,12 +15,15 @@ class PengawasDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Consumer<AppProvider>(
       builder: (ctx, provider, _) {
         final list = provider.pengawasList.where((p) => p.id == pengawasId).toList();
         final pengawas = list.isNotEmpty ? list.first : null;
         if (pengawas == null) {
           return Scaffold(
+            backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
             appBar: AppBar(title: const Text('Detail Pengawas')),
             body: const Center(child: Text('Pengawas tidak ditemukan')),
           );
@@ -27,12 +32,18 @@ class PengawasDetailScreen extends StatelessWidget {
         final isAdmin = provider.isAdmin;
 
         return Scaffold(
+          backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
           appBar: AppBar(
-            title: const Text('Detail Pengawas'),
+            title: Text(
+              'DETAIL PENGAWAS',
+              style: GoogleFonts.poppins(fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 14),
+            ),
+            centerTitle: true,
+            elevation: 0,
             actions: [
               if (isAdmin)
                 IconButton(
-                  icon: const Icon(Icons.edit_outlined),
+                  icon: const Icon(Icons.edit_note_rounded),
                   tooltip: 'Edit Profil',
                   onPressed: () => Navigator.push(
                     context,
@@ -42,41 +53,54 @@ class PengawasDetailScreen extends StatelessWidget {
             ],
           ),
           body: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
-              // 1. DIGITAL CARD & QR CODE
-              _PengawasDigitalCard(pengawas: pengawas),
+              const SizedBox(height: 16),
+              // 1. PROFESSIONAL HEADER
+              _buildPengawasHeader(pengawas, isDark),
               const SizedBox(height: 24),
 
-              // 2. Informasi Akun
-              _sectionHeader('Informasi Akun'),
-              _infoCard([
-                _infoRow(Icons.person_pin_rounded, 'Nama Pengawas', pengawas.nama),
-                _infoRow(Icons.alternate_email_rounded, 'Username Login', '@${pengawas.username}'),
-                _infoRow(Icons.work_outline_rounded, 'Jabatan', pengawas.jabatan),
-                _infoRow(Icons.phone_rounded, 'WhatsApp', pengawas.nomorHp.isNotEmpty ? pengawas.nomorHp : '-'),
-                _infoRow(Icons.info_outline_rounded, 'Status Keaktifan', pengawas.isAktif ? 'Aktif' : 'Non-aktif',
-                    valueColor: pengawas.isAktif ? AppTheme.primaryGreen : Colors.grey),
-              ]),
+              // 2. SYSTEM METRICS / AUTHORITY
+              _buildAuthorityHUD(isDark),
               const SizedBox(height: 24),
 
-              // 3. Catatan
+              // 3. Informasi Akun
+              InfoSectionCard(
+                title: 'ACCOUNT CREDENTIALS', 
+                children: [
+                  InfoSectionRow(icon: Icons.person_rounded, label: 'FULL NAME', value: pengawas.nama),
+                  InfoSectionRow(icon: Icons.alternate_email_rounded, label: 'SYSTEM USERNAME', value: '@${pengawas.username}'),
+                  InfoSectionRow(icon: Icons.work_rounded, label: 'DESIGNATION', value: pengawas.jabatan),
+                  InfoSectionRow(icon: Icons.phone_rounded, label: 'WHATSAPP COMMAND', value: pengawas.nomorHp.isNotEmpty ? pengawas.nomorHp : '-'),
+                  InfoSectionRow(icon: Icons.verified_user_rounded, label: 'CLEARANCE STATUS', value: pengawas.isAktif ? 'AUTHORIZED' : 'DEACTIVATED',
+                      valueColor: pengawas.isAktif ? Colors.green : Colors.red),
+                ]
+              ),
+              const SizedBox(height: 24),
+
+              // 4. Catatan
               if (pengawas.catatan?.isNotEmpty ?? false) ...[
-                _sectionHeader('Catatan'),
+                _sectionTitle('OVERSEER NOTES'),
+                const SizedBox(height: 12),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade100),
+                    color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade100),
                   ),
                   child: Text(
                     pengawas.catatan!,
-                    style: const TextStyle(color: Colors.black87, fontSize: 13),
+                    style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 13, height: 1.5),
                   ),
                 ),
               ],
+              
+              const SizedBox(height: 32),
+              // DIGITAL PASS
+              _qrActionCard(context, pengawas, isDark),
+              const SizedBox(height: 40),
             ],
           ),
         );
@@ -84,40 +108,31 @@ class PengawasDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _sectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 10),
-      child: Text(
-        title,
-        style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.grey.shade800),
-      ),
-    );
-  }
-
-  Widget _infoCard(List<Widget> children) {
+  Widget _buildPengawasHeader(PengawasData p, bool isDark) {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [
-        BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 2)),
-      ]),
-      child: Column(children: children),
-    );
-  }
-
-  Widget _infoRow(IconData icon, String label, String value, {Color? valueColor}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.blue.withValues(alpha: 0.2), width: 1.5),
+      ),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey.shade400),
-          const SizedBox(width: 16),
+          AppAvatar(name: p.nama, radius: 36, imagePath: p.photoPath),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 11)),
                 Text(
-                  value,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: valueColor ?? Colors.black87),
+                  p.nama.toUpperCase(),
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : Colors.black87),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  'GREAT OVERSEER',
+                  style: const TextStyle(color: Colors.blue, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
                 ),
               ],
             ),
@@ -126,192 +141,90 @@ class PengawasDetailScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-class _PengawasDigitalCard extends StatelessWidget {
-  const _PengawasDigitalCard({required this.pengawas});
-  final PengawasData pengawas;
+  Widget _buildAuthorityHUD(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade100),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _hudItem(Icons.visibility_rounded, 'TOTAL', 'OVERSIGHT', Colors.blue, isDark),
+          _hudItem(Icons.verified_user_rounded, 'HIGH', 'CLEARANCE', Colors.green, isDark),
+          _hudItem(Icons.gavel_rounded, 'ADMIN', 'AUTHORITY', Colors.purple, isDark),
+        ],
+      ),
+    );
+  }
 
-  void _showQrDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'QR CODE PENGAWAS',
-                style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.primaryGreen),
-              ),
-              const SizedBox(height: 20),
-              FutureBuilder<String>(
-                future: context.read<AppProvider>().getLoginQrData(pengawas.id),
-                builder: (context, snapshot) {
-                  return QrImageView(
-                    data: snapshot.data ?? pengawas.username,
-                    version: QrVersions.auto,
-                    size: 180.0,
-                    backgroundColor: Colors.white,
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-              Divider(color: Colors.grey.shade300, height: 1),
-              const SizedBox(height: 16),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-                      child: pengawas.photoPath != null
-                          ? Image.network(pengawas.photoPath!, fit: BoxFit.cover)
-                          : Center(
-                              child: Text(
-                                pengawas.nama[0],
-                                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.primaryGreen),
-                              ),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          pengawas.nama,
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Username: @${pengawas.username}',
-                          style: TextStyle(
-                            fontFamily: 'monospace',
-                            color: Colors.grey.shade600,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text(
-                  'Tutup',
-                  style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
+  Widget _hudItem(IconData icon, String val, String label, Color color, bool isDark) {
+    return Column(
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 4),
+            Text(val, style: GoogleFonts.poppins(color: isDark ? Colors.white : Colors.black87, fontWeight: FontWeight.w900, fontSize: 18)),
+          ],
+        ),
+        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
+      ],
+    );
+  }
+
+  Widget _qrActionCard(BuildContext context, PengawasData p, bool isDark) {
+    return InkWell(
+      onTap: () => _showQrDialog(context, p),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.2)),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.qr_code_2_rounded, color: AppTheme.primaryGreen, size: 24),
+            SizedBox(width: 12),
+            Text('ACCESS PASS QR', style: TextStyle(color: AppTheme.primaryGreen, fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1)),
+          ],
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: AppTheme.primaryGreen.withValues(alpha: 0.2), width: 1.5),
+  Widget _sectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, bottom: 10),
+      child: Text(
+        title.toUpperCase(), 
+        style: GoogleFonts.poppins(fontWeight: FontWeight.w900, fontSize: 10, color: Colors.grey, letterSpacing: 1.5)
       ),
-      child: InkWell(
-        onTap: () => _showQrDialog(context),
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'KARTU PENGAWAS DIGITAL',
-                    style: GoogleFonts.poppins(
-                      color: AppTheme.primaryGreen,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const Icon(Icons.qr_code_2_rounded, color: AppTheme.primaryGreen, size: 20),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      color: AppTheme.primaryGreen.withValues(alpha: 0.05),
-                      child: pengawas.photoPath != null
-                          ? Image.network(pengawas.photoPath!, fit: BoxFit.cover)
-                          : Center(
-                              child: Text(
-                                pengawas.nama[0],
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppTheme.primaryGreen),
-                              ),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          pengawas.nama,
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Username: @${pengawas.username}',
-                          style: TextStyle(fontFamily: 'monospace', color: Colors.grey.shade600, fontSize: 10),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  FutureBuilder<String>(
-                    future: context.read<AppProvider>().getLoginQrData(pengawas.id),
-                    builder: (context, snapshot) {
-                      return QrImageView(
-                        data: snapshot.data ?? pengawas.username,
-                        version: QrVersions.auto,
-                        size: 60.0,
-                        backgroundColor: Colors.white,
-                      );
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: Text(
-                  'Ketuk kartu untuk memperbesar QR Code',
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontStyle: FontStyle.italic),
-                ),
-              ),
-            ],
-          ),
+    );
+  }
+
+  void _showQrDialog(BuildContext context, PengawasData p) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('OVERSEER ACCESS PASS', style: GoogleFonts.poppins(fontWeight: FontWeight.w900, letterSpacing: 1)),
+            const SizedBox(height: 20),
+            QrImageView(data: p.username, size: 200),
+            const SizedBox(height: 16),
+            Text(p.nama, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(p.jabatan, style: const TextStyle(color: Colors.grey, fontSize: 12)),
+          ],
         ),
       ),
     );

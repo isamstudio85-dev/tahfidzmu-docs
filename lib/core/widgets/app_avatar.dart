@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:tahfidz_app/core/theme/app_theme.dart';
+import 'package:tahfidz_app/core/utils/reward_system.dart';
 
 /// Generates a DiceBear avatar URL seeded by the person's name.
 /// Each name always maps to the same avatar (deterministic).
@@ -30,6 +31,7 @@ class AppAvatar extends StatelessWidget {
     this.imageAsset,
     this.backgroundColor,
     this.foregroundColor,
+    this.activeFrame,
   });
 
   /// Person's name — used to seed the AI avatar and derive initials.
@@ -50,6 +52,9 @@ class AppAvatar extends StatelessWidget {
   /// Text color for the fallback initials avatar.
   final Color? foregroundColor;
 
+  /// Virtual frame ID to draw around the avatar.
+  final String? activeFrame;
+
   String get _initials {
     final parts = name.trim().split(RegExp(r'\s+'));
     if (parts.isEmpty || parts.first.isEmpty) return '?';
@@ -61,6 +66,9 @@ class AppAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bgColor = backgroundColor ?? AppTheme.lightGreen;
     final fgColor = foregroundColor ?? AppTheme.darkGreen;
+    final frameColor = RewardSystem.getFrameColor(activeFrame);
+
+    Widget avatar;
 
     Widget fallback = CircleAvatar(
       radius: radius,
@@ -80,43 +88,70 @@ class AppAvatar extends StatelessWidget {
       final isUrl = imagePath!.startsWith('http');
       
       if (isUrl) {
-        return CachedNetworkImage(
+        avatar = CachedNetworkImage(
           imageUrl: imagePath!,
           imageBuilder: (context, imageProvider) => CircleAvatar(radius: radius, backgroundImage: imageProvider),
           placeholder: (context, url) => CircleAvatar(radius: radius, backgroundColor: bgColor, child: const CircularProgressIndicator(strokeWidth: 2)),
           errorWidget: (context, url, error) => fallback,
         );
-      }
-
-      return ClipOval(
-        child: SizedBox(
-          width: radius * 2,
-          height: radius * 2,
-          child: Image.file(
-            File(imagePath!),
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => fallback,
+      } else {
+        avatar = ClipOval(
+          child: SizedBox(
+            width: radius * 2,
+            height: radius * 2,
+            child: Image.file(
+              File(imagePath!),
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => fallback,
+            ),
           ),
-        ),
-      );
-    }
-
-    // Bundled asset image
-    if (imageAsset != null) {
-      return CircleAvatar(
+        );
+      }
+    } else if (imageAsset != null) {
+      // Bundled asset image
+      avatar = CircleAvatar(
         radius: radius,
         backgroundImage: AssetImage(imageAsset!),
         onBackgroundImageError: (_, __) {},
         child: null,
       );
+    } else {
+      // Fallback to initials with dynamic themed background (clean & premium)
+      avatar = fallback;
     }
 
-    // Default Fallback Asset (Instead of DiceBear AI)
-    return CircleAvatar(
-      radius: radius,
-      backgroundImage: const AssetImage('assets/images/avatar-default.png'),
-      backgroundColor: bgColor,
-      onBackgroundImageError: (_, __) {},
+    if (frameColor == null) return avatar;
+
+    // Wrap with Frame
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Glow effect
+        Container(
+          width: radius * 2 + 8,
+          height: radius * 2 + 8,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: frameColor.withValues(alpha: 0.3),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+        ),
+        // The Frame
+        Container(
+          width: radius * 2 + 6,
+          height: radius * 2 + 6,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: frameColor, width: 3),
+          ),
+        ),
+        avatar,
+      ],
     );
   }
 }

@@ -93,11 +93,10 @@ class _MainShellState extends State<MainShell> {
     final int safeIndex = _index.clamp(0, screens.length - 1);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
       body: IndexedStack(index: safeIndex, children: screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.12),

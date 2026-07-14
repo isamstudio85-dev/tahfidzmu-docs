@@ -1,104 +1,446 @@
-﻿{
-    "number":  96,
-    "name":  "سُورَةُ العَلَقِ",
-    "englishName":  "Al-Alaq",
-    "numberOfAyahs":  19,
-    "revelationType":  "Meccan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ٱقْرَأْ بِٱسْمِ رَبِّكَ ٱلَّذِى خَلَقَ",
-                      "translation":  "Bacalah dengan (menyebut) nama Tuhanmu Yang menciptakan,"
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "خَلَقَ ٱلْإِنسَٰنَ مِنْ عَلَقٍ",
-                      "translation":  "Dia telah menciptakan manusia dari segumpal darah."
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "ٱقْرَأْ وَرَبُّكَ ٱلْأَكْرَمُ",
-                      "translation":  "Bacalah, dan Tuhanmulah Yang Maha Pemurah,"
-                  },
-                  {
-                      "numberInSurah":  4,
-                      "arabic":  "ٱلَّذِى عَلَّمَ بِٱلْقَلَمِ",
-                      "translation":  "Yang mengajar (manusia) dengan perantaran kalam,"
-                  },
-                  {
-                      "numberInSurah":  5,
-                      "arabic":  "عَلَّمَ ٱلْإِنسَٰنَ مَا لَمْ يَعْلَمْ",
-                      "translation":  "Dia mengajar kepada manusia apa yang tidak diketahuinya."
-                  },
-                  {
-                      "numberInSurah":  6,
-                      "arabic":  "كَلَّآ إِنَّ ٱلْإِنسَٰنَ لَيَطْغَىٰٓ",
-                      "translation":  "Ketahuilah! Sesungguhnya manusia benar-benar melampaui batas,"
-                  },
-                  {
-                      "numberInSurah":  7,
-                      "arabic":  "أَن رَّءَاهُ ٱسْتَغْنَىٰٓ",
-                      "translation":  "karena dia melihat dirinya serba cukup."
-                  },
-                  {
-                      "numberInSurah":  8,
-                      "arabic":  "إِنَّ إِلَىٰ رَبِّكَ ٱلرُّجْعَىٰٓ",
-                      "translation":  "Sesungguhnya hanya kepada Tuhanmulah kembali(mu)."
-                  },
-                  {
-                      "numberInSurah":  9,
-                      "arabic":  "أَرَءَيْتَ ٱلَّذِى يَنْهَىٰ",
-                      "translation":  "Bagaimana pendapatmu tentang orang yang melarang,"
-                  },
-                  {
-                      "numberInSurah":  10,
-                      "arabic":  "عَبْدًا إِذَا صَلَّىٰٓ",
-                      "translation":  "seorang hamba ketika mengerjakan shalat,"
-                  },
-                  {
-                      "numberInSurah":  11,
-                      "arabic":  "أَرَءَيْتَ إِن كَانَ عَلَى ٱلْهُدَىٰٓ",
-                      "translation":  "bagaimana pendapatmu jika orang yang melarang itu berada di atas kebenaran,"
-                  },
-                  {
-                      "numberInSurah":  12,
-                      "arabic":  "أَوْ أَمَرَ بِٱلتَّقْوَىٰٓ",
-                      "translation":  "atau dia menyuruh bertakwa (kepada Allah)?"
-                  },
-                  {
-                      "numberInSurah":  13,
-                      "arabic":  "أَرَءَيْتَ إِن كَذَّبَ وَتَوَلَّىٰٓ",
-                      "translation":  "Bagaimana pendapatmu jika orang yang melarang itu mendustakan dan berpaling?"
-                  },
-                  {
-                      "numberInSurah":  14,
-                      "arabic":  "أَلَمْ يَعْلَم بِأَنَّ ٱللَّهَ يَرَىٰ",
-                      "translation":  "Tidaklah dia mengetahui bahwa sesungguhnya Allah melihat segala perbuatannya?"
-                  },
-                  {
-                      "numberInSurah":  15,
-                      "arabic":  "كَلَّا لَئِن لَّمْ يَنتَهِ لَنَسْفَعًۢا بِٱلنَّاصِيَةِ",
-                      "translation":  "Ketahuilah, sungguh jika dia tidak berhenti (berbuat demikian) niscaya Kami tarik ubun-ubunnya,"
-                  },
-                  {
-                      "numberInSurah":  16,
-                      "arabic":  "نَاصِيَةٍۢ كَٰذِبَةٍ خَاطِئَةٍۢ",
-                      "translation":  "(yaitu) ubun-ubun orang yang mendustakan lagi durhaka."
-                  },
-                  {
-                      "numberInSurah":  17,
-                      "arabic":  "فَلْيَدْعُ نَادِيَهُۥ",
-                      "translation":  "Maka biarlah dia memanggil golongannya (untuk menolongnya),"
-                  },
-                  {
-                      "numberInSurah":  18,
-                      "arabic":  "سَنَدْعُ ٱلزَّبَانِيَةَ",
-                      "translation":  "kelak Kami akan memanggil malaikat Zabaniyah,"
-                  },
-                  {
-                      "numberInSurah":  19,
-                      "arabic":  "كَلَّا لَا تُطِعْهُ وَٱسْجُدْ وَٱقْتَرِب ۩",
-                      "translation":  "sekali-kali jangan, janganlah kamu patuh kepadanya; dan sujudlah dan dekatkanlah (dirimu kepada Tuhan)."
-                  }
-              ]
+{
+  "number": 96,
+  "name": "سُورَةُ العَلَقِ",
+  "englishName": "Al-Alaq",
+  "numberOfAyahs": 19,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ٱقْرَأْ بِٱسْمِ رَبِّكَ ٱلَّذِى خَلَقَ",
+      "translation": "Bacalah dengan (menyebut) nama Tuhanmu Yang menciptakan,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱقْرَأْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "بِٱسْمِ",
+          "rule": null
+        },
+        {
+          "word": "رَبِّكَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِى",
+          "rule": null
+        },
+        {
+          "word": "خَلَقَ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "خَلَقَ ٱلْإِنسَٰنَ مِنْ عَلَقٍ",
+      "translation": "Dia telah menciptakan manusia dari segumpal darah.",
+      "wordsTajweed": [
+        {
+          "word": "خَلَقَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "مِنْ",
+          "rule": null
+        },
+        {
+          "word": "عَلَقٍ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "ٱقْرَأْ وَرَبُّكَ ٱلْأَكْرَمُ",
+      "translation": "Bacalah, dan Tuhanmulah Yang Maha Pemurah,",
+      "wordsTajweed": [
+        {
+          "word": "ٱقْرَأْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "وَرَبُّكَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَكْرَمُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "ٱلَّذِى عَلَّمَ بِٱلْقَلَمِ",
+      "translation": "Yang mengajar (manusia) dengan perantaran kalam,",
+      "wordsTajweed": [
+        {
+          "word": "ٱلَّذِى",
+          "rule": null
+        },
+        {
+          "word": "عَلَّمَ",
+          "rule": null
+        },
+        {
+          "word": "بِٱلْقَلَمِ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "عَلَّمَ ٱلْإِنسَٰنَ مَا لَمْ يَعْلَمْ",
+      "translation": "Dia mengajar kepada manusia apa yang tidak diketahuinya.",
+      "wordsTajweed": [
+        {
+          "word": "عَلَّمَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "لَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَعْلَمْ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "كَلَّآ إِنَّ ٱلْإِنسَٰنَ لَيَطْغَىٰٓ",
+      "translation": "Ketahuilah! Sesungguhnya manusia benar-benar melampaui batas,",
+      "wordsTajweed": [
+        {
+          "word": "كَلَّآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "لَيَطْغَىٰٓ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "أَن رَّءَاهُ ٱسْتَغْنَىٰٓ",
+      "translation": "karena dia melihat dirinya serba cukup.",
+      "wordsTajweed": [
+        {
+          "word": "أَن",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "رَّءَاهُ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "ٱسْتَغْنَىٰٓ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "إِنَّ إِلَىٰ رَبِّكَ ٱلرُّجْعَىٰٓ",
+      "translation": "Sesungguhnya hanya kepada Tuhanmulah kembali(mu).",
+      "wordsTajweed": [
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "رَبِّكَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرُّجْعَىٰٓ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 9,
+      "arabic": "أَرَءَيْتَ ٱلَّذِى يَنْهَىٰ",
+      "translation": "Bagaimana pendapatmu tentang orang yang melarang,",
+      "wordsTajweed": [
+        {
+          "word": "أَرَءَيْتَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِى",
+          "rule": null
+        },
+        {
+          "word": "يَنْهَىٰ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 10,
+      "arabic": "عَبْدًا إِذَا صَلَّىٰٓ",
+      "translation": "seorang hamba ketika mengerjakan shalat,",
+      "wordsTajweed": [
+        {
+          "word": "عَبْدًا",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "إِذَا",
+          "rule": null
+        },
+        {
+          "word": "صَلَّىٰٓ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 11,
+      "arabic": "أَرَءَيْتَ إِن كَانَ عَلَى ٱلْهُدَىٰٓ",
+      "translation": "bagaimana pendapatmu jika orang yang melarang itu berada di atas kebenaran,",
+      "wordsTajweed": [
+        {
+          "word": "أَرَءَيْتَ",
+          "rule": null
+        },
+        {
+          "word": "إِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَانَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "عَلَى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْهُدَىٰٓ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 12,
+      "arabic": "أَوْ أَمَرَ بِٱلتَّقْوَىٰٓ",
+      "translation": "atau dia menyuruh bertakwa (kepada Allah)?",
+      "wordsTajweed": [
+        {
+          "word": "أَوْ",
+          "rule": null
+        },
+        {
+          "word": "أَمَرَ",
+          "rule": null
+        },
+        {
+          "word": "بِٱلتَّقْوَىٰٓ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 13,
+      "arabic": "أَرَءَيْتَ إِن كَذَّبَ وَتَوَلَّىٰٓ",
+      "translation": "Bagaimana pendapatmu jika orang yang melarang itu mendustakan dan berpaling?",
+      "wordsTajweed": [
+        {
+          "word": "أَرَءَيْتَ",
+          "rule": null
+        },
+        {
+          "word": "إِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَذَّبَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "وَتَوَلَّىٰٓ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 14,
+      "arabic": "أَلَمْ يَعْلَم بِأَنَّ ٱللَّهَ يَرَىٰ",
+      "translation": "Tidaklah dia mengetahui bahwa sesungguhnya Allah melihat segala perbuatannya?",
+      "wordsTajweed": [
+        {
+          "word": "أَلَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَعْلَم",
+          "rule": "ikhfa_shafawi"
+        },
+        {
+          "word": "بِأَنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱللَّهَ",
+          "rule": null
+        },
+        {
+          "word": "يَرَىٰ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 15,
+      "arabic": "كَلَّا لَئِن لَّمْ يَنتَهِ لَنَسْفَعًۢا بِٱلنَّاصِيَةِ",
+      "translation": "Ketahuilah, sungguh jika dia tidak berhenti (berbuat demikian) niscaya Kami tarik ubun-ubunnya,",
+      "wordsTajweed": [
+        {
+          "word": "كَلَّا",
+          "rule": null
+        },
+        {
+          "word": "لَئِن",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لَّمْ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "يَنتَهِ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "لَنَسْفَعًۢا",
+          "rule": "iqlab"
+        },
+        {
+          "word": "بِٱلنَّاصِيَةِ",
+          "rule": "iqlab"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 16,
+      "arabic": "نَاصِيَةٍۢ كَٰذِبَةٍ خَاطِئَةٍۢ",
+      "translation": "(yaitu) ubun-ubun orang yang mendustakan lagi durhaka.",
+      "wordsTajweed": [
+        {
+          "word": "نَاصِيَةٍۢ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كَٰذِبَةٍ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "خَاطِئَةٍۢ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 17,
+      "arabic": "فَلْيَدْعُ نَادِيَهُۥ",
+      "translation": "Maka biarlah dia memanggil golongannya (untuk menolongnya),",
+      "wordsTajweed": [
+        {
+          "word": "فَلْيَدْعُ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "نَادِيَهُۥ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 18,
+      "arabic": "سَنَدْعُ ٱلزَّبَانِيَةَ",
+      "translation": "kelak Kami akan memanggil malaikat Zabaniyah,",
+      "wordsTajweed": [
+        {
+          "word": "سَنَدْعُ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "ٱلزَّبَانِيَةَ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 19,
+      "arabic": "كَلَّا لَا تُطِعْهُ وَٱسْجُدْ وَٱقْتَرِب ۩",
+      "translation": "sekali-kali jangan, janganlah kamu patuh kepadanya; dan sujudlah dan dekatkanlah (dirimu kepada Tuhan).",
+      "wordsTajweed": [
+        {
+          "word": "كَلَّا",
+          "rule": null
+        },
+        {
+          "word": "لَا",
+          "rule": null
+        },
+        {
+          "word": "تُطِعْهُ",
+          "rule": null
+        },
+        {
+          "word": "وَٱسْجُدْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "وَٱقْتَرِب ۩",
+          "rule": "qalqalah"
+        }
+      ]
+    }
+  ]
 }

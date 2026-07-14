@@ -83,9 +83,13 @@ class _TahfidzAppState extends State<TahfidzApp> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<AppProvider>();
+    
     return MaterialApp(
       title: 'TahfidzMU',
       theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: provider.themeMode,
       home: Consumer<AppProvider>(
         builder: (_, provider, __) {
           if (provider.isInitializing || provider.isLoggingOut) {

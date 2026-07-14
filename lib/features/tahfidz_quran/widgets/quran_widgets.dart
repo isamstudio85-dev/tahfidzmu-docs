@@ -4,6 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tahfidz_app/models/error_mark.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 
+import 'package:tahfidz_app/core/tajwid/tajwid_types.dart';
+import 'package:tahfidz_app/models/surah_model.dart';
+
 /// A single tappable Arabic word in the Quran reader.
 /// Single tap  = Tajwid error (or advance state)
 /// Double tap  = Makhroj error
@@ -14,12 +17,16 @@ class WordWidget extends StatefulWidget {
     required this.errorMark,
     required this.onTap,
     this.onDoubleTap,
+    this.wordTajweed,
+    this.showTajwid = false,
   });
 
   final String word;
   final ErrorMark? errorMark;
   final VoidCallback? onTap;
   final VoidCallback? onDoubleTap;
+  final WordTajweed? wordTajweed;
+  final bool showTajwid;
 
   @override
   State<WordWidget> createState() => _WordWidgetState();
@@ -59,9 +66,18 @@ class _WordWidgetState extends State<WordWidget> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final bool hasError = widget.errorMark != null;
-    final Color fgColor = hasError ? widget.errorMark!.errorType.color : Colors.black87;
+    Color fgColor = hasError ? widget.errorMark!.errorType.color : Colors.black87;
     final Color bgColor = hasError ? widget.errorMark!.errorType.bgColor : Colors.transparent;
     final Color borderColor = hasError ? widget.errorMark!.errorType.color : Colors.transparent;
+    FontWeight fontWeight = FontWeight.normal;
+
+    if (!hasError && widget.showTajwid && widget.wordTajweed != null && widget.wordTajweed!.rule != null) {
+      final type = parseCpfairRule(widget.wordTajweed!.rule!);
+      if (type != null) {
+        fgColor = type.color;
+        fontWeight = FontWeight.w600;
+      }
+    }
 
     return GestureDetector(
       onTap: widget.onTap,
@@ -85,6 +101,7 @@ class _WordWidgetState extends State<WordWidget> with SingleTickerProviderStateM
             style: GoogleFonts.amiri(
               fontSize: 26,
               color: fgColor,
+              fontWeight: fontWeight,
               height: 2.0,
             ),
             textDirection: TextDirection.rtl,

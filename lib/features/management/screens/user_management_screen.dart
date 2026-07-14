@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tahfidz_app/features/management/screens/santri_list_screen.dart';
 import 'package:tahfidz_app/features/management/screens/musyrif_list_screen.dart';
@@ -91,22 +92,70 @@ class UserManagementScreen extends StatelessWidget {
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(isAdmin ? 'Manajemen Pengguna' : 'Data Pengguna'),
+          title: Column(
+            children: [
+              Text(
+                isAdmin ? 'ACADEMY HUB' : 'DATA PENGGUNA',
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 18),
+              ),
+              Text(
+                isAdmin ? 'Manajemen Seluruh Karakter' : 'Daftar Pejuang Al-Qur\'an',
+                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.7), letterSpacing: 1),
+              ),
+            ],
+          ),
           backgroundColor: AppTheme.primaryGreen,
           foregroundColor: Colors.white,
-          bottom: TabBar(
-            indicatorColor: Colors.white,
-            indicatorWeight: 3,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
-            labelPadding: EdgeInsets.zero, // Equal width allocation
-            isScrollable: false,
-            tabs: tabs,
+          centerTitle: true,
+          elevation: 0,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [AppTheme.primaryGreen, Color(0xFF065F46)],
+              ),
+            ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(70),
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: TabBar(
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                labelColor: AppTheme.primaryGreen,
+                unselectedLabelColor: Colors.white.withValues(alpha: 0.8),
+                dividerColor: Colors.transparent,
+                labelPadding: EdgeInsets.zero,
+                labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 0.5),
+                tabs: tabs,
+              ),
+            ),
           ),
         ),
-        body: TabBarView(
-          physics: const BouncingScrollPhysics(),
-          children: views,
+        body: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.dark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
+          ),
+          child: TabBarView(
+            physics: const BouncingScrollPhysics(),
+            children: views,
+          ),
         ),
       ),
     );

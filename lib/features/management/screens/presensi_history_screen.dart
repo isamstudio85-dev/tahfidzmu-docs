@@ -23,6 +23,7 @@ class _PresensiHistoryScreenState extends State<PresensiHistoryScreen> with Auto
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final provider = context.watch<AppProvider>();
     final List<PresensiHalaqah> sortedPresensi = List.from(provider.presensiList)
       ..sort((a, b) => b.tanggal.compareTo(a.tanggal));
@@ -38,20 +39,21 @@ class _PresensiHistoryScreenState extends State<PresensiHistoryScreen> with Auto
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: TextField(
+            style: TextStyle(color: isDark ? Colors.white : Colors.black87),
             decoration: InputDecoration(
               hintText: 'Cari Halaqah atau Musyrif...',
               prefixIcon: const Icon(Icons.search, size: 20),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: isDark ? AppTheme.darkSurface : Colors.white,
               isDense: true,
               contentPadding: const EdgeInsets.symmetric(vertical: 12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(color: Colors.grey.shade200),
+                borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(color: Colors.grey.shade200),
+                borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -75,14 +77,14 @@ class _PresensiHistoryScreenState extends State<PresensiHistoryScreen> with Auto
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.bold, 
                     fontSize: 10, 
-                    color: Colors.grey.shade500,
+                    color: isDark ? Colors.white38 : Colors.grey.shade500,
                     letterSpacing: 1.2,
                   ),
                 ),
                 const Spacer(),
                 Text(
                   '${filteredPresensi.length} Data',
-                  style: TextStyle(fontSize: 10, color: Colors.grey.shade400, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 10, color: isDark ? Colors.white24 : Colors.grey.shade400, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -104,16 +106,14 @@ class _PresensiHistoryScreenState extends State<PresensiHistoryScreen> with Auto
 
     if (widget.hideAppBar) {
       return Container(
-        color: const Color(0xFFF8F9FA),
+        color: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
         child: body,
       );
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: const Text('Riwayat Presensi Halaqah'),
-      ),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
+      appBar: AppBar(title: const Text('Riwayat Presensi')),
       body: body,
     );
   }
@@ -141,66 +141,132 @@ class _PresensiRecordCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final dateStr = DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(presensi.tanggal);
     final timeStr = DateFormat('HH:mm').format(presensi.waktuSubmit);
 
     final stats = _calculateStats();
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
-      ),
-      elevation: 0,
-      child: ExpansionTile(
-        shape: const Border(),
-        collapsedShape: const Border(),
-        title: Text(
-          presensi.halaqahNama,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Musyrif: ${presensi.musyrifNama}', style: const TextStyle(fontSize: 12)),
-            const SizedBox(height: 2),
-            Text('$dateStr • $timeStr WIB', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
-          ],
-        ),
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: AppTheme.primaryGreen.withValues(alpha: 0.1),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(Icons.check_circle_rounded, color: AppTheme.primaryGreen, size: 24),
-        ),
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Divider(),
-                const SizedBox(height: 8),
-                _buildStatRow(stats),
-                const SizedBox(height: 12),
-                const Text(
-                  'Daftar Kehadiran Santri:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                ),
-                const SizedBox(height: 8),
-                ...presensi.daftarHadir.entries.map((entry) {
-                  return _SantriPresenceTile(
-                    santriId: entry.key,
-                    status: entry.value,
-                  );
-                }),
-              ],
-            ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: ExpansionTile(
+          shape: const Border(),
+          collapsedShape: const Border(),
+          backgroundColor: Colors.transparent,
+          collapsedBackgroundColor: Colors.transparent,
+          tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          title: Text(
+            presensi.halaqahNama.toUpperCase(),
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w900, 
+              fontSize: 14, 
+              letterSpacing: 0.5,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(Icons.person_pin_rounded, size: 12, color: AppTheme.primaryGreen.withValues(alpha: 0.7)),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Musyrif: ${presensi.musyrifNama}', 
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: isDark ? Colors.white70 : Colors.grey.shade700),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text('$dateStr • $timeStr WIB', style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.grey.shade500)),
+            ],
+          ),
+          leading: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.description_rounded, color: AppTheme.primaryGreen, size: 24),
+              ),
+              // THE STAMP
+              Positioned(
+                right: -2,
+                bottom: -2,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppTheme.darkSurface : Colors.white, 
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 16),
+                ),
+              ),
+            ],
+          ),
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Divider(height: 1, thickness: 0.5),
+                  const SizedBox(height: 16),
+                  // Tactical Summary
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade100),
+                    ),
+                    child: _buildStatRow(stats),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'SANTRI MISSION LOG:',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w900, 
+                      fontSize: 9, 
+                      letterSpacing: 1.5,
+                      color: isDark ? Colors.white38 : Colors.grey.shade500,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ...presensi.daftarHadir.entries.map((entry) {
+                    return _SantriPresenceTile(
+                      santriId: entry.key,
+                      status: entry.value,
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -209,10 +275,10 @@ class _PresensiRecordCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _miniStat('Hadir', stats['hadir'] ?? 0, Colors.green),
-        _miniStat('Sakit', stats['sakit'] ?? 0, Colors.orange),
-        _miniStat('Izin', stats['izin'] ?? 0, Colors.blue),
-        _miniStat('Alfa', stats['alfa'] ?? 0, Colors.red),
+        _miniStat('COMPLETED', stats['hadir'] ?? 0, Colors.green),
+        _miniStat('INJURED', stats['sakit'] ?? 0, Colors.orange),
+        _miniStat('AWAY', stats['izin'] ?? 0, Colors.blue),
+        _miniStat('MISSING', stats['alfa'] ?? 0, Colors.red),
       ],
     );
   }
@@ -220,8 +286,14 @@ class _PresensiRecordCard extends StatelessWidget {
   Widget _miniStat(String label, int val, Color color) {
     return Column(
       children: [
-        Text('$val', style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: 16)),
-        Text(label, style: const TextStyle(fontSize: 9, color: Colors.grey)),
+        Text(
+          '$val', 
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w900, color: color, fontSize: 18)
+        ),
+        Text(
+          label, 
+          style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: Colors.grey, letterSpacing: 0.5)
+        ),
       ],
     );
   }
@@ -257,6 +329,7 @@ class _SantriPresenceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.read<AppProvider>();
     final santri = provider.getSantriById(santriId);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     Color color;
     String label;
@@ -264,57 +337,68 @@ class _SantriPresenceTile extends StatelessWidget {
     switch (status) {
       case 'setoran':
         color = Colors.green;
-        label = 'Hadir (Setoran)';
+        label = 'COMPLETED';
         break;
       case 'ditunda':
         color = Colors.teal;
-        label = 'Hadir (Belum Sesi)';
+        label = 'WAITING';
         break;
       case 'sakit':
         color = Colors.orange;
-        label = 'Sakit';
+        label = 'INJURED';
         break;
       case 'izin':
         color = Colors.blue;
-        label = 'Izin';
+        label = 'AWAY';
         break;
       case 'alfa':
         color = Colors.red;
-        label = 'Alfa';
+        label = 'MISSING';
         break;
       default:
         color = Colors.grey;
-        label = status;
+        label = status.toUpperCase();
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 12,
-            backgroundColor: color.withValues(alpha: 0.1),
-            child: Text(
-              (santri?.name ?? 'S')[0],
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color),
+          // Status Orb
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 6, spreadRadius: 1),
+              ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: Text(
               santri?.name ?? 'Santri ID: $santriId',
-              style: const TextStyle(fontSize: 13),
+              style: TextStyle(
+                fontWeight: FontWeight.w700, 
+                fontSize: 13,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: color.withValues(alpha: 0.3)),
             ),
             child: Text(
               label,
-              style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(fontSize: 8, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5),
             ),
           ),
         ],

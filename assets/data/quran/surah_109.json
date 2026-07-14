@@ -1,39 +1,171 @@
-﻿{
-    "number":  109,
-    "name":  "سُورَةُ الكَافِرُونَ",
-    "englishName":  "Al-Kaafiroon",
-    "numberOfAyahs":  6,
-    "revelationType":  "Meccan",
-    "ayahs":  [
-                  {
-                      "numberInSurah":  1,
-                      "arabic":  "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ",
-                      "translation":  "Katakanlah: \"Hai orang-orang kafir,"
-                  },
-                  {
-                      "numberInSurah":  2,
-                      "arabic":  "لَآ أَعْبُدُ مَا تَعْبُدُونَ",
-                      "translation":  "Aku tidak akan menyembah apa yang kamu sembah."
-                  },
-                  {
-                      "numberInSurah":  3,
-                      "arabic":  "وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ",
-                      "translation":  "Dan kamu bukan penyembah Tuhan yang aku sembah."
-                  },
-                  {
-                      "numberInSurah":  4,
-                      "arabic":  "وَلَآ أَنَا۠ عَابِدٌۭ مَّا عَبَدتُّمْ",
-                      "translation":  "Dan aku tidak pernah menjadi penyembah apa yang kamu sembah,"
-                  },
-                  {
-                      "numberInSurah":  5,
-                      "arabic":  "وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ",
-                      "translation":  "dan kamu tidak pernah (pula) menjadi penyembah Tuhan yang aku sembah."
-                  },
-                  {
-                      "numberInSurah":  6,
-                      "arabic":  "لَكُمْ دِينُكُمْ وَلِىَ دِينِ",
-                      "translation":  "Untukmu agamamu, dan untukkulah, agamaku\"."
-                  }
-              ]
+{
+  "number": 109,
+  "name": "سُورَةُ الكَافِرُونَ",
+  "englishName": "Al-Kaafiroon",
+  "numberOfAyahs": 6,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ يَٰٓأَيُّهَا ٱلْكَٰفِرُونَ",
+      "translation": "Katakanlah: \"Hai orang-orang kafir,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "قُلْ",
+          "rule": null
+        },
+        {
+          "word": "يَٰٓأَيُّهَا",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "ٱلْكَٰفِرُونَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "لَآ أَعْبُدُ مَا تَعْبُدُونَ",
+      "translation": "Aku tidak akan menyembah apa yang kamu sembah.",
+      "wordsTajweed": [
+        {
+          "word": "لَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَعْبُدُ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "تَعْبُدُونَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ",
+      "translation": "Dan kamu bukan penyembah Tuhan yang aku sembah.",
+      "wordsTajweed": [
+        {
+          "word": "وَلَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَنتُمْ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "عَٰبِدُونَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَعْبُدُ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "وَلَآ أَنَا۠ عَابِدٌۭ مَّا عَبَدتُّمْ",
+      "translation": "Dan aku tidak pernah menjadi penyembah apa yang kamu sembah,",
+      "wordsTajweed": [
+        {
+          "word": "وَلَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَنَا۠",
+          "rule": null
+        },
+        {
+          "word": "عَابِدٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَّا",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "عَبَدتُّمْ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "وَلَآ أَنتُمْ عَٰبِدُونَ مَآ أَعْبُدُ",
+      "translation": "dan kamu tidak pernah (pula) menjadi penyembah Tuhan yang aku sembah.",
+      "wordsTajweed": [
+        {
+          "word": "وَلَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَنتُمْ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "عَٰبِدُونَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "مَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَعْبُدُ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "لَكُمْ دِينُكُمْ وَلِىَ دِينِ",
+      "translation": "Untukmu agamamu, dan untukkulah, agamaku\".",
+      "wordsTajweed": [
+        {
+          "word": "لَكُمْ",
+          "rule": null
+        },
+        {
+          "word": "دِينُكُمْ",
+          "rule": null
+        },
+        {
+          "word": "وَلِىَ",
+          "rule": null
+        },
+        {
+          "word": "دِينِ",
+          "rule": "madd_246"
+        }
+      ]
+    }
+  ]
 }

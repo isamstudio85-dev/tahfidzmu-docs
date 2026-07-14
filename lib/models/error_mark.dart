@@ -57,6 +57,7 @@ class ErrorMark {
   final int ayahNumber;
   final int wordIndex;
   final String word;
+  final String? tajwidRuleName;
 
   const ErrorMark({
     required this.wordKey,
@@ -65,6 +66,7 @@ class ErrorMark {
     required this.ayahNumber,
     required this.wordIndex,
     required this.word,
+    this.tajwidRuleName,
   });
 
   static String generateKey(int surahNumber, int ayahNumber, int wordIndex) =>
@@ -77,6 +79,7 @@ class ErrorMark {
     'ayahNumber': ayahNumber,
     'wordIndex': wordIndex,
     'word': word,
+    if (tajwidRuleName != null) 'tajwidRuleName': tajwidRuleName,
   };
 
   factory ErrorMark.fromJson(Map<String, dynamic> json) => ErrorMark(
@@ -86,5 +89,6 @@ class ErrorMark {
     ayahNumber: json['ayahNumber'] as int,
     wordIndex: json['wordIndex'] as int,
     word: json['word'] as String,
+    tajwidRuleName: json['tajwidRuleName'] as String?,
   );
 }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_role.dart';
 import '../services/firebase_service.dart';
 
@@ -16,6 +17,8 @@ mixin AuthMixin on ChangeNotifier {
 
   bool isPhotoUploading = false;
   String adminPhoto = '';
+
+  ThemeMode themeMode = ThemeMode.light;
 
   bool get isLoggedIn => currentRole != null;
   bool get isSuperAdmin => currentRole == UserRole.superAdmin;
@@ -35,6 +38,23 @@ mixin AuthMixin on ChangeNotifier {
     currentUserId = userId;
     this.pesantrenId = pesantrenId;
     notifyListeners();
+  }
+
+  void toggleTheme() async {
+    themeMode = themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('theme_mode', themeMode.name);
+  }
+
+  Future<void> loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getString('theme_mode');
+    if (saved != null) {
+      themeMode = ThemeMode.values.firstWhere((e) => e.name == saved, orElse: () => ThemeMode.light);
+      notifyListeners();
+    }
   }
 
   UserRole? roleFromString(String role) {

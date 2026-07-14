@@ -11,11 +11,15 @@ import '../models/tasmi_record.dart';
 import '../models/setoran_continuation.dart';
 import '../models/presensi_halaqah.dart';
 import '../models/app_notification.dart';
+import '../models/voucher_ticket.dart';
 import '../models/error_mark.dart';
 import '../services/quran_service.dart';
 
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/core/utils/quran_juz_utils.dart';
+import 'package:tahfidz_app/core/utils/gamification_utils.dart';
+import 'package:tahfidz_app/core/utils/badge_system.dart';
+import 'package:tahfidz_app/core/utils/reward_system.dart';
 import '../services/login_preferences_service.dart';
 
 import 'auth_mixin.dart';
@@ -73,6 +77,7 @@ class AppProvider extends ChangeNotifier
     _isInitializing = true;
     notifyListeners();
     try {
+      await loadTheme();
       await _fetchSurahList();
       final user = firebase.currentUser;
       if (user != null) {
@@ -293,6 +298,42 @@ class AppProvider extends ChangeNotifier
 
       final double newEstimatedJuz = targetSantri.initialMemorizedJuz.length + ((currentZiyadah + addedZiyadah) / 604.0);
 
+      // Gamification Updates
+      final int earnedXP = GamificationUtils.calculateXP(record);
+      final int earnedCoins = GamificationUtils.calculateCoins(record);
+      
+      final int newTotalXP = targetSantri.totalXP + earnedXP;
+      int newTotalCoins = targetSantri.totalCoins + earnedCoins;
+      
+      final int newStreak = GamificationUtils.calculateNewStreak(
+        targetSantri.lastSetoranAt,
+        record.date,
+        targetSantri.streakDays,
+      );
+
+      // Streak bonus coins
+      if (newStreak % 7 == 0 && newStreak > 0) {
+        newTotalCoins += 100; // Weekly streak bonus
+      }
+
+      final List<String> newBadges = BadgeSystem.checkNewBadges(targetSantri, record, newStreak);
+      final List<String> updatedUnlockedBadges = [...targetSantri.unlockedBadges, ...newBadges];
+
+      // Notification for Level Up & Level Bonus
+      final int oldLevel = GamificationUtils.calculateLevel(targetSantri.totalXP);
+      final int newLevel = GamificationUtils.calculateLevel(newTotalXP);
+      if (newLevel > oldLevel) {
+        final int levelBonus = GamificationUtils.getLevelUpBonus(newLevel);
+        newTotalCoins += levelBonus;
+        
+        await sendNotification(
+          santriId, 
+          "Level Up! 🌟", 
+          "Selamat! Kamu naik ke Level $newLevel dan mendapat bonus $levelBonus Koin!", 
+          "achievement"
+        );
+      }
+
       await getCollection('santri').doc(santriId).update({
         'averageScore': newAvg,
         'totalSetoranCount': currentCount + 1,
@@ -303,7 +344,24 @@ class AppProvider extends ChangeNotifier
         'estimatedJuz': newEstimatedJuz,
         'juzCoveredByZiyadah': juzSet.toList()..sort(),
         'lastSetoranAt': record.date.toIso8601String(),
+        'totalXP': newTotalXP,
+        'totalCoins': newTotalCoins,
+        'streakDays': newStreak,
+        'unlockedBadges': updatedUnlockedBadges,
       });
+
+      // Notification for New Badges
+      for (var badgeId in newBadges) {
+        final badge = BadgeSystem.badges[badgeId];
+        if (badge != null) {
+          await sendNotification(
+            santriId, 
+            "Lencana Baru: ${badge.name} 🏆", 
+            "Kamu mendapatkan lencana: ${badge.description}", 
+            "achievement"
+          );
+        }
+      }
     }
     notifyListeners();
   }
@@ -372,9 +430,26 @@ class AppProvider extends ChangeNotifier
   }
 
   @override
-  void startSetoranSession({required Santri santri, required SetoranType type, required SurahInfo surah, required int ayahStart, required int ayahEnd}) {
-    super.startSetoranSession(santri: santri, type: type, surah: surah, ayahStart: ayahStart, ayahEnd: ayahEnd);
-    _writeActiveSessionToFirestore(santriName: santri.name, detail: '${type.label}: ${surah.englishName} $ayahStart-$ayahEnd');
+  void startSetoranSession({
+    required Santri santri,
+    required SetoranType type,
+    required SurahInfo surah,
+    required int ayahStart,
+    required int ayahEnd,
+    String calculationMethod = 'ayat',
+  }) {
+    super.startSetoranSession(
+      santri: santri,
+      type: type,
+      surah: surah,
+      ayahStart: ayahStart,
+      ayahEnd: ayahEnd,
+      calculationMethod: calculationMethod,
+    );
+    _writeActiveSessionToFirestore(
+      santriName: santri.name,
+      detail: '${type.label}: ${surah.englishName} $ayahStart-$ayahEnd (${calculationMethod == 'baris' ? 'Baris' : 'Ayat'})',
+    );
   }
 
   @override
@@ -545,6 +620,7 @@ class AppProvider extends ChangeNotifier
 
   Future<SetoranRecord?> completeSetoran(int fluencyRating) async {
     if (activeSetoranSantri == null) return null;
+    final int? lines = await calculateLinesForRange(activeSetoranSurahNumber, activeSetoranAyahStart, sessionPassedAyahs.isNotEmpty ? sessionPassedAyahs.reduce((a, b) => a > b ? a : b) : activeSetoranAyahEnd);
     final record = SetoranRecord(
       id: getCollection('santri').doc().id,
       santriId: activeSetoranSantri!.id,
@@ -560,6 +636,8 @@ class AppProvider extends ChangeNotifier
       fluencyRating: fluencyRating,
       date: DateTime.now(),
       finalScore: ScoringUtils.calculateScore(errorMarks: sessionErrors.values.toList(), fluencyRating: fluencyRating),
+      totalLines: lines,
+      calculationMethod: activeSetoranCalculationMethod,
     );
     await updateSetoranRecord(activeSetoranSantri!.id, record);
     await endSetoranSession();
@@ -576,6 +654,7 @@ class AppProvider extends ChangeNotifier
     required int tajwidErrors,
     required int makhrojErrors,
     required int fluencyRating,
+    required String calculationMethod,
   }) async {
     // Generate dummy error marks to satisfy the model and scoring utility
     // These marks don't have word indices/text since it's a manual aggregate
@@ -601,6 +680,7 @@ class AppProvider extends ChangeNotifier
       ));
     }
 
+    final int? lines = await calculateLinesForRange(surah.number, ayahStart, ayahEnd);
     final record = SetoranRecord(
       id: getCollection('santri').doc().id,
       santriId: santri.id,
@@ -616,6 +696,8 @@ class AppProvider extends ChangeNotifier
       fluencyRating: fluencyRating,
       date: DateTime.now(),
       finalScore: ScoringUtils.calculateScore(errorMarks: manualErrors, fluencyRating: fluencyRating),
+      totalLines: lines,
+      calculationMethod: calculationMethod,
     );
 
     await updateSetoranRecord(santri.id, record);
@@ -770,5 +852,198 @@ class AppProvider extends ChangeNotifier
   /// Helper for tests or manual state injection (Not for production login)
   void login(UserRole role, {String? linkedSantriId, String? linkedMusyrifId, String? pesantrenId}) {
     setLoginInfo(role, linkedSantriId: linkedSantriId, linkedMusyrifId: linkedMusyrifId, pesantrenId: pesantrenId);
+  }
+
+  void impersonateParent(String santriId) {
+    setLoginInfo(
+      UserRole.orangTua,
+      linkedSantriId: santriId,
+      linkedMusyrifId: null,
+      userId: 'simulated_$santriId',
+      pesantrenId: pesantrenId ?? 'demo',
+    );
+    startListeningToSingleSantri(santriId);
+  }
+
+  Future<bool> purchaseReward(String santriId, VirtualReward reward) async {
+    final santri = getSantriById(santriId);
+    if (santri == null || santri.totalCoins < reward.cost) return false;
+    
+    final newCoins = santri.totalCoins - reward.cost;
+    final newUnlocked = [...santri.unlockedItems, reward.id];
+    
+    Map<String, dynamic> updates = {
+      'totalCoins': newCoins,
+      'unlockedItems': newUnlocked,
+    };
+    
+    // Auto-equip if it's a frame or title
+    if (reward.type == RewardType.frame) updates['activeFrame'] = reward.id;
+    if (reward.type == RewardType.title) updates['activeTitle'] = reward.value;
+
+    try {
+      await getCollection('santri').doc(santriId).update(updates);
+      notifyListeners();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> equipReward(String santriId, VirtualReward reward) async {
+    final santri = getSantriById(santriId);
+    if (santri == null || !santri.unlockedItems.contains(reward.id)) return;
+    
+    Map<String, dynamic> updates = {};
+    if (reward.type == RewardType.frame) updates['activeFrame'] = reward.id;
+    if (reward.type == RewardType.title) updates['activeTitle'] = reward.value;
+    if (reward.type == RewardType.theme) updates['activeTheme'] = reward.id;
+    
+    await getCollection('santri').doc(santriId).update(updates);
+    notifyListeners();
+  }
+
+  Future<bool> purchasePhysicalReward(String santriId, VirtualReward reward) async {
+    final santri = getSantriById(santriId);
+    if (santri == null || santri.totalCoins < reward.cost) return false;
+
+    final voucherId = generateId('vouchers');
+    final ticket = VoucherTicket(
+      id: voucherId,
+      santriId: santriId,
+      santriName: santri.name,
+      rewardId: reward.id,
+      rewardName: reward.name,
+      cost: reward.cost,
+      purchaseDate: DateTime.now(),
+      status: VoucherStatus.pending,
+    );
+
+    try {
+      // 1. Create Ticket
+      await getCollection('vouchers').doc(voucherId).set(ticket.toJson());
+      
+      // 2. Deduct Coins
+      await getCollection('santri').doc(santriId).update({
+        'totalCoins': FieldValue.increment(-reward.cost),
+      });
+
+      // 3. Notify Admin/Musyrif (Optional but recommended)
+      // For now, we just rely on the real-time sync
+      
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint('Failed to purchase physical reward: $e');
+      return false;
+    }
+  }
+
+  Future<bool> redeemVoucher(String voucherId) async {
+    try {
+      await getCollection('vouchers').doc(voucherId).update({
+        'status': VoucherStatus.redeemed.name,
+        'redeemedDate': Timestamp.now(),
+      });
+      notifyListeners();
+      return true;
+    } catch (e) {
+      debugPrint('Failed to redeem voucher: $e');
+      return false;
+    }
+  }
+
+  Future<int?> calculateLinesForRange(int surahNum, int ayahStart, int ayahEnd) async {
+    try {
+      final surah = await QuranService.getSurah(surahNum);
+      
+      final ayahStartModel = surah.ayahs.firstWhere((a) => a.numberInSurah == ayahStart);
+      final ayahEndModel = surah.ayahs.firstWhere((a) => a.numberInSurah == ayahEnd);
+      
+      final p1 = ayahStartModel.pageNumber;
+      final l1 = ayahStartModel.startLine;
+      
+      final p2 = ayahEndModel.pageNumber;
+      final l2 = ayahEndModel.endLine;
+      
+      if (p1 == null || l1 == null || p2 == null || l2 == null) {
+        return null; // Data mapping tidak tersedia
+      }
+      
+      if (p1 == p2) {
+        return l2 - l1 + 1;
+      } else {
+        int lines = (15 - l1 + 1);
+        lines += (p2 - p1 - 1) * 15;
+        lines += l2;
+        return lines;
+      }
+    } catch (e) {
+      debugPrint("Error calculating lines for range: $e");
+      return null;
+    }
+  }
+
+  Future<Map<String, int>?> resolveAyahRangeFromLines({
+    required int surahNum,
+    required int startPage,
+    required int startLine,
+    required int endPage,
+    required int endLine,
+  }) async {
+    try {
+      final surah = await QuranService.getSurah(surahNum);
+      
+      int? ayahStart;
+      int? ayahEnd;
+
+      // Cari ayat pertama yang mencakup startPage & startLine
+      for (final a in surah.ayahs) {
+        final p = a.pageNumber;
+        final endL = a.endLine;
+        if (p == null || endL == null) continue;
+
+        if (p > startPage) {
+          break;
+        }
+        if (p == startPage && endL >= startLine) {
+          ayahStart = a.numberInSurah;
+          break;
+        }
+      }
+
+      // Cari ayat terakhir yang mencakup endPage & endLine
+      for (final a in surah.ayahs.reversed) {
+        final p = a.pageNumber;
+        final startL = a.startLine;
+        if (p == null || startL == null) continue;
+
+        if (p < endPage) {
+          break;
+        }
+        if (p == endPage && startL <= endLine) {
+          ayahEnd = a.numberInSurah;
+          break;
+        }
+      }
+
+      // Fallback
+      ayahStart ??= 1;
+      ayahEnd ??= surah.ayahs.last.numberInSurah;
+
+      if (ayahStart > ayahEnd) {
+        final temp = ayahStart;
+        ayahStart = ayahEnd;
+        ayahEnd = temp;
+      }
+
+      return {
+        'ayahStart': ayahStart,
+        'ayahEnd': ayahEnd,
+      };
+    } catch (e) {
+      debugPrint("Error resolving ayah range from lines: $e");
+      return null;
+    }
   }
 }
