@@ -68,70 +68,155 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     cancelSubscriptions();
 
     final completers = <Completer>[];
-    
     final santriCompleter = Completer();
     final halaqahCompleter = Completer();
-    final musyrifCompleter = Completer();
-    final kelasCompleter = Completer();
-    final voucherCompleter = Completer();
-    
-    completers.addAll([santriCompleter, halaqahCompleter, musyrifCompleter, kelasCompleter, voucherCompleter]);
+    completers.addAll([santriCompleter, halaqahCompleter]);
 
-    // ── 1. Unified Santri & Halaqah Subscription (Global for Ranking) ──────
-    // To show ranking to everyone, we must fetch all santri and halaqahs.
-    // However, we only attach deep listeners (subcollections) to relevant ones.
+    // ── 1. Load Data Statis & Penunjang Sekali Saja (Get-Once) ──────
 
-    // 1.1 All Santri (Basic Info)
-    santriSub = getCollection('santri').snapshots().listen((snap) {
+    // 1.1 Load Halaqahs once-off terlebih dahulu agar data terisi untuk filter Musyrif
+    try {
+      final halaqahSnap = await getCollection('halaqah').get();
+      halaqahList = halaqahSnap.docs.map((doc) {
+        try { return HalaqahData.fromJson(doc.data()); } catch (_) { return null; }
+      }).whereType<HalaqahData>().toList();
+      debugPrint("Halaqah list initialized once-off: ${halaqahList.length} items");
+    } catch (e) {
+      debugPrint("Failed to get halaqah once-off: $e");
+    }
+
+    // 1.2 Load Musyrif once-off
+    try {
+      final musyrifSnap = await getCollection('musyrif').get();
+      musyrifList = musyrifSnap.docs.map((doc) {
+        try { return MusyrifData.fromJson(doc.data()); } catch (_) { return null; }
+      }).whereType<MusyrifData>().toList();
+      debugPrint("Musyrif list initialized once-off: ${musyrifList.length} items");
+    } catch (e) {
+      debugPrint("Failed to get musyrif once-off: $e");
+    }
+
+    // 1.3 Load Kelas once-off
+    try {
+      final kelasSnap = await getCollection('kelas').get();
+      kelasList = kelasSnap.docs.map((doc) {
+        try { return KelasData.fromJson(doc.data()); } catch (_) { return null; }
+      }).whereType<KelasData>().toList();
+    } catch (e) {
+      debugPrint("Failed to get kelas once-off: $e");
+    }
+
+    // 1.4 Load Vouchers once-off
+    try {
+      final voucherSnap = await getCollection('vouchers').get();
+      voucherList = voucherSnap.docs.map((doc) => VoucherTicket.fromJson(doc.data())).toList();
+      voucherList.sort((a, b) => b.purchaseDate.compareTo(a.purchaseDate));
+    } catch (e) {
+      debugPrint("Failed to get vouchers once-off: $e");
+    }
+
+    // 1.5 Load Graduation Events once-off
+    try {
+      final eventSnap = await getCollection('graduation_events').get();
+      graduationEvents = eventSnap.docs.map((doc) => GraduationEvent.fromJson(doc.data())).toList();
+    } catch (e) {
+      debugPrint("Failed to get graduation events once-off: $e");
+    }
+
+    // 1.6 Load Graduation Registrations once-off
+    try {
+      final regSnap = await getCollection('graduation_registrations').get();
+      graduationRegistrations = regSnap.docs.map((doc) => GraduationRegistration.fromJson(doc.data())).toList();
+    } catch (e) {
+      debugPrint("Failed to get graduation registrations once-off: $e");
+    }
+
+    // 1.7 Load Pengawas once-off (hanya untuk admin)
+    if (isAdmin) {
       try {
-        final allSantri = snap.docs.map((doc) {
-          try {
-            return Santri.fromJson(doc.data());
-          } catch (e) {
-            debugPrint("Error parsing santri doc ${doc.id}: $e");
-            return null;
-          }
-        }).whereType<Santri>().toList();
-        
-        if (isOrangTua) {
-          // Keep santriList populated for ranking, but attach deep listener only to child
-          santriList = allSantri;
-          if (linkedSantriId != null) {
-            _listenToSingleSantriSubcollections(linkedSantriId!);
-          }
-        } else if (isMusyrif) {
-          // Keep santriList populated for ranking, but attach deep listeners only to halaqah
-          santriList = allSantri;
-          final myHalaqahIds = halaqahList.map((h) => h.id).toList();
-          if (myHalaqahIds.isNotEmpty) {
-            final mySantriList = allSantri.where((s) => myHalaqahIds.contains(s.halaqahId)).toList();
-            _listenToMultipleSantriSubcollections(mySantriList);
-          }
-        } else {
-          // Admin: listen to everything deep
-          _listenToMultipleSantriSubcollections(allSantri);
-        }
+        final pengawasSnap = await getCollection('pengawas').get();
+        pengawasList = pengawasSnap.docs.map((doc) => PengawasData.fromJson(doc.data())).toList();
       } catch (e) {
-        debugPrint("Critical error in santri listener: $e");
+        debugPrint("Failed to get pengawas once-off: $e");
       }
-      
-      if (!santriCompleter.isCompleted) santriCompleter.complete();
-      notifyListeners();
-    }, onError: (e) {
-      debugPrint("Santri Sub Error: $e");
-      if (!santriCompleter.isCompleted) santriCompleter.complete();
-    });
+    }
 
-    // 1.2 All Halaqahs (For Ranking & Statistics)
+    // ── 2. Unified Santri Query & Subscription (Real-time Segmentasi) ──────
+
+    // Fetch daftar santri global sekali saja untuk cache UI / Ranking
+    try {
+      final globalSantriSnap = await getCollection('santri').get();
+      santriList = globalSantriSnap.docs.map((doc) {
+        try { return Santri.fromJson(doc.data()); } catch (_) { return null; }
+      }).whereType<Santri>().toList();
+      debugPrint("Global Santri List cached: ${santriList.length} items");
+    } catch (e) {
+      debugPrint("Failed to fetch global santri: $e");
+    }
+
+    // Pasang stream santri tertarget sesuai role
+    if (isOrangTua) {
+      // Orang Tua: hanya stream 1 santri (anaknya)
+      if (linkedSantriId != null) {
+        _listenToSingleSantriSubcollections(linkedSantriId!);
+        santriSub = getCollection('santri').doc(linkedSantriId).snapshots().listen((doc) {
+          if (doc.exists) {
+            final child = Santri.fromJson(doc.data()!);
+            santriList = santriList.map((s) => s.id == child.id ? child : s).toList();
+            notifyListeners();
+          }
+          if (!santriCompleter.isCompleted) santriCompleter.complete();
+        }, onError: (e) {
+          debugPrint("OrangTua Santri Sub Error: $e");
+          if (!santriCompleter.isCompleted) santriCompleter.complete();
+        });
+      } else {
+        if (!santriCompleter.isCompleted) santriCompleter.complete();
+      }
+    } else if (isMusyrif) {
+      // Musyrif: hanya stream santri di halaqah yang dikelolanya
+      final myHalaqahIds = halaqahList.where((h) => h.musyrifId == currentUserId || (linkedMusyrif?.managedHalaqahIds.contains(h.id) ?? false)).map((h) => h.id).toList();
+      if (myHalaqahIds.isNotEmpty) {
+        santriSub = getCollection('santri').where('halaqahId', whereIn: myHalaqahIds).snapshots().listen((snap) {
+          final mySantriList = snap.docs.map((doc) {
+            try { return Santri.fromJson(doc.data()); } catch (_) { return null; }
+          }).whereType<Santri>().toList();
+
+          _listenToMultipleSantriSubcollections(mySantriList);
+
+          final mySantriMap = { for (var s in mySantriList) s.id : s };
+          santriList = santriList.map((s) => mySantriMap[s.id] ?? s).toList();
+
+          if (!santriCompleter.isCompleted) santriCompleter.complete();
+          notifyListeners();
+        }, onError: (e) {
+          debugPrint("Musyrif Santri Sub Error: $e");
+          if (!santriCompleter.isCompleted) santriCompleter.complete();
+        });
+      } else {
+        if (!santriCompleter.isCompleted) santriCompleter.complete();
+      }
+    } else {
+      // Admin: stream all santri
+      santriSub = getCollection('santri').snapshots().listen((snap) {
+        final allSantri = snap.docs.map((doc) {
+          try { return Santri.fromJson(doc.data()); } catch (_) { return null; }
+        }).whereType<Santri>().toList();
+
+        _listenToMultipleSantriSubcollections(allSantri);
+        if (!santriCompleter.isCompleted) santriCompleter.complete();
+        notifyListeners();
+      }, onError: (e) {
+        debugPrint("Admin Santri Sub Error: $e");
+        if (!santriCompleter.isCompleted) santriCompleter.complete();
+      });
+    }
+
+    // 2.1 Pasang stream halaqah secara global (real-time ringan untuk statistika)
     halaqahSub = getCollection('halaqah').snapshots().listen((snap) {
       try {
         halaqahList = snap.docs.map((doc) {
-          try {
-            return HalaqahData.fromJson(doc.data());
-          } catch (e) {
-            debugPrint("Error parsing halaqah doc ${doc.id}: $e");
-            return null;
-          }
+          try { return HalaqahData.fromJson(doc.data()); } catch (_) { return null; }
         }).whereType<HalaqahData>().toList();
       } catch (e) {
         debugPrint("Critical error in halaqah listener: $e");
@@ -143,43 +228,22 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
       if (!halaqahCompleter.isCompleted) halaqahCompleter.complete();
     });
 
-    // 1.3 Voucher Tickets
-    getCollection('vouchers').snapshots().listen((snap) {
-      try {
-        voucherList = snap.docs
-            .map((doc) => VoucherTicket.fromJson(doc.data()))
-            .toList();
-        voucherList.sort((a, b) => b.purchaseDate.compareTo(a.purchaseDate));
-      } catch (e) {
-        debugPrint("Error parsing vouchers: $e");
-      }
-      if (!voucherCompleter.isCompleted) voucherCompleter.complete();
-      notifyListeners();
-    }, onError: (e) {
-      debugPrint("Voucher Sub Error: $e");
-      if (!voucherCompleter.isCompleted) voucherCompleter.complete();
-    });
-
-    // ── 2. Role-specific recent activity ────────────────────────────────────
+    // ── 3. Role-specific recent activity ────────────────────────────────────
     recentSetoransSub?.cancel();
     if (isOrangTua) {
        // Parents don't need the collectionGroup listener for others
     } else if (isMusyrif) {
-      // COORDINATOR SUPPORT: A coordinator might have many halaqahs.
-      // Firebase 'whereIn' is limited to 10. We'll query pesantren-wide 
-      // and filter in-memory for accuracy and stability.
       if (pesantrenId != null) {
         recentSetoransSub = firestore.collectionGroup('setoranHistory')
             .where('pesantrenId', isEqualTo: pesantrenId)
             .orderBy('date', descending: true)
-            .limit(50) // Increased limit to ensure we find enough relevant ones
+            .limit(50)
             .snapshots().listen((snap) {
           final myHalaqahIds = halaqahList.where((h) => h.musyrifId == currentUserId || (linkedMusyrif?.managedHalaqahIds.contains(h.id) ?? false)).map((h) => h.id).toSet();
           
           for (var doc in snap.docs) {
             final data = doc.data();
             final hId = data['halaqahId'] as String?;
-            // Only add if it belongs to one of my managed halaqahs
             if (hId != null && myHalaqahIds.contains(hId)) {
               _addSetoranToSantriInMemory(SetoranRecord.fromJson(data));
             }
@@ -187,7 +251,6 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
         }, onError: (e) => debugPrint("Recent Setorans Sub Error: $e"));
       }
     } else {
-      // Admin: listen to the 100 most recent records pesantren-wide
       Query<Map<String, dynamic>> query = firestore.collectionGroup('setoranHistory');
       if (pesantrenId != null) query = query.where('pesantrenId', isEqualTo: pesantrenId);
       recentSetoransSub = query.orderBy('date', descending: true).limit(100).snapshots().listen((snap) {
@@ -197,66 +260,6 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
       });
     }
 
-    // ── 2. Other Global Subscriptions ─────────────────────────────────────────
-    musyrifSub = getCollection('musyrif').snapshots().listen((snap) {
-      try {
-        musyrifList = snap.docs.map((doc) {
-          try {
-            return MusyrifData.fromJson(doc.data());
-          } catch (e) {
-            debugPrint("Error parsing musyrif doc ${doc.id}: $e");
-            return null;
-          }
-        }).whereType<MusyrifData>().toList();
-        debugPrint("Musyrif list updated: ${musyrifList.length} items (PID: $pesantrenId, Path: ${getCollection('musyrif').path})");
-      } catch (e) {
-        debugPrint("Critical error in musyrif listener: $e");
-      }
-      if (!musyrifCompleter.isCompleted) musyrifCompleter.complete();
-      notifyListeners();
-    }, onError: (e) {
-      debugPrint("Musyrif Sub Error: $e");
-      if (!musyrifCompleter.isCompleted) musyrifCompleter.complete();
-    });
-
-    kelasSub = getCollection('kelas').snapshots().listen((snap) {
-      try {
-        kelasList = snap.docs.map((doc) {
-          try {
-            return KelasData.fromJson(doc.data());
-          } catch (e) {
-            debugPrint("Error parsing kelas doc ${doc.id}: $e");
-            return null;
-          }
-        }).whereType<KelasData>().toList();
-      } catch (e) {
-        debugPrint("Critical error in kelas listener: $e");
-      }
-      if (!kelasCompleter.isCompleted) kelasCompleter.complete();
-      notifyListeners();
-    }, onError: (e) {
-      debugPrint("Kelas Sub Error: $e");
-      if (!kelasCompleter.isCompleted) kelasCompleter.complete();
-    });
-
-    eventSub = getCollection('graduation_events').snapshots().listen((snap) {
-      graduationEvents = snap.docs.map((doc) => GraduationEvent.fromJson(doc.data())).toList();
-      notifyListeners();
-    });
-
-    regSub = getCollection('graduation_registrations').snapshots().listen((snap) {
-      graduationRegistrations = snap.docs.map((doc) => GraduationRegistration.fromJson(doc.data())).toList();
-      notifyListeners();
-    });
-
-    if (isAdmin) {
-      pengawasSub = getCollection('pengawas').snapshots().listen((snap) {
-        pengawasList = snap.docs.map((doc) => PengawasData.fromJson(doc.data())).toList();
-        notifyListeners();
-      }, onError: (e) {
-        debugPrint("Error listening to pengawas: $e");
-      });
-    }
 
     final thirtyDaysAgo = DateTime.now().subtract(const Duration(days: 30));
     presensiSub = getCollection('presensi')

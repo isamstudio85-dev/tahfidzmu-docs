@@ -177,6 +177,7 @@ class _PesantrenScreenState extends State<PesantrenScreen> {
                   _moduleSwitch(provider, 'Fiqih', 'Tuntunan ibadah lengkap & sistematis', Icons.menu_book_rounded, provider.isModuleActive('fiqih'), onTap: () => provider.toggleModule('fiqih'), isDark: isDark),
                   _moduleSwitch(provider, 'Pengetahuan Pondok', 'Materi pengetahuan pondok yang harus dihafal', Icons.lightbulb_outline_rounded, provider.isModuleActive('pondok_info'), onTap: () => provider.toggleModule('pondok_info'), isDark: isDark),
                   _moduleSwitch(provider, 'Wisuda & Ujian Tasmi\'', 'Pendaftaran ujian tasmi\' dan kelulusan wisuda', Icons.school_rounded, provider.isModuleActive('graduation'), onTap: () => provider.toggleModule('graduation'), isDark: isDark),
+                  _moduleSwitch(provider, 'Gamifikasi', 'Fitur Level, XP, Koin, Quest, dan Toko Voucher', Icons.emoji_events_rounded, provider.isModuleActive('gamification'), onTap: () => provider.toggleModule('gamification'), isDark: isDark),
                 ],
                 const SizedBox(height: 32),
                 if (!widget.manageModulesOnly)

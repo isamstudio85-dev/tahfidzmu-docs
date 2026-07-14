@@ -33,7 +33,11 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
 
   void _initTabController() {
     final provider = context.read<AppProvider>();
-    final int length = (provider.isAdmin || provider.isPengawas) ? 4 : 3;
+    final showRanking = provider.isModuleActive('gamification');
+    final showPresensi = provider.isAdmin || provider.isPengawas;
+    int length = 2; // RIWAYAT, LAPORAN
+    if (showRanking) length++;
+    if (showPresensi) length++;
     _tabController = TabController(length: length, vsync: this);
   }
 
@@ -48,15 +52,19 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
     final provider = context.watch<AppProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
-    // Safety check for tab length changes (e.g. role change without restart)
-    final int expectedLength = (provider.isAdmin || provider.isPengawas) ? 4 : 3;
+    final showRanking = provider.isModuleActive('gamification');
+    final bool showPresensi = provider.isAdmin || provider.isPengawas;
+    
+    int expectedLength = 2; // RIWAYAT, LAPORAN
+    if (showRanking) expectedLength++;
+    if (showPresensi) expectedLength++;
+
     if (_tabController == null || _tabController!.length != expectedLength) {
       _tabController?.dispose();
       _tabController = TabController(length: expectedLength, vsync: this);
     }
 
     final canAddSetoran = provider.isAdmin || provider.isMusyrif;
-    final bool showPresensi = provider.isAdmin || provider.isPengawas;
 
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF8F9FA),
@@ -96,7 +104,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
               labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 0.5),
               tabs: [
                 const Tab(text: 'RIWAYAT'),
-                const Tab(text: 'RANKING'),
+                if (showRanking) const Tab(text: 'RANKING'),
                 const Tab(text: 'LAPORAN'),
                 if (showPresensi) const Tab(text: 'PRESENSI'),
               ],
@@ -118,7 +126,7 @@ class _QuranMemorizationScreenState extends State<QuranMemorizationScreen> with 
                if (mounted) setState(() => _filterType = v);
             },
           ),
-          const QuranRankingList(),
+          if (showRanking) const QuranRankingList(),
           const _LaporanStatistikTab(),
           if (showPresensi) const PresensiHistoryScreen(hideAppBar: true),
         ],

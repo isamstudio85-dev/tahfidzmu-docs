@@ -88,14 +88,16 @@ class MusyrifDashboard extends StatelessWidget {
                       _buildActionHUD(context, isDark),
                       const SizedBox(height: 24),
 
-                      const QuestCenterPortalCard(),
-                      const SizedBox(height: 32),
+                      if (provider.isModuleActive('gamification')) ...[
+                        const PusatHafalanPortalCard(),
+                        const SizedBox(height: 32),
+                      ],
 
                       // --- HALAQAH STATUS ---
                       if (myHalaqah.isNotEmpty) ...[
-                        const SectionTitle('STATUS HALAQAH (KOMPETISI)'),
+                        const SectionTitle('STATUS HALAQAH'),
                         const SizedBox(height: 12),
-                        _buildGuildStatus(provider, myHalaqah, isDark),
+                        _buildHalaqahStatus(provider, myHalaqah, isDark),
                         const SizedBox(height: 32),
                       ],
                       
@@ -349,26 +351,26 @@ class MusyrifDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildGuildStatus(AppProvider provider, List<HalaqahData> myHalaqah, bool isDark) {
+  Widget _buildHalaqahStatus(AppProvider provider, List<HalaqahData> myHalaqah, bool isDark) {
     // Reuse leaderboard logic to find current rank
-    final Map<String, int> guildXpMap = {};
+    final Map<String, int> halaqahXpMap = {};
     for (var s in provider.santriList) {
       if (s.halaqahId == null) continue;
-      guildXpMap[s.halaqahId!] = (guildXpMap[s.halaqahId] ?? 0) + s.totalXP;
+      halaqahXpMap[s.halaqahId!] = (halaqahXpMap[s.halaqahId] ?? 0) + s.totalXP;
     }
     
-    final allGuilds = provider.halaqahList.map((h) => (id: h.id, xp: guildXpMap[h.id] ?? 0)).toList();
-    allGuilds.sort((a, b) => b.xp.compareTo(a.xp));
+    final allHalaqahs = provider.halaqahList.map((h) => (id: h.id, xp: halaqahXpMap[h.id] ?? 0)).toList();
+    allHalaqahs.sort((a, b) => b.xp.compareTo(a.xp));
 
     // Show status for the first halaqah managed
     final h = myHalaqah.first;
-    final int rank = allGuilds.indexWhere((g) => g.id == h.id) + 1;
-    final int totalXP = guildXpMap[h.id] ?? 0;
+    final int rank = allHalaqahs.indexWhere((g) => g.id == h.id) + 1;
+    final int totalXP = halaqahXpMap[h.id] ?? 0;
     
     // Find MVP in this halaqah
-    final mySantriListInGuild = provider.santriList.where((s) => s.halaqahId == h.id).toList();
-    mySantriListInGuild.sort((a, b) => b.totalXP.compareTo(a.totalXP));
-    final mvp = mySantriListInGuild.isNotEmpty ? mySantriListInGuild.first : null;
+    final mySantriListInHalaqah = provider.santriList.where((s) => s.halaqahId == h.id).toList();
+    mySantriListInHalaqah.sort((a, b) => b.totalXP.compareTo(a.totalXP));
+    final mvp = mySantriListInHalaqah.isNotEmpty ? mySantriListInHalaqah.first : null;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -385,14 +387,14 @@ class MusyrifDashboard extends StatelessWidget {
         children: [
           Row(
             children: [
-              // Guild Badge/Shield
+              // Halaqah Icon
               Container(
                 width: 60, height: 60,
                 decoration: BoxDecoration(
                   color: AppTheme.primaryGreen.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.shield_rounded, color: AppTheme.primaryGreen, size: 32),
+                child: const Icon(Icons.groups_rounded, color: AppTheme.primaryGreen, size: 32),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -419,9 +421,9 @@ class MusyrifDashboard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _guildStat('TOTAL XP', '$totalXP', Colors.blueAccent),
+              _halaqahStat('TOTAL XP', '$totalXP', Colors.blueAccent),
               if (mvp != null)
-                _guildStat('SANTRI TERBAIK', mvp.name.split(' ')[0].toUpperCase(), AppTheme.gold),
+                _halaqahStat('SANTRI TERBAIK', mvp.name.split(' ')[0].toUpperCase(), AppTheme.gold),
             ],
           ),
         ],
@@ -429,7 +431,7 @@ class MusyrifDashboard extends StatelessWidget {
     );
   }
 
-  Widget _guildStat(String label, String val, Color color) {
+  Widget _halaqahStat(String label, String val, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

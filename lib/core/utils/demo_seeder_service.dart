@@ -97,7 +97,7 @@ class DemoSeederService {
           finalScore: score,
         );
 
-        await provider.getCollection('santri').doc(santriId).collection('setoran').doc(setoranId).set(setoran.toJson());
+        await provider.getCollection('santri').doc(santriId).collection('setoranHistory').doc(setoranId).set(setoran.toJson());
       }
     }
   }

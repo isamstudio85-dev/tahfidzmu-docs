@@ -91,23 +91,37 @@ class _MainShellState extends State<MainShell> {
     final screens = _getScreens(provider);
     final bool isFiveMenu = role != UserRole.orangTua;
     final int safeIndex = _index.clamp(0, screens.length - 1);
+    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final borderColor = isDark ? Colors.white10 : Colors.grey.shade200;
 
     return Scaffold(
       body: IndexedStack(index: safeIndex, children: screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: navBgColor,
+          border: Border(
+            top: BorderSide(
+              color: isDark 
+                  ? AppTheme.primaryGreen.withValues(alpha: 0.25)
+                  : borderColor,
+              width: isDark ? 1.5 : 1.0,
+            ),
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
+              color: isDark 
+                  ? AppTheme.primaryGreen.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.06),
               blurRadius: 12,
-              offset: const Offset(0, -4), // Distinct top shadow
+              offset: const Offset(0, -4),
             ),
           ],
         ),
         child: SafeArea(
           child: Container(
-            height: 68,
+            height: 64,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: isFiveMenu 
                 ? Row(
@@ -134,32 +148,40 @@ class _MainShellState extends State<MainShell> {
 
   Widget _centerLogoItem(int idx) {
     final isSelected = _index == idx;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Expanded(
       child: Center(
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: () => setState(() => _index = idx),
-            borderRadius: BorderRadius.circular(28), // Matches the circle
-            splashColor: Colors.black.withValues(alpha: 0.05), // Neutral grey ripple
+            borderRadius: BorderRadius.circular(24),
+            splashColor: Colors.black.withValues(alpha: 0.05),
             child: Container(
-              width: 58, // Slightly smaller bulatan as requested
-              height: 58,
-              padding: const EdgeInsets.all(5),
+              width: 48,
+              height: 48,
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.8),
+                color: isSelected 
+                    ? (isDark ? const Color(0xFF334155) : Colors.white) 
+                    : (isDark ? const Color(0xFF1E293B) : Colors.white.withValues(alpha: 0.9)),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: isSelected ? 0.08 : 0.03),
-                    blurRadius: 6,
+                    color: isSelected 
+                        ? AppTheme.gold.withValues(alpha: 0.4) 
+                        : Colors.black.withValues(alpha: 0.05),
+                    blurRadius: isSelected ? 8 : 4,
+                    spreadRadius: isSelected ? 1 : 0,
                     offset: const Offset(0, 2),
                   ),
                 ],
                 border: Border.all(
-                  // Changed from Green to Thin Grey
-                  color: isSelected ? Colors.grey.shade300 : Colors.grey.shade100,
-                  width: 1.0,
+                  color: isSelected 
+                      ? AppTheme.gold 
+                      : (isDark ? Colors.white24 : Colors.grey.shade300),
+                  width: isSelected ? 2.0 : 1.0,
                 ),
               ),
               child: Image.asset(
@@ -167,8 +189,8 @@ class _MainShellState extends State<MainShell> {
                 fit: BoxFit.contain,
                 errorBuilder: (_, __, ___) => Icon(
                   Icons.auto_stories_rounded,
-                  color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade400,
-                  size: 24,
+                  color: isSelected ? AppTheme.gold : Colors.grey.shade400,
+                  size: 20,
                 ),
               ),
             ),
@@ -180,31 +202,66 @@ class _MainShellState extends State<MainShell> {
 
   Widget _navItem(int idx, IconData icon, IconData activeIcon, String label) {
     final isSelected = _index == idx;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    final activeColor = AppTheme.primaryGreen;
+    final inactiveColor = isDark ? Colors.white30 : Colors.grey.shade400;
+    final labelColor = isSelected 
+        ? activeColor 
+        : (isDark ? Colors.white70 : Colors.grey.shade600);
+
     return Expanded(
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () => setState(() => _index = idx),
-          borderRadius: BorderRadius.circular(16), // SQUIRCLE RIPPLE
-          splashColor: AppTheme.primaryGreen.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+          splashColor: activeColor.withValues(alpha: 0.1),
           highlightColor: Colors.transparent,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              Icon(
-                isSelected ? activeIcon : icon,
-                color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade400,
-                size: 22,
-              ),
-              const SizedBox(height: 2),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected ? AppTheme.primaryGreen : Colors.grey.shade600,
+              if (isSelected)
+                Positioned(
+                  top: 0,
+                  child: Container(
+                    width: 20,
+                    height: 3,
+                    decoration: BoxDecoration(
+                      color: activeColor,
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(3),
+                        bottomRight: Radius.circular(3),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: activeColor.withValues(alpha: 0.8),
+                          blurRadius: 6,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    isSelected ? activeIcon : icon,
+                    color: isSelected ? activeColor : inactiveColor,
+                    size: 22,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: labelColor,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

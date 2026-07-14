@@ -257,8 +257,8 @@ class GamificationCard extends StatelessWidget {
   }
 }
 
-class QuestCenterPortalCard extends StatelessWidget {
-  const QuestCenterPortalCard({super.key});
+class PusatHafalanPortalCard extends StatelessWidget {
+  const PusatHafalanPortalCard({super.key});
 
   @override
   Widget build(BuildContext context) {

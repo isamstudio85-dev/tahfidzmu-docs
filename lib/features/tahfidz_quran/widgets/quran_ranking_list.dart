@@ -260,7 +260,7 @@ class _HalaqahRankingTab extends StatelessWidget {
         child: ListView.builder(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
           itemCount: halaqahs.length,
-          itemBuilder: (ctx, i) => _GuildRankCard(rank: i + 1, item: halaqahs[i]),
+          itemBuilder: (ctx, i) => _HalaqahRankCard(rank: i + 1, item: halaqahs[i]),
         ),
       );
     });
@@ -332,7 +332,7 @@ class _EpicPortraitCards extends StatelessWidget {
                           shape: BoxShape.circle,
                           border: Border.all(color: color, width: 1.5),
                         ),
-                        child: AppAvatar(name: santri.name, radius: 24, imagePath: santri.photoPath),
+                        child: AppAvatar(name: santri.name, radius: 24, imagePath: santri.photoPath, streakDays: santri.streakDays),
                       ),
                       Positioned(
                         bottom: -2,
@@ -471,7 +471,7 @@ class _RankCard extends StatelessWidget {
               ),
             ),
             // Avatar
-            AppAvatar(name: santri.name, radius: 18, imagePath: santri.photoPath),
+            AppAvatar(name: santri.name, radius: 18, imagePath: santri.photoPath, streakDays: santri.streakDays),
             const SizedBox(width: 12),
             // Name
             Expanded(
@@ -530,8 +530,8 @@ class _RankCard extends StatelessWidget {
   }
 }
 
-class _GuildRankCard extends StatelessWidget {
-  const _GuildRankCard({required this.rank, required this.item});
+class _HalaqahRankCard extends StatelessWidget {
+  const _HalaqahRankCard({required this.rank, required this.item});
   final int rank; final dynamic item;
 
   @override

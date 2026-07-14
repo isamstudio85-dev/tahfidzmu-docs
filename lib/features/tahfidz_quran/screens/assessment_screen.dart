@@ -9,6 +9,8 @@ import 'package:tahfidz_app/core/widgets/app_avatar.dart';
 import 'package:tahfidz_app/core/utils/scoring_utils.dart';
 import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_widgets.dart';
 import 'package:tahfidz_app/features/dashboard/screens/main_shell.dart';
+import 'package:tahfidz_app/core/utils/gamification_utils.dart';
+import 'package:tahfidz_app/models/santri.dart';
 
 class AssessmentScreen extends StatefulWidget {
   const AssessmentScreen({super.key});
@@ -46,6 +48,15 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
             
         final tajwid = errors.where((e) => e.errorType == ErrorType.tajwid).length;
         final makhroj = errors.where((e) => e.errorType == ErrorType.makhroj).length;
+
+        if (_saved && provider.isModuleActive('gamification')) {
+          return PopScope(
+            canPop: false,
+            child: Scaffold(
+              body: _buildSetoranSuccessScreen(provider),
+            ),
+          );
+        }
 
         return PopScope(
           canPop: false,
@@ -137,7 +148,7 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AppAvatar(name: santri?.name ?? '?', radius: 24, backgroundColor: Colors.white24, foregroundColor: Colors.white, imagePath: santri?.photoPath),
+              AppAvatar(name: santri?.name ?? '?', radius: 24, backgroundColor: Colors.white24, foregroundColor: Colors.white, imagePath: santri?.photoPath, activeFrame: santri?.activeFrame, streakDays: santri?.streakDays ?? 0),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -328,5 +339,306 @@ class _AssessmentScreenState extends State<AssessmentScreen> {
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
+  }
+
+  Widget _buildSetoranSuccessScreen(AppProvider provider) {
+    final record = _savedRecord;
+    if (record == null) return const Center(child: CircularProgressIndicator());
+
+    final int earnedXP = GamificationUtils.calculateXP(record);
+    final int earnedCoins = GamificationUtils.calculateCoins(record);
+
+    final Santri? santri = provider.santriList.cast<Santri?>().firstWhere(
+      (s) => s?.id == record.santriId,
+      orElse: () => null,
+    );
+
+    final int currentLevel = santri != null ? GamificationUtils.calculateLevel(santri.totalXP) : 1;
+    final double progress = santri != null ? GamificationUtils.levelProgress(santri.totalXP) : 0.0;
+    final int nextLevelXP = GamificationUtils.xpForLevel(currentLevel + 1);
+    final int neededXP = nextLevelXP - (santri?.totalXP ?? 0);
+
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF0F2027), // Deep space dark teal
+            Color(0xFF203A43),
+            Color(0xFF2C5364),
+          ],
+        ),
+      ),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 20),
+              // Big Glowing Trophy Icon
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppTheme.gold.withValues(alpha: 0.15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.gold.withValues(alpha: 0.3),
+                          blurRadius: 30,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    Icons.emoji_events_rounded,
+                    color: AppTheme.gold,
+                    size: 72,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'SETORAN TERCATAT!',
+                style: GoogleFonts.poppins(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: 2,
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (GamificationUtils.checkPerfectFlow(record)) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade900.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.amber, width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.orange.withValues(alpha: 0.5),
+                        blurRadius: 8,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.local_fire_department_rounded, color: Colors.amber, size: 16),
+                      const SizedBox(width: 6),
+                      Text(
+                        'PERFECT FLOW COMBO x1.5!',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+              Text(
+                'Hafalanmu telah tercatat di lembaran perjuangan.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(height: 32),
+              
+              // Rewards Card
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    width: 1.5,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // XP Reward
+                    _rewardIndicator(
+                      icon: Icons.flash_on_rounded,
+                      color: Colors.cyanAccent,
+                      label: 'XP DIDAPAT',
+                      value: '+$earnedXP XP',
+                    ),
+                    // Vertical Divider
+                    Container(
+                      width: 1.5,
+                      height: 50,
+                      color: Colors.white24,
+                    ),
+                    // Coins Reward
+                    _rewardIndicator(
+                      icon: Icons.stars_rounded,
+                      color: AppTheme.gold,
+                      label: 'KOIN EMAS',
+                      value: '+$earnedCoins KOIN',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Level Progress Section
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.04),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    width: 1,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'LEVEL $currentLevel',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          'LEVEL ${currentLevel + 1}',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white60,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    // Custom Glowing Progress Bar
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Stack(
+                        children: [
+                          Container(
+                            height: 14,
+                            color: Colors.white12,
+                          ),
+                          FractionallySizedBox(
+                            widthFactor: progress,
+                            child: Container(
+                              height: 14,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppTheme.gold,
+                                    Colors.orangeAccent,
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      neededXP <= 0 ? 'Mencapai Level Maksimal!' : 'Butuh $neededXP XP lagi untuk naik Level',
+                      style: const TextStyle(
+                        color: Colors.white60,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 48),
+
+              // Action Button
+              SizedBox(
+                width: double.infinity,
+                height: 58,
+                child: FilledButton.icon(
+                  icon: const Icon(Icons.home_rounded),
+                  label: Text(
+                    'KEMBALI KE BERANDA',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppTheme.primaryGreen,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: () => Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MainShell()),
+                    (r) => false,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _rewardIndicator({
+    required IconData icon,
+    required Color color,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 36),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            color: Colors.white38,
+            letterSpacing: 1,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
   }
 }

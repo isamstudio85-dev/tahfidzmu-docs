@@ -39,7 +39,7 @@ class AppProvider extends ChangeNotifier
   bool isSurahListLoading = false;
   String? surahListError;
 
-  final Set<String> _activeModules = {'quran', 'hadits', 'tajwid', 'tahsin', 'graduation', 'fiqih', 'pondok_info'};
+  final Set<String> _activeModules = {'quran', 'hadits', 'tajwid', 'tahsin', 'graduation', 'fiqih', 'pondok_info', 'gamification'};
   Set<String> get activeModules => Set.unmodifiable(_activeModules);
   bool isModuleActive(String key) => _activeModules.contains(key);
 
@@ -52,11 +52,12 @@ class AppProvider extends ChangeNotifier
     _activeModules.add('quran'); 
     _activeModules.add('fiqih');
     _activeModules.add('pondok_info');
+    _activeModules.add('gamification');
 
     notifyListeners();
   }
 
-  void toggleModule(String key) {
+  Future<void> toggleModule(String key) async {
     if (key == 'quran') return;
     if (_activeModules.contains(key)) {
       _activeModules.remove(key);
@@ -64,6 +65,14 @@ class AppProvider extends ChangeNotifier
       _activeModules.add(key);
     }
     notifyListeners();
+
+    try {
+      await getCollection('settings').doc('modules').set({
+        'active': _activeModules.toList(),
+      });
+    } catch (e) {
+      debugPrint("Failed to save active modules: $e");
+    }
   }
 
   bool get isCoordinator => linkedMusyrif?.isKoordinator ?? false;

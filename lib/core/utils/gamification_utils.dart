@@ -26,7 +26,27 @@ class GamificationUtils {
     // Ziyadah (new memorization) gives 20% bonus
     double multiplier = record.type == SetoranType.ziyadah ? 1.2 : 1.0;
     
+    // Perfect Flow combo gives 1.5x multiplier
+    final bool isPerfectFlow = checkPerfectFlow(record);
+    if (isPerfectFlow) {
+      multiplier *= 1.5;
+    }
+    
     return ((baseXP + gradeBonus) * multiplier).round();
+  }
+
+  /// Check if setoran qualifies for Perfect Flow (no errors, min length)
+  static bool checkPerfectFlow(SetoranRecord record) {
+    final hasNoErrors = record.errorMarks.isEmpty;
+    if (!hasNoErrors) return false;
+    
+    if (record.calculationMethod == 'baris') {
+      final lines = record.totalLines ?? 0;
+      return lines >= 15; // 1 halaman mushaf standard = 15 baris
+    } else {
+      // 5 ayat ke atas tanpa salah dianggap memenuhi kualifikasi panjang halaman rata-rata
+      return record.passedAyahs.length >= 5; 
+    }
   }
 
   /// Calculate Coins earned from a setoran
@@ -95,24 +115,3 @@ class GamificationUtils {
   }
 }
 
-extension LevelCalculation on double {
-  int get asLevel {
-    // Simple square root based level
-    // xp = 100 -> lvl 1
-    // xp = 400 -> lvl 2
-    // xp = 900 -> lvl 3
-    // Using a more generous linear-quadratic hybrid
-    // Let's use: xp = 50 * L * (L + 1)
-    // L=1 -> 100 XP
-    // L=2 -> 300 XP
-    // L=3 -> 600 XP
-    // L=10 -> 5500 XP
-    
-    // Let's stick to the simplest one for now
-    // XP = level * 200
-    // L=1 -> 200
-    // L=2 -> 400
-    // L=3 -> 600
-    return (this / 2).floor().clamp(1, 99);
-  }
-}

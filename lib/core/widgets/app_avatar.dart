@@ -32,6 +32,7 @@ class AppAvatar extends StatelessWidget {
     this.backgroundColor,
     this.foregroundColor,
     this.activeFrame,
+    this.streakDays = 0,
   });
 
   /// Person's name — used to seed the AI avatar and derive initials.
@@ -54,6 +55,9 @@ class AppAvatar extends StatelessWidget {
 
   /// Virtual frame ID to draw around the avatar.
   final String? activeFrame;
+
+  /// Streak days of memorization (shows fire overlay if >= 7).
+  final int streakDays;
 
   String get _initials {
     final parts = name.trim().split(RegExp(r'\s+'));
@@ -120,37 +124,72 @@ class AppAvatar extends StatelessWidget {
       avatar = fallback;
     }
 
-    if (frameColor == null) return avatar;
+    final showFire = streakDays >= 7;
 
-    // Wrap with Frame
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Glow effect
-        Container(
-          width: radius * 2 + 8,
-          height: radius * 2 + 8,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: frameColor.withValues(alpha: 0.3),
-                blurRadius: 10,
-                spreadRadius: 2,
+    Widget renderedAvatar = frameColor == null 
+        ? avatar 
+        : Stack(
+            alignment: Alignment.center,
+            children: [
+              // Glow effect
+              Container(
+                width: radius * 2 + 8,
+                height: radius * 2 + 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: frameColor.withValues(alpha: 0.3),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
               ),
+              // The Frame
+              Container(
+                width: radius * 2 + 6,
+                height: radius * 2 + 6,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: frameColor, width: 3),
+                ),
+              ),
+              avatar,
             ],
+          );
+
+    if (!showFire) return renderedAvatar;
+
+    // Wrap with Fire / Streak Status overlay
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        renderedAvatar,
+        Positioned(
+          bottom: -2,
+          right: -2,
+          child: Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.red.shade900,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.orange.shade500, width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.orange.withValues(alpha: 0.8),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.local_fire_department_rounded,
+              color: Colors.amber,
+              size: 14,
+            ),
           ),
         ),
-        // The Frame
-        Container(
-          width: radius * 2 + 6,
-          height: radius * 2 + 6,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: frameColor, width: 3),
-          ),
-        ),
-        avatar,
       ],
     );
   }

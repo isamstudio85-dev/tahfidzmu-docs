@@ -238,9 +238,9 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
                               ),
                             )
                           else ...[
-                            _heroProfileCard(_selectedSantri!),
+                            _santriProfileCard(_selectedSantri!),
                             const SizedBox(height: 32),
-                            _sectionTitle('KONFIGURASI MISI'),
+                            _sectionTitle('KONFIGURASI SETORAN'),
                             const SizedBox(height: 20),
                             _buildTypePicker(),
                             const SizedBox(height: 16),
@@ -326,8 +326,8 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
                 Center(
                   child: Text(
                     _isQuickMode 
-                      ? 'MODE REKAP: Mencatat hasil dari misi sebelumnya.' 
-                      : 'MODE INTERAKTIF: Memasuki arena mushaf digital.', 
+                      ? 'MODE REKAP: Mencatat hasil setoran secara manual.' 
+                      : 'MODE INTERAKTIF: Menyimak langsung dengan mushaf digital.', 
                     style: const TextStyle(color: Colors.grey, fontSize: 10, fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),
                     textAlign: TextAlign.center,
                   )
@@ -420,7 +420,7 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
 
   Widget _buildSantriSelector() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    if (_selectedSantri != null) return _heroProfileCard(_selectedSantri!);
+    if (_selectedSantri != null) return _santriProfileCard(_selectedSantri!);
 
     return InkWell(
       onTap: _showSantriPicker,
@@ -571,7 +571,7 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'LOKASI MISI (SURAH)',
+                    'PILIH SURAH',
                     style: TextStyle(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.grey.shade500, letterSpacing: 1),
                   ),
                   Text(
@@ -1198,7 +1198,7 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
     );
   }
 
-  Widget _heroProfileCard(Santri santri) {
+  Widget _santriProfileCard(Santri santri) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final level = GamificationUtils.calculateLevel(santri.totalXP);
     
@@ -1211,7 +1211,7 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
       ),
       child: Row(
         children: [
-          AppAvatar(name: santri.name, radius: 24, imagePath: santri.photoPath, activeFrame: santri.activeFrame),
+          AppAvatar(name: santri.name, radius: 24, imagePath: santri.photoPath, activeFrame: santri.activeFrame, streakDays: santri.streakDays),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -1258,9 +1258,9 @@ class _SetoranFormScreenState extends State<SetoranFormScreen> {
         ],
       ),
       child: FilledButton.icon(
-        icon: Icon(_isQuickMode ? Icons.check_circle_outline_rounded : Icons.explore_rounded, size: 28),
+        icon: Icon(_isQuickMode ? Icons.check_circle_outline_rounded : Icons.menu_book_rounded, size: 28),
         label: Text(
-          _isQuickMode ? 'SUBMIT LAPORAN' : 'JALANKAN MISI', 
+          _isQuickMode ? 'SIMPAN REKAP' : 'SIMAK SETORAN', 
           style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.5)
         ),
         style: FilledButton.styleFrom(

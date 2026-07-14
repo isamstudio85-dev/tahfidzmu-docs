@@ -86,13 +86,12 @@ class OrangTuaDashboard extends StatelessWidget {
                   ],
                 ],
               ),
-              const SizedBox(height: 24),
-              
-              GamificationCard(santri: child),
-              const SizedBox(height: 24),
-
-              const QuestCenterPortalCard(),
-              const SizedBox(height: 32),
+              if (context.watch<AppProvider>().isModuleActive('gamification')) ...[
+                GamificationCard(santri: child),
+                const SizedBox(height: 24),
+                const PusatHafalanPortalCard(),
+                const SizedBox(height: 32),
+              ],
 
               if (isTablet)
                 Row(
@@ -477,6 +476,7 @@ class OrangTuaDashboard extends StatelessWidget {
               backgroundColor: Colors.white24,
               foregroundColor: Colors.white,
               activeFrame: child.activeFrame,
+              streakDays: child.streakDays,
             ),
           ),
           const SizedBox(width: 16),

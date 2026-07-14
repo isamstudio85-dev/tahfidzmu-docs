@@ -41,16 +41,16 @@ class MusyrifDetailScreen extends StatelessWidget {
         final myHalaqahs = provider.halaqahList.where((h) => h.musyrifId == musyrif.id).toList();
         int bestRank = 99;
         if (myHalaqahs.isNotEmpty) {
-           final Map<String, int> guildXpMap = {};
+           final Map<String, int> halaqahXpMap = {};
            for (var s in provider.santriList) {
              if (s.halaqahId == null) continue;
-             guildXpMap[s.halaqahId!] = (guildXpMap[s.halaqahId] ?? 0) + s.totalXP;
+             halaqahXpMap[s.halaqahId!] = (halaqahXpMap[s.halaqahId] ?? 0) + s.totalXP;
            }
-           final allGuilds = provider.halaqahList.map((h) => (id: h.id, xp: guildXpMap[h.id] ?? 0)).toList();
-           allGuilds.sort((a, b) => b.xp.compareTo(a.xp));
+           final allHalaqahs = provider.halaqahList.map((h) => (id: h.id, xp: halaqahXpMap[h.id] ?? 0)).toList();
+           allHalaqahs.sort((a, b) => b.xp.compareTo(a.xp));
            
            for (var h in myHalaqahs) {
-             int rank = allGuilds.indexWhere((g) => g.id == h.id) + 1;
+             int rank = allHalaqahs.indexWhere((g) => g.id == h.id) + 1;
              if (rank < bestRank && rank > 0) bestRank = rank;
            }
         }

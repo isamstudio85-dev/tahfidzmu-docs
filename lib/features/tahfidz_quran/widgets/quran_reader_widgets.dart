@@ -271,6 +271,30 @@ class AyahBlock extends StatelessWidget {
                 ],
               ),
             ),
+            if (!isReadOnly && sessionErrors.length >= 3)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.red,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'AYAT KRITIS (KESALAHAN >= 3)',
+                      style: GoogleFonts.poppins(
+                        color: Colors.red.shade700,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

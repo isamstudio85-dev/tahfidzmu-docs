@@ -13,8 +13,8 @@ import 'package:tahfidz_app/features/tahfidz_quran/widgets/quran_ranking_list.da
 import 'package:tahfidz_app/features/tahfidz_quran/screens/laporan_screen.dart';
 import 'package:tahfidz_app/core/utils/demo_seeder_service.dart';
 import 'package:tahfidz_app/models/voucher_ticket.dart';
-import 'package:tahfidz_app/features/management/screens/redemption_center_screen.dart';
 import 'package:tahfidz_app/features/dashboard/widgets/notification_bell.dart';
+import 'package:tahfidz_app/features/tahfidz_quran/screens/qr_scanner_screen.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key, required this.provider});
@@ -31,7 +31,12 @@ class AdminDashboard extends StatelessWidget {
           style: GoogleFonts.poppins(fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 16),
         ),
         centerTitle: true,
-        actions: [const NotificationBell(), const SizedBox(width: 8)],
+        actions: [
+          if (!provider.isPengawas)
+            _buildQuickVoucherAction(context),
+          const NotificationBell(),
+          const SizedBox(width: 8),
+        ],
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -53,8 +58,10 @@ class AdminDashboard extends StatelessWidget {
                 _buildSubscriptionWarning(context),
                 const SizedBox(height: 24),
 
-                const QuestCenterPortalCard(),
-                const SizedBox(height: 32),
+                if (provider.isModuleActive('gamification')) ...[
+                  const PusatHafalanPortalCard(),
+                  const SizedBox(height: 32),
+                ],
                 
                 if (isTablet)
                   Row(
@@ -336,75 +343,42 @@ class AdminDashboard extends StatelessWidget {
   }
 
   Widget _buildAdminStats(BuildContext context, bool isTablet) {
-    final pendingVouchers = provider.voucherList.where((v) => v.status == VoucherStatus.pending).length;
-
-    return Column(
+    return Row(
       children: [
-        Row(
-          children: [
-            _statTile(
-              context,
-              '${provider.santriList.length}',
-              'Santri',
-              Icons.people_alt_rounded,
-              Colors.blue,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const SantriListScreen()),
-              ),
-            ),
-            const SizedBox(width: 12),
-            _statTile(
-              context,
-              '${provider.musyrifList.length}',
-              'Musyrif',
-              Icons.person_pin_rounded,
-              Colors.green,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MusyrifListScreen()),
-              ),
-            ),
-            const SizedBox(width: 12),
-            _statTile(
-              context,
-              '${provider.halaqahList.length}',
-              'Halaqah',
-              Icons.groups_rounded,
-              Colors.purple,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const HalaqahListScreen()),
-              ),
-            ),
-          ],
+        _statTile(
+          context,
+          '${provider.santriList.length}',
+          'Santri',
+          Icons.people_alt_rounded,
+          Colors.blue,
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const SantriListScreen()),
+          ),
         ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            _statTile(
-              context,
-              '$pendingVouchers',
-              'Voucher Pending',
-              Icons.card_giftcard_rounded,
-              Colors.orange,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const RedemptionCenterScreen()),
-              ),
-            ),
-            if (isTablet) ...[
-              const SizedBox(width: 12),
-              _statTile(
-                context,
-                '${provider.santriList.fold(0, (acc, s) => acc + s.setoranHistory.length)}',
-                'Total Setoran',
-                Icons.history_edu_rounded,
-                Colors.blueGrey,
-                () {},
-              ),
-            ],
-          ],
+        const SizedBox(width: 12),
+        _statTile(
+          context,
+          '${provider.musyrifList.length}',
+          'Musyrif',
+          Icons.person_pin_rounded,
+          Colors.green,
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const MusyrifListScreen()),
+          ),
+        ),
+        const SizedBox(width: 12),
+        _statTile(
+          context,
+          '${provider.halaqahList.length}',
+          'Halaqah',
+          Icons.groups_rounded,
+          Colors.purple,
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const HalaqahListScreen()),
+          ),
         ),
       ],
     );
@@ -757,6 +731,115 @@ class AdminDashboard extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  }
+
+  Widget _buildQuickVoucherAction(BuildContext context) {
+    final pendingCount = provider.voucherList.where((v) => v.status == VoucherStatus.pending).length;
+    
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.confirmation_number_rounded, color: AppTheme.gold),
+          tooltip: 'Cairkan Tiket Voucher',
+          onPressed: () => _quickVoucherRedeem(context),
+        ),
+        if (pendingCount > 0)
+          Positioned(
+            right: 4,
+            top: 4,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                '$pendingCount',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 7,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Future<void> _quickVoucherRedeem(BuildContext context) async {
+    final result = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const QrScannerScreen(returnRaw: true)),
+    );
+
+    if (result != null) {
+      final voucher = provider.voucherList.where((v) => v.id == result).firstOrNull;
+      if (voucher != null) {
+        if (voucher.status == VoucherStatus.redeemed) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Voucher ini sudah dicairkan!'), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating),
+            );
+          }
+        } else {
+          if (context.mounted) {
+            _showQuickConfirmRedeem(context, voucher);
+          }
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Voucher tidak ditemukan.'), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating),
+          );
+        }
+      }
+    }
+  }
+
+  void _showQuickConfirmRedeem(BuildContext context, VoucherTicket voucher) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text('Cairkan Voucher?'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Santri: ${voucher.santriName}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text('Hadiah: ${voucher.rewardName}'),
+            const SizedBox(height: 16),
+            const Text('Berikan hadiah fisik kepada santri sekarang.'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('BATAL')),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                await provider.redeemVoucher(voucher.id);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Voucher berhasil dicairkan! 🎉'), backgroundColor: Colors.green, behavior: SnackBarBehavior.floating),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Gagal mencairkan: $e'), backgroundColor: Colors.red, behavior: SnackBarBehavior.floating),
+                  );
+                }
+              }
+            },
+            child: const Text('CAIRKAN'),
+          ),
+        ],
+      ),
     );
   }
 }

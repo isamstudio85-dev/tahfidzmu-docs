@@ -71,6 +71,15 @@ class AppTheme {
         thumbColor: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? primaryGreen : null),
         trackColor: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? primaryGreen.withValues(alpha: 0.5) : null),
       ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: primaryGreen,
+        foregroundColor: Colors.white,
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFF34D399), width: 1.5),
+        ),
+      ),
     );
   }
 
@@ -116,6 +125,15 @@ class AppTheme {
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? primaryGreen : Colors.grey.shade400),
         trackColor: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? primaryGreen.withValues(alpha: 0.5) : Colors.white10),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: primaryGreen,
+        foregroundColor: Colors.white,
+        elevation: 12,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Color(0xFF34D399), width: 2.0),
+        ),
       ),
     );
   }
