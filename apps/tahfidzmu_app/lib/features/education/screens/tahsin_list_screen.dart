@@ -43,6 +43,7 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isWide = MediaQuery.of(context).size.width > 900;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isLoading) {
       return Scaffold(
@@ -76,10 +77,10 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
 
     if (isWide) {
       return Scaffold(
-        backgroundColor: const Color(0xFFFDF9F0),
+        backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
         appBar: AppBar(
           title: const Text('Tahsin & Makharijul Huruf'),
-          backgroundColor: const Color(0xFF2E5A27),
+          backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -121,10 +122,10 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
       appBar: AppBar(
         title: const Text('Belajar Tahsin'),
-        backgroundColor: const Color(0xFF2E5A27),
+        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -255,6 +256,7 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // If wideModeSection is provided, use it directly (Detail view mode)
     final section = widget.wideModeSection ?? widget.sections[_currentIndex];
     final hasPrev = !widget.hideAppBar && _currentIndex > 0;
@@ -263,11 +265,11 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
     return Scaffold(
       appBar: widget.hideAppBar ? null : AppBar(
         title: const Text('Belajar Tahsin'),
-        backgroundColor: const Color(0xFF2E5A27),
+        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      backgroundColor: const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -277,7 +279,7 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
               if (widget.hideAppBar) ...[
                 Text(
                   section['name'],
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: const Color(0xFF2E5A27)),
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: isDark ? Colors.white : const Color(0xFF2E5A27)),
                 ),
                 const SizedBox(height: 8),
                 Text(widget.categoryTitle, style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w500)),

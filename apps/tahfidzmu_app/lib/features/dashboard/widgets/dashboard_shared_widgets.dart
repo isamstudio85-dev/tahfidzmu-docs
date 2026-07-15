@@ -19,51 +19,52 @@ class GamificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final int level = GamificationUtils.calculateLevel(santri.totalXP);
     final String title = GamificationUtils.getLevelTitle(level);
     final double progress = GamificationUtils.levelProgress(santri.totalXP);
     final int nextLevelXP = GamificationUtils.xpForLevel(level + 1);
     final String xpText = '${santri.totalXP} / $nextLevelXP XP';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Card(
-      elevation: 0,
+      elevation: 8,
+      shadowColor: AppTheme.primaryGreen.withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(28),
-        side: BorderSide(color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1), width: 1.5),
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: AppTheme.gold.withValues(alpha: 0.5), width: 1),
       ),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: isDark ? [
-              AppTheme.darkSurface,
-              AppTheme.darkSurfaceVariant.withValues(alpha: 0.5),
-            ] : [
-              Colors.white,
-              AppTheme.primaryGreen.withValues(alpha: 0.02),
-            ],
+            colors: isDark 
+              ? [const Color(0xFF0B1914), const Color(0xFF143026)]
+              : [const Color(0xFF004D40), const Color(0xFF00796B)],
           ),
         ),
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             Row(
               children: [
-                // Level Badge with Glow
+                // Level Badge with Gold Glow
                 Container(
-                  width: 60,
-                  height: 60,
+                  width: 56,
+                  height: 56,
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryGreen,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFFDF00), Color(0xFFD4AF37)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryGreen.withValues(alpha: 0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 6),
+                        color: AppTheme.gold.withValues(alpha: 0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
@@ -72,10 +73,10 @@ class GamificationCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          'LEVEL',
+                          'LVL',
                           style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 7,
+                            color: Colors.black54,
+                            fontSize: 8,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1,
                           ),
@@ -83,8 +84,8 @@ class GamificationCard extends StatelessWidget {
                         Text(
                           '$level',
                           style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 22,
+                            color: Colors.black87,
+                            fontSize: 20,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
@@ -92,7 +93,7 @@ class GamificationCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 20),
+                const SizedBox(width: 16),
                 // Title & XP info
                 Expanded(
                   child: Column(
@@ -102,38 +103,39 @@ class GamificationCard extends StatelessWidget {
                         title.toUpperCase(),
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w900,
-                          fontSize: 14,
-                          color: isDark ? Colors.white : AppTheme.primaryGreen,
-                          letterSpacing: 0.5,
+                          fontSize: 15,
+                          color: Colors.white,
+                          letterSpacing: 1,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Wrap(
-                        spacing: 8,
+                        spacing: 12,
                         runSpacing: 4,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.stars_rounded, color: AppTheme.gold, size: 14),
+                              const Icon(Icons.stars_rounded, color: AppTheme.gold, size: 16),
                               const SizedBox(width: 4),
                               Text(
                                 '${santri.totalCoins}',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: isDark ? Colors.white70 : Colors.black87,
-                                  fontWeight: FontWeight.w800,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppTheme.gold,
+                                  fontWeight: FontWeight.w900,
                                 ),
                               ),
                             ],
                           ),
                           Text(
-                            '•  $xpText',
-                            style: TextStyle(
+                            xpText,
+                            style: const TextStyle(
                               fontSize: 11,
-                              color: isDark ? Colors.white38 : Colors.grey.shade600,
+                              color: Colors.white70,
                               fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
                             ),
                           ),
                         ],
@@ -142,42 +144,40 @@ class GamificationCard extends StatelessWidget {
                   ),
                 ),
                 // Shop & Voucher Buttons
-                Column(
+                Row(
                   children: [
                     _actionButton(
                       context,
-                      icon: Icons.shopping_bag_rounded,
-                      color: AppTheme.gold,
-                      isDark: isDark,
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => RewardStoreScreen(santri: santri)),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _actionButton(
-                      context,
                       icon: Icons.confirmation_number_rounded,
-                      color: Colors.orange,
-                      isDark: isDark,
+                      color: Colors.orangeAccent,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const MyVouchersScreen()),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _actionButton(
+                      context,
+                      icon: Icons.storefront_rounded,
+                      color: AppTheme.gold,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => RewardStoreScreen(santri: santri)),
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            // Badges Row with Horizontal Scroll
+            const SizedBox(height: 20),
+            // Badges Row (More Compact)
             if (santri.unlockedBadges.isNotEmpty) ...[
               SizedBox(
-                height: 44,
+                height: 38,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: santri.unlockedBadges.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 10),
+                  separatorBuilder: (_, __) => const SizedBox(width: 8),
                   itemBuilder: (context, index) {
                     final badgeId = santri.unlockedBadges[index];
                     final badge = BadgeSystem.badges[badgeId];
@@ -186,7 +186,7 @@ class GamificationCard extends StatelessWidget {
                   },
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
             ],
             // Progress Bar
             Column(
@@ -195,8 +195,8 @@ class GamificationCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('PROGRES LEVEL', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white24 : Colors.grey, letterSpacing: 0.5)),
-                    Text('${(progress * 100).toInt()}%', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.primaryGreen)),
+                    const Text('PROGRES LEVEL', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.white54, letterSpacing: 1)),
+                    Text('${(progress * 100).toInt()}%', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: AppTheme.gold)),
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -204,9 +204,9 @@ class GamificationCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   child: LinearProgressIndicator(
                     value: progress,
-                    minHeight: 10,
-                    backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100,
-                    valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen),
+                    minHeight: 8,
+                    backgroundColor: Colors.black26,
+                    valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.gold),
                   ),
                 ),
               ],
@@ -217,40 +217,40 @@ class GamificationCard extends StatelessWidget {
     );
   }
 
-  Widget _actionButton(BuildContext context, {required IconData icon, required Color color, required bool isDark, required VoidCallback onTap}) {
+  Widget _actionButton(BuildContext context, {required IconData icon, required Color color, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(15),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: isDark ? 0.2 : 0.1),
-          borderRadius: BorderRadius.circular(15),
+          color: Colors.white.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white24),
         ),
-        child: Icon(icon, color: color, size: 22),
+        child: Icon(icon, color: color, size: 20),
       ),
     );
   }
 
   Widget _badgeIcon(BadgeInfo badge, bool isDark) {
     return Container(
-      width: 44,
-      height: 44,
+      width: 38,
+      height: 38,
       decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkSurfaceVariant : Colors.white,
+        color: Colors.white.withValues(alpha: 0.1),
         shape: BoxShape.circle,
-        border: Border.all(color: badge.color.withValues(alpha: 0.2)),
+        border: Border.all(color: badge.color.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: badge.color.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: badge.color.withValues(alpha: 0.2),
+            blurRadius: 4,
           ),
         ],
       ),
       child: Tooltip(
         message: '${badge.name}: ${badge.description}',
-        child: Icon(badge.icon, color: badge.color, size: 24),
+        child: Icon(badge.icon, color: badge.color, size: 20),
       ),
     );
   }
@@ -331,7 +331,7 @@ class PusatHafalanPortalCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'PUSAT HAFALAN DIGITAL',
+                            'PUSAT HAFALAN',
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontWeight: FontWeight.w900,

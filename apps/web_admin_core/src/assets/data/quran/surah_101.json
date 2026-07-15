@@ -1,0 +1,246 @@
+{
+  "number": 101,
+  "name": "سُورَةُ القَارِعَةِ",
+  "englishName": "Al-Qaari'a",
+  "numberOfAyahs": 11,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ٱلْقَارِعَةُ",
+      "translation": "Hari Kiamat,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقَارِعَةُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "مَا ٱلْقَارِعَةُ",
+      "translation": "apakah hari Kiamat itu?",
+      "wordsTajweed": [
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقَارِعَةُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "وَمَآ أَدْرَىٰكَ مَا ٱلْقَارِعَةُ",
+      "translation": "Tahukah kamu apakah hari Kiamat itu?",
+      "wordsTajweed": [
+        {
+          "word": "وَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَدْرَىٰكَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقَارِعَةُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "يَوْمَ يَكُونُ ٱلنَّاسُ كَٱلْفَرَاشِ ٱلْمَبْثُوثِ",
+      "translation": "Pada hari itu manusia adalah seperti anai-anai yang bertebaran,",
+      "wordsTajweed": [
+        {
+          "word": "يَوْمَ",
+          "rule": null
+        },
+        {
+          "word": "يَكُونُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلنَّاسُ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "كَٱلْفَرَاشِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمَبْثُوثِ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "وَتَكُونُ ٱلْجِبَالُ كَٱلْعِهْنِ ٱلْمَنفُوشِ",
+      "translation": "dan gunung-gunung adalah seperti bulu yang dihambur-hamburkan.",
+      "wordsTajweed": [
+        {
+          "word": "وَتَكُونُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجِبَالُ",
+          "rule": null
+        },
+        {
+          "word": "كَٱلْعِهْنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمَنفُوشِ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "فَأَمَّا مَن ثَقُلَتْ مَوَٰزِينُهُۥ",
+      "translation": "Dan adapun orang-orang yang berat timbangan (kebaikan)nya,",
+      "wordsTajweed": [
+        {
+          "word": "فَأَمَّا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "مَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ثَقُلَتْ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "مَوَٰزِينُهُۥ",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "فَهُوَ فِى عِيشَةٍۢ رَّاضِيَةٍۢ",
+      "translation": "maka dia berada dalam kehidupan yang memuaskan.",
+      "wordsTajweed": [
+        {
+          "word": "فَهُوَ",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "عِيشَةٍۢ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "رَّاضِيَةٍۢ",
+          "rule": "idghaam_no_ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "وَأَمَّا مَنْ خَفَّتْ مَوَٰزِينُهُۥ",
+      "translation": "Dan adapun orang-orang yang ringan timbangan (kebaikan)nya,",
+      "wordsTajweed": [
+        {
+          "word": "وَأَمَّا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "مَنْ",
+          "rule": null
+        },
+        {
+          "word": "خَفَّتْ",
+          "rule": null
+        },
+        {
+          "word": "مَوَٰزِينُهُۥ",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 9,
+      "arabic": "فَأُمُّهُۥ هَاوِيَةٌۭ",
+      "translation": "maka tempat kembalinya adalah neraka Hawiyah.",
+      "wordsTajweed": [
+        {
+          "word": "فَأُمُّهُۥ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "هَاوِيَةٌۭ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 10,
+      "arabic": "وَمَآ أَدْرَىٰكَ مَا هِيَهْ",
+      "translation": "Tahukah kamu apakah neraka Hawiyah itu?",
+      "wordsTajweed": [
+        {
+          "word": "وَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَدْرَىٰكَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "هِيَهْ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 11,
+      "arabic": "نَارٌ حَامِيَةٌۢ",
+      "translation": "(Yaitu) api yang sangat panas.",
+      "wordsTajweed": [
+        {
+          "word": "نَارٌ",
+          "rule": null
+        },
+        {
+          "word": "حَامِيَةٌۢ",
+          "rule": null
+        }
+      ]
+    }
+  ]
+}

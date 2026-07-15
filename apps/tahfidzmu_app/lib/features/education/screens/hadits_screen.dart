@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 import 'package:core_models/core_models.dart';
 import 'package:tahfidz_app/services/hadith_service.dart';
@@ -54,6 +55,7 @@ class _HaditsScreenState extends State<HaditsScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isWide = MediaQuery.of(context).size.width > 900;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return FutureBuilder<Map<String, List<Hadith>>>(
       future: _loadThemesAndArbain(),
@@ -131,10 +133,10 @@ class _HaditsScreenState extends State<HaditsScreen> {
 
         if (isWide) {
           return Scaffold(
-            backgroundColor: const Color(0xFFFDF9F0),
+            backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
             appBar: AppBar(
               title: const Text('Hadits Pilihan'),
-              backgroundColor: const Color(0xFF2E5A27),
+              backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
               foregroundColor: Colors.white,
               elevation: 0,
             ),
@@ -164,10 +166,10 @@ class _HaditsScreenState extends State<HaditsScreen> {
         }
 
         return Scaffold(
-          backgroundColor: const Color(0xFFFDF9F0),
+          backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
           appBar: AppBar(
             title: const Text('Hadits Pilihan'),
-            backgroundColor: const Color(0xFF2E5A27),
+            backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
             foregroundColor: Colors.white,
             elevation: 0,
           ),

@@ -182,11 +182,6 @@ class AppProvider extends ChangeNotifier
           ? (mappingDoc.data()?['defaultPassword'] as String?)?.trim()
           : null;
 
-      // If QR login and password is same as username (no password in QR), use defaultPassword directly
-      if (qrLogin && p == u && dbPassword != null && dbPassword.isNotEmpty) {
-        p = dbPassword;
-      }
-
       UserCredential? cred;
       try {
         // 1. Attempt primary sign-in with the provided/resolved password
@@ -246,14 +241,21 @@ class AppProvider extends ChangeNotifier
         if (mData['mustResetAuth'] == true) {
           final resetPassword = mData['defaultPassword'] as String?;
           if (resetPassword != null && resetPassword.trim().isNotEmpty && resetPassword.trim() != p) {
+            bool updateSuccess = false;
             try {
               await user.updatePassword(resetPassword.trim());
               p = resetPassword.trim(); // Use the new password going forward
+              updateSuccess = true;
             } catch (e) {
               debugPrint('Failed to sync Auth password after admin reset: $e');
             }
+            if (updateSuccess) {
+              await getCollection('user_mappings').doc(effectiveUsername).update({'mustResetAuth': false});
+            }
+          } else {
+            // If resetPassword is null or same as p, nothing to do, just clear the flag
+            await getCollection('user_mappings').doc(effectiveUsername).update({'mustResetAuth': false});
           }
-          await getCollection('user_mappings').doc(effectiveUsername).update({'mustResetAuth': false});
         }
       }
 

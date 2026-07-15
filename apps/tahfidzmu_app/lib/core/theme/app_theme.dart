@@ -39,7 +39,7 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: lightBg,
       appBarTheme: AppBarTheme(
-        backgroundColor: primaryGreen,
+        backgroundColor: darkGreen,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,

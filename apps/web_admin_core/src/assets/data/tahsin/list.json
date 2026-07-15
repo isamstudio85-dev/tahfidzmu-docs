@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "title": "Belajar Makhorijul Huruf Hijaiyah",
+    "slug": "makharij",
+    "fileName": "makhorijul_huruf.json",
+    "description": "",
+    "icon": "record_voice_over"
+  },
+  {
+    "id": 2,
+    "title": "Praktik Tilawah",
+    "slug": "praktis",
+    "fileName": "praktik_tilawah.json",
+    "description": "",
+    "icon": "auto_stories"
+  }
+]

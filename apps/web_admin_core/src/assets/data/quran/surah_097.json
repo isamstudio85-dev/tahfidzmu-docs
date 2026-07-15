@@ -1,0 +1,180 @@
+{
+  "number": 97,
+  "name": "سُورَةُ القَدۡرِ",
+  "englishName": "Al-Qadr",
+  "numberOfAyahs": 5,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِّسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ إِنَّآ أَنزَلْنَٰهُ فِى لَيْلَةِ ٱلْقَدْرِ",
+      "translation": "Sesungguhnya Kami telah menurunkannya (Al Quran) pada malam kemuliaan.",
+      "wordsTajweed": [
+        {
+          "word": "بِّسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "إِنَّآ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "أَنزَلْنَٰهُ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "لَيْلَةِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقَدْرِ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "وَمَآ أَدْرَىٰكَ مَا لَيْلَةُ ٱلْقَدْرِ",
+      "translation": "Dan tahukah kamu apakah malam kemuliaan itu?",
+      "wordsTajweed": [
+        {
+          "word": "وَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَدْرَىٰكَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "لَيْلَةُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقَدْرِ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "لَيْلَةُ ٱلْقَدْرِ خَيْرٌۭ مِّنْ أَلْفِ شَهْرٍۢ",
+      "translation": "Malam kemuliaan itu lebih baik dari seribu bulan.",
+      "wordsTajweed": [
+        {
+          "word": "لَيْلَةُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقَدْرِ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "خَيْرٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّنْ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "أَلْفِ",
+          "rule": null
+        },
+        {
+          "word": "شَهْرٍۢ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "تَنَزَّلُ ٱلْمَلَٰٓئِكَةُ وَٱلرُّوحُ فِيهَا بِإِذْنِ رَبِّهِم مِّن كُلِّ أَمْرٍۢ",
+      "translation": "Pada malam itu turun malaikat-malaikat dan malaikat Jibril dengan izin Tuhannya untuk mengatur segala urusan.",
+      "wordsTajweed": [
+        {
+          "word": "تَنَزَّلُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمَلَٰٓئِكَةُ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "وَٱلرُّوحُ",
+          "rule": null
+        },
+        {
+          "word": "فِيهَا",
+          "rule": null
+        },
+        {
+          "word": "بِإِذْنِ",
+          "rule": null
+        },
+        {
+          "word": "رَبِّهِم",
+          "rule": null
+        },
+        {
+          "word": "مِّن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "كُلِّ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "أَمْرٍۢ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "سَلَٰمٌ هِىَ حَتَّىٰ مَطْلَعِ ٱلْفَجْرِ",
+      "translation": "Malam itu (penuh) kesejahteraan sampai terbit fajar.",
+      "wordsTajweed": [
+        {
+          "word": "سَلَٰمٌ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "هِىَ",
+          "rule": null
+        },
+        {
+          "word": "حَتَّىٰ",
+          "rule": null
+        },
+        {
+          "word": "مَطْلَعِ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "ٱلْفَجْرِ",
+          "rule": "qalqalah"
+        }
+      ]
+    }
+  ]
+}

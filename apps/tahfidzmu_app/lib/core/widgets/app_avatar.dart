@@ -126,13 +126,11 @@ class AppAvatar extends StatelessWidget {
         child: null,
       );
     } else {
-      // Fallback to DiceBear with female hijab / male hairstyles (clean & premium)
-      final url = avatarUrl(name, jenisKelamin, size: (radius * 2).toInt());
-      avatar = CachedNetworkImage(
-        imageUrl: url,
-        imageBuilder: (context, imageProvider) => CircleAvatar(radius: radius, backgroundImage: imageProvider),
-        placeholder: (context, url) => fallback,
-        errorWidget: (context, url, error) => fallback,
+      // Fallback to local default avatar asset
+      avatar = CircleAvatar(
+        radius: radius,
+        backgroundImage: const AssetImage('assets/images/avatar-default.png'),
+        backgroundColor: bgColor,
       );
     }
 

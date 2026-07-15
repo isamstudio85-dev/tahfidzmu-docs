@@ -146,9 +146,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: AppTheme.primaryGreen, // Match logo/dashboard green
       elevation: 0,
-      foregroundColor: Colors.white,
       title: Selector<AppProvider, ({String name, String englishName, SetoranType type})>(
         selector: (context, p) => (
           name: p.activeSetoranSurahName,

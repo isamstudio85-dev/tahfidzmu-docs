@@ -10,14 +10,15 @@ class BismillahHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryGreen.withValues(alpha: 0.08),
+        color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.15 : 0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.primaryGreen.withValues(alpha: 0.25),
+          color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.35 : 0.25),
           width: 1,
         ),
       ),
@@ -26,7 +27,7 @@ class BismillahHeader extends StatelessWidget {
           'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
           style: GoogleFonts.amiri(
             fontSize: 28,
-            color: AppTheme.darkGreen,
+            color: isDark ? Colors.white : AppTheme.darkGreen,
             height: 2,
           ),
           textDirection: TextDirection.rtl,

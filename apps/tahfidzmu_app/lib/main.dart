@@ -90,6 +90,7 @@ class _TahfidzAppState extends State<TahfidzApp> {
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: provider.themeMode,
+      themeAnimationDuration: Duration.zero,
       home: Consumer<AppProvider>(
         builder: (_, provider, __) {
           if (provider.isInitializing || provider.isLoggingOut) {

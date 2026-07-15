@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 
 import 'package:core_models/core_models.dart';
 
@@ -11,15 +12,16 @@ class HaditsDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = hadith.isArbain
         ? 'Arbain Nawawi No. ${hadith.arbainNo}'
         : 'Hadits ${hadith.id}';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
       appBar: hideAppBar ? null : AppBar(
         title: Text(title),
-        backgroundColor: const Color(0xFF2E5A27), // Deep olive green
+        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27), // Deep olive green
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -34,7 +36,7 @@ class HaditsDetailScreen extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
-                  color: const Color(0xFF2E5A27),
+                  color: isDark ? Colors.white : const Color(0xFF2E5A27),
                 ),
               ),
               const SizedBox(height: 20),

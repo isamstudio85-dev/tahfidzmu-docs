@@ -462,10 +462,10 @@ class _RankCard extends StatelessWidget {
             SizedBox(
               width: 32,
               child: Text(
-                '#$rank',
+                rank <= 3 ? '#$rank' : '$rank',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white24 : Colors.grey.shade300,
+                  color: AppTheme.gold,
                   fontSize: 14,
                 ),
               ),
@@ -551,7 +551,7 @@ class _HalaqahRankCard extends StatelessWidget {
           Container(
             width: 40, height: 40,
             decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey.shade50, shape: BoxShape.circle),
-            child: Center(child: Text('#$rank', style: GoogleFonts.poppins(fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.grey.shade300))),
+            child: Center(child: Text(rank <= 3 ? '#$rank' : '$rank', style: GoogleFonts.poppins(fontWeight: FontWeight.w900, color: AppTheme.gold))),
           ),
           const SizedBox(width: 16),
           Expanded(

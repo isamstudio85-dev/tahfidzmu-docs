@@ -1,0 +1,87 @@
+import { BrowserRouter as Router, Navigate, Routes, Route } from "react-router";
+import SignIn from "./pages/AuthPages/SignIn";
+import NotFound from "./pages/OtherPage/NotFound";
+import AppLayout from "./layout/AppLayout";
+import { ScrollToTop } from "./components/common/ScrollToTop";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import Home from "./pages/Dashboard/Home";
+import SantriManagement from "./pages/SantriManagement";
+import MusyrifManagement from "./pages/MusyrifManagement";
+import KelasManagement from "./pages/KelasManagement";
+import HalaqahManagement from "./pages/HalaqahManagement";
+import PengawasManagement from "./pages/PengawasManagement";
+import WisudaManagement from "./pages/WisudaManagement";
+import PesantrenInfoManagement from "./pages/PesantrenInfoManagement";
+import PondokKnowledgeManagement from "./pages/PondokKnowledgeManagement";
+import MonitoringProgres from "./pages/MonitoringProgres";
+import InputHafalan from "./pages/InputHafalan";
+import ProfileSettings from "./pages/ProfileSettings";
+import SuperAdminPesantrenPage from "./pages/SuperAdminPesantrenPage";
+import VoucherManagement from "./pages/VoucherManagement";
+import SuperAdminStaffPage from "./pages/SuperAdminStaffPage";
+import SuperAdminFinancePage from "./pages/SuperAdminFinancePage";
+import BillingManagement from "./pages/BillingManagement";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import { useAuth } from "./context/AuthContext";
+
+function DashboardEntry() {
+  const { profile } = useAuth();
+
+  if (profile?.role === "superAdmin") {
+    return <SuperAdminDashboard />;
+  }
+
+  return <Home />;
+}
+
+function KoordinatorGate({ children }: { children: React.ReactNode }) {
+  const { profile } = useAuth();
+  if (profile?.isKoordinator && profile?.role !== "admin" && profile?.role !== "superAdmin") {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+}
+
+export default function App() {
+  return (
+    <>
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          {/* Protected Dashboard Layout */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index path="/" element={<DashboardEntry />} />
+            <Route path="/pesantren" element={<SuperAdminPesantrenPage />} />
+            <Route path="/staf" element={<SuperAdminStaffPage />} />
+            <Route path="/santri" element={<SantriManagement />} />
+             <Route path="/musyrif" element={<KoordinatorGate><MusyrifManagement /></KoordinatorGate>} />
+            <Route path="/pengawas" element={<KoordinatorGate><PengawasManagement /></KoordinatorGate>} />
+            <Route path="/kelas" element={<KelasManagement />} />
+            <Route path="/halaqah" element={<HalaqahManagement />} />
+            <Route path="/wisuda" element={<WisudaManagement />} />
+            <Route path="/pondok-materi" element={<PondokKnowledgeManagement />} />
+            <Route path="/pesantren-info" element={<KoordinatorGate><PesantrenInfoManagement /></KoordinatorGate>} />
+            <Route path="/monitoring" element={<MonitoringProgres />} />
+            <Route path="/input-hafalan" element={<InputHafalan />} />
+            <Route path="/voucher" element={<KoordinatorGate><VoucherManagement /></KoordinatorGate>} />
+            <Route path="/keuangan" element={<SuperAdminFinancePage />} />
+            <Route path="/tagihan" element={<KoordinatorGate><BillingManagement /></KoordinatorGate>} />
+            <Route path="/profil" element={<ProfileSettings />} />
+          </Route>
+
+          {/* Auth Layout */}
+          <Route path="/signin" element={<SignIn />} />
+
+          {/* Fallback Route */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </>
+  );
+}

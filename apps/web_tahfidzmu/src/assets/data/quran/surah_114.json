@@ -1,0 +1,147 @@
+{
+  "number": 114,
+  "name": "سُورَةُ النَّاسِ",
+  "englishName": "An-Naas",
+  "numberOfAyahs": 6,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ",
+      "translation": "Katakanlah: \"Aku berlindung kepada Tuhan (yang memelihara dan menguasai) manusia.",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "قُلْ",
+          "rule": null
+        },
+        {
+          "word": "أَعُوذُ",
+          "rule": null
+        },
+        {
+          "word": "بِرَبِّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلنَّاسِ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "مَلِكِ ٱلنَّاسِ",
+      "translation": "Raja manusia.",
+      "wordsTajweed": [
+        {
+          "word": "مَلِكِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلنَّاسِ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "إِلَٰهِ ٱلنَّاسِ",
+      "translation": "Sembahan manusia.",
+      "wordsTajweed": [
+        {
+          "word": "إِلَٰهِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلنَّاسِ",
+          "rule": "ghunnah, mad tabi'i"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ",
+      "translation": "Dari kejahatan (bisikan) syaitan yang biasa bersembunyi,",
+      "wordsTajweed": [
+        {
+          "word": "مِن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "شَرِّ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ٱلْوَسْوَاسِ",
+          "rule": "null"
+        },
+        {
+          "word": "ٱلْخَنَّاسِ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ",
+      "translation": "yang membisikkan (kejahatan) ke dalam dada manusia,",
+      "wordsTajweed": [
+        {
+          "word": "ٱلَّذِى",
+          "rule": null
+        },
+        {
+          "word": "يُوَسْوِسُ",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "صُدُورِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلنَّاسِ",
+          "rule": "ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
+      "translation": "dari (golongan) jin dan manusia.",
+      "wordsTajweed": [
+        {
+          "word": "مِنَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْجِنَّةِ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "وَٱلنَّاسِ",
+          "rule": "ghunnah"
+        }
+      ]
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 
 class PondokKnowledgeScreen extends StatefulWidget {
@@ -48,7 +49,7 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
     final bool isWide = MediaQuery.of(context).size.width > 900;
 
     if (_selectedIndex == null && displayList.isNotEmpty) {
-      _selectedIndex = 0;
+      _selectedIndex = isWide ? 0 : -1;
     }
 
     Widget listWidget = displayList.isEmpty
@@ -86,11 +87,14 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
             },
           );
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
       appBar: AppBar(
-        title: const Text('Pengetahuan Pondok'),
-        backgroundColor: const Color(0xFF2E5A27),
+        title: Text(provider.pesantrenInfo.nama.trim().isNotEmpty
+            ? 'Wawasan ${provider.pesantrenInfo.nama.trim()}'
+            : 'Pengetahuan Pondok'),
+        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
         foregroundColor: Colors.white,
         elevation: 0,
       ),

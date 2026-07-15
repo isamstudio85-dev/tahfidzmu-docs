@@ -1,0 +1,346 @@
+{
+  "number": 91,
+  "name": "سُورَةُ الشَّمۡسِ",
+  "englishName": "Ash-Shams",
+  "numberOfAyahs": 15,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلشَّمْسِ وَضُحَىٰهَا",
+      "translation": "Demi matahari dan cahayanya di pagi hari,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلشَّمْسِ",
+          "rule": null
+        },
+        {
+          "word": "وَضُحَىٰهَا",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "وَٱلْقَمَرِ إِذَا تَلَىٰهَا",
+      "translation": "dan bulan apabila mengiringinya,",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلْقَمَرِ",
+          "rule": null
+        },
+        {
+          "word": "إِذَا",
+          "rule": null
+        },
+        {
+          "word": "تَلَىٰهَا",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "وَٱلنَّهَارِ إِذَا جَلَّىٰهَا",
+      "translation": "dan siang apabila menampakkannya,",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلنَّهَارِ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "إِذَا",
+          "rule": null
+        },
+        {
+          "word": "جَلَّىٰهَا",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "وَٱلَّيْلِ إِذَا يَغْشَىٰهَا",
+      "translation": "dan malam apabila menutupinya,",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلَّيْلِ",
+          "rule": null
+        },
+        {
+          "word": "إِذَا",
+          "rule": null
+        },
+        {
+          "word": "يَغْشَىٰهَا",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "وَٱلسَّمَآءِ وَمَا بَنَىٰهَا",
+      "translation": "dan langit serta pembinaannya,",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلسَّمَآءِ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "بَنَىٰهَا",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "وَٱلْأَرْضِ وَمَا طَحَىٰهَا",
+      "translation": "dan bumi serta penghamparannya,",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلْأَرْضِ",
+          "rule": null
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "طَحَىٰهَا",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "وَنَفْسٍۢ وَمَا سَوَّىٰهَا",
+      "translation": "dan jiwa serta penyempurnaannya (ciptaannya),",
+      "wordsTajweed": [
+        {
+          "word": "وَنَفْسٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَمَا",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "سَوَّىٰهَا",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "فَأَلْهَمَهَا فُجُورَهَا وَتَقْوَىٰهَا",
+      "translation": "maka Allah mengilhamkan kepada jiwa itu (jalan) kefasikan dan ketakwaannya.",
+      "wordsTajweed": [
+        {
+          "word": "فَأَلْهَمَهَا",
+          "rule": null
+        },
+        {
+          "word": "فُجُورَهَا",
+          "rule": null
+        },
+        {
+          "word": "وَتَقْوَىٰهَا",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 9,
+      "arabic": "قَدْ أَفْلَحَ مَن زَكَّىٰهَا",
+      "translation": "sesungguhnya beruntunglah orang yang mensucikan jiwa itu,",
+      "wordsTajweed": [
+        {
+          "word": "قَدْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "أَفْلَحَ",
+          "rule": null
+        },
+        {
+          "word": "مَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "زَكَّىٰهَا",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 10,
+      "arabic": "وَقَدْ خَابَ مَن دَسَّىٰهَا",
+      "translation": "dan sesungguhnya merugilah orang yang mengotorinya.",
+      "wordsTajweed": [
+        {
+          "word": "وَقَدْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "خَابَ",
+          "rule": null
+        },
+        {
+          "word": "مَن",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "دَسَّىٰهَا",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 11,
+      "arabic": "كَذَّبَتْ ثَمُودُ بِطَغْوَىٰهَآ",
+      "translation": "(Kaum) Tsamud telah mendustakan (rasulnya) karena mereka melampaui batas,",
+      "wordsTajweed": [
+        {
+          "word": "كَذَّبَتْ",
+          "rule": null
+        },
+        {
+          "word": "ثَمُودُ",
+          "rule": null
+        },
+        {
+          "word": "بِطَغْوَىٰهَآ",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 12,
+      "arabic": "إِذِ ٱنۢبَعَثَ أَشْقَىٰهَا",
+      "translation": "ketika bangkit orang yang paling celaka di antara mereka,",
+      "wordsTajweed": [
+        {
+          "word": "إِذِ",
+          "rule": null
+        },
+        {
+          "word": "ٱنۢبَعَثَ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "أَشْقَىٰهَا",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 13,
+      "arabic": "فَقَالَ لَهُمْ رَسُولُ ٱللَّهِ نَاقَةَ ٱللَّهِ وَسُقْيَٰهَا",
+      "translation": "lalu Rasul Allah (Saleh) berkata kepada mereka: (\"Biarkanlah) unta betina Allah dan minumannya\".",
+      "wordsTajweed": [
+        {
+          "word": "فَقَالَ",
+          "rule": null
+        },
+        {
+          "word": "لَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "رَسُولُ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "نَاقَةَ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "وَسُقْيَٰهَا",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 14,
+      "arabic": "فَكَذَّبُوهُ فَعَقَرُوهَا فَدَمْدَمَ عَلَيْهِمْ رَبُّهُم بِذَنۢبِهِمْ فَسَوَّىٰهَا",
+      "translation": "Lalu mereka mendustakannya dan menyembelih unta itu, maka Tuhan mereka membinasakan mereka disebabkan dosa mereka, lalu Allah menyama-ratakan mereka (dengan tanah),",
+      "wordsTajweed": [
+        {
+          "word": "فَكَذَّبُوهُ",
+          "rule": null
+        },
+        {
+          "word": "فَعَقَرُوهَا",
+          "rule": null
+        },
+        {
+          "word": "فَدَمْدَمَ",
+          "rule": null
+        },
+        {
+          "word": "عَلَيْهِمْ",
+          "rule": null
+        },
+        {
+          "word": "رَبُّهُم",
+          "rule": "ikhfa_shafawi"
+        },
+        {
+          "word": "بِذَنۢبِهِمْ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "فَسَوَّىٰهَا",
+          "rule": "madd_2"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 15,
+      "arabic": "وَلَا يَخَافُ عُقْبَٰهَا",
+      "translation": "dan Allah tidak takut terhadap akibat tindakan-Nya itu.",
+      "wordsTajweed": [
+        {
+          "word": "وَلَا",
+          "rule": null
+        },
+        {
+          "word": "يَخَافُ",
+          "rule": null
+        },
+        {
+          "word": "عُقْبَٰهَا",
+          "rule": "qalqalah"
+        }
+      ]
+    }
+  ]
+}

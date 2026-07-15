@@ -79,6 +79,7 @@ class _QuranTadarusScreenState extends State<QuranTadarusScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isWide = MediaQuery.of(context).size.width > 900;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     Widget content = _loading
         ? const Center(child: CircularProgressIndicator())
@@ -158,10 +159,10 @@ class _QuranTadarusScreenState extends State<QuranTadarusScreen> {
 
     if (isWide) {
       return Scaffold(
-        backgroundColor: const Color(0xFFF5F5F0),
+        backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF5F5F0),
         appBar: AppBar(
           title: const Text('Al-Quran & Tafsir'),
-          backgroundColor: AppTheme.primaryGreen,
+          backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -220,11 +221,14 @@ class _SurahTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMeccan = surah.revelationType == 'Meccan';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       elevation: 0,
-      color: isSelected && isWide ? AppTheme.primaryGreen.withValues(alpha: 0.1) : Colors.white,
+      color: isSelected && isWide 
+          ? AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1) 
+          : (isDark ? AppTheme.darkSurface : Colors.white),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
@@ -237,7 +241,7 @@ class _SurahTile extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryGreen.withValues(alpha: 0.1),
+                  color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.25 : 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
@@ -245,7 +249,7 @@ class _SurahTile extends StatelessWidget {
                     '${surah.number}',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.primaryGreen,
+                      color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
                       fontSize: 14,
                     ),
                   ),
@@ -259,9 +263,10 @@ class _SurahTile extends StatelessWidget {
                   children: [
                     Text(
                       surah.englishName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -269,7 +274,7 @@ class _SurahTile extends StatelessWidget {
                       '${surah.numberOfAyahs} ayat · ${isMeccan ? 'Makkiyah' : 'Madaniyah'}',
                       style: TextStyle(
                         fontSize: 11,
-                        color: Colors.grey.shade500,
+                        color: isDark ? Colors.white38 : Colors.grey.shade500,
                       ),
                     ),
                   ],
@@ -279,8 +284,9 @@ class _SurahTile extends StatelessWidget {
               Text(
                 surah.name,
                 style: GoogleFonts.amiri(
-                  fontSize: 20,
-                  color: AppTheme.primaryGreen,
+                  fontSize: 22,
+                  color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                  fontWeight: FontWeight.bold,
                 ),
                 textDirection: TextDirection.rtl,
               ),
@@ -404,10 +410,13 @@ class _SurahReaderScreenState extends State<_SurahReaderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: _readMode == _ReadMode.mushaf ? Colors.white : const Color(0xFFFFFDE7),
+      backgroundColor: isDark 
+          ? AppTheme.darkBg 
+          : (_readMode == _ReadMode.mushaf ? Colors.white : const Color(0xFFFFFDE7)),
       appBar: widget.hideAppBar ? null : AppBar(
-        backgroundColor: AppTheme.primaryGreen,
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         title: Column(
           children: [

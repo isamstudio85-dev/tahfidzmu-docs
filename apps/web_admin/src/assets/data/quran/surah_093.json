@@ -1,0 +1,262 @@
+{
+  "number": 93,
+  "name": "سُورَةُ الضُّحَىٰ",
+  "englishName": "Ad-Dhuhaa",
+  "numberOfAyahs": 11,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلضُّحَىٰ",
+      "translation": "Demi waktu matahari sepenggalahan naik,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلضُّحَىٰ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "وَٱلَّيْلِ إِذَا سَجَىٰ",
+      "translation": "dan demi malam apabila telah sunyi (gelap),",
+      "wordsTajweed": [
+        {
+          "word": "وَٱلَّيْلِ",
+          "rule": null
+        },
+        {
+          "word": "إِذَا",
+          "rule": null
+        },
+        {
+          "word": "سَجَىٰ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ",
+      "translation": "Tuhanmu tiada meninggalkan kamu dan tiada (pula) benci kepadamu.",
+      "wordsTajweed": [
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "وَدَّعَكَ",
+          "rule": null
+        },
+        {
+          "word": "رَبُّكَ",
+          "rule": null
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "قَلَىٰ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "وَلَلْءَاخِرَةُ خَيْرٌۭ لَّكَ مِنَ ٱلْأُولَىٰ",
+      "translation": "Dan sesungguhnya hari kemudian itu lebih baik bagimu daripada yang sekarang (permulaan).",
+      "wordsTajweed": [
+        {
+          "word": "وَلَلْءَاخِرَةُ",
+          "rule": null
+        },
+        {
+          "word": "خَيْرٌۭ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لَّكَ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "مِنَ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأُولَىٰ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰٓ",
+      "translation": "Dan kelak Tuhanmu pasti memberikan karunia-Nya kepadamu, lalu (hati) kamu menjadi puas.",
+      "wordsTajweed": [
+        {
+          "word": "وَلَسَوْفَ",
+          "rule": null
+        },
+        {
+          "word": "يُعْطِيكَ",
+          "rule": null
+        },
+        {
+          "word": "رَبُّكَ",
+          "rule": null
+        },
+        {
+          "word": "فَتَرْضَىٰٓ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "أَلَمْ يَجِدْكَ يَتِيمًۭا فَـَٔاوَىٰ",
+      "translation": "Bukankah Dia mendapatimu sebagai seorang yatim, lalu Dia melindungimu?",
+      "wordsTajweed": [
+        {
+          "word": "أَلَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَجِدْكَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "يَتِيمًۭا",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَـَٔاوَىٰ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "وَوَجَدَكَ ضَآلًّۭا فَهَدَىٰ",
+      "translation": "Dan Dia mendapatimu sebagai seorang yang bingung, lalu Dia memberikan petunjuk.",
+      "wordsTajweed": [
+        {
+          "word": "وَوَجَدَكَ",
+          "rule": null
+        },
+        {
+          "word": "ضَآلًّۭا",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَهَدَىٰ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "وَوَجَدَكَ عَآئِلًۭا فَأَغْنَىٰ",
+      "translation": "Dan Dia mendapatimu sebagai seorang yang kekurangan, lalu Dia memberikan kecukupan.",
+      "wordsTajweed": [
+        {
+          "word": "وَوَجَدَكَ",
+          "rule": null
+        },
+        {
+          "word": "عَآئِلًۭا",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فَأَغْنَىٰ",
+          "rule": "ikhfa"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 9,
+      "arabic": "فَأَمَّا ٱلْيَتِيمَ فَلَا تَقْهَرْ",
+      "translation": "Sebab itu, terhadap anak yatim janganlah kamu berlaku sewenang-wenang.",
+      "wordsTajweed": [
+        {
+          "word": "فَأَمَّا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْيَتِيمَ",
+          "rule": null
+        },
+        {
+          "word": "فَلَا",
+          "rule": null
+        },
+        {
+          "word": "تَقْهَرْ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 10,
+      "arabic": "وَأَمَّا ٱلسَّآئِلَ فَلَا تَنْهَرْ",
+      "translation": "Dan terhadap orang yang minta-minta, janganlah kamu menghardiknya.",
+      "wordsTajweed": [
+        {
+          "word": "وَأَمَّا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلسَّآئِلَ",
+          "rule": "madd_muttasil"
+        },
+        {
+          "word": "فَلَا",
+          "rule": null
+        },
+        {
+          "word": "تَنْهَرْ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 11,
+      "arabic": "وَأَمَّا بِنِعْمَةِ رَبِّكَ فَحَدِّثْ",
+      "translation": "Dan terhadap nikmat Tuhanmu, maka hendaklah kamu siarkan.",
+      "wordsTajweed": [
+        {
+          "word": "وَأَمَّا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "بِنِعْمَةِ",
+          "rule": null
+        },
+        {
+          "word": "رَبِّكَ",
+          "rule": null
+        },
+        {
+          "word": "فَحَدِّثْ",
+          "rule": null
+        }
+      ]
+    }
+  ]
+}

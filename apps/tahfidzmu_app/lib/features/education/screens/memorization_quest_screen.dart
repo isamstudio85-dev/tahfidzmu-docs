@@ -22,7 +22,7 @@ class MemorizationQuestScreen extends StatelessWidget {
       backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       appBar: AppBar(
         title: const Text('PUSAT HAFALAN'),
-        backgroundColor: AppTheme.primaryGreen,
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -58,44 +58,95 @@ class MemorizationQuestScreen extends StatelessWidget {
 
             const SizedBox(height: 32),
             _sectionHeader('WAWASAN & ILMU', Icons.bolt_rounded, isDark),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                if (provider.isModuleActive('fiqih'))
-                  _SquareQuestTile(
-                    title: 'Fiqih',
-                    icon: Icons.menu_book_rounded,
-                    color: Colors.brown,
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => EducationalListScreen(type: 'fiqih'))),
-                    isDark: isDark,
+            Builder(
+              builder: (context) {
+                final List<Widget> listItems = [];
+                
+                if (provider.isModuleActive('fiqih')) {
+                  listItems.add(
+                    _buildListTile(
+                      title: 'Fiqih',
+                      subtitle: 'Belajar tata cara ibadah & hukum islam',
+                      icon: Icons.menu_book_rounded,
+                      color: Colors.brown,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => EducationalListScreen(type: 'fiqih'))),
+                      isDark: isDark,
+                    ),
+                  );
+                }
+                if (provider.isModuleActive('tajwid')) {
+                  listItems.add(
+                    _buildListTile(
+                      title: 'Tajwid',
+                      subtitle: 'Pedoman hukum membaca Al-Quran dengan benar',
+                      icon: Icons.auto_stories_rounded,
+                      color: Colors.blue,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => EducationalListScreen(type: 'tajwid'))),
+                      isDark: isDark,
+                    ),
+                  );
+                }
+                if (provider.isModuleActive('tahsin')) {
+                  listItems.add(
+                    _buildListTile(
+                      title: 'Tahsin',
+                      subtitle: 'Latihan makharijul huruf & pembetulan bacaan',
+                      icon: Icons.record_voice_over_rounded,
+                      color: Colors.deepPurple,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TahsinListScreen())),
+                      isDark: isDark,
+                    ),
+                  );
+                }
+                if (provider.isModuleActive('pondok_info')) {
+                  final String pondokName = provider.pesantrenInfo.nama.trim();
+                  listItems.add(
+                    _buildListTile(
+                      title: pondokName.isNotEmpty ? pondokName : 'Pondok',
+                      subtitle: 'Wawasan sejarah & kepondokan pesantren',
+                      icon: Icons.school_rounded,
+                      color: Colors.blueGrey,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PondokKnowledgeScreen())),
+                      isDark: isDark,
+                    ),
+                  );
+                }
+
+                if (listItems.isEmpty) return const SizedBox.shrink();
+
+                final List<Widget> childrenWithDividers = [];
+                for (int i = 0; i < listItems.length; i++) {
+                  childrenWithDividers.add(listItems[i]);
+                  if (i < listItems.length - 1) {
+                    childrenWithDividers.add(
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: isDark ? Colors.white10 : Colors.grey.shade100,
+                        indent: 76,
+                      ),
+                    );
+                  }
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Card(
+                    margin: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100, width: 1.2),
+                    ),
+                    color: isDark ? AppTheme.darkSurface : Colors.white,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Column(
+                        children: childrenWithDividers,
+                      ),
+                    ),
                   ),
-                if (provider.isModuleActive('tajwid'))
-                  _SquareQuestTile(
-                    title: 'Tajwid',
-                    icon: Icons.auto_stories_rounded,
-                    color: Colors.blue,
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => EducationalListScreen(type: 'tajwid'))),
-                    isDark: isDark,
-                  ),
-                if (provider.isModuleActive('tahsin'))
-                  _SquareQuestTile(
-                    title: 'Tahsin',
-                    icon: Icons.record_voice_over_rounded,
-                    color: Colors.deepPurple,
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TahsinListScreen())),
-                    isDark: isDark,
-                  ),
-                if (provider.isModuleActive('pondok_info'))
-                  _SquareQuestTile(
-                    title: 'Pondok',
-                    icon: Icons.school_rounded,
-                    color: Colors.blueGrey,
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PondokKnowledgeScreen())),
-                    isDark: isDark,
-                  ),
-              ],
+                );
+              },
             ),
             const SizedBox(height: 40),
             Center(
@@ -115,6 +166,60 @@ class MemorizationQuestScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 60),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 22),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: isDark ? Colors.white : const Color(0xFF1E293B),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isDark ? Colors.white38 : Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: isDark ? Colors.white38 : Colors.grey.shade400),
           ],
         ),
       ),
@@ -224,62 +329,3 @@ class _QuestTile extends StatelessWidget {
   }
 }
 
-class _SquareQuestTile extends StatelessWidget {
-  const _SquareQuestTile({
-    required this.title,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-    required this.isDark,
-  });
-
-  final String title;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final double width = (MediaQuery.of(context).size.width - 52) / 2;
-    return Card(
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
-      ),
-      color: isDark ? AppTheme.darkSurface : Colors.white,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          width: width,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: color, size: 22),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

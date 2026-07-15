@@ -193,7 +193,16 @@ class _HomeScreenState extends State<HomeScreen> {
     if (provider.isOrangTua) {
       final child = provider.linkedSantri;
       if (child == null) {
-        body = const Center(child: Text('Data tidak ditemukan.'));
+        body = const Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Memuat data...', style: TextStyle(color: Colors.grey)),
+            ],
+          ),
+        );
       } else {
         body = OrangTuaDashboard(child: child);
       }

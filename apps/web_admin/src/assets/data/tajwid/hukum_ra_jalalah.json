@@ -1,0 +1,96 @@
+{
+  "id": 7,
+  "title": "Hukum Ra' & Lafal Jalalah",
+  "introduction": "Hukum pelafalan huruf Ra (ر) dan Lafal Jalalah (nama Allah - اللَّه) memiliki aturan khusus mengenai kapan suara harus ditebalkan (Tafkhim) atau ditipiskan (Tarqiq):",
+  "sections": [
+    {
+      "name": "I. HUKUM HURUF RA (ر)",
+      "definition": "Karakteristik suara huruf Ra terbagi menjadi tiga macam cara pengucapan:"
+    },
+    {
+      "name": "1. Ra Tafkhim (Tebal)",
+      "definition": "Membaca huruf Ra dengan menggemakan suara di dalam mulut (pangkal lidah dinaikkan). Terjadi jika:\n- Ra berharakat Fathah (رَ) atau Dhommah (رُ).\n- Ra sukun (رْ) didahului huruf fathah/dhommah.\n- Ra sukun karena wakaf didahului alif/wawu sukun.\n- Ra sukun didahului Hamzah Washal (kasrah buatan).",
+      "example": [
+        {
+          "arabic": "رَبُّكُمْ",
+          "latin": "Rabbukum",
+          "note": "Ra berharakat fathah"
+        },
+        {
+          "arabic": "وَالْقُرْآنَ",
+          "latin": "Wal qur-aana",
+          "note": "Ra sukun didahului dhommah"
+        },
+        {
+          "arabic": "امْتَابُوا ۚ أَمِ ارْتَابُوا",
+          "latin": "Amir-taabuu",
+          "note": "Ra sukun didahului Hamzah Washal"
+        }
+      ]
+    },
+    {
+      "name": "2. Ra Tarqiq (Tipis)",
+      "definition": "Membaca huruf Ra secara tipis (posisi lidah di bawah). Terjadi jika:\n- Ra berharakat Kasrah (رِ).\n- Ra sukun (رْ) didahului kasrah asli dalam satu kata dan setelahnya bukan huruf Isti'la.\n- Ra sukun karena wakaf didahului huruf Ya sukun (يْ).",
+      "example": [
+        {
+          "arabic": "رِجَالٌ",
+          "latin": "Rijaal",
+          "note": "Ra berharakat kasrah"
+        },
+        {
+          "arabic": "فِرْعَوْنَ",
+          "latin": "Fir'auna",
+          "note": "Ra sukun didahului kasrah asli"
+        },
+        {
+          "arabic": "خَبِيرٌ",
+          "latin": "Khabiir",
+          "note": "Ra sukun wakaf didahului Ya sukun"
+        }
+      ]
+    },
+    {
+      "name": "3. Jawazul Wajhain (Boleh Tebal / Tipis)",
+      "definition": "Hukum di mana pembaca boleh memilih menebalkan (tafkhim) atau menipiskan (tarqiq) huruf Ra. Terjadi jika ada Ra sukun didahului kasrah asli dan setelahnya ada huruf Isti'la berharakat kasrah.",
+      "example": [
+        {
+          "arabic": "كُلُّ فِرْقٍ",
+          "latin": "Kullu firqin",
+          "note": "Ra sukun didahului kasrah, setelahnya Qaf (huruf Isti'la) berharakat kasrah"
+        }
+      ]
+    },
+    {
+      "name": "II. HUKUM LAFAL JALALAH (اللَّه)",
+      "definition": "Pengucapan nama agung Allah (اللَّه) terbagi menjadi dua cara baca:"
+    },
+    {
+      "name": "1. Tafkhim / Taghliz (Tebal)",
+      "definition": "Dibaca tebal mendengung (suara Lam tebal) jika lafal Allah didahului oleh huruf berharakat Fathah atau Dhommah.",
+      "example": [
+        {
+          "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ",
+          "latin": "Qul huwallahu ahad",
+          "note": "Lafal Allah didahului huruf berharakat Fathah (وَ)"
+        },
+        {
+          "arabic": "نَصْرُ اللَّهِ",
+          "latin": "Nasrullahi",
+          "note": "Lafal Allah didahului huruf berharakat Dhommah (رُ)"
+        }
+      ]
+    },
+    {
+      "name": "2. Tarqiq (Tipis)",
+      "definition": "Dibaca tipis (seperti huruf L biasa pada umumnya) jika lafal Allah didahului oleh huruf berharakat Kasrah.",
+      "example": [
+        {
+          "arabic": "بِسْمِ اللَّهِ",
+          "latin": "Bismillah",
+          "note": "Lafal Allah didahului huruf berharakat Kasrah (مِ)"
+        }
+      ]
+    }
+  ],
+  "reference": "Rujukan Kitab: Matn Al-Muqaddimah Al-Jazariyyah (Bab At-Tarqiq wa Ahkamul Ra-at) karya Imam Ibnul Jazari, dan Kitab Taisirur Rahman."
+}

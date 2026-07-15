@@ -1,0 +1,48 @@
+{
+  "id": 3,
+  "title": "Alif Lam Qamariyah & Syamsiyah",
+  "introduction": "Hukum Alif Lam (ال) atau yang biasa disebut dengan Al-Ta'rif adalah aturan membaca dua huruf alif dan lam di awal kata benda (isim). Hukum bacaannya terbagi menjadi 2 jenis utama:",
+  "sections": [
+    {
+      "name": "1. Alif Lam Qamariyah (Izhar Qamariyah)",
+      "definition": "Alif Lam (ال) dibaca dengan jelas/terang, bunyi huruf Lam sukun (لْ) terdengar jelas di lidah. Dinamakan Qamariyah (seperti bulan) karena huruf-hurufnya diibaratkan bintang yang tetap tampak jelas saat ada bulan. Terjadi apabila Alif Lam bertemu salah satu dari 14 huruf berikut:",
+      "letters": "ء ب ج ح خ ع غ ف ق ك م w هـ ي",
+      "sub_sections": [
+        {
+          "name": "Cara Menghafal Huruf Qamariyah",
+          "definition": "Ke-14 huruf Qamariyah dikumpulkan dalam satu bait kalimat terkenal: اِبْغِ حَجَّكَ وَخَفْ عَقِيْمَهُ (Ibg-hi hajjaka wa khaf 'aqiimah - 'Carilah haji yang mabrur dan takutlah akan kesia-siaannya')."
+        }
+      ],
+      "example": [
+        {
+          "arabic": "الْحَمْدُ لِلَّهِ",
+          "latin": "Al-hamdu lillah",
+          "note": "Alif Lam bertemu huruf Ha (ح)"
+        },
+        {
+          "arabic": "الْقَارِعَةُ",
+          "latin": "Al-qaari'ah",
+          "note": "Alif Lam bertemu huruf Qaf (ق)"
+        }
+      ]
+    },
+    {
+      "name": "2. Alif Lam Syamsiyah (Idgham Syamsiyah)",
+      "definition": "Alif Lam (ال) tidak diucapkan, melainkan melebur masuk (idgham) ke dalam huruf berikutnya yang berharakat tasydid. Dinamakan Syamsiyah (seperti matahari) karena bunyi Lam langsung hilang terserap, layaknya bintang yang sirna di bawah sinar matahari. Terjadi jika bertemu salah satu dari 14 huruf berikut:",
+      "letters": "ت ث د ذ ر ز س š ص ض ط ظ ل ن",
+      "example": [
+        {
+          "arabic": "الرَّحْمَنِ الرَّحِيمِ",
+          "latin": "Ar-rahmaanir-rahiim",
+          "note": "Alif Lam melebur langsung ke huruf Ra (ر)"
+        },
+        {
+          "arabic": "مِنَ النَّاسِ",
+          "latin": "Minan-naas",
+          "note": "Alif Lam melebur langsung ke huruf Nun (ن)"
+        }
+      ]
+    }
+  ],
+  "reference": "Rujukan Kitab: Matn Tuhfatul Athfal (Bab Lami Al wa Lami Al-Fi'li) karya Syeikh Sulaiman Al-Janzuri, dan Kitab Matn Al-Jazariyyah karya Imam Ibnul Jazari."
+}

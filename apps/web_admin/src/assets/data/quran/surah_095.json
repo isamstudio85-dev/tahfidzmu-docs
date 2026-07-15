@@ -1,0 +1,217 @@
+{
+  "number": 95,
+  "name": "سُورَةُ التِّينِ",
+  "englishName": "At-Tin",
+  "numberOfAyahs": 8,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِّسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلتِّينِ وَٱلزَّيْتُونِ",
+      "translation": "Demi (buah) Tin dan (buah) Zaitun,",
+      "wordsTajweed": [
+        {
+          "word": "بِّسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلتِّينِ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلزَّيْتُونِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "وَطُورِ سِينِينَ",
+      "translation": "dan demi bukit Sinai,",
+      "wordsTajweed": [
+        {
+          "word": "وَطُورِ",
+          "rule": null
+        },
+        {
+          "word": "سِينِينَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "وَهَٰذَا ٱلْبَلَدِ ٱلْأَمِينِ",
+      "translation": "dan demi kota (Mekah) ini yang aman,",
+      "wordsTajweed": [
+        {
+          "word": "وَهَٰذَا",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ٱلْبَلَدِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَمِينِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "لَقَدْ خَلَقْنَا ٱلْإِنسَٰنَ فِىٓ أَحْسَنِ تَقْوِيمٍۢ",
+      "translation": "sesungguhnya Kami telah menciptakan manusia dalam bentuk yang sebaik-baiknya.",
+      "wordsTajweed": [
+        {
+          "word": "لَقَدْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "خَلَقْنَا",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "فِىٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَحْسَنِ",
+          "rule": null
+        },
+        {
+          "word": "تَقْوِيمٍۢ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "ثُمَّ رَدَدْنَٰهُ أَسْفَلَ سَٰفِلِينَ",
+      "translation": "Kemudian Kami kembalikan dia ke tempat yang serendah-rendahnya (neraka),",
+      "wordsTajweed": [
+        {
+          "word": "ثُمَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "رَدَدْنَٰهُ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "أَسْفَلَ",
+          "rule": null
+        },
+        {
+          "word": "سَٰفِلِينَ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّٰلِحَٰتِ فَلَهُمْ أَجْرٌ غَيْرُ مَمْنُونٍۢ",
+      "translation": "kecuali orang-orang yang beriman dan mengerjakan amal saleh; maka bagi mereka pahala yang tiada putus-putusnya.",
+      "wordsTajweed": [
+        {
+          "word": "إِلَّا",
+          "rule": null
+        },
+        {
+          "word": "ٱلَّذِينَ",
+          "rule": null
+        },
+        {
+          "word": "ءَامَنُوا۟",
+          "rule": null
+        },
+        {
+          "word": "وَعَمِلُوا۟",
+          "rule": null
+        },
+        {
+          "word": "ٱلصَّٰلِحَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "فَلَهُمْ",
+          "rule": null
+        },
+        {
+          "word": "أَجْرٌ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "غَيْرُ",
+          "rule": null
+        },
+        {
+          "word": "مَمْنُونٍۢ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "فَمَا يُكَذِّبُكَ بَعْدُ بِٱلدِّينِ",
+      "translation": "Maka apakah yang menyebabkan kamu mendustakan (hari) pembalasan sesudah (adanya keterangan-keterangan) itu?",
+      "wordsTajweed": [
+        {
+          "word": "فَمَا",
+          "rule": null
+        },
+        {
+          "word": "يُكَذِّبُكَ",
+          "rule": null
+        },
+        {
+          "word": "بَعْدُ",
+          "rule": null
+        },
+        {
+          "word": "بِٱلدِّينِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "أَلَيْسَ ٱللَّهُ بِأَحْكَمِ ٱلْحَٰكِمِينَ",
+      "translation": "Bukankah Allah Hakim yang seadil-adilnya?",
+      "wordsTajweed": [
+        {
+          "word": "أَلَيْسَ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "بِأَحْكَمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْحَٰكِمِينَ",
+          "rule": "madd_246"
+        }
+      ]
+    }
+  ]
+}

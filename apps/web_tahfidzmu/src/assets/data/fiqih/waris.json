@@ -1,0 +1,38 @@
+{
+  "title": "Fiqih Waris (Mawarith)",
+  "introduction": "Ilmu waris adalah ilmu yang mengatur pemindahan kepemilikan harta dari orang yang wafat kepada ahli waris yang berhak secara adil sesuai ketentuan syariat.",
+  "sections": [
+    {
+      "name": "1. Definisi & Dalil",
+      "definition": "Mawarith secara bahasa adalah bentuk jamak dari miras yang berarti peninggalan. Ilmu ini bertujuan menjaga keadilan dalam keluarga dan mencegah perselisihan harta.\n\nDalil Al-Quran:\nيُوصِيكُمُ اللَّهُ فِي أَوْلَادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الْأُنْثَيَيْنِ\n'Allah mensyariatkan bagimu tentang (pembagian pusaka untuk) anak-anakmu. Yaitu: bagian seorang anak laki-laki sama dengan bagian dua orang anak perempuan.' (QS. An-Nisa: 11)"
+    },
+    {
+      "name": "2. Rukun & Syarat Waris",
+      "definition": "Rukun Waris:\n1. Muwarris: Orang yang meninggal dunia.\n2. Waris: Ahli waris yang masih hidup saat pewaris wafat.\n3. Maurus: Harta peninggalan yang akan dibagikan.\n\nSyarat:\nWafatnya pewaris, hidupnya ahli waris, dan tidak adanya penghalang (seperti beda agama)."
+    },
+    {
+      "name": "3. Kewajiban Sebelum Bagi Waris",
+      "definition": "Harta tidak boleh langsung dibagikan sebelum 4 urusan ini diselesaikan:\n1. Biaya pengurusan jenazah (Kafan, makam).\n2. Pelunasan hutang almarhum (Kepada Allah atau manusia).\n3. Pelaksanaan wasiat (Maksimal 1/3 dari total harta).\n4. Pembagian sisa harta kepada ahli waris."
+    },
+    {
+      "name": "4. Ahli Waris Utama (Zawil Furud)",
+      "definition": "Beberapa bagian yang sudah ditentukan (Kadar Pasti):\n- Suami: 1/2 (jika tidak ada anak) atau 1/4 (jika ada anak).\n- Istri: 1/4 (jika tidak ada anak) atau 1/8 (jika ada anak).\n- Ibu: 1/3 (jika tidak ada anak/saudara) atau 1/6 (jika ada anak/saudara).\n- Ayah: 1/6 (jika ada anak laki-laki)."
+    },
+    {
+      "name": "5. Mawani' (Penghalang Waris)",
+      "definition": "Seseorang tidak berhak mendapat warisan jika:\n1. Membunuh orang yang akan mewarisinya.\n2. Perbedaan Agama (Misal: Anak non-muslim tidak mewarisi orang tua muslim, dan sebaliknya).\n3. Perbudakan (status sebagai budak)."
+    },
+    {
+      "name": "6. Konsep 'Asyabah (Sisa Harta)",
+      "definition": "'Asyabah adalah ahli waris yang mendapatkan seluruh sisa harta setelah dibagikan kepada Zawil Furud. Umumnya didapatkan oleh anak laki-laki atau saudara laki-laki kandung."
+    },
+    {
+      "name": "7. Adab dalam Berwaris",
+      "definition": "- Melakukan pembagian sesegera mungkin setelah urusan hutang selesai.\n- Mengedepankan musyawarah dan kekeluargaan.\n- Tidak serakah dan menjaga hak anak yatim jika ada di antara ahli waris.\n- Memberikan sedikit santunan kepada kerabat/fakir miskin yang hadir saat pembagian namun tidak berhak mendapat waris."
+    },
+    {
+      "name": "8. Hikmah Ilmu Waris",
+      "definition": "- Menegakkan keadilan ekonomi dalam keluarga.\n- Memberikan perlindungan bagi kaum wanita dan anak-anak.\n- Mencegah perpecahan keluarga akibat perebutan harta.\n- Menjadi bukti ketaatan total kepada aturan Allah yang sangat rinci mengenai harta."
+    }
+  ]
+}

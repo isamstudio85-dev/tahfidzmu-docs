@@ -1,0 +1,66 @@
+[
+  {
+    "id": 1,
+    "title": "Hukum Nun Mati dan Tanwin",
+    "slug": "nun-mati-tanwin",
+    "fileName": "nun_mati_tanwin.json",
+    "description": "Aturan membaca ketika Nun sukun (نْ) atau Tanwin ( ً  ٍ  ٌ ) bertemu huruf hijaiyah.",
+    "icon": "auto_stories"
+  },
+  {
+    "id": 2,
+    "title": "Hukum Mim Mati",
+    "slug": "mim-mati",
+    "fileName": "mim_mati.json",
+    "description": "Aturan membaca ketika Mim sukun (مْ) bertemu huruf hijaiyah.",
+    "icon": "menu_book"
+  },
+  {
+    "id": 3,
+    "title": "Alif Lam Qamariyah & Syamsiyah",
+    "slug": "alif-lam",
+    "fileName": "alif_lam.json",
+    "description": "Perbedaan cara membaca Alif Lam saat bertemu huruf Syamsiyah dan Qamariyah.",
+    "icon": "import_contacts"
+  },
+  {
+    "id": 4,
+    "title": "Hukum Mad (Panjang)",
+    "slug": "mad",
+    "fileName": "mad.json",
+    "description": "Aturan lengkap memanjangkan suara pada berbagai jenis hukum Mad.",
+    "icon": "straighten"
+  },
+  {
+    "id": 5,
+    "title": "Qalqalah",
+    "slug": "qalqalah",
+    "fileName": "qalqalah.json",
+    "description": "Aturan memantulkan suara pada huruf-huruf tertentu saat mati/sukun.",
+    "icon": "vibration"
+  },
+  {
+    "id": 6,
+    "title": "Hukum Idgham",
+    "slug": "idgham",
+    "fileName": "idgham.json",
+    "description": "Kaidah Idgham Mutamatsilain, Mutajanisain, dan Mutaqaribain.",
+    "icon": "auto_stories"
+  },
+  {
+    "id": 7,
+    "title": "Hukum Ra' & Lafal Jalalah",
+    "slug": "hukum-ra-jalalah",
+    "fileName": "hukum_ra_jalalah.json",
+    "description": "Kaidah menebalkan dan menipiskan huruf Ra' serta pengucapan nama Allah.",
+    "icon": "menu_book"
+  },
+  {
+    "id": 8,
+    "title": "Bacaan Gharib & Saktah",
+    "slug": "gharib-saktah",
+    "fileName": "gharib_saktah.json",
+    "description": "Cara pelafalan bacaan khusus seperti Imalah, Isymam, Tashil, Naql, dan Saktah.",
+    "icon": "warning_amber"
+  }
+]

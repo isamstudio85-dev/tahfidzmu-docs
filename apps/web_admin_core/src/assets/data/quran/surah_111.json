@@ -1,0 +1,152 @@
+{
+  "number": 111,
+  "name": "سُورَةُ المَسَدِ",
+  "englishName": "Al-Masad",
+  "numberOfAyahs": 5,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ تَبَّتْ يَدَآ أَبِى لَهَبٍۢ وَتَبَّ",
+      "translation": "Binasalah kedua tangan Abu Lahab dan sesungguhnya dia akan binasa.",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "تَبَّتْ",
+          "rule": null
+        },
+        {
+          "word": "يَدَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَبِى",
+          "rule": null
+        },
+        {
+          "word": "لَهَبٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَتَبَّ",
+          "rule": "idghaam_ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "مَآ أَغْنَىٰ عَنْهُ مَالُهُۥ وَمَا كَسَبَ",
+      "translation": "Tidaklah berfaedah kepadanya harta bendanya dan apa yang ia usahakan.",
+      "wordsTajweed": [
+        {
+          "word": "مَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَغْنَىٰ",
+          "rule": null
+        },
+        {
+          "word": "عَنْهُ",
+          "rule": null
+        },
+        {
+          "word": "مَالُهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "وَمَا",
+          "rule": null
+        },
+        {
+          "word": "كَسَبَ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "سَيَصْلَىٰ نَارًۭا ذَاتَ لَهَبٍۢ",
+      "translation": "Kelak dia akan masuk ke dalam api yang bergejolak.",
+      "wordsTajweed": [
+        {
+          "word": "سَيَصْلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "نَارًۭا",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "ذَاتَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "لَهَبٍۢ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "وَٱمْرَأَتُهُۥ حَمَّالَةَ ٱلْحَطَبِ",
+      "translation": "Dan (begitu pula) istrinya, pembawa kayu bakar.",
+      "wordsTajweed": [
+        {
+          "word": "وَٱمْرَأَتُهُۥ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "حَمَّالَةَ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْحَطَبِ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "فِى جِيدِهَا حَبْلٌۭ مِّن مَّسَدٍۭ",
+      "translation": "Yang di lehernya ada tali dari sabut.",
+      "wordsTajweed": [
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "جِيدِهَا",
+          "rule": null
+        },
+        {
+          "word": "حَبْلٌۭ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مِّن",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مَّسَدٍۭ",
+          "rule": "idghaam_ghunnah"
+        }
+      ]
+    }
+  ]
+}

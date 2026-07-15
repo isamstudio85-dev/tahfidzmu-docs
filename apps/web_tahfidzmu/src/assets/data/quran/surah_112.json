@@ -1,0 +1,113 @@
+{
+  "number": 112,
+  "name": "سُورَةُ الإِخۡلَاصِ",
+  "englishName": "Al-Ikhlaas",
+  "numberOfAyahs": 4,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ قُلْ هُوَ ٱللَّهُ أَحَدٌ",
+      "translation": "Katakanlah: \"Dialah Allah, Yang Maha Esa.",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "قُلْ",
+          "rule": null
+        },
+        {
+          "word": "هُوَ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "أَحَدٌ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "ٱللَّهُ ٱلصَّمَدُ",
+      "translation": "Allah adalah Tuhan yang bergantung kepada-Nya segala sesuatu.",
+      "wordsTajweed": [
+        {
+          "word": "ٱللَّهُ",
+          "rule": null
+        },
+        {
+          "word": "ٱلصَّمَدُ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+      "translation": "Dia tiada beranak dan tidak pula diperanakkan,",
+      "wordsTajweed": [
+        {
+          "word": "لَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَلِدْ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "وَلَمْ",
+          "rule": null
+        },
+        {
+          "word": "يُولَدْ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ",
+      "translation": "dan tidak ada seorangpun yang setara dengan Dia\".",
+      "wordsTajweed": [
+        {
+          "word": "وَلَمْ",
+          "rule": null
+        },
+        {
+          "word": "يَكُن",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لَّهُۥ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "كُفُوًا",
+          "rule": null
+        },
+        {
+          "word": "أَحَدٌۢ",
+          "rule": "qalqalah"
+        }
+      ]
+    }
+  ]
+}

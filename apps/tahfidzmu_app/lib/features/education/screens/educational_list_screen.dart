@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/features/education/screens/tahsin_list_screen.dart';
 
 class EducationalListScreen extends StatefulWidget {
@@ -58,6 +59,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
   Widget build(BuildContext context) {
     final String title = widget.type == 'tajwid' ? 'Ilmu Tajwid' : (widget.type == 'fiqih' ? 'Fiqih' : 'Ilmu Tahsin');
     final bool isWide = MediaQuery.of(context).size.width > 900;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_isLoading) {
       return Scaffold(
@@ -116,10 +118,10 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
 
     if (isWide) {
       return Scaffold(
-        backgroundColor: const Color(0xFFFDF9F0),
+        backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
         appBar: AppBar(
           title: Text(title),
-          backgroundColor: const Color(0xFF2E5A27),
+          backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -159,10 +161,10 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: const Color(0xFF2E5A27),
+        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -303,14 +305,15 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: widget.hideAppBar ? null : AppBar(
         title: Text(widget.title),
-        backgroundColor: const Color(0xFF2E5A27),
+        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      backgroundColor: const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _data == null

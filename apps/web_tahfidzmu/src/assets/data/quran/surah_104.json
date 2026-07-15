@@ -1,0 +1,220 @@
+{
+  "number": 104,
+  "name": "سُورَةُ الهُمَزَةِ",
+  "englishName": "Al-Humaza",
+  "numberOfAyahs": 9,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَيْلٌۭ لِّكُلِّ هُمَزَةٍۢ لُّمَزَةٍ",
+      "translation": "Kecelakaanlah bagi setiap pengumpat lagi pencela,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "وَيْلٌۭ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لِّكُلِّ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "هُمَزَةٍۢ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لُّمَزَةٍ",
+          "rule": "idghaam_no_ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "ٱلَّذِى جَمَعَ مَالًۭا وَعَدَّدَهُۥ",
+      "translation": "yang mengumpulkan harta dan menghitung-hitung,",
+      "wordsTajweed": [
+        {
+          "word": "ٱلَّذِى",
+          "rule": null
+        },
+        {
+          "word": "جَمَعَ",
+          "rule": null
+        },
+        {
+          "word": "مَالًۭا",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "وَعَدَّدَهُۥ",
+          "rule": "idghaam_ghunnah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "يَحْسَبُ أَنَّ مَالَهُۥٓ أَخْلَدَهُۥ",
+      "translation": "dia mengira bahwa hartanya itu dapat mengkekalkannya,",
+      "wordsTajweed": [
+        {
+          "word": "يَحْسَبُ",
+          "rule": null
+        },
+        {
+          "word": "أَنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "مَالَهُۥٓ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَخْلَدَهُۥ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "كَلَّا ۖ لَيُنۢبَذَنَّ فِى ٱلْحُطَمَةِ",
+      "translation": "sekali-kali tidak! Sesungguhnya dia benar-benar akan dilemparkan ke dalam Huthamah.",
+      "wordsTajweed": [
+        {
+          "word": "كَلَّا ۖ",
+          "rule": null
+        },
+        {
+          "word": "لَيُنۢبَذَنَّ",
+          "rule": "iqlab"
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْحُطَمَةِ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "وَمَآ أَدْرَىٰكَ مَا ٱلْحُطَمَةُ",
+      "translation": "Dan tahukah kamu apa Huthamah itu?",
+      "wordsTajweed": [
+        {
+          "word": "وَمَآ",
+          "rule": "madd_munfasil"
+        },
+        {
+          "word": "أَدْرَىٰكَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "ٱلْحُطَمَةُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "نَارُ ٱللَّهِ ٱلْمُوقَدَةُ",
+      "translation": "(yaitu) api (yang disediakan) Allah yang dinyalakan,",
+      "wordsTajweed": [
+        {
+          "word": "نَارُ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْمُوقَدَةُ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "ٱلَّتِى تَطَّلِعُ عَلَى ٱلْأَفْـِٔدَةِ",
+      "translation": "yang (membakar) sampai ke hati.",
+      "wordsTajweed": [
+        {
+          "word": "ٱلَّتِى",
+          "rule": null
+        },
+        {
+          "word": "تَطَّلِعُ",
+          "rule": null
+        },
+        {
+          "word": "عَلَى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْأَفْـِٔدَةِ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "إِنَّهَا عَلَيْهِم مُّؤْصَدَةٌۭ",
+      "translation": "Sesungguhnya api itu ditutup rapat atas mereka,",
+      "wordsTajweed": [
+        {
+          "word": "إِنَّهَا",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "عَلَيْهِم",
+          "rule": null
+        },
+        {
+          "word": "مُّؤْصَدَةٌۭ",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 9,
+      "arabic": "فِى عَمَدٍۢ مُّمَدَّدَةٍۭ",
+      "translation": "(sedang mereka itu) diikat pada tiang-tiang yang panjang.",
+      "wordsTajweed": [
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "عَمَدٍۢ",
+          "rule": "idghaam_ghunnah"
+        },
+        {
+          "word": "مُّمَدَّدَةٍۭ",
+          "rule": "idghaam_ghunnah"
+        }
+      ]
+    }
+  ]
+}

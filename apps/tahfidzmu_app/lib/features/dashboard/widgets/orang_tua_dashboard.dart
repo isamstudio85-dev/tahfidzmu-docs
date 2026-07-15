@@ -28,8 +28,6 @@ class OrangTuaDashboard extends StatelessWidget {
           'BERANDA SANTRI',
           style: GoogleFonts.poppins(fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 16),
         ),
-        backgroundColor: AppTheme.primaryGreen,
-        foregroundColor: Colors.white,
         centerTitle: true,
       ),
       body: LayoutBuilder(
@@ -63,10 +61,11 @@ class OrangTuaDashboard extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   _oStat(
-                    Icons.assignment_turned_in_rounded,
-                    'Setoran',
-                    '${setorans.length} Sesi',
+                    Icons.qr_code_2_rounded,
+                    'Kartu QR',
+                    'Buka',
                     AppTheme.primaryGreen,
+                    onTap: () => _showDigitalCardDialog(context),
                   ),
                   const SizedBox(width: 12),
                   _oStat(
@@ -87,8 +86,12 @@ class OrangTuaDashboard extends StatelessWidget {
                 ],
               ),
               if (context.watch<AppProvider>().isModuleActive('gamification')) ...[
+                Divider(color: Colors.grey.withValues(alpha: 0.2), thickness: 1),
+                const SizedBox(height: 16),
                 GamificationCard(santri: child),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+                Divider(color: Colors.grey.withValues(alpha: 0.2), thickness: 1),
+                const SizedBox(height: 16),
                 const PusatHafalanPortalCard(),
                 const SizedBox(height: 32),
               ],
@@ -107,8 +110,6 @@ class OrangTuaDashboard extends StatelessWidget {
                               child.id,
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          _buildDigitalCard(context),
                         ],
                       ),
                     ),
@@ -134,7 +135,7 @@ class OrangTuaDashboard extends StatelessWidget {
                           const SizedBox(height: 24),
                           SizedBox(
                             width: double.infinity,
-                            child: OutlinedButton.icon(
+                            child: FilledButton.icon(
                               onPressed: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -142,8 +143,11 @@ class OrangTuaDashboard extends StatelessWidget {
                                       SantriDetailScreen(santriId: child.id),
                                 ),
                               ),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppTheme.primaryGreen,
+                              ),
                               icon: const Icon(Icons.person_search_rounded),
-                              label: const Text('Lihat Detail Lengkap'),
+                              label: const Text('LIHAT DETAIL LENGKAP'),
                             ),
                           ),
                         ],
@@ -161,8 +165,6 @@ class OrangTuaDashboard extends StatelessWidget {
                         child.id,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    _buildDigitalCard(context),
                     const SizedBox(height: 24),
                     const SectionTitle('Riwayat Terbaru'),
                     const SizedBox(height: 12),
@@ -177,7 +179,7 @@ class OrangTuaDashboard extends StatelessWidget {
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton.icon(
+                      child: FilledButton.icon(
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -185,8 +187,11 @@ class OrangTuaDashboard extends StatelessWidget {
                                 SantriDetailScreen(santriId: child.id),
                           ),
                         ),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppTheme.primaryGreen,
+                        ),
                         icon: const Icon(Icons.person_search_rounded),
-                        label: const Text('Lihat Detail Lengkap'),
+                        label: const Text('LIHAT DETAIL LENGKAP'),
                       ),
                     ),
                   ],
@@ -199,59 +204,7 @@ class OrangTuaDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildDigitalCard(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Card(
-      elevation: 0,
-      color: isDark ? AppTheme.darkSurface : Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => _showDigitalCardDialog(context),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Icon(
-                Icons.qr_code_2_rounded,
-                color: isDark ? Colors.white : Colors.black87,
-                size: 28,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'KARTU SANTRI DIGITAL',
-                      style: GoogleFonts.poppins(
-                        color: AppTheme.primaryGreen,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'QR Code untuk akses cepat',
-                      style: TextStyle(
-                        color: isDark ? Colors.white38 : Colors.grey.shade600,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.qr_code_rounded, color: AppTheme.primaryGreen, size: 20),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+
 
   void _showDigitalCardDialog(BuildContext context) {
     showDialog(
@@ -453,7 +406,9 @@ class OrangTuaDashboard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: bannerImagePath == null
             ? const LinearGradient(
-                colors: [Color(0xFF6A1B9A), Color(0xFF9C27B0)],
+                colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               )
             : null,
         image: bannerImagePath != null
@@ -558,45 +513,56 @@ class OrangTuaDashboard extends StatelessWidget {
     );
   }
 
-  Widget _oStat(IconData icon, String label, String value, Color color) {
+  Widget _oStat(IconData icon, String label, String value, Color color, {VoidCallback? onTap}) {
     return Builder(builder: (context) {
       final isDark = Theme.of(context).brightness == Brightness.dark;
-      return Expanded(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: isDark ? 0.1 : 0.05),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: color.withValues(alpha: isDark ? 0.2 : 0.1)),
-          ),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 24),
-              const SizedBox(height: 8),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  value,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: isDark ? Colors.white : color,
-                  ),
+      Widget content = Ink(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: isDark ? 0.1 : 0.05),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withValues(alpha: isDark ? 0.2 : 0.1)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 8),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: isDark ? Colors.white : color,
                 ),
               ),
-              const SizedBox(height: 2),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isDark ? Colors.white54 : color.withValues(alpha: 0.7),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                color: isDark ? Colors.white54 : color.withValues(alpha: 0.7),
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
+
+      if (onTap != null) {
+        content = Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(20),
+            child: content,
+          ),
+        );
+      }
+
+      return Expanded(child: content);
     });
   }
 

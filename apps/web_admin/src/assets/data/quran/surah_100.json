@@ -1,0 +1,262 @@
+{
+  "number": 100,
+  "name": "سُورَةُ العَادِيَاتِ",
+  "englishName": "Al-Aadiyaat",
+  "numberOfAyahs": 11,
+  "revelationType": "Meccan",
+  "ayahs": [
+    {
+      "numberInSurah": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ وَٱلْعَٰدِيَٰتِ ضَبْحًۭا",
+      "translation": "Demi kuda perang yang berlari kencang dengan terengah-engah,",
+      "wordsTajweed": [
+        {
+          "word": "بِسْمِ",
+          "rule": null
+        },
+        {
+          "word": "ٱللَّهِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحْمَٰنِ",
+          "rule": null
+        },
+        {
+          "word": "ٱلرَّحِيمِ",
+          "rule": null
+        },
+        {
+          "word": "وَٱلْعَٰدِيَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "ضَبْحًۭا",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 2,
+      "arabic": "فَٱلْمُورِيَٰتِ قَدْحًۭا",
+      "translation": "dan kuda yang mencetuskan api dengan pukulan (kuku kakinya),",
+      "wordsTajweed": [
+        {
+          "word": "فَٱلْمُورِيَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "قَدْحًۭا",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 3,
+      "arabic": "فَٱلْمُغِيرَٰتِ صُبْحًۭا",
+      "translation": "dan kuda yang menyerang dengan tiba-tiba di waktu pagi,",
+      "wordsTajweed": [
+        {
+          "word": "فَٱلْمُغِيرَٰتِ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "صُبْحًۭا",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 4,
+      "arabic": "فَأَثَرْنَ بِهِۦ نَقْعًۭا",
+      "translation": "maka ia menerbangkan debu,",
+      "wordsTajweed": [
+        {
+          "word": "فَأَثَرْنَ",
+          "rule": null
+        },
+        {
+          "word": "بِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "نَقْعًۭا",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 5,
+      "arabic": "فَوَسَطْنَ بِهِۦ جَمْعًا",
+      "translation": "dan menyerbu ke tengah-tengah kumpulan musuh,",
+      "wordsTajweed": [
+        {
+          "word": "فَوَسَطْنَ",
+          "rule": "qalqalah"
+        },
+        {
+          "word": "بِهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "جَمْعًا",
+          "rule": null
+        }
+      ]
+    },
+    {
+      "numberInSurah": 6,
+      "arabic": "إِنَّ ٱلْإِنسَٰنَ لِرَبِّهِۦ لَكَنُودٌۭ",
+      "translation": "sesungguhnya manusia itu sangat ingkar, tidak berterima kasih kepada Tuhannya,",
+      "wordsTajweed": [
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "ٱلْإِنسَٰنَ",
+          "rule": "ikhfa"
+        },
+        {
+          "word": "لِرَبِّهِۦ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "لَكَنُودٌۭ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 7,
+      "arabic": "وَإِنَّهُۥ عَلَىٰ ذَٰلِكَ لَشَهِيدٌۭ",
+      "translation": "dan sesungguhnya manusia itu menyaksikan (sendiri) keingkarannya,",
+      "wordsTajweed": [
+        {
+          "word": "وَإِنَّهُۥ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "عَلَىٰ",
+          "rule": null
+        },
+        {
+          "word": "ذَٰلِكَ",
+          "rule": "madd_2"
+        },
+        {
+          "word": "لَشَهِيدٌۭ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 8,
+      "arabic": "وَإِنَّهُۥ لِحُبِّ ٱلْخَيْرِ لَشَدِيدٌ",
+      "translation": "dan sesungguhnya dia sangat bakhil karena cintanya kepada harta.",
+      "wordsTajweed": [
+        {
+          "word": "وَإِنَّهُۥ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "لِحُبِّ",
+          "rule": null
+        },
+        {
+          "word": "ٱلْخَيْرِ",
+          "rule": null
+        },
+        {
+          "word": "لَشَدِيدٌ",
+          "rule": "qalqalah"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 9,
+      "arabic": "۞ أَفَلَا يَعْلَمُ إِذَا بُعْثِرَ مَا فِى ٱلْقُبُورِ",
+      "translation": "Maka apakah dia tidak mengetahui apabila dibangkitkan apa yang ada di dalam kubur,",
+      "wordsTajweed": [
+        {
+          "word": "أَفَلَا",
+          "rule": null
+        },
+        {
+          "word": "يَعْلَمُ",
+          "rule": null
+        },
+        {
+          "word": "إِذَا",
+          "rule": null
+        },
+        {
+          "word": "بُعْثِرَ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلْقُبُورِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 10,
+      "arabic": "وَحُصِّلَ مَا فِى ٱلصُّدُورِ",
+      "translation": "dan dilahirkan apa yang ada di dalam dada,",
+      "wordsTajweed": [
+        {
+          "word": "وَحُصِّلَ",
+          "rule": null
+        },
+        {
+          "word": "مَا",
+          "rule": null
+        },
+        {
+          "word": "فِى",
+          "rule": null
+        },
+        {
+          "word": "ٱلصُّدُورِ",
+          "rule": "madd_246"
+        }
+      ]
+    },
+    {
+      "numberInSurah": 11,
+      "arabic": "إِنَّ رَبَّهُم بِهِمْ يَوْمَئِذٍۢ لَّخَبِيرٌۢ",
+      "translation": "sesungguhnya Tuhan mereka pada hari itu Maha Mengetahui keadaan mereka.",
+      "wordsTajweed": [
+        {
+          "word": "إِنَّ",
+          "rule": "ghunnah"
+        },
+        {
+          "word": "رَبَّهُم",
+          "rule": "ikhfa_shafawi"
+        },
+        {
+          "word": "بِهِمْ",
+          "rule": "ikhfa_shafawi"
+        },
+        {
+          "word": "يَوْمَئِذٍۢ",
+          "rule": "idghaam_no_ghunnah"
+        },
+        {
+          "word": "لَّخَبِيرٌۢ",
+          "rule": "idghaam_no_ghunnah"
+        }
+      ]
+    }
+  ]
+}
