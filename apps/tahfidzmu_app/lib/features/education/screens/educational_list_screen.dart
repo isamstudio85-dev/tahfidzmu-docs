@@ -401,41 +401,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
         if (section['definition'] != null) _buildSmartContent(section['definition']),
         if (section['letters'] != null) ...[
           const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-            decoration: BoxDecoration(
-              color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  section['letters'],
-                  textAlign: TextAlign.center,
-                  textDirection: TextDirection.rtl,
-                  style: GoogleFonts.amiri(
-                    fontSize: 32,
-                    color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
-                    fontWeight: FontWeight.bold,
-                    height: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'Huruf',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white38 : Colors.grey.shade500,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _buildLettersWidget(context, section['letters']),
         ],
         if (section['example'] != null) ...[
           const SizedBox(height: 16),
@@ -480,41 +446,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
           if (sub['definition'] != null) _buildSmartContent(sub['definition']),
           if (sub['letters'] != null) ...[
             const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-              decoration: BoxDecoration(
-                color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    sub['letters'],
-                    textAlign: TextAlign.center,
-                    textDirection: TextDirection.rtl,
-                    style: GoogleFonts.amiri(
-                      fontSize: 32,
-                      color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
-                      fontWeight: FontWeight.bold,
-                      height: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Huruf',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white38 : Colors.grey.shade500,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildLettersWidget(context, sub['letters']),
           ],
           if (sub['example'] != null) ...[
             const SizedBox(height: 16),
@@ -531,6 +463,79 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildLettersWidget(BuildContext context, String letters) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasLatinLetters = RegExp(r'[a-zA-Z]').hasMatch(letters);
+
+    if (hasLatinLetters) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        decoration: BoxDecoration(
+          color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.info_outline_rounded, 
+              size: 16, 
+              color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                letters,
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white70 : const Color(0xFF1E293B),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        decoration: BoxDecoration(
+          color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              letters,
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+              style: GoogleFonts.amiri(
+                fontSize: 32,
+                color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Huruf',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white38 : Colors.grey.shade500,
+                letterSpacing: 1.0,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildSmartContent(String content) {
