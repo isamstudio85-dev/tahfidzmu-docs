@@ -47,6 +47,7 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
     final isAdmin = provider.isAdmin;
     final displayList = provider.pondokKnowledgeList;
     final bool isWide = MediaQuery.of(context).size.width > 900;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (_selectedIndex == null && displayList.isNotEmpty) {
       _selectedIndex = isWide ? 0 : -1;
@@ -66,7 +67,7 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
         : ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             itemCount: displayList.length,
-            separatorBuilder: (ctx, i) => const Divider(color: Color(0xFFE5D5B8), height: 1),
+            separatorBuilder: (ctx, i) => Divider(color: isDark ? Colors.white10 : Colors.grey.shade200, height: 1),
             itemBuilder: (ctx, i) {
               final item = displayList[i];
               final isSelected = _selectedIndex == i;
@@ -74,27 +75,26 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
               return ListTile(
                 onTap: () => setState(() => _selectedIndex = isWide ? i : (_selectedIndex == i ? -1 : i)),
                 selected: isSelected && isWide,
-                selectedTileColor: const Color(0xFFF4EAD4),
+                selectedTileColor: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 leading: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(color: const Color(0xFF2E5A27).withValues(alpha: 0.1), shape: BoxShape.circle),
-                  child: const Icon(Icons.school_rounded, color: Color(0xFF2E5A27), size: 18),
+                  decoration: BoxDecoration(color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1), shape: BoxShape.circle),
+                  child: Icon(Icons.school_rounded, color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, size: 18),
                 ),
-                title: Text(item['title'] ?? '', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: const Color(0xFF4E342E))),
-                trailing: isWide ? null : Icon(_selectedIndex == i ? Icons.expand_less : Icons.expand_more),
+                title: Text(item['title'] ?? '', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: isDark ? Colors.white : const Color(0xFF1E293B))),
+                trailing: isWide ? null : Icon(_selectedIndex == i ? Icons.expand_less : Icons.expand_more, color: isDark ? Colors.white30 : Colors.grey.shade400),
               );
             },
           );
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       appBar: AppBar(
         title: Text(provider.pesantrenInfo.nama.trim().isNotEmpty
             ? 'Wawasan ${provider.pesantrenInfo.nama.trim()}'
             : 'Pengetahuan Pondok'),
-        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -104,7 +104,16 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
                 SizedBox(width: 320, child: Container(decoration: const BoxDecoration(border: Border(right: BorderSide(color: Color(0xFFE5D5B8)))), child: listWidget)),
                 Expanded(
                   child: _selectedIndex == null || _selectedIndex! < 0 || _selectedIndex! >= displayList.length
-                      ? const Center(child: Text('Pilih informasi untuk melihat detail'))
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.school_rounded, size: 80, color: AppTheme.primaryGreen.withValues(alpha: 0.15)),
+                              const SizedBox(height: 16),
+                              Text('Pilih informasi untuk melihat detail', style: TextStyle(color: isDark ? Colors.white38 : Colors.grey.shade600)),
+                            ],
+                          ),
+                        )
                       : _PondokDetailView(
                           item: displayList[_selectedIndex!],
                           isAdmin: isAdmin,
@@ -116,32 +125,66 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
             )
           : displayList.isEmpty
               ? listWidget
-              : ListView.builder(
+              : ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: displayList.length,
+                  separatorBuilder: (ctx, i) => Divider(color: isDark ? Colors.white10 : Colors.grey.shade200, height: 1),
                   itemBuilder: (ctx, i) {
-                    final isExpanded = _selectedIndex == i;
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: isExpanded ? const Color(0xFFE5D5B8) : Colors.grey.shade100)),
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        children: [
-                          ListTile(
-                            onTap: () => setState(() => _selectedIndex = isExpanded ? -1 : i),
-                            leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: const Color(0xFF2E5A27).withValues(alpha: 0.1), shape: BoxShape.circle), child: const Icon(Icons.school_rounded, color: Color(0xFF2E5A27), size: 18)),
-                            title: Text(displayList[i]['title'] ?? '', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: const Color(0xFF4E342E))),
-                            trailing: Icon(isExpanded ? Icons.expand_less_rounded : Icons.expand_more_rounded),
-                          ),
-                          if (isExpanded)
-                            _PondokDetailView(
-                              item: displayList[i],
+                    final item = displayList[i];
+                    return ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PondokDetailScreen(
+                              item: item,
                               isAdmin: isAdmin,
-                              onEdit: () => Navigator.push(context, MaterialPageRoute(builder: (_) => PondokKnowledgeEditPage(item: displayList[i], index: i))),
+                              onEdit: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => PondokKnowledgeEditPage(item: item, index: i),
+                                ),
+                              ),
                               onDelete: () => _deleteItem(i),
-                              compact: true,
                             ),
-                        ],
+                          ),
+                        );
+                      },
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1), 
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.school_rounded, 
+                          color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, 
+                          size: 18,
+                        ),
+                      ),
+                      title: Text(
+                        item['title'] ?? '',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold, 
+                          fontSize: 13, 
+                          color: isDark ? Colors.white : const Color(0xFF1E293B),
+                        ),
+                      ),
+                      subtitle: item['description'] != null
+                          ? Text(
+                              item['description'],
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: isDark ? Colors.white38 : Colors.grey.shade600,
+                              ),
+                            )
+                          : null,
+                      trailing: Icon(
+                        Icons.chevron_right_rounded, 
+                        color: isDark ? Colors.white30 : Colors.grey.shade400,
+                        size: 18,
                       ),
                     );
                   },
@@ -149,7 +192,7 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
       floatingActionButton: isAdmin
           ? FloatingActionButton.extended(
               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PondokKnowledgeEditPage())),
-              backgroundColor: const Color(0xFF2E5A27),
+              backgroundColor: AppTheme.primaryGreen,
               foregroundColor: Colors.white,
               icon: const Icon(Icons.add),
               label: const Text('Tambah Materi'),
@@ -159,16 +202,53 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
   }
 }
 
-class _PondokDetailView extends StatelessWidget {
-  const _PondokDetailView({required this.item, required this.isAdmin, required this.onEdit, required this.onDelete, this.compact = false});
+class PondokDetailScreen extends StatelessWidget {
+  const PondokDetailScreen({
+    super.key,
+    required this.item,
+    required this.isAdmin,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
   final Map<String, dynamic> item;
   final bool isAdmin;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
-  final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
+      appBar: AppBar(
+        title: Text(item['title'] ?? 'Detail Informasi'),
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: _PondokDetailView(
+          item: item,
+          isAdmin: isAdmin,
+          onEdit: onEdit,
+          onDelete: onDelete,
+        ),
+      ),
+    );
+  }
+}
+
+class _PondokDetailView extends StatelessWidget {
+  const _PondokDetailView({required this.item, required this.isAdmin, required this.onEdit, required this.onDelete});
+  final Map<String, dynamic> item;
+  final bool isAdmin;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final type = item['type'] ?? 'paragraph';
     final isListType = type == 'bullet' || type == 'number';
     final contentText = item['content'] ?? '';
@@ -176,18 +256,16 @@ class _PondokDetailView extends StatelessWidget {
     final hasImage = item['imagePath'] != null && item['imagePath'].toString().isNotEmpty;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(compact ? 16 : 24),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!compact) ...[
-            Text(item['title'] ?? '', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: const Color(0xFF2E5A27))),
-            const SizedBox(height: 8),
-            if (item['description'] != null) Text(item['description'], style: TextStyle(fontSize: 13, color: Colors.grey.shade600, fontWeight: FontWeight.w500)),
-            const SizedBox(height: 20),
-            const Divider(color: Color(0xFFE5D5B8)),
-            const SizedBox(height: 20),
-          ],
+          Text(item['title'] ?? '', style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen)),
+          const SizedBox(height: 8),
+          if (item['description'] != null) Text(item['description'], style: TextStyle(fontSize: 13, color: isDark ? Colors.white38 : Colors.grey.shade600, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 20),
+          Divider(color: isDark ? Colors.white10 : Colors.grey.shade200),
+          const SizedBox(height: 20),
           if (hasImage)
             Padding(
               padding: const EdgeInsets.only(bottom: 24),
@@ -205,8 +283,46 @@ class _PondokDetailView extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (type == 'bullet') Container(margin: const EdgeInsets.only(top: 8, right: 14, left: 4), width: 8, height: 8, decoration: const BoxDecoration(color: Color(0xFF2E5A27), shape: BoxShape.circle)) else Container(margin: const EdgeInsets.only(top: 2, right: 12), width: 24, height: 24, alignment: Alignment.center, decoration: BoxDecoration(color: const Color(0xFF2E5A27).withValues(alpha: 0.1), shape: BoxShape.circle), child: Text('${index + 1}', style: const TextStyle(color: Color(0xFF2E5A27), fontSize: 12, fontWeight: FontWeight.bold))),
-                      Expanded(child: Text(listItems[index], style: GoogleFonts.poppins(fontSize: 15, color: const Color(0xFF4E342E), height: 1.6, fontWeight: FontWeight.w500))),
+                      if (type == 'bullet')
+                        Container(
+                          margin: const EdgeInsets.only(top: 8, right: 14, left: 4),
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: isDark ? AppTheme.accentGreen : AppTheme.primaryGreen, 
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      else
+                        Container(
+                          margin: const EdgeInsets.only(top: 2, right: 12),
+                          width: 24,
+                          height: 24,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1), 
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '${index + 1}',
+                            style: TextStyle(
+                              color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, 
+                              fontSize: 12, 
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      Expanded(
+                        child: Text(
+                          listItems[index],
+                          style: GoogleFonts.poppins(
+                            fontSize: 15, 
+                            color: isDark ? Colors.white70 : const Color(0xFF1E293B), 
+                            height: 1.6, 
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -221,7 +337,12 @@ class _PondokDetailView extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: Text(
                     para,
-                    style: GoogleFonts.poppins(fontSize: 15, color: const Color(0xFF4E342E), height: 1.7, fontWeight: FontWeight.w500),
+                    style: GoogleFonts.poppins(
+                      fontSize: 15, 
+                      color: isDark ? Colors.white70 : const Color(0xFF1E293B), 
+                      height: 1.7, 
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 );
               }).toList(),

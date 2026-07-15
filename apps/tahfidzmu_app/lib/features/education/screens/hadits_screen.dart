@@ -84,7 +84,9 @@ class _HaditsScreenState extends State<HaditsScreen> {
               prefixIcon: const Icon(Icons.search_rounded, size: 20),
               isDense: true,
               filled: true,
-              fillColor: isWide ? Colors.white : const Color(0xFFF4EAD4).withValues(alpha: 0.5),
+              fillColor: isWide 
+                  ? (isDark ? AppTheme.darkSurface : Colors.white) 
+                  : (isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -100,10 +102,10 @@ class _HaditsScreenState extends State<HaditsScreen> {
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemCount: _filteredData.length,
-                separatorBuilder: (ctx, i) => const Divider(
-                  color: Color(0xFFE5D5B8),
+                separatorBuilder: (ctx, i) => Divider(
+                  color: isDark ? Colors.white10 : Colors.grey.shade200,
                   height: 1,
-                  thickness: 1.2,
+                  thickness: 1.0,
                 ),
                 itemBuilder: (context, i) {
                   final tema = _filteredData.keys.elementAt(i);
@@ -133,10 +135,10 @@ class _HaditsScreenState extends State<HaditsScreen> {
 
         if (isWide) {
           return Scaffold(
-            backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
+            backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
             appBar: AppBar(
               title: const Text('Hadits Pilihan'),
-              backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
+              backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
               foregroundColor: Colors.white,
               elevation: 0,
             ),
@@ -145,8 +147,8 @@ class _HaditsScreenState extends State<HaditsScreen> {
                 SizedBox(
                   width: 350,
                   child: Container(
-                    decoration: const BoxDecoration(
-                      border: Border(right: BorderSide(color: Color(0xFFE5D5B8), width: 1)),
+                    decoration: BoxDecoration(
+                      border: Border(right: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200, width: 1)),
                     ),
                     child: listWidget,
                   ),
@@ -166,10 +168,10 @@ class _HaditsScreenState extends State<HaditsScreen> {
         }
 
         return Scaffold(
-          backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
+          backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
           appBar: AppBar(
             title: const Text('Hadits Pilihan'),
-            backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
+            backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
             foregroundColor: Colors.white,
             elevation: 0,
           ),
@@ -217,8 +219,9 @@ class _TemaSectionState extends State<_TemaSection> {
     final isArbain = widget.tema == 'arbain';
     final String label = isArbain ? "Arba'in An-Nawawiyyah" : Hadith.temaLabel(widget.tema);
     
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      color: const Color(0xFFFDF9F0),
+      color: isDark ? AppTheme.darkBg : Colors.white,
       child: Column(
         children: [
           InkWell(
@@ -246,7 +249,7 @@ class _TemaSectionState extends State<_TemaSection> {
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
-                            color: const Color(0xFF4E342E), // Soft Espresso
+                            color: isDark ? Colors.white : const Color(0xFF1E293B),
                           ),
                         ),
                         Text(
@@ -264,7 +267,7 @@ class _TemaSectionState extends State<_TemaSection> {
                     _expanded
                         ? Icons.expand_less_rounded
                         : Icons.expand_more_rounded,
-                    color: const Color(0xFF2E5A27),
+                    color: isDark ? Colors.white70 : AppTheme.primaryGreen,
                   ),
                 ],
               ),
@@ -278,8 +281,8 @@ class _TemaSectionState extends State<_TemaSection> {
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 itemCount: widget.hadiths.length,
-                separatorBuilder: (_, __) => const Divider(
-                  color: Color(0xFFEDE8DF),
+                separatorBuilder: (_, __) => Divider(
+                  color: isDark ? Colors.white10 : Colors.grey.shade100,
                   height: 1,
                   thickness: 0.8,
                 ),
@@ -317,9 +320,12 @@ class _HadithCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isSelected && isWide ? const Color(0xFFF4EAD4) : Colors.transparent,
+        color: isSelected && isWide 
+            ? (isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9)) 
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
@@ -335,9 +341,12 @@ class _HadithCard extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
+                  color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1),
                   shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFE5D5B8), width: 1),
+                  border: Border.all(
+                    color: isDark ? AppTheme.primaryGreen.withValues(alpha: 0.3) : AppTheme.primaryGreen.withValues(alpha: 0.15),
+                    width: 1,
+                  ),
                 ),
                 child: Center(
                   child: Text(
@@ -347,7 +356,7 @@ class _HadithCard extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
-                      color: const Color(0xFF2E5A27),
+                      color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
                     ),
                   ),
                 ),
@@ -365,22 +374,10 @@ class _HadithCard extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF4E342E),
+                        color: isDark ? Colors.white : const Color(0xFF1E293B),
                       ),
                     ),
                     const SizedBox(height: 4),
-                    // Arabic preview (snippet)
-                    Text(
-                      hadith.matanArab,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textDirection: TextDirection.rtl,
-                      style: GoogleFonts.amiri(
-                        fontSize: 14,
-                        color: const Color(0xFF1B5E20).withValues(alpha: 0.7),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
                     // Perawi
                     Row(
                       children: [
@@ -407,9 +404,9 @@ class _HadithCard extends StatelessWidget {
                 ),
               ),
               if (!isWide)
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
-                  color: Color(0xFF2E5A27),
+                  color: isDark ? Colors.white70 : AppTheme.primaryGreen,
                   size: 18,
                 ),
             ],

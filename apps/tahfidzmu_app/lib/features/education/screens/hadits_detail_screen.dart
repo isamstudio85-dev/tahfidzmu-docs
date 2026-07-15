@@ -18,10 +18,10 @@ class HaditsDetailScreen extends StatelessWidget {
         : 'Hadits ${hadith.id}';
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0), // Classic warm parchment (Kitab Kuning background)
+      backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       appBar: hideAppBar ? null : AppBar(
         title: Text(title),
-        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27), // Deep olive green
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -36,7 +36,7 @@ class HaditsDetailScreen extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
-                  color: isDark ? Colors.white : const Color(0xFF2E5A27),
+                  color: isDark ? Colors.white : AppTheme.primaryGreen,
                 ),
               ),
               const SizedBox(height: 20),
@@ -50,7 +50,7 @@ class HaditsDetailScreen extends StatelessWidget {
                 if (hadith.isArbain)
                   _badge(
                     'Arba\'in Nawawi #${hadith.arbainNo}',
-                    const Color(0xFF2E5A27),
+                    AppTheme.primaryGreen,
                   ),
                 _badge(Hadith.temaLabel(hadith.tema), _temaColor(hadith.tema)),
               ],
@@ -63,11 +63,11 @@ class HaditsDetailScreen extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 11,
-                color: Color(0xFF2E5A27),
+                color: Color(0xFF10B981),
                 letterSpacing: 1.2,
               ),
             ),
-            _buildArabicCard(hadith.matanArab),
+            _buildArabicCard(context, hadith.matanArab),
             const SizedBox(height: 12),
 
             // ── Terjemah ──────────────────────────────────────────────────
@@ -76,7 +76,7 @@ class HaditsDetailScreen extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 11,
-                color: Color(0xFF2E5A27),
+                color: Color(0xFF10B981),
                 letterSpacing: 1.2,
               ),
             ),
@@ -85,16 +85,19 @@ class HaditsDetailScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFFAF6EE),
+                color: isDark ? AppTheme.darkSurface : Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFEDE8DF), width: 1.0),
+                border: Border.all(
+                  color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200, 
+                  width: 1.2,
+                ),
               ),
               child: Text(
                 hadith.terjemah,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   height: 1.6,
-                  color: const Color(0xFF4E342E),
+                  color: isDark ? Colors.white70 : const Color(0xFF1E293B),
                 ),
               ),
             ),
@@ -105,7 +108,7 @@ class HaditsDetailScreen extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 11,
-                color: Color(0xFF2E5A27),
+                color: Color(0xFF10B981),
                 letterSpacing: 1.2,
               ),
             ),
@@ -113,24 +116,32 @@ class HaditsDetailScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFFAF6EE),
+                color: isDark ? AppTheme.darkSurface : Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFEDE8DF), width: 1.0),
+                border: Border.all(
+                  color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200, 
+                  width: 1.2,
+                ),
               ),
               child: Column(
                 children: [
                   _infoRow(
+                    context,
                     Icons.person_rounded,
                     'Perawi',
                     hadith.perawi,
-                    const Color(0xFF2E5A27),
+                    AppTheme.primaryGreen,
                   ),
-                  const Divider(height: 20, color: Color(0xFFEDE8DF)),
+                  Divider(
+                    height: 20, 
+                    color: isDark ? Colors.white10 : Colors.grey.shade100,
+                  ),
                   _infoRow(
+                    context,
                     Icons.import_contacts_rounded,
                     'Sumber Kitab',
                     hadith.sumber,
-                    const Color(0xFF2E5A27),
+                    AppTheme.primaryGreen,
                   ),
                 ],
               ),
@@ -142,15 +153,19 @@ class HaditsDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildArabicCard(String text) {
+  Widget _buildArabicCard(BuildContext context, String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4EAD4),
+        color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5D5B8), width: 1.2),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200, 
+          width: 1.2,
+        ),
       ),
       child: Text(
         text,
@@ -158,7 +173,7 @@ class HaditsDetailScreen extends StatelessWidget {
         textDirection: TextDirection.rtl,
         style: GoogleFonts.amiri(
           fontSize: 22,
-          color: const Color(0xFF1B5E20),
+          color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
           height: 1.7,
           fontWeight: FontWeight.bold,
         ),
@@ -185,7 +200,8 @@ class HaditsDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _infoRow(IconData icon, String label, String value, Color color) {
+  Widget _infoRow(BuildContext context, IconData icon, String label, String value, Color color) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -216,7 +232,7 @@ class HaditsDetailScreen extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF4E342E),
+                  color: isDark ? Colors.white : const Color(0xFF1E293B),
                 ),
               ),
             ],

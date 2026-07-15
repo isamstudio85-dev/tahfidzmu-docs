@@ -77,7 +77,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
           prefixIcon: const Icon(Icons.search_rounded, size: 20),
           isDense: true,
           filled: true,
-          fillColor: isWide ? Colors.white : const Color(0xFFF4EAD4).withValues(alpha: 0.5),
+          fillColor: isWide ? (isDark ? AppTheme.darkSurface : Colors.white) : (isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -93,7 +93,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             itemCount: _filteredItems.length,
-            separatorBuilder: (ctx, i) => const Divider(color: Color(0xFFE5D5B8), height: 1),
+            separatorBuilder: (ctx, i) => Divider(color: isDark ? Colors.white10 : Colors.grey.shade200, height: 1),
             itemBuilder: (ctx, i) {
               final item = _filteredItems[i];
               return _TajwidAccordion(
@@ -118,10 +118,10 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
 
     if (isWide) {
       return Scaffold(
-        backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
+        backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
         appBar: AppBar(
           title: Text(title),
-          backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
+          backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -130,7 +130,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
             SizedBox(
               width: 320,
               child: Container(
-                decoration: const BoxDecoration(border: Border(right: BorderSide(color: Color(0xFFE5D5B8)))),
+                decoration: BoxDecoration(border: Border(right: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200))),
                 child: listWidget,
               ),
             ),
@@ -140,9 +140,9 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.auto_stories_rounded, size: 80, color: const Color(0xFF2E5A27).withValues(alpha: 0.1)),
+                          Icon(Icons.auto_stories_rounded, size: 80, color: AppTheme.primaryGreen.withValues(alpha: 0.15)),
                           const SizedBox(height: 16),
-                          Text('Pilih bab Tajwid untuk membaca materi', style: TextStyle(color: Colors.grey.shade600)),
+                          Text('Pilih bab Tajwid untuk membaca materi', style: TextStyle(color: isDark ? Colors.white38 : Colors.grey.shade600)),
                         ],
                       ),
                     )
@@ -161,10 +161,10 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -214,11 +214,12 @@ class _TajwidAccordionState extends State<_TajwidAccordion> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         ListTile(
           selected: widget.isSelected && widget.isWide,
-          selectedTileColor: const Color(0xFFF4EAD4),
+          selectedTileColor: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
           onTap: () {
             if (widget.isWide) {
               setState(() => _expanded = !_expanded);
@@ -238,14 +239,31 @@ class _TajwidAccordionState extends State<_TajwidAccordion> {
           },
           leading: Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: const Color(0xFF2E5A27).withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: Icon(_getIcon(widget.item['icon']), color: const Color(0xFF2E5A27), size: 18),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1), 
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              _getIcon(widget.item['icon']), 
+              color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, 
+              size: 18,
+            ),
           ),
           title: Text(
             widget.item['title'],
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: const Color(0xFF4E342E)),
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold, 
+              fontSize: 13, 
+              color: isDark ? Colors.white : const Color(0xFF1E293B),
+            ),
           ),
-          trailing: widget.isWide ? Icon(_expanded ? Icons.expand_less : Icons.expand_more, size: 16) : const Icon(Icons.chevron_right_rounded, size: 18),
+          trailing: Icon(
+            widget.isWide
+                ? (_expanded ? Icons.expand_less : Icons.expand_more)
+                : Icons.chevron_right_rounded,
+            color: isDark ? Colors.white30 : Colors.grey.shade400,
+            size: widget.isWide ? 16 : 18,
+          ),
         ),
         if (_expanded && _loading)
           const Padding(padding: EdgeInsets.symmetric(vertical: 8), child: LinearProgressIndicator(minHeight: 1)),
@@ -309,11 +327,11 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
     return Scaffold(
       appBar: widget.hideAppBar ? null : AppBar(
         title: Text(widget.title),
-        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _data == null
@@ -327,26 +345,34 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
                       if (widget.hideAppBar) ...[
                         Text(
                           widget.title,
-                          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: const Color(0xFF2E5A27)),
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold, 
+                            fontSize: 24, 
+                            color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                          ),
                         ),
                         const SizedBox(height: 20),
-                        const Divider(color: Color(0xFFE5D5B8)),
+                        Divider(color: isDark ? Colors.white10 : Colors.grey.shade200),
                         const SizedBox(height: 20),
                       ],
                       if (_data['introduction'] != null) ...[
-                        const Text(
+                        Text(
                           'PENDAHULUAN',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 11,
-                            color: Color(0xFF2E5A27),
+                            color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
                             letterSpacing: 1.2,
                           ),
                         ),
                         const SizedBox(height: 12),
                         Text(
                           _data['introduction'],
-                          style: GoogleFonts.poppins(fontSize: 14, color: const Color(0xFF4E342E), height: 1.7),
+                          style: GoogleFonts.poppins(
+                            fontSize: 14, 
+                            color: isDark ? Colors.white70 : const Color(0xFF1E293B), 
+                            height: 1.7,
+                          ),
                         ),
                         const SizedBox(height: 24),
                       ],
@@ -359,6 +385,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
   }
 
   Widget _buildSection(dynamic section) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -367,7 +394,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: const Color(0xFF2E5A27),
+            color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
           ),
         ),
         const SizedBox(height: 12),
@@ -377,18 +404,18 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF4EAD4),
+              color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE5D5B8)),
+              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
             ),
             child: Row(
               children: [
-                const Text(
+                Text(
                   'Huruf: ',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: Color(0xFF4E342E),
+                    color: isDark ? Colors.white70 : const Color(0xFF1E293B),
                   ),
                 ),
                 Expanded(
@@ -396,7 +423,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
                     section['letters'],
                     style: GoogleFonts.amiri(
                       fontSize: 24,
-                      color: const Color(0xFF1B5E20),
+                      color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
                       fontWeight: FontWeight.bold,
                     ),
                     textDirection: TextDirection.rtl,
@@ -408,25 +435,26 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
         ],
         if (section['example'] != null) ...[
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Contoh:',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 12,
-              color: Color(0xFF8D6E63),
+              color: isDark ? Colors.white38 : Colors.grey.shade500,
             ),
           ),
-          ...(section['example'] as List).map((ex) => _buildExample(ex)),
+          ...(section['example'] as List).map((ex) => _buildExample(context, ex)),
         ],
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 20),
-          child: Divider(color: Color(0xFFE5D5B8)),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Divider(color: isDark ? Colors.white10 : Colors.grey.shade200),
         ),
       ],
     );
   }
 
   Widget _buildSmartContent(String content) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final lines = content.split('\n');
     
     return Column(
@@ -466,7 +494,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
             line,
             style: GoogleFonts.poppins(
               fontSize: 14,
-              color: const Color(0xFF5D4037),
+              color: isDark ? Colors.white70 : const Color(0xFF1E293B),
               height: 1.6,
               fontWeight: line.contains(':') ? FontWeight.bold : FontWeight.normal,
             ),
@@ -477,6 +505,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
   }
 
   Widget _buildListItem(String leading, String text, {required bool isNumeric}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0, left: 2),
       child: Row(
@@ -489,13 +518,13 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
               height: 20,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFF2E5A27).withValues(alpha: 0.1),
+                color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1),
                 shape: BoxShape.circle,
               ),
               child: Text(
                 leading,
-                style: const TextStyle(
-                  color: Color(0xFF2E5A27),
+                style: TextStyle(
+                  color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
@@ -506,8 +535,8 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
               margin: const EdgeInsets.only(top: 7, right: 12, left: 6),
               width: 6,
               height: 6,
-              decoration: const BoxDecoration(
-                color: Color(0xFF2E5A27),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.accentGreen : AppTheme.primaryGreen,
                 shape: BoxShape.circle,
               ),
             ),
@@ -516,7 +545,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
               text,
               style: GoogleFonts.poppins(
                 fontSize: 14,
-                color: const Color(0xFF4E342E),
+                color: isDark ? Colors.white70 : const Color(0xFF1E293B),
                 height: 1.5,
                 fontWeight: FontWeight.w500,
               ),
@@ -528,14 +557,15 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
   }
 
   Widget _buildArabicCard(String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 12),
       padding: const EdgeInsets.all(16), // Slimmer padding for HP
       decoration: BoxDecoration(
-        color: const Color(0xFFF4EAD4), 
+        color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9), 
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE5D5B8), width: 1.2),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200, width: 1.2),
       ),
       child: Text(
         text,
@@ -543,7 +573,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
         textDirection: TextDirection.rtl,
         style: GoogleFonts.amiri(
           fontSize: 22, // Optimized size for HP
-          color: const Color(0xFF1B5E20),
+          color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
           height: 1.7,
           fontWeight: FontWeight.bold,
         ),
@@ -552,6 +582,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
   }
 
   Widget _buildLinkButton(String tag) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     String label = "Buka Panduan";
     VoidCallback? action;
 
@@ -575,8 +606,8 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
         ),
         style: OutlinedButton.styleFrom(
-          foregroundColor: const Color(0xFF2E5A27),
-          side: const BorderSide(color: Color(0xFF2E5A27), width: 1.5),
+          foregroundColor: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+          side: BorderSide(color: isDark ? AppTheme.accentGreen : AppTheme.primaryGreen, width: 1.5),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -584,15 +615,54 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
     );
   }
 
-  Widget _buildExample(dynamic ex) {
+  Widget _buildExample(BuildContext context, dynamic ex) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(color: Color(0xFFFAF6EE), border: Border(left: BorderSide(color: Color(0xFFE5D5B8), width: 4))),
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkSurface : const Color(0xFFFAF9F6), 
+        border: Border(
+          left: BorderSide(
+            color: isDark ? AppTheme.accentGreen : AppTheme.primaryGreen, 
+            width: 4,
+          ),
+        ),
+      ),
       child: Row(
         children: [
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(ex['latin'], style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 14, color: const Color(0xFF4E342E))), if (ex['note'] != null) Text(ex['note'], style: TextStyle(fontSize: 11, color: Colors.grey.shade500))])),
-          Text(ex['arabic'], style: GoogleFonts.amiri(fontSize: 26, color: const Color(0xFF2E5A27), fontWeight: FontWeight.bold), textDirection: TextDirection.rtl),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ex['latin'], 
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600, 
+                    fontSize: 14, 
+                    color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  ),
+                ),
+                if (ex['note'] != null) 
+                  Text(
+                    ex['note'], 
+                    style: TextStyle(
+                      fontSize: 11, 
+                      color: isDark ? Colors.white38 : Colors.grey.shade500,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Text(
+            ex['arabic'], 
+            style: GoogleFonts.amiri(
+              fontSize: 26, 
+              color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, 
+              fontWeight: FontWeight.bold,
+            ), 
+            textDirection: TextDirection.rtl,
+          ),
         ],
       ),
     );
