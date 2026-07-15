@@ -91,9 +91,13 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       appBar: AppBar(
-        title: Text(provider.pesantrenInfo.nama.trim().isNotEmpty
-            ? 'Wawasan ${provider.pesantrenInfo.nama.trim()}'
-            : 'Pengetahuan Pondok'),
+        title: Text(
+          provider.pesantrenInfo.nama.trim().isNotEmpty
+              ? 'Wawasan ${provider.pesantrenInfo.nama.trim()}'
+              : 'Pengetahuan Pondok',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
         backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -222,7 +226,7 @@ class PondokDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       appBar: AppBar(
-        title: Text(item['title'] ?? 'Detail Informasi'),
+        title: Text(item['title'] ?? 'Detail Informasi', maxLines: 1, overflow: TextOverflow.ellipsis),
         backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,

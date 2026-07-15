@@ -120,7 +120,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
       return Scaffold(
         backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
         appBar: AppBar(
-          title: Text(title),
+          title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
           backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
           foregroundColor: Colors.white,
           elevation: 0,
@@ -163,7 +163,7 @@ class _EducationalListScreenState extends State<EducationalListScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       appBar: AppBar(
-        title: Text(title),
+        title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
         backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -326,7 +326,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: widget.hideAppBar ? null : AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title, maxLines: 1, overflow: TextOverflow.ellipsis),
         backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -704,51 +704,61 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
   Widget _buildExample(BuildContext context, dynamic ex) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
+      width: double.infinity,
       margin: const EdgeInsets.only(top: 12),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
         color: isDark ? AppTheme.darkSurface : const Color(0xFFFAF9F6), 
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
         border: Border(
           left: BorderSide(
             color: isDark ? AppTheme.accentGreen : AppTheme.primaryGreen, 
             width: 4,
           ),
+          top: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100, width: 1.0),
+          bottom: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100, width: 1.0),
+          right: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100, width: 1.0),
         ),
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  ex['latin'], 
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600, 
-                    fontSize: 14, 
-                    color: isDark ? Colors.white : const Color(0xFF1E293B),
-                  ),
-                ),
-                if (ex['note'] != null) 
-                  Text(
-                    ex['note'], 
-                    style: TextStyle(
-                      fontSize: 11, 
-                      color: isDark ? Colors.white38 : Colors.grey.shade500,
-                    ),
-                  ),
-              ],
-            ),
-          ),
           Text(
             ex['arabic'], 
+            textAlign: TextAlign.center,
             style: GoogleFonts.amiri(
-              fontSize: 26, 
+              fontSize: 28, 
               color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, 
               fontWeight: FontWeight.bold,
+              height: 1.2,
             ), 
             textDirection: TextDirection.rtl,
           ),
+          const SizedBox(height: 8),
+          Text(
+            ex['latin'], 
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w600, 
+              fontSize: 13, 
+              color: isDark ? Colors.white : const Color(0xFF1E293B),
+            ),
+          ),
+          if (ex['note'] != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              ex['note'], 
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11, 
+                color: isDark ? Colors.white38 : Colors.grey.shade500,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
         ],
       ),
     );
