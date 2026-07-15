@@ -449,11 +449,87 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
           ),
           ...(section['example'] as List).map((ex) => _buildExample(context, ex)),
         ],
+        if (section['sub_sections'] != null) ...[
+          const SizedBox(height: 12),
+          ...(section['sub_sections'] as List).map((sub) => _buildSubSection(sub)),
+        ],
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Divider(color: isDark ? Colors.white10 : Colors.grey.shade200),
         ),
       ],
+    );
+  }
+
+  Widget _buildSubSection(dynamic sub) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.only(left: 12.0, top: 12.0, bottom: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            sub['name'],
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (sub['definition'] != null) _buildSmartContent(sub['definition']),
+          if (sub['letters'] != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    sub['letters'],
+                    textAlign: TextAlign.center,
+                    textDirection: TextDirection.rtl,
+                    style: GoogleFonts.amiri(
+                      fontSize: 32,
+                      color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                      fontWeight: FontWeight.bold,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Huruf',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white38 : Colors.grey.shade500,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          if (sub['example'] != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              'Contoh:',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                color: isDark ? Colors.white38 : Colors.grey.shade500,
+              ),
+            ),
+            ...(sub['example'] as List).map((ex) => _buildExample(context, ex)),
+          ],
+        ],
+      ),
     );
   }
 
