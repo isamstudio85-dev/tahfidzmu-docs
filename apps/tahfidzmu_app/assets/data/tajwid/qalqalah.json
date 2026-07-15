@@ -1,56 +1,53 @@
 {
-  "id": 5,
-  "title": "Qalqalah",
-  "introduction": "Qalqalah secara bahasa artinya memantul atau bergetar. Secara istilah tajwid, memantulkan bunyi huruf qalqalah yang mati karena sukun asli (di tengah kata) atau sukun buatan karena waqaf (berhenti membaca di akhir kalimat). Huruf Qalqalah ada 5:",
+  "title": "Hukum Qalqalah",
+  "introduction": "Qalqalah secara bahasa artinya memantul atau bergetar. Secara istilah tajwid, memantulkan bunyi huruf qalqalah yang mati karena sukun asli atau karena berhenti (waqaf).",
   "sections": [
     {
-      "name": "Huruf Qalqalah (ق ط ب ج د)",
-      "definition": "Huruf-huruf qalqalah dikumpulkan dalam satu lafal singkatan: قُطْبُ جَدٍ (Quthbu Jadin), atau biasa disingkat secara lokal 'Baju Di Toko'.",
-      "letters": "ق ط ب ج د"
+      "name": "Huruf Qalqalah",
+      "definition": "Huruf qalqalah ada 5 yang dikumpulkan dalam singkatan قُطْبُ جَدٍ (Quthbu Jadin).\n\nHurufnya:\nق ط ب ج د"
     },
     {
       "name": "1. Qalqalah Sughra (Kecil)",
-      "definition": "Apabila huruf Qalqalah berharakat sukun asli (bukan karena waqaf) dan letaknya berada di tengah-tengah kata/kalimat. Pantulannya dibaca tipis/ringan tanpa menghentikan nafas secara berlebihan.",
+      "definition": "Terjadi apabila huruf Qalqalah berharakat sukun asli dan letaknya di tengah kata. Pantulannya dibaca ringan.",
       "example": [
         {
-          "arabic": "يَدْخُلُونَ فِي دِينِ اللَّهِ",
-          "latin": "Yadkhuluuna fii diinillah",
-          "note": "Huruf Dal (د) sukun asli di tengah kata 'Yadkhuluuna'"
+          "arabic": "يَدْخُلُونَ",
+          "latin": "Yadkhuluuna"
         },
         {
-          "arabic": "لَقَدْ خَلَقْنَا الْإِنْسَانَ",
-          "latin": "Laqad khalaqnal insaan",
-          "note": "Huruf Qaf (ق) sukun asli di tengah kata 'Khalaqnaa'"
+          "arabic": "لَقَدْ خَلَقْنَا",
+          "latin": "Laqad khalaqnaa"
         }
       ]
     },
     {
       "name": "2. Qalqalah Kubra (Besar)",
-      "definition": "Apabila huruf Qalqalah mati bukan sukun asli, melainkan berharakat hidup namun dibaca mati karena dihentikan (waqaf) di akhir ayat. Pantulannya harus dibaca secara tebal dan kuat.",
+      "definition": "Terjadi apabila huruf Qalqalah mati karena dihentikan (waqaf) di akhir ayat. Pantulannya dibaca kuat.",
       "example": [
         {
-          "arabic": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
-          "latin": "Qul a'uudzu birabbil falaq",
-          "note": "Huruf Qaf (ق) hidup di akhir kalimat disukunkan karena berhenti"
+          "arabic": "بِرَبِّ الْفَلَقِ",
+          "latin": "Birabbil falaq"
+        },
+        {
+          "arabic": "مِنْ عَلَقٍ",
+          "latin": "Min 'alaq"
         }
       ]
     },
     {
-      "name": "3. Qalqalah Akbar (Sangat Besar)",
-      "definition": "Tingkatan qalqalah tertinggi. Terjadi apabila huruf Qalqalah di akhir ayat berharakat tasydid dan diwakafkan. Cara membacanya adalah menekan suara pada huruf tersebut sejenak (seperti menahan tasydid) baru kemudian dipantulkan dengan sangat kuat.",
+      "name": "3. Qalqalah Akbar (Paling Besar)",
+      "definition": "Terjadi apabila huruf Qalqalah di akhir ayat berharakat tasydid dan diwakafkan. Suara ditekan sejenak lalu dipantulkan sangat kuat.",
       "example": [
         {
-          "arabic": "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ",
-          "latin": "Tabbat yadaa abii lahabiw-watabb",
-          "note": "Huruf Ba (ب) bertasydid di akhir ayat. Harus ditahan sejenak baru dipantulkan secara kuat"
+          "arabic": "وَتَبَّ",
+          "latin": "Watabb"
         },
         {
-          "arabic": "ذَٰلِكَ الْيَوْمُ الْحَقُّ",
-          "latin": "Dzaalikal yaumul haqq",
-          "note": "Huruf Qaf (ق) bertasydid di akhir ayat"
+          "arabic": "الْحَقُّ",
+          "latin": "Al-haqq"
         }
       ]
     }
   ],
-  "reference": "Rujukan Kitab: Matn Al-Muqaddimah Al-Jazariyyah (Bab Al-Qalqalah) karya Imam Ibnul Jazari, dan Kitab Taisirur Rahman fi Tajwidil Quran karya Syeikhah Su'ad Al-Fatih."
+  "reference": "Rujukan: Al-Muqaddimah Al-Jazariyyah."
 }

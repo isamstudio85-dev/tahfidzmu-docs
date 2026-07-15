@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
-import 'package:tahfidz_app/features/education/screens/tahsin_list_screen.dart';
+import '../widgets/smart_content_view.dart';
+import 'tahsin_list_screen.dart';
 
 class EducationalListScreen extends StatefulWidget {
   const EducationalListScreen({super.key, required this.type, this.hideAppBar = false});
@@ -398,7 +399,17 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        if (section['definition'] != null) _buildSmartContent(section['definition']),
+        if (section['definition'] != null) SmartContentView(
+          content: section['definition'],
+          onLinkTap: (tag) {
+            if (tag.contains("TAHSIN_FATIHAH")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => TahsinListScreen()),
+              );
+            }
+          },
+        ),
         if (section['letters'] != null) ...[
           _buildLettersWidget(context, section['letters']),
         ],
@@ -442,7 +453,17 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          if (sub['definition'] != null) _buildSmartContent(sub['definition']),
+        if (sub['definition'] != null) SmartContentView(
+          content: sub['definition'],
+          onLinkTap: (tag) {
+            if (tag.contains("TAHSIN_FATIHAH")) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => TahsinListScreen()),
+              );
+            }
+          },
+        ),
           if (sub['letters'] != null) ...[
             _buildLettersWidget(context, sub['letters']),
           ],
@@ -630,7 +651,7 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
       action = () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const TahsinListScreen()),
+          MaterialPageRoute(builder: (_) => TahsinListScreen()),
         );
       };
     }
@@ -657,44 +678,45 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
   Widget _buildExample(BuildContext context, dynamic ex) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8),
+      padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 '• ',
                 style: TextStyle(
                   color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
               ),
               Expanded(
                 child: Text(
-                  ex['arabic'],
+                  ex['arabic'] ?? '',
                   style: GoogleFonts.amiri(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
                   ),
-                  textDirection: TextDirection.rtl,
                 ),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 12.0, top: 4.0),
-            child: Text(
-              '${ex['latin']}${ex['note'] != null ? ' — ${ex['note']}' : ''}',
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                color: isDark ? Colors.white54 : Colors.grey.shade600,
+          if (ex['latin'] != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 14, top: 2),
+              child: Text(
+                ex['latin'],
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isDark ? Colors.white38 : Colors.grey.shade600,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

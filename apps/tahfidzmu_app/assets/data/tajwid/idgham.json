@@ -1,64 +1,49 @@
 {
-  "id": 6,
-  "title": "Hukum Idgham (Mutamatsilain, Mutajanisain, Mutaqaribain)",
-  "introduction": "Idgham artinya meleburkan atau memasukkan huruf mati ke dalam huruf hidup berikutnya sehingga menjadi satu huruf yang bertasydid. Diluar hukum Nun dan Mim mati, terdapat 3 pembagian Idgham penting berdasarkan kesamaan makhraj dan sifat hurufnya:",
+  "title": "Hukum Idgham",
+  "introduction": "Idgham artinya meleburkan atau memasukkan huruf mati ke dalam huruf hidup berikutnya sehingga menjadi satu huruf yang bertasydid. Selain hukum Nun dan Mim mati, terdapat 3 pembagian Idgham lainnya:",
   "sections": [
     {
-      "name": "1. Idgham Mutamatsilain (Mitslain)",
-      "definition": "Pertemuan dua huruf yang sama persis (sama makhraj/tempat keluar dan sama sifatnya), di mana huruf pertama berharakat mati (sukun) dan huruf kedua berharakat hidup. Wajib dibaca melebur sempurna dengan tasydid.",
-      "letters": "Semua huruf hijaiyah yang bertemu sesamanya (kecuali huruf Mad Wawu dan Ya)",
+      "name": "1. Idgham Mutamatsilain",
+      "definition": "Pertemuan dua huruf yang sama persis (makhraj dan sifatnya sama), di mana huruf pertama sukun dan huruf kedua hidup. Wajib dibaca melebur sempurna.",
       "example": [
         {
           "arabic": "اِذْهَبْ بِّكِتَابِي",
-          "latin": "Idz-hab-bikitaabii",
-          "note": "Huruf Ba (ب) sukun bertemu huruf Ba (ب) hidup"
+          "latin": "Idz-hab bikitaabii"
         },
         {
           "arabic": "قَدْ دَخَلُوا",
-          "latin": "Qad-dakhaluu",
-          "note": "Huruf Dal (د) sukun bertemu huruf Dal (د) hidup"
+          "latin": "Qad dakhaluu"
         }
       ]
     },
     {
       "name": "2. Idgham Mutajanisain",
-      "definition": "Pertemuan dua huruf yang memiliki makhraj (tempat keluar) yang sama, tetapi memiliki sifat-sifat huruf yang berbeda. Terjadi jika huruf pertama mati dan huruf kedua hidup. Dalam riwayat Hafs, wajib dibaca melebur pada pasangan huruf tertentu berikut:",
-      "letters": "ت-د-ط (grup lidah-gigi), ذ-ظ-ث (grup gigi-bibir), ب-م (grup bibir)",
+      "definition": "Pertemuan dua huruf yang memiliki makhraj sama, tetapi sifatnya berbeda. Terjadi jika huruf pertama mati dan huruf kedua hidup.\n\nPasangan hurufnya:\n- ت - د - ط\n- ذ - ظ - ث\n- ب - م",
       "example": [
         {
           "arabic": "قَدْ تَبَيَّنَ",
-          "latin": "Qat-tabayyana",
-          "note": "Dal (د) sukun bertemu Ta (ت) hidup. Dal melebur sepenuhnya menjadi Ta"
+          "latin": "Qat tabayyana"
         },
         {
           "arabic": "يَلْهَثْ ذَلِكَ",
-          "latin": "Yalhadz-dzalika",
-          "note": "Tsa (ث) sukun bertemu Dzal (ذ) hidup"
-        },
-        {
-          "arabic": "ارْكَبْ مَعَنَا",
-          "latin": "Irkam-ma'anaa",
-          "note": "Ba (ب) sukun bertemu Mim (م) hidup. Dibaca dengung ditahan"
+          "latin": "Yal-hadz dzaalika"
         }
       ]
     },
     {
       "name": "3. Idgham Mutaqaribain",
-      "definition": "Pertemuan dua huruf yang memiliki makhraj dan sifat yang berdekatan (hampir sama), di mana huruf pertama sukun dan huruf kedua hidup. Wajib melebur pada 2 pasangan berikut:",
-      "letters": "ق bertemu ك (grup lidah belakang), dan ل bertemu ر (grup ujung lidah)",
+      "definition": "Pertemuan dua huruf yang memiliki makhraj dan sifat yang berdekatan.\n\nTerjadi pada pasangan:\n- ق bertemu ك\n- ل bertemu ر",
       "example": [
         {
           "arabic": "أَلَمْ نَخْلُقْكُمْ",
-          "latin": "Alam nakhlukkum",
-          "note": "Qaf (ق) sukun bertemu Kaf (ك) hidup. Qaf melebur menjadi Kaf"
+          "latin": "Alam nakhlukkum"
         },
         {
           "arabic": "وَقُلْ رَبِّ",
-          "latin": "Wa qur-rabbi",
-          "note": "Lam (ل) sukun bertemu Ra (ر) hidup. Lam melebur menjadi Ra"
+          "latin": "Waqur rabbi"
         }
       ]
     }
   ],
-  "reference": "Rujukan Kitab: Matn Tuhfatul Athfal (Bab Fil Mitslaini wal Mutaqaribaini wal Mutajanisaini) karya Syeikh Sulaiman Al-Janzuri, dan Kitab Al-Qawa'idul Asasiyyah fi Ilmit Tajwid."
+  "reference": "Rujukan: Matn Tuhfatul Athfal."
 }

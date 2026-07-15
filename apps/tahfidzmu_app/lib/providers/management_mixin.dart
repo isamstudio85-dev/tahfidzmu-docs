@@ -129,6 +129,7 @@ mixin ManagementMixin on ChangeNotifier, AuthMixin, DataMixin {
 
   Future<void> addSantri(
     String name, {
+    String? id,
     String? halaqahId,
     String? kelas,
     String? nis,
@@ -145,7 +146,7 @@ mixin ManagementMixin on ChangeNotifier, AuthMixin, DataMixin {
     String? username,
     String? password,
   }) async {
-    final id = getCollection('santri').doc().id;
+    final finalId = id ?? getCollection('santri').doc().id;
     String? cloudPhotoUrl;
     if (photoPath != null &&
         photoPath.isNotEmpty &&
@@ -154,14 +155,14 @@ mixin ManagementMixin on ChangeNotifier, AuthMixin, DataMixin {
         cloudPhotoUrl = await firebase.uploadPhoto(
           localPath: photoPath,
           folder: 'santri_photos',
-          fileName: id,
+          fileName: finalId,
         );
       } catch (e) {
         debugPrint('Failed to upload santri photo: $e');
       }
     }
     final santri = Santri(
-      id: id,
+      id: finalId,
       name: name,
       nis: nis,
       email: email,
@@ -177,14 +178,14 @@ mixin ManagementMixin on ChangeNotifier, AuthMixin, DataMixin {
       tanggalLahir: tanggalLahir,
       initialMemorizedJuz: initialMemorizedJuz ?? [],
     );
-    await getCollection('santri').doc(id).set(santri.toJson());
+    await getCollection('santri').doc(finalId).set(santri.toJson());
     
     final userKey = (username?.isNotEmpty ?? false)
         ? normalizeLoginKey(username!)
-        : (nis?.isNotEmpty ?? false ? digitsOnly(nis!) : id);
+        : (nis?.isNotEmpty ?? false ? digitsOnly(nis!) : finalId);
         
     await getCollection('user_mappings').doc(userKey).set({
-      'linkedId': id,
+      'linkedId': finalId,
       'role': 'orangTua',
       'defaultPassword': password ?? userKey,
     });

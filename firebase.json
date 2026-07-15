@@ -8,7 +8,7 @@
   },
   "hosting": {
     "site": "tahfidzmu-db5d9",
-    "public": "web_admin/dist",
+    "public": "apps/web_admin/dist",
     "ignore": [
       "firebase.json",
       "**/.*",

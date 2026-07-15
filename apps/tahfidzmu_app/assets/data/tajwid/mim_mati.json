@@ -1,65 +1,52 @@
 {
-  "id": 2,
   "title": "Hukum Mim Mati",
-  "introduction": "Hukum Mim Mati (مْ) adalah aturan membaca huruf Mim sukun apabila bertemu dengan salah satu dari 28 huruf hijaiyah. Berbeda dengan Nun mati, hukum Mim mati hanya terbagi menjadi 3 jenis saja:",
+  "introduction": "Hukum Mim Mati (مْ) adalah aturan membaca huruf Mim sukun apabila bertemu dengan huruf hijaiyah. Hukumnya terbagi menjadi 3 jenis:",
   "sections": [
     {
       "name": "1. Ikhfa Syafawi",
-      "definition": "Apabila Mim mati (مْ) bertemu dengan huruf Ba (ب). Cara membacanya adalah menyamarkan bunyi Mim di bibir disertai dengungan (ghunnah) yang ditahan 2 harakat. Bibir dirapatkan secara lembut (tidak terlalu ditekan kuat).",
+      "definition": "Apabila Mim mati (مْ) bertemu dengan huruf Ba (ب). Cara membacanya adalah menyamarkan bunyi Mim di bibir disertai dengungan (ghunnah) yang ditahan 2 harakat.",
       "letters": "ب",
       "example": [
         {
           "arabic": "تَرْمِيْهِمْ بِحِجَارَةٍ",
-          "latin": "Tarmiihim bi-hijaarah",
-          "note": "Mim mati bertemu Ba (ب)"
+          "latin": "Tarmiihim bihijaaratin"
         },
         {
           "arabic": "وَمَا هُمْ بِمُؤْمِنِينَ",
-          "latin": "Wa maa hum-bimu'miniin",
-          "note": "Mim mati bertemu Ba (ب)"
+          "latin": "Wamaa hum bimu'miniin"
         }
       ]
     },
     {
-      "name": "2. Idgham Mutamatsilain (Idgham Mimi / Mitslain)",
-      "definition": "Apabila Mim mati (مْ) bertemu dengan sesama huruf Mim (م). Cara membacanya adalah memasukkan Mim pertama ke dalam Mim kedua secara utuh dengan disertai dengung sempurna (ghunnah) yang ditahan selama 2 harakat.",
+      "name": "2. Idgham Mutamatsilain (Idgham Mimi)",
+      "definition": "Apabila Mim mati (مْ) bertemu dengan sesama huruf Mim (م). Cara membacanya adalah memasukkan Mim pertama ke dalam Mim kedua disertai dengung sempurna selama 2 harakat.",
       "letters": "م",
       "example": [
         {
           "arabic": "لَهُمْ مَّا يَشَاءُوْنَ",
-          "latin": "Lahum-maa yasyaa-uun",
-          "note": "Mim mati bertemu Mim (م) bertasydid"
+          "latin": "Lahum maa yasyaa'uun"
         },
         {
           "arabic": "فِي قُلُوبِهِمْ مَرَضٌ",
-          "latin": "Fii quluubihim-maradh",
-          "note": "Mim mati bertemu Mim (م)"
+          "latin": "Fii quluubihim maradhun"
         }
       ]
     },
     {
       "name": "3. Izhar Syafawi",
-      "definition": "Apabila Mim mati (مْ) bertemu dengan salah satu huruf hijaiyah selain huruf Ba (ب) dan Mim (م). Cara membacanya adalah melafalkan bunyi Mim sukun secara jelas di bibir tanpa dengung. Bunyi Mim harus langsung terputus bersih sebelum masuk ke huruf berikutnya.",
-      "letters": "26 Huruf Hijaiyah selain ب dan م",
-      "sub_sections": [
-        {
-          "name": "⚠️ Peringatan Penting (Izhar Syafawi Syadid)",
-          "definition": "Harus sangat berhati-hati dan dibaca ekstra jelas (tanpa mendengung) apabila Mim mati bertemu dengan huruf Wawu (و) atau Fa (ف). Karena kedekatan makhraj (tempat keluar) huruf-huruf tersebut di bibir, pembaca seringkali tidak sengaja mendengungkannya."
-        }
-      ],
+      "definition": "Apabila Mim mati (مْ) bertemu dengan huruf hijaiyah selain Ba (ب) dan Mim (م). Cara membacanya adalah melafalkan bunyi Mim secara jelas tanpa dengung.\n\n⚠️ Peringatan:\nHarus ekstra jelas jika bertemu huruf Wawu (و) atau Fa (ف) agar tidak terdengar samar.",
+      "letters": "Selain ب dan م",
       "example": [
         {
           "arabic": "لَعَلَّكُمْ تَتَّقُوْنَ",
-          "latin": "La'allakum tattaquun",
-          "note": "Mim mati bertemu Ta (ت)"
+          "latin": "La'allakum tattaquun"
         },
         {
           "arabic": "عَلَيْهِمْ وَلَا الضَّالِّينَ",
-          "latin": "‘alaihim wa ladh-dhaalliin",
-          "note": "Mim mati bertemu Wawu (و) — Harus dibaca jelas, dilarang mendengung!"
+          "latin": "'Alaihim waladh dhaalliin"
         }
       ]
     }
   ],
-  "reference": "Rujukan Kitab: Matn Tuhfatul Athfal (Bab Ahkamul Mimis Sakinah) karya Syeikh Sulaiman Al-Janzuri, dan Kitab Hidayatut Tali fi Tajwidil Quran."
+  "reference": "Rujukan: Matn Tuhfatul Athfal."
 }

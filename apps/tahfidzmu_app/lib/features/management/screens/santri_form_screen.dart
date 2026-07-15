@@ -43,6 +43,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
   List<int> _initialJuz = [];
   bool _showAccountInfo = false;
   bool _isSaving = false;
+  late final String _santriId;
 
   bool get _isEdit => widget.existing != null;
 
@@ -57,6 +58,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
     _namaOrangTuaCtrl = TextEditingController(text: s?.namaOrangTua ?? s?.namaAyah ?? s?.namaIbu ?? '');
     _nomorHpWaliCtrl = TextEditingController(text: s?.nomorHpWali ?? '');
     _tanggalLahirCtrl = TextEditingController(text: s?.tanggalLahir ?? '');
+    _santriId = s?.id ?? context.read<AppProvider>().getCollection('santri').doc().id;
 
     _usernameCtrl = TextEditingController();
     _passwordCtrl = TextEditingController();
@@ -404,6 +406,7 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
       } else {
         await provider.addSantri(
           _namaCtrl.text.trim(),
+          id: _santriId,
           nis: _nisCtrl.text.trim().isEmpty ? null : _nisCtrl.text.trim(),
           email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
           jenisKelamin: _jenisKelamin,
@@ -606,26 +609,11 @@ class _SantriFormScreenState extends State<SantriFormScreen> {
                       border: Border.all(color: AppTheme.primaryGreen.withValues(alpha: 0.2), width: 1.5),
                     ),
                     child: Center(
-                      child: ValueListenableBuilder<TextEditingValue>(
-                        valueListenable: _nisCtrl,
-                        builder: (context, val, _) {
-                          final currentId = val.text.trim();
-                          return currentId.isNotEmpty
-                              ? QrImageView(
-                                  data: currentId,
-                                  version: QrVersions.auto,
-                                  size: 90.0,
-                                  backgroundColor: Colors.white,
-                                )
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.qr_code_2_rounded, color: Colors.grey, size: 40),
-                                    const SizedBox(height: 4),
-                                    Text('QR Otomatis', style: TextStyle(color: Colors.grey.shade500, fontSize: 10)),
-                                  ],
-                                );
-                        },
+                      child: QrImageView(
+                        data: _santriId,
+                        version: QrVersions.auto,
+                        size: 90.0,
+                        backgroundColor: Colors.white,
                       ),
                     ),
                   ),

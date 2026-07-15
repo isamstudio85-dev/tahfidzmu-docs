@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
+import '../widgets/smart_content_view.dart';
 
 class PondokKnowledgeScreen extends StatefulWidget {
   const PondokKnowledgeScreen({super.key});
@@ -91,13 +92,7 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
     return Scaffold(
       backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       appBar: AppBar(
-        title: Text(
-          provider.pesantrenInfo.nama.trim().isNotEmpty
-              ? 'Wawasan ${provider.pesantrenInfo.nama.trim()}'
-              : 'Pengetahuan Pondok',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        title: const Text('TENTANG PONDOK'),
         backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -105,7 +100,15 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
       body: isWide
           ? Row(
               children: [
-                SizedBox(width: 320, child: Container(decoration: const BoxDecoration(border: Border(right: BorderSide(color: Color(0xFFE5D5B8)))), child: listWidget)),
+                SizedBox(
+                  width: 320, 
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border(right: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200))
+                    ), 
+                    child: listWidget
+                  )
+                ),
                 Expanded(
                   child: _selectedIndex == null || _selectedIndex! < 0 || _selectedIndex! >= displayList.length
                       ? Center(
@@ -129,69 +132,76 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
             )
           : displayList.isEmpty
               ? listWidget
-              : ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: displayList.length,
-                  separatorBuilder: (ctx, i) => Divider(color: isDark ? Colors.white10 : Colors.grey.shade200, height: 1),
-                  itemBuilder: (ctx, i) {
-                    final item = displayList[i];
-                    return ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => PondokDetailScreen(
-                              item: item,
-                              isAdmin: isAdmin,
-                              onEdit: () => Navigator.push(
+              : Column(
+                  children: [
+                    _buildBanner(context),
+                    Expanded(
+                      child: ListView.separated(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: displayList.length,
+                        separatorBuilder: (ctx, i) => Divider(color: isDark ? Colors.white10 : Colors.grey.shade200, height: 1),
+                        itemBuilder: (ctx, i) {
+                          final item = displayList[i];
+                          return ListTile(
+                            onTap: () {
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => PondokKnowledgeEditPage(item: item, index: i),
+                                  builder: (_) => PondokDetailScreen(
+                                    item: item,
+                                    isAdmin: isAdmin,
+                                    onEdit: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PondokKnowledgeEditPage(item: item, index: i),
+                                      ),
+                                    ),
+                                    onDelete: () => _deleteItem(i),
+                                  ),
                                 ),
+                              );
+                            },
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1), 
+                                shape: BoxShape.circle,
                               ),
-                              onDelete: () => _deleteItem(i),
+                              child: Icon(
+                                Icons.school_rounded, 
+                                color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, 
+                                size: 18,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1), 
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.school_rounded, 
-                          color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, 
-                          size: 18,
-                        ),
-                      ),
-                      title: Text(
-                        item['title'] ?? '',
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold, 
-                          fontSize: 13, 
-                          color: isDark ? Colors.white : const Color(0xFF1E293B),
-                        ),
-                      ),
-                      subtitle: item['description'] != null
-                          ? Text(
-                              item['description'],
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: isDark ? Colors.white38 : Colors.grey.shade600,
+                            title: Text(
+                              item['title'] ?? '',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold, 
+                                fontSize: 13, 
+                                color: isDark ? Colors.white : const Color(0xFF1E293B),
                               ),
-                            )
-                          : null,
-                      trailing: Icon(
-                        Icons.chevron_right_rounded, 
-                        color: isDark ? Colors.white30 : Colors.grey.shade400,
-                        size: 18,
+                            ),
+                            subtitle: item['description'] != null
+                                ? Text(
+                                    item['description'],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: isDark ? Colors.white38 : Colors.grey.shade600,
+                                    ),
+                                  )
+                                : null,
+                            trailing: Icon(
+                              Icons.chevron_right_rounded, 
+                              color: isDark ? Colors.white30 : Colors.grey.shade400,
+                              size: 18,
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
       floatingActionButton: isAdmin
           ? FloatingActionButton.extended(
@@ -202,6 +212,49 @@ class _PondokKnowledgeScreenState extends State<PondokKnowledgeScreen> {
               label: const Text('Tambah Materi'),
             )
           : null,
+    );
+  }
+
+  Widget _buildBanner(BuildContext context) {
+    final provider = context.read<AppProvider>();
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppTheme.darkGreen, AppTheme.primaryGreen],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primaryGreen.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.school_rounded, color: Colors.white, size: 32),
+          const SizedBox(height: 12),
+          Text(
+            'Informasi Pondok',
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          Text(
+            provider.pesantrenName,
+            style: const TextStyle(color: Colors.white70, fontSize: 12),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -278,79 +331,7 @@ class _PondokDetailView extends StatelessWidget {
                 child: item['imagePath'].toString().startsWith('http') ? Image.network(item['imagePath'], fit: BoxFit.cover, width: double.infinity) : Image.file(File(item['imagePath']), fit: BoxFit.cover, width: double.infinity, errorBuilder: (_, __, ___) => const SizedBox()),
               ),
             ),
-          if (isListType)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(listItems.length, (index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (type == 'bullet')
-                        Container(
-                          margin: const EdgeInsets.only(top: 8, right: 14, left: 4),
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: isDark ? AppTheme.accentGreen : AppTheme.primaryGreen, 
-                            shape: BoxShape.circle,
-                          ),
-                        )
-                      else
-                        Container(
-                          margin: const EdgeInsets.only(top: 2, right: 12),
-                          width: 24,
-                          height: 24,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryGreen.withValues(alpha: isDark ? 0.2 : 0.1), 
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            '${index + 1}',
-                            style: TextStyle(
-                              color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, 
-                              fontSize: 12, 
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      Expanded(
-                        child: Text(
-                          listItems[index],
-                          style: GoogleFonts.poppins(
-                            fontSize: 15, 
-                            color: isDark ? Colors.white70 : const Color(0xFF1E293B), 
-                            height: 1.6, 
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            )
-          else
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: contentText.toString().split('\n').map((para) {
-                if (para.trim().isEmpty) return const SizedBox(height: 8);
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: Text(
-                    para,
-                    style: GoogleFonts.poppins(
-                      fontSize: 15, 
-                      color: isDark ? Colors.white70 : const Color(0xFF1E293B), 
-                      height: 1.7, 
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+          SmartContentView(content: contentText),
           if (isAdmin)
             Padding(
               padding: const EdgeInsets.only(top: 32),
@@ -417,7 +398,7 @@ class _PondokKnowledgeEditPageState extends State<PondokKnowledgeEditPage> {
             const SizedBox(height: 16),
             TextFormField(controller: _descCtrl, decoration: const InputDecoration(labelText: 'Keterangan Singkat')),
             const SizedBox(height: 24),
-            const Text('Format Tampilan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF2E5A27))),
+            const Text('Format Tampilan', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.darkGreen)),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -447,7 +428,7 @@ class _PondokKnowledgeEditPageState extends State<PondokKnowledgeEditPage> {
         label: Center(child: Text(label)),
         selected: active,
         onSelected: (s) => setState(() => _contentType = type),
-        selectedColor: const Color(0xFF2E5A27).withValues(alpha: 0.2),
+        selectedColor: AppTheme.primaryGreen.withValues(alpha: 0.2),
       ),
     );
   }

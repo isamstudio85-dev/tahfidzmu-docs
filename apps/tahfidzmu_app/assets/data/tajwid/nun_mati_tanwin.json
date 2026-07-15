@@ -1,65 +1,54 @@
 {
-  "id": 1,
   "title": "Hukum Nun Mati dan Tanwin",
   "introduction": "Apabila Nun Sukun (نْ) atau Tanwin ( ً  ٍ  ٌ ) bertemu dengan salah satu huruf Hijaiyah, maka hukum bacanya terbagi menjadi 4 bagian dasar. Pembagian ini disandarkan secara mutawatir pada kaidah qiraah imam-imam tajwid.",
   "sections": [
     {
       "name": "1. Izhar Halqi",
-      "definition": "Izhar artinya jelas/terang. Apabila Nun sukun atau Tanwin bertemu dengan salah satu huruf halqi (tenggorokan), maka suaranya harus dibaca jelas, tegas, tanpa mendengung (ghunnah).",
-      "letters": "ء هـ ع ح غ خ",
+      "definition": "Izhar secara bahasa artinya jelas atau terang. Apabila Nun sukun atau Tanwin bertemu dengan salah satu huruf Halqi (tenggorokan), maka suaranya harus dibaca jelas, tegas, tanpa mendengung (ghunnah).\n\nHuruf-hurufnya:\nء هـ ع ح غ خ",
       "example": [
         {
           "arabic": "مَنْ آمَنَ",
-          "latin": "Man aamana",
-          "note": "Nun mati bertemu Alif (ء)"
+          "latin": "Man aamana"
         },
         {
           "arabic": "عَذَابٌ أَلِيمٌ",
-          "latin": "'Adzabun aliim",
-          "note": "Tanwin bertemu Alif (ء)"
+          "latin": "'Adzaabun aliim"
         },
         {
           "arabic": "مِنْ غَيْرِكُمْ",
-          "latin": "Min ghairikum",
-          "note": "Nun mati bertemu Ghain (غ)"
+          "latin": "Min ghairikum"
         }
       ]
     },
     {
       "name": "2. Idgham",
-      "definition": "Idgham secara bahasa artinya memasukkan atau meleburkan sesuatu ke dalam sesuatu yang lain. Dalam istilah tajwid, melafalkan dua huruf menjadi satu seperti huruf yang bertasydid. Terbagi menjadi dua kelompok utama:",
+      "definition": "Idgham secara bahasa artinya memasukkan atau meleburkan. Dalam istilah tajwid, melafalkan dua huruf menjadi satu seperti huruf yang bertasydid. Terbagi menjadi dua kelompok utama:",
       "sub_sections": [
         {
           "name": "a. Idgham Bi Ghunnah (Ma'al Ghunnah)",
-          "definition": "Meleburkan suara Nun mati/tanwin disertai dengungan (ghunnah) yang ditahan 2 harakat. Terjadi jika bertemu 4 huruf berikut:",
-          "letters": "ي ن م و",
+          "definition": "Meleburkan suara Nun mati atau Tanwin disertai dengungan (ghunnah) yang ditahan 2 harakat.\n\nHuruf-hurufnya:\nي ن م و",
           "example": [
             {
               "arabic": "مَنْ يَقُوْلُ",
-              "latin": "May yaquulu",
-              "note": "Nun mati bertemu Ya' (ي)"
+              "latin": "May yaquulu"
             },
             {
               "arabic": "لَهَبٍ وَتَبَّ",
-              "latin": "Lahabiw-watabb",
-              "note": "Tanwin bertemu Wawu (و)"
+              "latin": "Lahabiw watabb"
             }
           ]
         },
         {
           "name": "b. Idgham Bila Ghunnah (Bighairi Ghunnah)",
-          "definition": "Meleburkan suara Nun mati/tanwin secara sempurna tanpa disertai dengungan sama sekali. Terjadi jika bertemu 2 huruf berikut:",
-          "letters": "ل ر",
+          "definition": "Meleburkan suara Nun mati atau Tanwin secara sempurna tanpa disertai dengungan sama sekali.\n\nHuruf-hurufnya:\nل ر",
           "example": [
             {
               "arabic": "مِنْ رَبِّهِمْ",
-              "latin": "Mir rabbihim",
-              "note": "Nun mati bertemu Ra' (ر)"
+              "latin": "Mir rabbihim"
             },
             {
               "arabic": "هُدًى لِّلْمُتَّقِينَ",
-              "latin": "Hudal-lilmuttaqiin",
-              "note": "Tanwin bertemu Lam (ل)"
+              "latin": "Hudal lilmuttaqiin"
             }
           ]
         }
@@ -67,49 +56,42 @@
     },
     {
       "name": "3. Iqlab",
-      "definition": "Iqlab secara bahasa artinya membalikkan atau mengganti. Secara istilah, mengubah bunyi Nun mati atau Tanwin menjadi bunyi huruf Mim (م) sukun secara samar ketika bertemu huruf Ba (ب), disertai dengan penahanan dengung (ghunnah) 2 harakat.",
-      "letters": "ب",
+      "definition": "Iqlab secara bahasa artinya membalikkan atau mengganti. Secara istilah, mengubah bunyi Nun mati atau Tanwin menjadi bunyi huruf Mim (م) sukun secara samar ketika bertemu huruf Ba (ب), disertai dengan penahanan dengung (ghunnah) 2 harakat.\n\nHurufnya:\nب",
       "example": [
         {
           "arabic": "مِنْ بَعْدِ",
-          "latin": "Mim ba'di",
-          "note": "Nun mati bertemu Ba' (ب)"
+          "latin": "Mim ba'di"
         },
         {
           "arabic": "سَمِيعٌ بَصِيرٌ",
-          "latin": "Samii'um-bashiir",
-          "note": "Tanwin bertemu Ba' (ب)"
+          "latin": "Samii'um bashiir"
         }
       ]
     },
     {
       "name": "4. Ikhfa Haqiqi",
-      "definition": "Ikhfa secara bahasa artinya menyamarkan atau menyembunyikan. Secara istilah, melafalkan huruf sukun di antara bunyi Izhar dan Idgham tanpa tasydid namun disertai dengung (ghunnah) yang ditahan 2 harakat. Hurufnya ada 15.",
-      "letters": "ت ث ج د ذ ز س ش ص ض ط ظ ف ق ك",
+      "definition": "Ikhfa secara bahasa artinya menyamarkan atau menyembunyikan. Secara istilah, melafalkan huruf sukun di antara bunyi Izhar dan Idgham tanpa tasydid namun disertai dengung (ghunnah) yang ditahan 2 harakat.\n\nHuruf-hurufnya (15):\nت ث ج د ذ ز س ش ص ض ط ظ ف ق ك",
       "sub_sections": [
         {
-          "name": "Tingkatan Ikhfa Haqiqi (Berdasarkan Kedekatan Makhraj)",
-          "definition": "Pembagian Ikhfa Haqiqi terbagi menjadi 3 jenis utama sesuai dengan kedekatan jarak makhrajnya:\n\n1. Ikhfa Kubra / Aqrab (Dekat):\nCara membaca samarnya lebih dekat ke huruf berikutnya (suara samarnya dominan, dengungnya tipis/sebentar). Terjadi jika bertemu 3 huruf: ت - د - ط.\n\n2. Ikhfa Sughra / Ab'ad (Jauh):\nCara membaca samarnya lebih jauh atau ke pangkal hidung (suara dengungnya dominan dan tebal). Terjadi jika bertemu 2 huruf: ق - ك.\n\n3. Ikhfa Wusta / Ausath (Sedang):\nCara membaca samar dan dengungnya seimbang (berada di tengah-tengah). Terjadi jika bertemu 10 huruf sisanya: ث - ج - ذ - ز - س - ش - ص - ض - ظ - ف."
+          "name": "Tingkatan Ikhfa Haqiqi",
+          "definition": "Berdasarkan kedekatan makhrajnya, Ikhfa Haqiqi terbagi menjadi 3:\n\n1. Ikhfa Kubra / Aqrab (Dekat):\nCara membaca samarnya lebih dekat ke huruf berikutnya. Terjadi jika bertemu: ت - د - ط.\n\n2. Ikhfa Sughra / Ab'ad (Jauh):\nCara membaca dengungnya lebih dominan dan tebal. Terjadi jika bertemu: ق - ك.\n\n3. Ikhfa Wusta / Ausath (Sedang):\nCara membaca samar dan dengungnya seimbang. Terjadi jika bertemu 10 huruf sisanya: ث - ج - ذ - ز - س - ش - ص - ض - ظ - ف."
         }
       ],
       "example": [
         {
           "arabic": "مِنْ تَحْتِهَا",
-          "latin": "Min tahtiha",
-          "note": "Nun mati bertemu Ta' (ت) — Contoh Ikhfa Kubra (Aqrab)"
+          "latin": "Min tahtihaa"
         },
         {
           "arabic": "مِنْ قَبْلِ",
-          "latin": "Minq-qabli",
-          "note": "Nun mati bertemu Qaf (ق) — Contoh Ikhfa Sughra (Ab'ad)"
+          "latin": "Min qabli"
         },
         {
           "arabic": "أَنْفُسَكُمْ",
-          "latin": "Anfusakum",
-          "note": "Nun mati bertemu Fa' (ف) — Contoh Ikhfa Wusta (Ausath)"
+          "latin": "Anfusakum"
         }
       ]
     }
   ],
-  "reference": "Rujukan Kitab: Matn Tuhfatul Athfal (Bab Nun Sukun wa Tanwin) karya Syeikh Sulaiman Al-Janzuri, dan Kitab Al-Muqaddimah Al-Jazariyyah karya Imam Ibnul Jazari."
+  "reference": "Rujukan: Matn Tuhfatul Athfal & Al-Muqaddimah Al-Jazariyyah."
 }

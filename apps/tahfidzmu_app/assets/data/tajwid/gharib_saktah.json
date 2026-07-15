@@ -1,79 +1,51 @@
 {
-  "id": 8,
   "title": "Bacaan Gharib & Saktah",
-  "introduction": "Bacaan Gharib secara bahasa artinya bacaan yang aneh, tersembunyi, atau asing (tidak umum). Dalam qiraah Imam Ashim riwayat Hafs jalur Syathibiyyah, terdapat beberapa bacaan khusus yang cara pelafalannya keluar dari kaidah penulisan standar mushaf:",
+  "introduction": "Bacaan Gharib adalah bacaan yang memiliki aturan khusus atau asing (tidak umum) dalam Al-Quran riwayat Hafs.",
   "sections": [
     {
       "name": "1. Imalah",
-      "definition": "Imalah secara bahasa artinya condong atau miring. Secara istilah, memiringkan bunyi harakat Fathah ke arah Kasrah, serta memiringkan bunyi Alif ke arah Ya (suara condong menyerupai bunyi 'E' dalam kata 'sate' atau 'meja'). Hanya ada 1 tempat di dalam Al-Quran.",
+      "definition": "Memiringkan bunyi fathah ke arah kasrah (seperti bunyi 'e' pada kata 'sate').\n\nLokasi: QS. Hud ayat 41.",
       "example": [
         {
-          "arabic": "بِسْمِ اللَّهِ مَجْرَاهَا",
-          "latin": "Bismillaahi majreehaa",
-          "note": "Surah Hud ayat 41. Lafal 'Majraaha' dibaca miring menjadi 'Majreehaa'"
+          "arabic": "مَجْرَاهَا",
+          "latin": "Majreehaa"
         }
       ]
     },
     {
       "name": "2. Isymam",
-      "definition": "Isymam artinya mencampurkan fathah dengan dhommah. Secara praktik, memonyongkan bibir (tanpa mengeluarkan suara dhommah) di tengah-tengah dengung saat membaca kata tertentu sebagai isyarat bahwa asal huruf tersebut berharakat dhommah. Hanya ada 1 tempat di Al-Quran.",
+      "definition": "Memonyongkan bibir di tengah dengung sebagai isyarat dhommah.\n\nLokasi: QS. Yusuf ayat 11.",
       "example": [
         {
-          "arabic": "قَالُوا يَا أَبَانَا مَا لَكَ لَا تَأْمَنَّا عَلَىٰ يُوسُفَ",
-          "latin": "Maa laka laa ta'mannaa",
-          "note": "Surah Yusuf ayat 11. Di tengah lafal 'Laa Ta'mannaa' (pada huruf Nun tasydid), bibir dimonyongkan ke depan sejenak."
+          "arabic": "لَا تَأْمَنَّا",
+          "latin": "Laa ta'mannaa (dengan isyarat bibir)"
         }
       ]
     },
     {
       "name": "3. Tashil",
-      "definition": "Tashil secara bahasa artinya memberi kemudahan. Secara istilah, meringankan pengucapan Hamzah kedua yang berdekatan dengan Hamzah pertama (suara Hamzah kedua dibaca samar di antara bunyi Hamzah dan Alif). Hanya ada 1 tempat di Al-Quran.",
+      "definition": "Meringankan bunyi hamzah kedua menjadi samar antara hamzah dan alif.\n\nLokasi: QS. Fussilat ayat 44.",
       "example": [
         {
-          "arabic": "ءَأَعْجَمِيٌّ وَعَرَبِيٌّ",
-          "latin": "Aa-e'jamiyyuw-wa 'arabiyy",
-          "note": "Surah Fussilat ayat 44. Hamzah kedua dibaca samar/lunak."
+          "arabic": "ءَأَعْجَمِيٌّ",
+          "latin": "Aa'jamiyyun (hamzah kedua samar)"
         }
       ]
     },
     {
-      "name": "4. Naql",
-      "definition": "Naql artinya memindahkan. Kaidah membaca dengan memindahkan harakat suatu huruf ke huruf sukun sebelumnya. Di dalam Al-Quran hanya terdapat di 1 tempat.",
+      "name": "4. Saktah",
+      "definition": "Berhenti sejenak (sekitar 2 harakat) tanpa mengambil nafas, lalu melanjutkan bacaan.\n\nDitandai dengan huruf Sin kecil (س) di atas ayat.",
       "example": [
         {
-          "arabic": "بِئْسَ الِاسْمُ الْفُسُوقُ بَعْدَ الْإِيمَانِ",
-          "latin": "Bi'sal-ismul fusuuq",
-          "note": "Surah Al-Hujurat ayat 11. Kalimat 'Bi'sa al-ismu' dibaca menyatu menjadi 'Bi'sal-ismu' (harakat kasrah hamzah dipindah ke lam)."
-        }
-      ]
-    },
-    {
-      "name": "5. Saktah",
-      "definition": "Saktah artinya diam atau menahan. Cara membacanya adalah menghentikan bacaan sejenak (selama kurang lebih 1 alif / 2 harakat) tanpa memutuskan nafas (dilarang mengambil nafas di sela saktah), lalu melanjutkan bacaan kembali. Terdapat 4 tempat wajib di Al-Quran:",
-      "letters": "Ditandai dengan huruf Sin kecil (س) di atas ayat",
-      "example": [
-        {
-          "arabic": "وَلَمْ يَجْعَلْ لَهُ عِوَجًا ۜ قَيِّمًا",
-          "latin": "‘iwajaa (berhenti sejenak tanpa nafas) qayyimaa",
-          "note": "Surah Al-Kahfi ayat 1-2. Saktah wajib di antara kata 'iwajaa' dan 'qayyimaa'."
+          "arabic": "عِوَجًا ۜ قَيِّمًا",
+          "latin": "'Iwajaa (berhenti sejenak) qayyiman"
         },
         {
-          "arabic": "مِنْ مَرْقَدِنَا ۜ ۗ هَٰذَا مَا وَعَدَ الرَّحْمَٰنُ",
-          "latin": "Marqadinaa (berhenti sejenak tanpa nafas) haadzaa",
-          "note": "Surah Yasin ayat 52."
-        },
-        {
-          "arabic": "وَقِيلَ مَنْ ۜ رَاقٍ",
-          "latin": "Man (berhenti sejenak tanpa nafas) raaq",
-          "note": "Surah Al-Qiyamah ayat 27."
-        },
-        {
-          "arabic": "كَلَّا ۖ بَلْ ۜ رَانَ عَلَىٰ قُلُوبِهِمْ",
-          "latin": "Bal (berhenti sejenak tanpa nafas) raana",
-          "note": "Surah Al-Mutaffifin ayat 14."
+          "arabic": "مَنْ ۜ رَاقٍ",
+          "latin": "Man (berhenti sejenak) raaq"
         }
       ]
     }
   ],
-  "reference": "Rujukan Kitab: Kitab Fathul Qadir fi Syarhi Matn Tuhfatil Athfal, Kitab Ghara'ibul Qur'an, dan standar qiraah jalur Syathibiyyah."
+  "reference": "Rujukan: Qiraah Imam Ashim riwayat Hafs."
 }

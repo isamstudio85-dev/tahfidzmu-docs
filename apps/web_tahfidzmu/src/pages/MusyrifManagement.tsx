@@ -62,6 +62,8 @@ export default function MusyrifManagement() {
       load();
       loadPesantrenName();
       loadHalaqah();
+    } else if (profile) {
+      setLoading(false);
     }
   }, [profile]);
 
@@ -267,11 +269,12 @@ export default function MusyrifManagement() {
   const handleOpenQr = (item: any) => {
     const entry = Object.entries(mappings).find(([, value]) => value.linkedId === item.id);
     const loginKey = entry ? entry[0] : ((item.nip || "").replace(/\D/g, "") || item.id);
+    const pwd = entry?.[1]?.defaultPassword || loginKey;
     setSelected({
       ...item,
       loginKey,
-      password: entry?.[1]?.defaultPassword || loginKey,
-      qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}`,
+      password: pwd,
+      qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}:${pwd}`,
     });
     setQrOpen(true);
   };
@@ -374,6 +377,21 @@ export default function MusyrifManagement() {
   const filtered = [...list]
     .filter((item) => (item.nama || "").toLowerCase().includes(search.toLowerCase()) || (item.nip || "").includes(search))
     .sort((a, b) => String(a.nama || "").localeCompare(String(b.nama || ""), "id", { sensitivity: "base" }));
+
+  if (profile?.role === "superAdmin" && !profile?.pesantrenId) {
+    return (
+      <>
+        <PageMeta title="Kelola Musyrif | TahfidzMU Admin" description="Administrasi data musyrif dan akun login." />
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-2xl">
+          <ShieldAlert className="w-12 h-12 text-amber-500 mb-3" />
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Pesantren Belum Dipilih</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-sm">
+            Anda masuk sebagai Super Admin. Silakan pilih pesantren terlebih dahulu melalui menu <strong>Pesantren</strong> untuk mengelola data.
+          </p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

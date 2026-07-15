@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import '../widgets/smart_content_view.dart';
 
 class TahsinListScreen extends StatefulWidget {
   const TahsinListScreen({super.key});
@@ -220,9 +221,11 @@ class _CategoryAccordionState extends State<_CategoryAccordion> {
                   title: Text(
                     s['name'], 
                     style: GoogleFonts.poppins(
-                      fontSize: 12, 
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isDark ? Colors.white70 : const Color(0xFF1E293B),
+                      fontSize: 13, 
+                      fontWeight: FontWeight.bold,
+                      color: isSelected
+                        ? (isDark ? AppTheme.accentGreen : AppTheme.darkGreen)
+                        : (isDark ? Colors.white70 : const Color(0xFF1E293B)),
                     ),
                   ),
                   leading: Icon(Icons.play_circle_outline, size: 16, color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen),
@@ -269,10 +272,9 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
     final section = widget.wideModeSection ?? widget.sections[_currentIndex];
     final hasPrev = !widget.hideAppBar && _currentIndex > 0;
     final hasNext = !widget.hideAppBar && _currentIndex < widget.sections.length - 1;
-    
     return Scaffold(
       appBar: widget.hideAppBar ? null : AppBar(
-        title: const Text('Belajar Tahsin'),
+        title: Text(widget.categoryTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
         backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -287,33 +289,42 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
               if (widget.hideAppBar) ...[
                 Text(
                   section['name'],
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: isDark ? Colors.white : AppTheme.darkGreen),
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(widget.categoryTitle, style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 20),
                 Divider(color: isDark ? Colors.white10 : Colors.grey.shade200),
                 const SizedBox(height: 20),
-              ],
-              
-              if (!widget.hideAppBar) ...[
-                // NAVIGATION HEADER (Mobile Only)
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9), 
-                    borderRadius: BorderRadius.circular(8), 
-                    border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
-                  ),
-                  child: Row(
-                    children: [
-                      IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: hasPrev ? (isDark ? AppTheme.accentGreen : AppTheme.darkGreen) : Colors.grey.shade400, size: 18), onPressed: hasPrev ? () => setState(() => _currentIndex--) : null),
-                      Expanded(child: Center(child: Text(section['name'], style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF1E293B)), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis))),
-                      IconButton(icon: Icon(Icons.arrow_forward_ios_rounded, color: hasNext ? (isDark ? AppTheme.accentGreen : AppTheme.darkGreen) : Colors.grey.shade400, size: 18), onPressed: hasNext ? () => setState(() => _currentIndex++) : null),
-                    ],
-                  ),
+              ] else ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        section['name'],
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.arrow_back_ios_new_rounded, color: hasPrev ? (isDark ? AppTheme.accentGreen : AppTheme.darkGreen) : Colors.grey.shade400, size: 18), 
+                      onPressed: hasPrev ? () => setState(() => _currentIndex--) : null,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.arrow_forward_ios_rounded, color: hasNext ? (isDark ? AppTheme.accentGreen : AppTheme.darkGreen) : Colors.grey.shade400, size: 18), 
+                      onPressed: hasNext ? () => setState(() => _currentIndex++) : null,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
               ],
   
               if (section['youtubeId'] != null) ...[
@@ -331,14 +342,7 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  section['definition'], 
-                  style: GoogleFonts.poppins(
-                    fontSize: 14, 
-                    height: 1.7, 
-                    color: isDark ? Colors.white70 : const Color(0xFF1E293B),
-                  ),
-                ),
+                SmartContentView(content: section['definition']),
                 const SizedBox(height: 24),
               ],
   
@@ -398,7 +402,7 @@ class _LockedYoutubePlayerState extends State<LockedYoutubePlayer> {
     _checkConnectivity();
     _controller = YoutubePlayerController(
       initialVideoId: widget.youtubeId,
-      flags: const YoutubePlayerFlags(
+      flags: YoutubePlayerFlags(
         autoPlay: false,
         mute: false,
         hideControls: true, 
@@ -490,7 +494,7 @@ class _LockedYoutubePlayerState extends State<LockedYoutubePlayer> {
                 Row(
                   children: [
                     Text(_currentTime, style: const TextStyle(color: Colors.white70, fontSize: 11)),
-                    Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: LinearProgressIndicator(value: _progress, backgroundColor: Colors.white24, valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen), minHeight: 4, borderRadius: BorderRadius.circular(2)))),
+                    Expanded(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 12), child: LinearProgressIndicator(value: _progress, backgroundColor: Colors.white24, valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryGreen), minHeight: 4, borderRadius: BorderRadius.circular(2)))),
                     Text(_totalTime, style: const TextStyle(color: Colors.white70, fontSize: 11)),
                   ],
                 ),

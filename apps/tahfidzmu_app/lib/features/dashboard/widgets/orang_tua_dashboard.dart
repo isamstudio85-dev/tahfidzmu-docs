@@ -226,16 +226,11 @@ class OrangTuaDashboard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              FutureBuilder<String>(
-                future: context.read<AppProvider>().getLoginQrData(child.id),
-                builder: (context, snapshot) {
-                  return QrImageView(
-                    data: snapshot.data ?? (child.nis ?? child.id),
-                    version: QrVersions.auto,
-                    size: 180.0,
-                    backgroundColor: Colors.white,
-                  );
-                },
+              QrImageView(
+                data: child.id,
+                version: QrVersions.auto,
+                size: 180.0,
+                backgroundColor: Colors.white,
               ),
               const SizedBox(height: 20),
               Divider(color: Colors.grey.shade300, height: 1),

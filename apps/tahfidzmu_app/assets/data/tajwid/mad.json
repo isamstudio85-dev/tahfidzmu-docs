@@ -1,21 +1,18 @@
 {
-  "id": 4,
   "title": "Hukum Mad (Panjang)",
-  "introduction": "Hukum Mad (memanjangkan suara) secara garis besar terbagi menjadi dua kelompok: Mad Asli (Thabi'i) dan Mad Far'i (Cabang). Berikut adalah 14 jenis hukum Mad yang wajib dipelajari:",
+  "introduction": "Hukum Mad (memanjangkan suara) secara garis besar terbagi menjadi dua kelompok: Mad Asli (Thabi'i) dan Mad Far'i (Cabang).",
   "sections": [
     {
-      "name": "I. MAD ASLI",
-      "definition": "Hukum Mad dasar yang tidak disebabkan oleh Hamzah atau Sukun."
-    },
-    {
-      "name": "1. Mad Thabi'i",
-      "definition": "Memanjangkan bacaan 2 harakat (1 alif) jika ada: Alif (ا) setelah fathah, Wawu sukun (وْ) setelah dhommah, atau Ya sukun (يْ) setelah kasrah.",
-      "letters": "ا و ي",
+      "name": "I. MAD ASLI (THABI'I)",
+      "definition": "Hukum Mad dasar yang terjadi jika ada:\n- Alif (ا) setelah fathah\n- Wawu sukun (وْ) setelah dhommah\n- Ya sukun (يْ) setelah kasrah\n\nPanjang bacaan: 2 harakat (1 alif).",
       "example": [
         {
           "arabic": "نُوْحِيْهَا",
-          "latin": "Nuu-hii-haa",
-          "note": "Ketiga huruf Mad Thabi'i berkumpul dalam satu kata ini"
+          "latin": "Nuuhriihaa"
+        },
+        {
+          "arabic": "قَالُوْا",
+          "latin": "Qaaluu"
         }
       ]
     },
@@ -24,62 +21,44 @@
       "definition": "Hukum Mad cabang yang terjadi karena huruf Mad bertemu dengan Hamzah."
     },
     {
-      "name": "2. Mad Wajib Muttasil",
-      "definition": "Apabila Mad Thabi'i bertemu Hamzah (ء) dalam satu kata yang sama. Wajib dibaca panjang 4-5 harakat (2 setengah alif).",
+      "name": "1. Mad Wajib Muttasil",
+      "definition": "Mad Thabi'i bertemu Hamzah (ء) dalam satu kata.\n\nPanjang: 4-5 harakat.",
       "example": [
         {
           "arabic": "جَاءَ نَصْرُ اللَّهِ",
-          "latin": "Jaa-a nasrullah",
-          "note": "Mad Thabi'i bertemu Hamzah dalam kata 'Jaa-a'"
+          "latin": "Jaa'a nashrullah"
+        },
+        {
+          "arabic": "السَّمَاءُ",
+          "latin": "As-samaa'u"
         }
       ]
     },
     {
-      "name": "3. Mad Jaiz Munfasil",
-      "definition": "Apabila Mad Thabi'i bertemu Hamzah (ء) di lain kata (berbeda kata). Boleh dibaca panjang 2, 4, atau 5 harakat.",
+      "name": "2. Mad Jaiz Munfasil",
+      "definition": "Mad Thabi'i bertemu Hamzah (ء) di lain kata.\n\nPanjang: 2, 4, atau 5 harakat.",
       "example": [
         {
           "arabic": "إِنَّا أَنْزَلْنَاهُ",
-          "latin": "Innaaa anzalnaahu",
-          "note": "Mad Thabi'i di akhir kata pertama bertemu Hamzah di awal kata kedua"
+          "latin": "Innaa anzalnaahu"
+        },
+        {
+          "arabic": "يَا أَيُّهَا",
+          "latin": "Yaa ayyuhaa"
         }
       ]
     },
     {
-      "name": "4. Mad Badal",
-      "definition": "Apabila huruf Hamzah (ء) mendahului huruf Mad. Dibaca panjang 2 harakat saja.",
+      "name": "3. Mad Badal",
+      "definition": "Hamzah (ء) mendahului huruf Mad.\n\nPanjang: 2 harakat.",
       "example": [
         {
-          "arabic": "آمَنَ الرَّسُولُ",
-          "latin": "Aamanar-rasuulu",
-          "note": "Hamzah berharakat fathah berdiri (bertemu Alif)"
+          "arabic": "آمَنَ",
+          "latin": "Aamana"
         },
         {
           "arabic": "إِيْمَانًا",
-          "latin": "Iimaanaa",
-          "note": "Hamzah kasrah bertemu Ya sukun"
-        }
-      ]
-    },
-    {
-      "name": "5. Mad Silah Qasirah",
-      "definition": "Apabila terdapat Ha Dhamir (kata ganti) diapit oleh huruf hidup dan tidak bertemu Hamzah setelahnya. Dibaca panjang 2 harakat.",
-      "example": [
-        {
-          "arabic": "إِنَّهُ كَانَ حَلِيمًا",
-          "latin": "Innahuu kaana haliimaa",
-          "note": "Ha Dhamir berharakat dhommah terbalik dibaca panjang"
-        }
-      ]
-    },
-    {
-      "name": "6. Mad Silah Tawilah",
-      "definition": "Apabila terdapat Ha Dhamir bertemu dengan Hamzah di kata berikutnya. Dibaca panjang 4-5 harakat.",
-      "example": [
-        {
-          "arabic": "عِنْدَهُ إِلَّا بِإِذْنِهِ",
-          "latin": "‘Indahuuu illaa bi-idznih",
-          "note": "Ha Dhamir bertemu Hamzah pada kata 'Illaa'"
+          "latin": "Iimaanan"
         }
       ]
     },
@@ -88,93 +67,61 @@
       "definition": "Hukum Mad cabang yang terjadi karena huruf Mad bertemu Sukun asli atau Tasydid."
     },
     {
-      "name": "7. Mad Arid Lissukun",
-      "definition": "Apabila Mad Thabi'i bertemu huruf hidup di akhir kalimat karena dihentikan (wakaf). Boleh dibaca panjang 2, 4, atau 6 harakat.",
+      "name": "4. Mad Arid Lissukun",
+      "definition": "Mad Thabi'i bertemu huruf hidup di akhir kalimat yang diwaqafkan.\n\nPanjang: 2, 4, atau 6 harakat.",
       "example": [
         {
-          "arabic": "مَالِكِ يَوْمِ الدِّينِ",
-          "latin": "Maaliki yaumid-diin",
-          "note": "Mad Thabi'i pada huruf Ya sukun sebelum Nun hidup yang diwakafkan"
+          "arabic": "يَوْمِ الدِّينِ",
+          "latin": "Yaumid diin"
+        },
+        {
+          "arabic": "تَعْلَمُونَ",
+          "latin": "Ta'lamuun"
         }
       ]
     },
     {
-      "name": "8. Mad Layyin (Lin)",
-      "definition": "Apabila ada huruf Wawu sukun (وْ) atau Ya sukun (يْ) yang didahului huruf berharakat fathah, dan setelahnya ada huruf hidup yang diwakafkan. Dibaca panjang 2, 4, atau 6 harakat.",
+      "name": "5. Mad Layyin (Lin)",
+      "definition": "Wawu (وْ) atau Ya sukun (يْ) didahului fathah, bertemu huruf hidup yang diwaqafkan.\n\nPanjang: 2, 4, atau 6 harakat.",
       "example": [
         {
-          "arabic": "رَبَّ هَذَا الْبَيْتِ",
-          "latin": "Rabba haadzal baiit",
-          "note": "Ya sukun didahului fathah dibaca panjang karena wakaf"
+          "arabic": "قُرَيْشٍ",
+          "latin": "Quraisy"
+        },
+        {
+          "arabic": "هَذَا الْبَيْتِ",
+          "latin": "Haadzal bait"
         }
       ]
     },
     {
-      "name": "9. Mad Iwad",
-      "definition": "Apabila ada kalimat berharakat Fathatain (tanwin fathah) di akhir kata yang diwakafkan (kecuali Ta Marbutah). Fathatain diganti menjadi fathah biasa dan dibaca panjang 2 harakat.",
+      "name": "6. Mad Iwad",
+      "definition": "Fathatain (ً) di akhir kata yang diwaqafkan (kecuali Ta Marbutah). Dibaca fathah panjang.\n\nPanjang: 2 harakat.",
       "example": [
         {
-          "arabic": "عَلِيمًا حَكِيمًا",
-          "latin": "‘Aliiman hakiimaa",
-          "note": "Kata 'Hakiiman' dibaca 'Hakiimaa' saat berhenti"
+          "arabic": "عَلِيمًا",
+          "latin": "'Aliimaa"
+        },
+        {
+          "arabic": "حَكِيمًا",
+          "latin": "Hakiimaa"
         }
       ]
     },
     {
-      "name": "10. Mad Lazim Mutsaqqal Kilmi",
-      "definition": "Apabila Mad Thabi'i bertemu huruf bertasydid dalam satu kata. Wajib dibaca panjang 6 harakat (3 alif) dengan suara ditekan berat.",
+      "name": "7. Mad Lazim Mutsaqqal Kilmi",
+      "definition": "Mad Thabi'i bertemu huruf bertasydid dalam satu kata.\n\nPanjang: 6 harakat.",
       "example": [
         {
           "arabic": "وَلَا الضَّالِّينَ",
-          "latin": "Waladh-dhaaaalliin",
-          "note": "Mad Thabi'i bertemu Lam bertasydid dalam satu kata"
-        }
-      ]
-    },
-    {
-      "name": "11. Mad Lazim Mukhaffaf Kilmi",
-      "definition": "Apabila Mad Thabi'i bertemu huruf sukun asli dalam satu kata. Wajib dibaca panjang 6 harakat secara ringan. Hanya ada 2 tempat di dalam Al-Quran (Surah Yunus ayat 51 & 91).",
-      "example": [
+          "latin": "Waladh dhaalliin"
+        },
         {
-          "arabic": "آلْآنَ وَقَدْ عَصَيْتَ",
-          "latin": "Aaal-aana wa qad 'ashaita",
-          "note": "Mad bertemu Lam sukun pada kata 'Aal-aana'"
-        }
-      ]
-    },
-    {
-      "name": "12. Mad Lazim Harfi Mutsaqqal",
-      "definition": "Terjadi pada huruf pembuka surah (Fawatihus Suwar) yang bila dieja terdiri dari 3 huruf dan huruf tengahnya adalah huruf mad serta diidghamkan (diberi tasydid). Dibaca panjang 6 harakat.",
-      "example": [
-        {
-          "arabic": "الٓمٓ",
-          "latin": "Alif laaam miiim",
-          "note": "Ejaan huruf Lam (لَامْ) bertemu Mim (مِيْمْ) dibaca idgham dengan dengung"
-        }
-      ]
-    },
-    {
-      "name": "13. Mad Lazim Harfi Mukhaffaf",
-      "definition": "Terjadi pada huruf pembuka surah yang bila dieja terdiri dari 3 huruf dan tidak diidghamkan (tidak mendengung). Dibaca panjang 6 harakat.",
-      "example": [
-        {
-          "arabic": "نٓ ۚ وَالْقَلَمِ",
-          "latin": "Nuuun, wal qalami",
-          "note": "Ejaan huruf Nun (نُوْنْ) dibaca panjang 6 harakat tanpa dengungan"
-        }
-      ]
-    },
-    {
-      "name": "14. Mad Tamkin",
-      "definition": "Apabila ada huruf Ya bertasydid kasrah (يِّ) bertemu dengan Ya sukun (يْ) dalam satu kata. Dibaca panjang 2 harakat dengan penekanan pada Ya pertama.",
-      "example": [
-        {
-          "arabic": "وَإِذَا حُيِّيتُمْ",
-          "latin": "Wa idzaa huyyiitum",
-          "note": "Penekanan pada tasydid Ya kasrah dilanjutkan mad Ya sukun"
+          "arabic": "الْحَاقَّةُ",
+          "latin": "Al-haaqqah"
         }
       ]
     }
   ],
-  "reference": "Rujukan Kitab: Matn Tuhfatul Athfal karya Syeikh Sulaiman Al-Janzuri, Matn Al-Muqaddimah Al-Jazariyyah karya Imam Ibnul Jazari, dan Taisirur Rahman fi Tajwidil Quran karya Syeikh Aiman Rusydi Suwaid."
+  "reference": "Rujukan: Matn Tuhfatul Athfal."
 }

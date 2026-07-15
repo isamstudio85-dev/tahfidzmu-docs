@@ -59,6 +59,8 @@ export default function SantriManagement() {
     if (profile?.pesantrenId) {
       loadSantri();
       loadRefs();
+    } else if (profile) {
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile]);
@@ -228,7 +230,8 @@ export default function SantriManagement() {
   const handleOpenQr = (s: any) => {
     const entry = Object.entries(mappings).find(([, v]) => v.linkedId === s.id);
     const loginKey = entry ? entry[0] : ((s.nis || "").replace(/\D/g, "") || s.id);
-    setSelected({ ...s, loginKey, password: entry?.[1]?.defaultPassword || loginKey, qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}` });
+    const pwd = entry?.[1]?.defaultPassword || loginKey;
+    setSelected({ ...s, loginKey, password: pwd, qrValue: `tahfidzmu:login:${profile?.pesantrenId}:${loginKey}:${pwd}` });
     setQrOpen(true);
   };
 
@@ -369,6 +372,21 @@ export default function SantriManagement() {
       return matchesSearch;
     })
     .sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "id", { sensitivity: "base" }));
+
+  if (profile?.role === "superAdmin" && !profile?.pesantrenId) {
+    return (
+      <>
+        <PageMeta title="Kelola Santri | TahfidzMU Admin" description="Administrasi data santri & kartu login QR." />
+        <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-6 bg-white dark:bg-white/[0.03] border border-gray-200 dark:border-gray-800 rounded-2xl">
+          <ShieldAlert className="w-12 h-12 text-amber-500 mb-3" />
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Pesantren Belum Dipilih</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-sm">
+            Anda masuk sebagai Super Admin. Silakan pilih pesantren terlebih dahulu melalui menu <strong>Pesantren</strong> untuk mengelola data.
+          </p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
