@@ -7,6 +7,7 @@ export 'src/models/error_mark.dart';
 export 'src/models/graduation_event.dart';
 export 'src/models/graduation_registration.dart';
 export 'src/models/hadith.dart';
+export 'src/models/kitab_model.dart';
 export 'src/models/halaqah_data.dart';
 export 'src/models/kelas_data.dart';
 export 'src/models/musyrif_data.dart';

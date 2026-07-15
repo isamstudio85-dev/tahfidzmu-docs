@@ -67,6 +67,11 @@ const adminNavItems: NavItem[] = [
   },
   {
     icon: <PageIcon />,
+    name: "Kelola Kitab",
+    path: "/kitab",
+  },
+  {
+    icon: <PageIcon />,
     name: "Monitoring Progres",
     path: "/monitoring",
   },

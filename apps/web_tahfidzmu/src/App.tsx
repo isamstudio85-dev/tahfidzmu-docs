@@ -22,6 +22,7 @@ import SuperAdminStaffPage from "./pages/SuperAdminStaffPage";
 import SuperAdminFinancePage from "./pages/SuperAdminFinancePage";
 import BillingManagement from "./pages/BillingManagement";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import KitabManagement from "./pages/KitabManagement";
 import { useAuth } from "./context/AuthContext";
 
 function DashboardEntry() {
@@ -67,6 +68,7 @@ export default function App() {
             <Route path="/wisuda" element={<WisudaManagement />} />
             <Route path="/pondok-materi" element={<PondokKnowledgeManagement />} />
             <Route path="/pesantren-info" element={<KoordinatorGate><PesantrenInfoManagement /></KoordinatorGate>} />
+            <Route path="/kitab" element={<KoordinatorGate><KitabManagement /></KoordinatorGate>} />
             <Route path="/monitoring" element={<MonitoringProgres />} />
             <Route path="/input-hafalan" element={<InputHafalan />} />
             <Route path="/voucher" element={<KoordinatorGate><VoucherManagement /></KoordinatorGate>} />

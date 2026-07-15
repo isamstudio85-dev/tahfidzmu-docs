@@ -1121,4 +1121,34 @@ class AppProvider extends ChangeNotifier
       return null;
     }
   }
+
+  Future<void> addKitabSetoran(String santriId, KitabSetoranRecord record) async {
+    if (pesantrenId == null) return;
+    final recordJson = record.toJson();
+    recordJson['pesantrenId'] = pesantrenId;
+
+    // Write to history
+    await getCollection('santri')
+        .doc(santriId)
+        .collection('kitab_setoran')
+        .doc(record.kitabId)
+        .collection('history')
+        .doc(record.id)
+        .set(recordJson);
+
+    // Update aggregate progress doc
+    await getCollection('santri')
+        .doc(santriId)
+        .collection('kitab_setoran')
+        .doc(record.kitabId)
+        .set({
+      'kitabId': record.kitabId,
+      'namaKitab': record.namaKitab,
+      'tipeUnit': record.tipeUnit,
+      'lastUnit': record.endUnit,
+      'lastUpdated': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+    
+    notifyListeners();
+  }
 }

@@ -19,9 +19,11 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
   StreamSubscription? presensiSub;
   StreamSubscription? notificationSub;
   StreamSubscription? pondokKnowledgeSub;
+  StreamSubscription? kitabSub;
 
   final Map<String, StreamSubscription> _setoranSubs = {};
   final Map<String, StreamSubscription> _tasmiSubs = {};
+  final Map<String, StreamSubscription> _kitabProgressSubs = {};
 
   List<Santri> santriList = [];
   List<MusyrifData> musyrifList = [];
@@ -35,6 +37,13 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
   List<VoucherTicket> voucherList = [];
   List<Map<String, dynamic>> pondokKnowledgeList = [];
   bool isPondokKnowledgeInitialized = false;
+  List<Kitab> kitabList = [];
+  
+  final Map<String, Map<String, KitabSetoranRecord>> _kitabProgress = {};
+
+  Map<String, KitabSetoranRecord> getKitabProgressForSantri(String sId) {
+    return _kitabProgress[sId] ?? {};
+  }
   
   PesantrenInfo pesantrenInfo = const PesantrenInfo(
     nama: 'Al-Furqon MBS Cibiuk',
@@ -309,6 +318,14 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
       debugPrint("Error listening to pondok_knowledge: $e");
     });
 
+    kitabSub?.cancel();
+    kitabSub = getCollection('kitab').snapshots().listen((snap) {
+      kitabList = snap.docs.map((doc) => Kitab.fromJson(doc.data())).toList();
+      notifyListeners();
+    }, onError: (e) {
+      debugPrint("Error listening to kitab list: $e");
+    });
+
     // Wait for initial essential data streams to yield at least one event before proceeding
     // Capped with a timeout to prevent bootstrapping hangs if there is no cached data and no network
     try {
@@ -337,6 +354,17 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
         .snapshots().listen((snap) {
       final history = snap.docs.map((doc) => TasmiRecord.fromJson(doc.data())).toList();
       _updateSantriHistoryInMemory(sId, tasmi: history);
+    });
+
+    _kitabProgressSubs[sId]?.cancel();
+    _kitabProgressSubs[sId] = getCollection('santri').doc(sId).collection('kitab_setoran').snapshots().listen((snap) {
+      final map = {
+        for (var doc in snap.docs) doc.id: KitabSetoranRecord.fromJson(doc.data())
+      };
+      _kitabProgress[sId] = map;
+      notifyListeners();
+    }, onError: (e) {
+      debugPrint("Error listening to student kitab progress: $e");
     });
   }
 
@@ -389,6 +417,11 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
       sub.cancel();
     }
     _tasmiSubs.clear();
+    for (var sub in _kitabProgressSubs.values) {
+      sub.cancel();
+    }
+    _kitabProgressSubs.clear();
+    _kitabProgress.clear();
   }
 
   void listenToActiveSantriHistory(String santriId) {
@@ -440,6 +473,7 @@ mixin DataMixin on ChangeNotifier, AuthMixin {
     presensiSub?.cancel();
     notificationSub?.cancel();
     pondokKnowledgeSub?.cancel();
+    kitabSub?.cancel();
     cancelAllSubcollectionSubscriptions();
   }
 

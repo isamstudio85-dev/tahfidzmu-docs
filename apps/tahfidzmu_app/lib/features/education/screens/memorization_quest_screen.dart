@@ -5,6 +5,7 @@ import 'package:tahfidz_app/core/theme/app_theme.dart';
 import 'package:tahfidz_app/providers/app_provider.dart';
 
 import 'hadits_screen.dart';
+import 'kitab_list_screen.dart';
 import 'quran_tadarus_screen.dart';
 import 'educational_list_screen.dart';
 import 'tahsin_list_screen.dart';
@@ -47,11 +48,11 @@ class MemorizationQuestScreen extends StatelessWidget {
               _sectionHeader('MODUL TAMBAHAN', Icons.import_contacts_rounded, isDark),
               const SizedBox(height: 12),
               _QuestTile(
-                title: 'Hadits Pilihan',
-                subtitle: 'Kumpulan hadits-hadits shahih',
+                title: 'Hafalan Kitab & Hadits',
+                subtitle: 'Nadhom, Hadits, & Kitab Pilihan',
                 icon: Icons.library_books_rounded,
                 color: Colors.orange.shade800,
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HaditsScreen())),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const KitabListScreen())),
                 isDark: isDark,
               ),
             ],
