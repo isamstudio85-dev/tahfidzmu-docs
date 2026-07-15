@@ -402,31 +402,35 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
         if (section['letters'] != null) ...[
           const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.all(16),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
             decoration: BoxDecoration(
               color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
             ),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Huruf: ',
-                  style: TextStyle(
+                  section['letters'],
+                  textAlign: TextAlign.center,
+                  textDirection: TextDirection.rtl,
+                  style: GoogleFonts.amiri(
+                    fontSize: 32,
+                    color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: isDark ? Colors.white70 : const Color(0xFF1E293B),
+                    height: 1.2,
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    section['letters'],
-                    style: GoogleFonts.amiri(
-                      fontSize: 24,
-                      color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textDirection: TextDirection.rtl,
+                const SizedBox(height: 6),
+                Text(
+                  'Huruf',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white38 : Colors.grey.shade500,
+                    letterSpacing: 1.0,
                   ),
                 ),
               ],
