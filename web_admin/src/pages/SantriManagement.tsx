@@ -68,6 +68,8 @@ export default function SantriManagement() {
     setLoading(true);
     try {
       const pid = profile.pesantrenId;
+
+
       const mapSnap = await getDocs(collection(db, "pesantren", pid, "user_mappings"));
       const tmp: Record<string, Mapping> = {};
       mapSnap.forEach((d) => { tmp[d.id] = d.data() as Mapping; });
@@ -141,6 +143,7 @@ export default function SantriManagement() {
     if (!name || !nis) { setError("Nama dan NIS wajib diisi"); return; }
     const pid = profile?.pesantrenId;
     if (!pid) return;
+
     const cleanNis = nis.trim().replace(/[^0-9]/g, "");
     if (!cleanNis) { setError("NIS harus mengandung angka"); return; }
     if (email.trim() && !/\S+@\S+\.\S+/.test(email.trim())) { setError("Format email tidak valid"); return; }
@@ -273,6 +276,8 @@ export default function SantriManagement() {
       setImportError("Belum ada data valid untuk diimport.");
       return;
     }
+
+    // Tidak ada batasan kuota saat impor data santri massal (pay-per-user)
 
     setImportSaving(true);
     setImportError(null);

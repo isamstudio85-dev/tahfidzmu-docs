@@ -75,13 +75,38 @@ const adminNavItems: NavItem[] = [
     name: "Input Hafalan",
     path: "/input-hafalan",
   },
+  {
+    icon: <UserCircleIcon />,
+    name: "Pusat Voucher",
+    path: "/voucher",
+  },
+  {
+    icon: <TableIcon />,
+    name: "Tagihan & Sewa",
+    path: "/tagihan",
+  },
 ];
 
 const superAdminNavItems: NavItem[] = [
   {
     icon: <GridIcon />,
+    name: "Dashboard",
+    path: "/",
+  },
+  {
+    icon: <GridIcon />,
     name: "Pesantren",
     path: "/pesantren",
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "Kelola Staf",
+    path: "/staf",
+  },
+  {
+    icon: <TableIcon />,
+    name: "Keuangan & Billing",
+    path: "/keuangan",
   },
 ];
 
@@ -94,12 +119,16 @@ const AppSidebar: React.FC = () => {
     if (profile?.role === "superAdmin") return superAdminNavItems;
 
     // If Admin or Musyrif Coordinator, show Admin Menu
-    if (profile?.role === "admin" || profile?.isKoordinator) {
+    if (profile?.role === "admin") {
       return adminNavItems;
     }
 
-    // For regular Musyrif, you might want to show a limited menu or nothing on web
-    return adminNavItems; // Default to admin items for now as web is mainly for management
+    if (profile?.isKoordinator) {
+      const forbiddenPaths = ["/pesantren-info", "/tagihan", "/musyrif", "/pengawas", "/voucher"];
+      return adminNavItems.filter((item) => !item.path || !forbiddenPaths.includes(item.path));
+    }
+
+    return adminNavItems;
   }, [profile]);
 
   const isActive = useCallback(

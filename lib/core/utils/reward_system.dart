@@ -186,6 +186,15 @@ class RewardSystem {
       value: 'assets/images/banner_store_desert.jpg',
       imagePath: 'assets/images/banner_store_desert.jpg',
     ),
+    VirtualReward(
+      id: 'theme_sakinah',
+      name: 'Tema Kartu: Taman Sakinah',
+      description: 'Latar belakang kartu profil bermotif bunga sakina merah muda yang anggun (Khusus Putri).',
+      cost: 1800,
+      type: RewardType.theme,
+      value: 'assets/images/banner_store_sakinah.jpg',
+      imagePath: 'assets/images/banner_store_sakinah.jpg',
+    ),
   ];
 
   static List<VirtualReward> getRewardsByType(RewardType type) {

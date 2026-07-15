@@ -431,12 +431,22 @@ class OrangTuaDashboard extends StatelessWidget {
       bannerImagePath = 'assets/images/banner_store_ramadan.jpg';
     } else if (activeTheme == 'theme_desert') {
       bannerImagePath = 'assets/images/banner_store_desert.jpg';
+    } else if (activeTheme == 'theme_sakinah') {
+      bannerImagePath = 'assets/images/banner_store_sakinah.jpg';
     }
 
     final hasFrame = child.activeFrame != null;
     final Color glowColor = child.activeFrame == 'frame_gold' 
         ? AppTheme.gold 
-        : (child.activeFrame == 'frame_emerald' ? const Color(0xFF50C878) : (child.activeFrame == 'frame_neon' ? Colors.cyan : Colors.transparent));
+        : (child.activeFrame == 'frame_emerald' 
+            ? const Color(0xFF50C878) 
+            : (child.activeFrame == 'frame_neon' 
+                ? Colors.cyan 
+                : (child.activeFrame == 'frame_pink' 
+                    ? const Color(0xFFFFB6C1) 
+                    : (child.activeFrame == 'frame_orchid' 
+                        ? const Color(0xFFBA55D3) 
+                        : Colors.transparent))));
 
     return Container(
       padding: const EdgeInsets.all(20),

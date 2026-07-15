@@ -17,16 +17,29 @@ import MonitoringProgres from "./pages/MonitoringProgres";
 import InputHafalan from "./pages/InputHafalan";
 import ProfileSettings from "./pages/ProfileSettings";
 import SuperAdminPesantrenPage from "./pages/SuperAdminPesantrenPage";
+import VoucherManagement from "./pages/VoucherManagement";
+import SuperAdminStaffPage from "./pages/SuperAdminStaffPage";
+import SuperAdminFinancePage from "./pages/SuperAdminFinancePage";
+import BillingManagement from "./pages/BillingManagement";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import { useAuth } from "./context/AuthContext";
 
 function DashboardEntry() {
   const { profile } = useAuth();
 
   if (profile?.role === "superAdmin") {
-    return <Navigate to="/pesantren" replace />;
+    return <SuperAdminDashboard />;
   }
 
   return <Home />;
+}
+
+function KoordinatorGate({ children }: { children: React.ReactNode }) {
+  const { profile } = useAuth();
+  if (profile?.isKoordinator && profile?.role !== "admin" && profile?.role !== "superAdmin") {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
 }
 
 export default function App() {
@@ -45,16 +58,20 @@ export default function App() {
           >
             <Route index path="/" element={<DashboardEntry />} />
             <Route path="/pesantren" element={<SuperAdminPesantrenPage />} />
+            <Route path="/staf" element={<SuperAdminStaffPage />} />
             <Route path="/santri" element={<SantriManagement />} />
-            <Route path="/musyrif" element={<MusyrifManagement />} />
-            <Route path="/pengawas" element={<PengawasManagement />} />
+             <Route path="/musyrif" element={<KoordinatorGate><MusyrifManagement /></KoordinatorGate>} />
+            <Route path="/pengawas" element={<KoordinatorGate><PengawasManagement /></KoordinatorGate>} />
             <Route path="/kelas" element={<KelasManagement />} />
             <Route path="/halaqah" element={<HalaqahManagement />} />
             <Route path="/wisuda" element={<WisudaManagement />} />
             <Route path="/pondok-materi" element={<PondokKnowledgeManagement />} />
-            <Route path="/pesantren-info" element={<PesantrenInfoManagement />} />
+            <Route path="/pesantren-info" element={<KoordinatorGate><PesantrenInfoManagement /></KoordinatorGate>} />
             <Route path="/monitoring" element={<MonitoringProgres />} />
             <Route path="/input-hafalan" element={<InputHafalan />} />
+            <Route path="/voucher" element={<KoordinatorGate><VoucherManagement /></KoordinatorGate>} />
+            <Route path="/keuangan" element={<SuperAdminFinancePage />} />
+            <Route path="/tagihan" element={<KoordinatorGate><BillingManagement /></KoordinatorGate>} />
             <Route path="/profil" element={<ProfileSettings />} />
           </Route>
 

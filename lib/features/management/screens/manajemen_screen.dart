@@ -24,21 +24,25 @@ class ManajemenScreen extends StatelessWidget {
       ),
       body: Consumer<AppProvider>(
         builder: (ctx, provider, _) {
+          final isKoordinator = provider.linkedMusyrif?.isKoordinator ?? false;
+
           return ListView(
             padding: const EdgeInsets.symmetric(vertical: 12),
             children: [
-              _header('INFORMASI LEMBAGA', isDark),
-              _tile(
-                context,
-                icon: Icons.business_rounded,
-                title: 'Profil Pesantren',
-                subtitle: 'Nama, alamat, dan logo lembaga',
-                color: AppTheme.primaryGreen,
-                onTap: () => Navigator.push(
+              if (!isKoordinator) ...[
+                _header('INFORMASI LEMBAGA', isDark),
+                _tile(
                   context,
-                  MaterialPageRoute(builder: (_) => const PesantrenScreen()),
+                  icon: Icons.business_rounded,
+                  title: 'Profil Pesantren',
+                  subtitle: 'Nama, alamat, dan logo lembaga',
+                  color: AppTheme.primaryGreen,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PesantrenScreen()),
+                  ),
                 ),
-              ),
+              ],
 
               _header('PENGATURAN TAHFIDZ', isDark),
               _tile(
@@ -74,49 +78,51 @@ class ManajemenScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const GraduationEventListScreen()),
                 ),
               ),
-              _tile(
-                context,
-                icon: Icons.tune_rounded,
-                title: 'Modul Hafalan',
-                subtitle: 'Aktifkan modul Quran/Hadits',
-                color: Colors.teal,
-                onTap: () => Navigator.push(
+              if (!isKoordinator) ...[
+                _tile(
                   context,
-                  MaterialPageRoute(builder: (_) => const PesantrenScreen(manageModulesOnly: true)),
+                  icon: Icons.tune_rounded,
+                  title: 'Modul Hafalan',
+                  subtitle: 'Aktifkan modul Quran/Hadits',
+                  color: Colors.teal,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PesantrenScreen(manageModulesOnly: true)),
+                  ),
                 ),
-              ),
-              
-              _header('PENGATURAN APLIKASI', isDark),
-              _buildSecurityToggle(context, provider),
+                
+                _header('PENGATURAN APLIKASI', isDark),
+                _buildSecurityToggle(context, provider),
 
-              _header('FITUR LANJUTAN', isDark),
-              _tile(
-                context,
-                icon: Icons.cleaning_services_rounded,
-                title: 'Bersihkan Data Residual',
-                subtitle: 'Hapus sisa field percobaan (subjectId)',
-                color: Colors.blueGrey,
-                onTap: () => _showSanitizeConfirmation(context, provider),
-              ),
-              _tile(
-                context,
-                icon: Icons.bug_report_outlined,
-                title: 'Diagnostik Sistem',
-                subtitle: 'Cek koneksi database & path',
-                color: Colors.indigo,
-                onTap: () => Navigator.push(
+                _header('FITUR LANJUTAN', isDark),
+                _tile(
                   context,
-                  MaterialPageRoute(builder: (_) => const DiagnosticScreen()),
+                  icon: Icons.cleaning_services_rounded,
+                  title: 'Bersihkan Data Residual',
+                  subtitle: 'Hapus sisa field percobaan (subjectId)',
+                  color: Colors.blueGrey,
+                  onTap: () => _showSanitizeConfirmation(context, provider),
                 ),
-              ),
-              _tile(
-                context,
-                icon: Icons.delete_forever_rounded,
-                title: 'Reset Data',
-                subtitle: 'Hapus seluruh data pesantren',
-                color: Colors.red,
-                onTap: () => _showResetConfirmation(context, provider),
-              ),
+                _tile(
+                  context,
+                  icon: Icons.bug_report_outlined,
+                  title: 'Diagnostik Sistem',
+                  subtitle: 'Cek koneksi database & path',
+                  color: Colors.indigo,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const DiagnosticScreen()),
+                  ),
+                ),
+                _tile(
+                  context,
+                  icon: Icons.delete_forever_rounded,
+                  title: 'Reset Data',
+                  subtitle: 'Hapus seluruh data pesantren',
+                  color: Colors.red,
+                  onTap: () => _showResetConfirmation(context, provider),
+                ),
+              ],
               const SizedBox(height: 40),
             ],
           );

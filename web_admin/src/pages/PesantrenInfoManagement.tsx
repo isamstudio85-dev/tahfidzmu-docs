@@ -18,7 +18,7 @@ type PesantrenInfo = {
   qrSecurityEnabled?: boolean;
 };
 
-type ModuleKey = "quran" | "hadits" | "tajwid" | "tahsin" | "pondok_info" | "graduation" | "fiqih";
+type ModuleKey = "quran" | "hadits" | "tajwid" | "tahsin" | "pondok_info" | "graduation" | "fiqih" | "gamification";
 
 const moduleItems: Array<{ key: ModuleKey; title: string; description: string; locked?: boolean }> = [
   { key: "quran", title: "Quran", description: "Hafalan dan setoran Al-Quran.", locked: true },
@@ -28,6 +28,7 @@ const moduleItems: Array<{ key: ModuleKey; title: string; description: string; l
   { key: "fiqih", title: "Fiqih", description: "Materi hafalan fiqih praktis sistematis." },
   { key: "pondok_info", title: "Pengetahuan Pondok", description: "Materi pengetahuan pondok yang harus dihafal." },
   { key: "graduation", title: "Wisuda & Ujian Tasmi'", description: "Pendaftaran ujian tasmi' dan kelulusan wisuda." },
+  { key: "gamification", title: "Gamifikasi & Toko Reward", description: "Sistem level, koin apresiasi, pencairan voucher reward, dan ranking." },
 ];
 
 const emptyInfo: PesantrenInfo = {

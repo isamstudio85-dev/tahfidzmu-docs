@@ -9,8 +9,8 @@ import { db, storage } from "../firebase";
 
 type TenantStatus = "active" | "suspended";
 type TenantFilter = "all" | TenantStatus | "expired";
-type SubscriptionTier = "Trial" | "Premium Bulanan" | "Premium Tahunan";
-type ModuleKey = "quran" | "hadits" | "tajwid" | "tahsin" | "pondok_info" | "graduation" | "fiqih";
+type SubscriptionTier = "Standar" | "Profesional";
+type ModuleKey = "quran" | "hadits" | "tajwid" | "tahsin" | "pondok_info" | "graduation" | "fiqih" | "gamification";
 const drawerTabs = [
   { key: "profil", label: "Profil" },
   { key: "akses", label: "Akses" },
@@ -36,6 +36,9 @@ type TenantItem = {
   moduleCount: number;
   activeModules: ModuleKey[];
   adminLoginKey: string;
+  pricePerSantri: number;
+  pricePerMusyrif: number;
+  discountAmount: number;
 };
 
 type TenantForm = {
@@ -52,9 +55,12 @@ type TenantForm = {
   activeUntil: string;
   logoUrl: string;
   activeModules: ModuleKey[];
+  pricePerSantri: number;
+  pricePerMusyrif: number;
+  discountAmount: number;
 };
 
-const defaultModules: ModuleKey[] = ["quran", "hadits", "tajwid", "tahsin", "pondok_info", "graduation", "fiqih"];
+const defaultModules: ModuleKey[] = ["quran", "hadits", "tajwid", "tahsin", "fiqih"];
 
 const moduleOptions: Array<{ key: ModuleKey; title: string; description: string; locked?: boolean }> = [
   { key: "quran", title: "Quran", description: "Setoran dan hafalan Al-Quran.", locked: true },
@@ -62,8 +68,9 @@ const moduleOptions: Array<{ key: ModuleKey; title: string; description: string;
   { key: "tajwid", title: "Tajwid", description: "Materi hukum bacaan dan evaluasi." },
   { key: "tahsin", title: "Tahsin", description: "Perbaikan bacaan dan makharijul huruf." },
   { key: "fiqih", title: "Fiqih", description: "Materi hafalan fiqih praktis sistematis." },
-  { key: "pondok_info", title: "Pengetahuan Pondok", description: "Materi pengetahuan pondok yang perlu dihafal." },
+  { key: "pondok_info", title: "Hafalan Kitab & Pondok Info", description: "Materi hafalan kitab kuning dan pengetahuan pondok kustom." },
   { key: "graduation", title: "Wisuda", description: "Ujian tasmi' dan wisuda." },
+  { key: "gamification", title: "Gamifikasi & Toko Reward", description: "Sistem level, koin apresiasi, dan voucher reward santri." },
 ];
 
 const emptyForm: TenantForm = {
@@ -75,11 +82,14 @@ const emptyForm: TenantForm = {
   website: "",
   pimpinan: "",
   adminPassword: "",
-  subscriptionTier: "Trial",
+  subscriptionTier: "Standar",
   status: "active",
   activeUntil: toDateInputValue(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
   logoUrl: "",
   activeModules: defaultModules,
+  pricePerSantri: 5000,
+  pricePerMusyrif: 0,
+  discountAmount: 0,
 };
 
 function toDateInputValue(date: Date) {
@@ -102,10 +112,33 @@ function normalizeNpsn(value: string) {
   return value.replace(/\D+/g, "").trim();
 }
 
+function getTierAllowedModules(tier: SubscriptionTier, value: unknown): ModuleKey[] {
+  if (!Array.isArray(value)) return ["quran"];
+  const next = value.filter((item): item is ModuleKey => typeof item === "string" && moduleOptions.some((option) => option.key === item));
+  const normalized = Array.from(new Set(["quran", ...next])) as ModuleKey[];
+  
+  const allowed: ModuleKey[] = ["quran"];
+  if (tier === "Standar") {
+    normalized.forEach((m) => {
+      if (m !== "quran" && m !== "gamification" && m !== "pondok_info" && m !== "graduation") {
+        allowed.push(m);
+      }
+    });
+  } else {
+    // Profesional
+    normalized.forEach((m) => {
+      if (m !== "quran") {
+        allowed.push(m);
+      }
+    });
+  }
+  return allowed;
+}
+
 function normalizeModules(value: unknown): ModuleKey[] {
   if (!Array.isArray(value)) return ["quran"];
   const next = value.filter((item): item is ModuleKey => typeof item === "string" && moduleOptions.some((option) => option.key === item));
-  return Array.from(new Set(["quran", ...next]));
+  return Array.from(new Set(["quran", ...next])) as ModuleKey[];
 }
 
 export default function SuperAdminPesantrenPage() {
@@ -125,6 +158,12 @@ export default function SuperAdminPesantrenPage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
 
+  // Global default pricing states
+  const [defaultPriceSantriStandar, setDefaultPriceSantriStandar] = useState(5000);
+  const [defaultPriceMusyrifStandar, setDefaultPriceMusyrifStandar] = useState(0);
+  const [defaultPriceSantriProfesional, setDefaultPriceSantriProfesional] = useState(10000);
+  const [defaultPriceMusyrifProfesional, setDefaultPriceMusyrifProfesional] = useState(0);
+
   useEffect(() => {
     if (profile?.role === "superAdmin") {
       void loadPesantren();
@@ -139,6 +178,15 @@ export default function SuperAdminPesantrenPage() {
     setError(null);
 
     try {
+      const globalPricingSnap = await getDoc(doc(db, "settings", "global_pricing"));
+      if (globalPricingSnap.exists()) {
+        const gData = globalPricingSnap.data();
+        setDefaultPriceSantriStandar(typeof gData.pricePerSantriStandar === "number" ? gData.pricePerSantriStandar : (typeof gData.pricePerSantri === "number" ? gData.pricePerSantri : 5000));
+        setDefaultPriceMusyrifStandar(typeof gData.priceMusyrifStandar === "number" ? gData.priceMusyrifStandar : (typeof gData.pricePerMusyrif === "number" ? gData.pricePerMusyrif : 0));
+        setDefaultPriceSantriProfesional(typeof gData.pricePerSantriProfesional === "number" ? gData.pricePerSantriProfesional : 10000);
+        setDefaultPriceMusyrifProfesional(typeof gData.pricePerMusyrifProfesional === "number" ? gData.pricePerMusyrifProfesional : 0);
+      }
+
       const snap = await getDocs(collection(db, "pesantren"));
       const nextItems = await Promise.all(
         snap.docs.map(async (item) => {
@@ -158,9 +206,9 @@ export default function SuperAdminPesantrenPage() {
             nama: String(data.nama || info.nama || item.id),
             status: data.status === "suspended" ? "suspended" : "active",
             subscriptionTier:
-              data.subscriptionTier === "Premium Bulanan" || data.subscriptionTier === "Premium Tahunan"
-                ? data.subscriptionTier
-                : "Trial",
+              data.subscriptionTier === "Premium Bulanan" || data.subscriptionTier === "Premium Tahunan" || data.subscriptionTier === "Profesional"
+                ? "Profesional"
+                : "Standar",
             activeUntil,
             logoUrl: String(data.logoUrl || info.logoPath || ""),
             alamat: String(info.alamat || ""),
@@ -172,6 +220,9 @@ export default function SuperAdminPesantrenPage() {
             moduleCount: activeModules.length || 1,
             activeModules,
             adminLoginKey: "admin",
+            pricePerSantri: typeof data.pricePerSantri === "number" ? data.pricePerSantri : 5000,
+            pricePerMusyrif: typeof data.pricePerMusyrif === "number" ? data.pricePerMusyrif : 0,
+            discountAmount: typeof data.discountAmount === "number" ? data.discountAmount : 0,
           } satisfies TenantItem;
         })
       );
@@ -189,7 +240,11 @@ export default function SuperAdminPesantrenPage() {
   function openCreateDrawer() {
     setMode("create");
     setSelectedId(null);
-    setForm(emptyForm);
+    setForm({
+      ...emptyForm,
+      pricePerSantri: defaultPriceSantriStandar,
+      pricePerMusyrif: defaultPriceMusyrifStandar,
+    });
     setLogoFile(null);
     setLogoPreview(null);
     setError(null);
@@ -214,6 +269,9 @@ export default function SuperAdminPesantrenPage() {
       logoUrl: item.logoUrl,
       activeModules: item.activeModules,
       adminPassword: "",
+      pricePerSantri: item.pricePerSantri,
+      pricePerMusyrif: item.pricePerMusyrif,
+      discountAmount: item.discountAmount,
     });
     setLogoFile(null);
     setLogoPreview(null);
@@ -287,7 +345,7 @@ export default function SuperAdminPesantrenPage() {
       const infoRef = doc(rootRef, "settings", "pesantren_info");
       const modulesRef = doc(rootRef, "settings", "modules");
       const mappingRef = doc(rootRef, "user_mappings", "admin");
-      const activeModules = normalizeModules(form.activeModules);
+      const activeModules = getTierAllowedModules(form.subscriptionTier, form.activeModules);
 
       if (mode === "create") {
         const existing = await getDoc(rootRef);
@@ -305,6 +363,9 @@ export default function SuperAdminPesantrenPage() {
           logoUrl: finalLogoUrl || null,
           subscriptionTier: form.subscriptionTier,
           activeUntil: Timestamp.fromDate(new Date(form.activeUntil)),
+          pricePerSantri: Number(form.pricePerSantri || 0),
+          pricePerMusyrif: Number(form.pricePerMusyrif || 0),
+          discountAmount: Number(form.discountAmount || 0),
         });
 
         await setDoc(infoRef, {
@@ -330,6 +391,9 @@ export default function SuperAdminPesantrenPage() {
           status: form.status,
           subscriptionTier: form.subscriptionTier,
           activeUntil: Timestamp.fromDate(new Date(form.activeUntil)),
+          pricePerSantri: Number(form.pricePerSantri || 0),
+          pricePerMusyrif: Number(form.pricePerMusyrif || 0),
+          discountAmount: Number(form.discountAmount || 0),
           ...(finalLogoUrl ? { logoUrl: finalLogoUrl } : {}),
         });
 
@@ -419,30 +483,55 @@ export default function SuperAdminPesantrenPage() {
   }
 
   async function handleDeletePesantren(item: TenantItem) {
+    const active = item.status === "active";
+    const expired = isExpired(item.activeUntil);
+
+    if (active && !expired) {
+      alert(
+        `PERINGATAN PROTEKSI HAPUS:\n` +
+        `Pesantren "${item.nama}" (ID: ${item.id}) tidak boleh dihapus karena statusnya masih AKTIF dan masa langganan belum berakhir.\n\n` +
+        `Syarat Penghapusan:\n` +
+        `1. Ubah status pesantren menjadi "Ditangguhkan" (Suspend) terlebih dahulu, ATAU\n` +
+        `2. Tunggu masa aktif langganan pesantren berakhir.`
+      );
+      return;
+    }
+
     if (item.id === "demo") {
        const confirmDemo = window.confirm("Anda akan menghapus pesantren DEMO. Ini adalah tindakan permanen. Lanjutkan?");
        if (!confirmDemo) return;
     } else {
-       const confirm = window.confirm(`Hapus pesantren ${item.nama} (${item.id}) secara permanen? Seluruh data santri, musyrif, dan riwayat akan hilang.`);
+       const confirm = window.confirm(`Hapus pesantren ${item.nama} (${item.id}) secara permanen? Seluruh data santri, musyrif, pengawas, voucher, dan riwayat akan hilang.`);
        if (!confirm) return;
     }
 
-    const finalConfirm = prompt("Ketik ID pesantren (" + item.id + ") untuk mengonfirmasi penghapusan:");
-    if (finalConfirm !== item.id) {
-      alert("Konfirmasi gagal. Penghapusan dibatalkan.");
+    const finalConfirm = prompt(`Ketik ID pesantren ("${item.id}") diikuti kata " HAPUS" (Contoh: ${item.id} HAPUS) untuk konfirmasi:`);
+    if (finalConfirm !== `${item.id} HAPUS`) {
+      alert("Konfirmasi salah. Penghapusan dibatalkan.");
       return;
     }
 
     setSaving(true);
     try {
       // 1. Delete all subcollections and their nested subcollections
-      const collectionsList = ["santri", "musyrif", "halaqah", "kelas", "graduation_events", "graduation_registrations", "user_mappings", "presensi", "active_sessions"];
+      const collectionsList = [
+        "santri",
+        "musyrif",
+        "pengawas",
+        "vouchers",
+        "halaqah",
+        "kelas",
+        "graduation_events",
+        "graduation_registrations",
+        "user_mappings",
+        "presensi",
+        "active_sessions"
+      ];
 
       for (const col of collectionsList) {
         const snap = await getDocs(collection(db, "pesantren", item.id, col));
 
         for (const parentDoc of snap.docs) {
-          // If it's the santri collection, we must delete nested history
           if (col === "santri") {
             const subCols = ["setoranHistory", "tasmiHistory"];
             for (const sub of subCols) {
@@ -450,7 +539,6 @@ export default function SuperAdminPesantrenPage() {
               await Promise.all(subSnap.docs.map((d) => deleteDoc(d.ref)));
             }
           }
-          // Now delete the parent document
           await deleteDoc(parentDoc.ref);
         }
       }
@@ -782,11 +870,36 @@ export default function SuperAdminPesantrenPage() {
                   <>
                     <section className="grid gap-4 md:grid-cols-2">
                       <Field label="Paket Langganan">
-                        <select value={form.subscriptionTier} onChange={(event) => setForm((current) => ({ ...current, subscriptionTier: event.target.value as SubscriptionTier }))} className={inputCls}>
-                          <option value="Trial">Trial</option>
-                          <option value="Premium Bulanan">Premium Bulanan</option>
-                          <option value="Premium Tahunan">Premium Tahunan</option>
+                        <select
+                          value={form.subscriptionTier}
+                          onChange={(event) => {
+                            const newTier = event.target.value as SubscriptionTier;
+                            setForm((current) => {
+                              const updated = { ...current, subscriptionTier: newTier };
+                              if (mode === "create") {
+                                updated.pricePerSantri = newTier === "Profesional" ? defaultPriceSantriProfesional : defaultPriceSantriStandar;
+                                updated.pricePerMusyrif = newTier === "Profesional" ? defaultPriceMusyrifProfesional : defaultPriceMusyrifStandar;
+                              }
+                              return updated;
+                            });
+                          }}
+                          className={inputCls}
+                        >
+                          <option value="Standar">Standar</option>
+                          <option value="Profesional">Profesional</option>
                         </select>
+                        <div className="mt-2 text-[11px] text-gray-500 leading-relaxed">
+                          {form.subscriptionTier === "Standar" && (
+                            <span className="text-blue-600 dark:text-blue-400 font-medium">
+                              ℹ️ Paket Standar: Tanpa batas jumlah santri/musyrif (bayar per pengguna). Modul Gamifikasi (Toko Reward), Hafalan Kitab, dan Wisuda terkunci.
+                            </span>
+                          )}
+                          {form.subscriptionTier === "Profesional" && (
+                            <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                              💎 Paket Profesional: Tanpa batas jumlah santri/musyrif (bayar per pengguna). Semua modul aktif tanpa batas (Gamifikasi, Hafalan Kitab, Wisuda, dan Logo Kustom).
+                            </span>
+                          )}
+                        </div>
                       </Field>
                       <Field label="Status Akses">
                         <select value={form.status} onChange={(event) => setForm((current) => ({ ...current, status: event.target.value as TenantStatus }))} className={inputCls}>
@@ -799,6 +912,15 @@ export default function SuperAdminPesantrenPage() {
                           <CalendarClock size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                           <input type="date" value={form.activeUntil} onChange={(event) => setForm((current) => ({ ...current, activeUntil: event.target.value }))} className={`${inputCls} pl-10`} />
                         </div>
+                      </Field>
+                      <Field label="Biaya Per Santri (Rp/Bulan)">
+                        <input type="number" value={form.pricePerSantri} onChange={(event) => setForm((current) => ({ ...current, pricePerSantri: Number(event.target.value) }))} className={inputCls} />
+                      </Field>
+                      <Field label="Biaya Per Musyrif (Rp/Bulan) - (0 = Gratis)">
+                        <input type="number" value={form.pricePerMusyrif} onChange={(event) => setForm((current) => ({ ...current, pricePerMusyrif: Number(event.target.value) }))} className={inputCls} />
+                      </Field>
+                      <Field label="Diskon Potongan Khusus (Rp)">
+                        <input type="number" value={form.discountAmount} onChange={(event) => setForm((current) => ({ ...current, discountAmount: Number(event.target.value) }))} className={inputCls} />
                       </Field>
                       {mode === "create" && (
                         <Field label="Password Admin Awal *">

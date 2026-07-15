@@ -41,6 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   List<Widget> _buildSuggestions() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final userQuery = _usernameCtrl.text.toLowerCase();
     final npsnQuery = _pesantrenIdCtrl.text.toLowerCase();
 
@@ -73,8 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Container(
         constraints: const BoxConstraints(maxHeight: 140),
         decoration: BoxDecoration(
-          color: const Color(0xFFF9F9F9),
-          border: Border.all(color: Colors.grey.shade200),
+          color: isDark ? AppTheme.darkBg : const Color(0xFFF9F9F9),
+          border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
           borderRadius: BorderRadius.circular(16),
         ),
         child: ListView.separated(
@@ -82,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: EdgeInsets.zero,
           itemCount: filtered.length,
           separatorBuilder: (_, __) =>
-              Divider(height: 1, color: Colors.grey.shade200),
+              Divider(height: 1, color: isDark ? Colors.white10 : Colors.grey.shade200),
           itemBuilder: (context, index) {
             final account = filtered[index];
             return ListTile(
@@ -107,10 +108,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               title: Text(
                 account.displayName,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 11,
-                  color: Colors.black87,
+                  color: isDark ? Colors.white70 : Colors.black87,
                 ),
               ),
               subtitle: Text(
@@ -289,8 +290,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F8E9), // Light background
+      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFF1F8E9),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -343,6 +345,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildLoginForm() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final providerError = context.watch<AppProvider>().loginError;
     final displayError =
         _errorMessage ??
@@ -353,8 +356,9 @@ class _LoginScreenState extends State<LoginScreen> {
       constraints: const BoxConstraints(maxWidth: 450),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppTheme.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(24),
+        border: isDark ? Border.all(color: Colors.white10) : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -444,11 +448,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     _rememberMe = !_rememberMe;
                   });
                 },
-                child: const Text(
+                child: Text(
                   'Ingat Saya',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.black87,
+                    color: isDark ? Colors.white70 : Colors.black87,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -540,10 +544,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildQuickAccess() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final textStyle = TextStyle(
       fontSize: 10,
       fontWeight: FontWeight.bold,
-      color: Colors.grey.shade600,
+      color: isDark ? Colors.white60 : Colors.grey.shade600,
       letterSpacing: 1.5,
     );
 
@@ -557,7 +562,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Text(
             'Silahkan hubungi admin pesantren Anda.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+            style: TextStyle(fontSize: 10, color: isDark ? Colors.white38 : Colors.grey.shade500),
           ),
           const SizedBox(height: 20),
           const SizedBox(height: 20),
@@ -577,7 +582,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     'Bantuan',
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.grey.shade600,
+                      color: isDark ? Colors.white60 : Colors.grey.shade600,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -585,7 +590,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Text(
                 '•',
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 10),
+                style: TextStyle(color: isDark ? Colors.white24 : Colors.grey.shade400, fontSize: 10),
               ),
               InkWell(
                 onTap: () => _launchURL(
@@ -600,7 +605,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     'Privasi',
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.grey.shade600,
+                      color: isDark ? Colors.white60 : Colors.grey.shade600,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -608,7 +613,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Text(
                 '•',
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 10),
+                style: TextStyle(color: isDark ? Colors.white24 : Colors.grey.shade400, fontSize: 10),
               ),
               InkWell(
                 onTap: () => _launchURL(
@@ -623,7 +628,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     'Persyaratan',
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.grey.shade600,
+                      color: isDark ? Colors.white60 : Colors.grey.shade600,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

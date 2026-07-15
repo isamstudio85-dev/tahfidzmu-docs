@@ -186,16 +186,39 @@ class AppProvider extends ChangeNotifier
 
       final String effectiveUsername = mappingDoc.exists ? mappingDoc.id : u;
 
+      // For QR login: read defaultPassword from Firestore as a fallback,
+      // but try the password from the QR code first.
+      final String? dbPassword = (qrLogin && mappingDoc.exists)
+          ? (mappingDoc.data()?['defaultPassword'] as String?)?.trim()
+          : null;
+
+      // If QR login and password is same as username (no password in QR), use defaultPassword directly
+      if (qrLogin && p == u && dbPassword != null && dbPassword.isNotEmpty) {
+        p = dbPassword;
+      }
+
       UserCredential? cred;
       try {
-        // 1. Attempt primary sign-in with EXACT provided password
+        // 1. Attempt primary sign-in with the provided/resolved password
         cred = await firebase.signIn(email, p);
       } catch (e) {
         final errStr = e.toString().toLowerCase();
         
-        // 2. Handle First-Time Auto-Provisioning (Excel Imports)
+        // 2. QR Login Fallback: if provided password failed, try defaultPassword from Firestore
+        if (qrLogin && mappingDoc.exists &&
+            (errStr.contains('wrong-password') || errStr.contains('invalid-credential')) &&
+            dbPassword != null && dbPassword.isNotEmpty && dbPassword != p) {
+          try {
+            cred = await firebase.signIn(email, dbPassword);
+            p = dbPassword; // Update p so saved account gets correct password
+          } catch (_) {
+            // Both passwords failed — fall through to auto-provisioning
+          }
+        }
+
+        // 3. Handle First-Time Auto-Provisioning (Excel Imports)
         // If sign-in failed, check if the account doesn't exist in Auth and we should create it
-        if (mappingDoc.exists && (errStr.contains('user-not-found') || errStr.contains('invalid-credential'))) {
+        if (cred == null && mappingDoc.exists && (errStr.contains('user-not-found') || errStr.contains('invalid-credential'))) {
           final expectedInitialPassword = (mappingDoc.data()?['defaultPassword'] as String?) ?? effectiveUsername;
           
           // Only create if the user provided the CORRECT initial password from mapping
@@ -228,8 +251,19 @@ class AppProvider extends ChangeNotifier
           'username': effectiveUsername,
           'pesantrenId': targetPesantrenId,
         });
+
+        // Handle admin-initiated password reset: sync Firebase Auth with new defaultPassword
         if (mData['mustResetAuth'] == true) {
-           await getCollection('user_mappings').doc(effectiveUsername).update({'mustResetAuth': false});
+          final resetPassword = mData['defaultPassword'] as String?;
+          if (resetPassword != null && resetPassword.trim().isNotEmpty && resetPassword.trim() != p) {
+            try {
+              await user.updatePassword(resetPassword.trim());
+              p = resetPassword.trim(); // Use the new password going forward
+            } catch (e) {
+              debugPrint('Failed to sync Auth password after admin reset: $e');
+            }
+          }
+          await getCollection('user_mappings').doc(effectiveUsername).update({'mustResetAuth': false});
         }
       }
 
@@ -240,6 +274,14 @@ class AppProvider extends ChangeNotifier
       currentUsername = effectiveUsername;
       currentPassword = p;
       if (isAdmin) adminPhoto = userData['photoPath'] ?? '';
+
+      // Detect if user is still using default password and should be prompted to change
+      if (mappingDoc.exists) {
+        final defaultPwd = mappingDoc.data()?['defaultPassword'] as String?;
+        final isDefaultPassword = (p == effectiveUsername) || (p == u) || (defaultPwd != null && p == defaultPwd && (defaultPwd == effectiveUsername || defaultPwd == u));
+        final hasChangedBefore = mappingDoc.data()?['mustChangePassword'] == false;
+        mustChangePassword = isDefaultPassword && !hasChangedBefore;
+      }
       await setupFirestoreListeners();
 
       // UI Info for saved account
@@ -804,13 +846,45 @@ class AppProvider extends ChangeNotifier
       AuthCredential credential = EmailAuthProvider.credential(email: user.email!, password: oldPassword);
       await user.reauthenticateWithCredential(credential);
       await user.updatePassword(newPassword);
+
+      // CRITICAL: Update defaultPassword in Firestore user_mappings.
+      // This MUST succeed for QR login to work after password change.
       if (currentUsername != null && pesantrenId != null) {
-        try { await getCollection('user_mappings').doc(currentUsername!).update({'defaultPassword': newPassword}); } catch (_) {}
+        await getCollection('user_mappings').doc(currentUsername!).update({
+          'defaultPassword': newPassword,
+          'mustChangePassword': false,
+        });
       }
+
+      // Update in-memory state
       currentPassword = newPassword;
+      mustChangePassword = false;
+
+      // Update saved account in local preferences so account switcher works
+      try {
+        final accounts = await LoginPreferencesService.getSavedAccounts();
+        final idx = accounts.indexWhere((a) =>
+            a.username == currentUsername && a.pesantrenId == pesantrenId);
+        if (idx >= 0) {
+          final old = accounts[idx];
+          await LoginPreferencesService.saveAccount(SavedAccount(
+            username: old.username,
+            password: newPassword,
+            pesantrenId: old.pesantrenId,
+            displayName: old.displayName,
+            photoPath: old.photoPath,
+            role: old.role,
+            linkedId: old.linkedId,
+          ));
+        }
+      } catch (_) {}
+
       notifyListeners();
       return true;
-    } catch (_) { return false; }
+    } catch (e) {
+      debugPrint('changeOwnPassword failed: $e');
+      return false;
+    }
   }
 
   dynamic getYearlyTarget(String santriId) => null;

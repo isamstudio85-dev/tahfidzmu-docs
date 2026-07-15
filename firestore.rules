@@ -150,6 +150,16 @@ service cloud.firestore {
       }
 
       // ─────────────────────────────────────────
+      // /pesantren/{pid}/invoices/{invoiceId}
+      // Tagihan sewa multi-tenant (SaaS)
+      // ─────────────────────────────────────────
+      match /invoices/{invoiceId} {
+        allow read: if isAuth() && isMemberOf(pid);
+        allow create, delete: if isSuperAdmin();
+        allow update: if isAuth() && (isSuperAdmin() || canManage(pid));
+      }
+
+      // ─────────────────────────────────────────
       // /pesantren/{pid}/user_mappings/{username}
       // SENSITIF: Berisi password default!
       // get tanpa auth dibutuhkan untuk login flow

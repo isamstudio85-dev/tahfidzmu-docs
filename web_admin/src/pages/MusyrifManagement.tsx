@@ -70,6 +70,8 @@ export default function MusyrifManagement() {
     setLoading(true);
     try {
       const pid = profile.pesantrenId;
+
+
       const mapSnap = await getDocs(collection(db, "pesantren", pid, "user_mappings"));
       const nextMappings: Record<string, Mapping> = {};
       mapSnap.forEach((entry) => {
@@ -171,17 +173,11 @@ export default function MusyrifManagement() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !nip) {
-      setError("Nama dan NIP wajib diisi");
-      return;
-    }
-    if (email && !/\S+@\S+\.\S+/.test(email.trim())) {
-      setError("Format email tidak valid");
-      return;
-    }
-
+    if (!name || !nip) { setError("Nama dan NIP wajib diisi"); return; }
+    if (email && !/\S+@\S+\.\S+/.test(email.trim())) { setError("Format email tidak valid"); return; }
     const pid = profile?.pesantrenId;
     if (!pid) return;
+
     const cleanNip = nip.trim().replace(/[^0-9]/g, "");
     if (!cleanNip) {
       setError("NIP harus mengandung angka");
@@ -318,6 +314,8 @@ export default function MusyrifManagement() {
       setImportError("Belum ada data valid untuk diimport.");
       return;
     }
+
+    // Tidak ada batasan kuota musyrif saat impor massal (pay-per-user)
 
     setImportSaving(true);
     setImportError(null);
