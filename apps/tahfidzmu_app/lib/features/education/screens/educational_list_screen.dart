@@ -393,18 +393,17 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
           section['name'],
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
-            fontSize: 16,
+            fontSize: 18,
             color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
           ),
         ),
         const SizedBox(height: 12),
         if (section['definition'] != null) _buildSmartContent(section['definition']),
         if (section['letters'] != null) ...[
-          const SizedBox(height: 12),
           _buildLettersWidget(context, section['letters']),
         ],
         if (section['example'] != null) ...[
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text(
             'Contoh:',
             style: TextStyle(
@@ -438,18 +437,17 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
             sub['name'],
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: 15,
               color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
             ),
           ),
           const SizedBox(height: 8),
           if (sub['definition'] != null) _buildSmartContent(sub['definition']),
           if (sub['letters'] != null) ...[
-            const SizedBox(height: 12),
             _buildLettersWidget(context, sub['letters']),
           ],
           if (sub['example'] != null) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               'Contoh:',
               style: TextStyle(
@@ -467,75 +465,35 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
 
   Widget _buildLettersWidget(BuildContext context, String letters) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hasLatinLetters = RegExp(r'[a-zA-Z]').hasMatch(letters);
-
-    if (hasLatinLetters) {
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        decoration: BoxDecoration(
-          color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
-        ),
-        child: Row(
+    
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
+      child: RichText(
+        text: TextSpan(
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            color: isDark ? Colors.white70 : const Color(0xFF1E293B),
+          ),
           children: [
-            Icon(
-              Icons.info_outline_rounded, 
-              size: 16, 
-              color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                letters,
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white70 : const Color(0xFF1E293B),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        decoration: BoxDecoration(
-          color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              letters,
-              textAlign: TextAlign.center,
-              textDirection: TextDirection.rtl,
-              style: GoogleFonts.amiri(
-                fontSize: 32,
-                color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
-                fontWeight: FontWeight.bold,
-                height: 1.2,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Huruf',
+            TextSpan(
+              text: 'Huruf: ',
               style: TextStyle(
-                fontSize: 11,
+                fontWeight: FontWeight.bold, 
+                color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+              ),
+            ),
+            TextSpan(
+              text: letters,
+              style: GoogleFonts.amiri(
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white38 : Colors.grey.shade500,
-                letterSpacing: 1.0,
+                color: isDark ? Colors.white : const Color(0xFF0F172A),
               ),
             ),
           ],
         ),
-      );
-    }
+      ),
+    );
   }
 
   Widget _buildSmartContent(String content) {
@@ -644,24 +602,19 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
 
   Widget _buildArabicCard(String text) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 12),
-      padding: const EdgeInsets.all(16), // Slimmer padding for HP
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9), 
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200, width: 1.2),
-      ),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.rtl,
-        style: GoogleFonts.amiri(
-          fontSize: 22, // Optimized size for HP
-          color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
-          height: 1.7,
-          fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Center(
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.rtl,
+          style: GoogleFonts.amiri(
+            fontSize: 24,
+            color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+            height: 1.6,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
@@ -703,62 +656,45 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
 
   Widget _buildExample(BuildContext context, dynamic ex) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(top: 12),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkSurface : const Color(0xFFFAF9F6), 
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(12),
-          bottomRight: Radius.circular(12),
-        ),
-        border: Border(
-          left: BorderSide(
-            color: isDark ? AppTheme.accentGreen : AppTheme.primaryGreen, 
-            width: 4,
-          ),
-          top: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100, width: 1.0),
-          bottom: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100, width: 1.0),
-          right: BorderSide(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade100, width: 1.0),
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 12, top: 8, bottom: 8),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            ex['arabic'], 
-            textAlign: TextAlign.center,
-            style: GoogleFonts.amiri(
-              fontSize: 28, 
-              color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, 
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-            ), 
-            textDirection: TextDirection.rtl,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '• ',
+                style: TextStyle(
+                  color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  ex['arabic'],
+                  style: GoogleFonts.amiri(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                  ),
+                  textDirection: TextDirection.rtl,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            ex['latin'], 
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600, 
-              fontSize: 13, 
-              color: isDark ? Colors.white : const Color(0xFF1E293B),
-            ),
-          ),
-          if (ex['note'] != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              ex['note'], 
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11, 
-                color: isDark ? Colors.white38 : Colors.grey.shade500,
-                fontStyle: FontStyle.italic,
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0, top: 4.0),
+            child: Text(
+              '${ex['latin']}${ex['note'] != null ? ' — ${ex['note']}' : ''}',
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                color: isDark ? Colors.white54 : Colors.grey.shade600,
               ),
             ),
-          ],
+          ),
         ],
       ),
     );
