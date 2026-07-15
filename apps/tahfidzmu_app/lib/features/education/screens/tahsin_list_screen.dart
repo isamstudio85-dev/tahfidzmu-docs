@@ -55,7 +55,7 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
     Widget sidebar = ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       itemCount: _categories.length,
-      separatorBuilder: (ctx, i) => const Divider(color: Color(0xFFE5D5B8), height: 1),
+      separatorBuilder: (ctx, i) => Divider(color: isDark ? Colors.white10 : Colors.grey.shade200, height: 1),
       itemBuilder: (ctx, i) {
         return _CategoryAccordion(
           category: _categories[i],
@@ -77,10 +77,10 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
 
     if (isWide) {
       return Scaffold(
-        backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
+        backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
         appBar: AppBar(
           title: const Text('Tahsin & Makharijul Huruf'),
-          backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
+          backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
@@ -90,7 +90,7 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
             SizedBox(
               width: 320,
               child: Container(
-                decoration: const BoxDecoration(border: Border(right: BorderSide(color: Color(0xFFE5D5B8)))),
+                decoration: BoxDecoration(border: Border(right: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200))),
                 child: sidebar,
               ),
             ),
@@ -101,7 +101,7 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.play_circle_filled_rounded, size: 80, color: const Color(0xFF2E5A27).withValues(alpha: 0.1)),
+                          Icon(Icons.play_circle_filled_rounded, size: 80, color: (isDark ? AppTheme.accentGreen : AppTheme.darkGreen).withValues(alpha: 0.15)),
                           const SizedBox(height: 16),
                           const Text('Pilih materi di samping untuk mulai belajar', style: TextStyle(color: Colors.grey)),
                         ],
@@ -122,10 +122,10 @@ class _TahsinListScreenState extends State<TahsinListScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       appBar: AppBar(
         title: const Text('Belajar Tahsin'),
-        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -170,6 +170,7 @@ class _CategoryAccordionState extends State<_CategoryAccordion> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         ListTile(
@@ -179,12 +180,12 @@ class _CategoryAccordionState extends State<_CategoryAccordion> {
           },
           leading: Icon(
             _expanded ? Icons.folder_open_rounded : Icons.folder_rounded,
-            color: const Color(0xFF2E5A27),
+            color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
             size: 20,
           ),
           title: Text(
             widget.category['title'],
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: const Color(0xFF4E342E)),
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: isDark ? Colors.white : const Color(0xFF1E293B)),
           ),
           trailing: Icon(_expanded ? Icons.expand_less : Icons.expand_more, size: 18),
         ),
@@ -199,7 +200,7 @@ class _CategoryAccordionState extends State<_CategoryAccordion> {
                 child: ListTile(
                   dense: true,
                   selected: isSelected && widget.isWide,
-                  selectedTileColor: const Color(0xFFF4EAD4),
+                  selectedTileColor: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9),
                   onTap: () {
                     if (widget.isWide) {
                       widget.onSectionTap(widget.category['title'], s);
@@ -216,8 +217,15 @@ class _CategoryAccordionState extends State<_CategoryAccordion> {
                       );
                     }
                   },
-                  title: Text(s['name'], style: TextStyle(fontSize: 12, fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
-                  leading: const Icon(Icons.play_circle_outline, size: 16),
+                  title: Text(
+                    s['name'], 
+                    style: GoogleFonts.poppins(
+                      fontSize: 12, 
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isDark ? Colors.white70 : const Color(0xFF1E293B),
+                    ),
+                  ),
+                  leading: Icon(Icons.play_circle_outline, size: 16, color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen),
                 ),
               );
             }),
@@ -265,11 +273,11 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
     return Scaffold(
       appBar: widget.hideAppBar ? null : AppBar(
         title: const Text('Belajar Tahsin'),
-        backgroundColor: isDark ? AppTheme.darkSurface : const Color(0xFF2E5A27),
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      backgroundColor: isDark ? AppTheme.darkBg : const Color(0xFFFDF9F0),
+      backgroundColor: isDark ? AppTheme.darkBg : AppTheme.lightBg,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
@@ -279,12 +287,12 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
               if (widget.hideAppBar) ...[
                 Text(
                   section['name'],
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: isDark ? Colors.white : const Color(0xFF2E5A27)),
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 24, color: isDark ? Colors.white : AppTheme.darkGreen),
                 ),
                 const SizedBox(height: 8),
                 Text(widget.categoryTitle, style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 20),
-                const Divider(color: Color(0xFFE5D5B8)),
+                Divider(color: isDark ? Colors.white10 : Colors.grey.shade200),
                 const SizedBox(height: 20),
               ],
               
@@ -292,12 +300,16 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
                 // NAVIGATION HEADER (Mobile Only)
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  decoration: BoxDecoration(color: const Color(0xFFF4EAD4), borderRadius: BorderRadius.circular(8), border: Border.all(color: const Color(0xFFE5D5B8))),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9), 
+                    borderRadius: BorderRadius.circular(8), 
+                    border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
+                  ),
                   child: Row(
                     children: [
-                      IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: hasPrev ? const Color(0xFF2E5A27) : Colors.grey.shade400, size: 18), onPressed: hasPrev ? () => setState(() => _currentIndex--) : null),
-                      Expanded(child: Center(child: Text(section['name'], style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold, color: const Color(0xFF4E342E)), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis))),
-                      IconButton(icon: Icon(Icons.arrow_forward_ios_rounded, color: hasNext ? const Color(0xFF2E5A27) : Colors.grey.shade400, size: 18), onPressed: hasNext ? () => setState(() => _currentIndex++) : null),
+                      IconButton(icon: Icon(Icons.arrow_back_ios_new_rounded, color: hasPrev ? (isDark ? AppTheme.accentGreen : AppTheme.darkGreen) : Colors.grey.shade400, size: 18), onPressed: hasPrev ? () => setState(() => _currentIndex--) : null),
+                      Expanded(child: Center(child: Text(section['name'], style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF1E293B)), textAlign: TextAlign.center, maxLines: 2, overflow: TextOverflow.ellipsis))),
+                      IconButton(icon: Icon(Icons.arrow_forward_ios_rounded, color: hasNext ? (isDark ? AppTheme.accentGreen : AppTheme.darkGreen) : Colors.grey.shade400, size: 18), onPressed: hasNext ? () => setState(() => _currentIndex++) : null),
                     ],
                   ),
                 ),
@@ -308,23 +320,50 @@ class _TahsinDetailPlayScreenState extends State<TahsinDetailPlayScreen> {
                 LockedYoutubePlayer(key: ValueKey(section['youtubeId']), youtubeId: section['youtubeId']),
                 const SizedBox(height: 24),
               ],
-
+ 
               if (section['definition'] != null) ...[
-                const Text('PENJELASAN', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 1, color: Color(0xFF2E5A27))),
+                Text(
+                  'Penjelasan',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen,
+                  ),
+                ),
                 const SizedBox(height: 10),
-                Text(section['definition'], style: GoogleFonts.poppins(fontSize: 14, height: 1.7, color: const Color(0xFF4E342E))),
+                Text(
+                  section['definition'], 
+                  style: GoogleFonts.poppins(
+                    fontSize: 14, 
+                    height: 1.7, 
+                    color: isDark ? Colors.white70 : const Color(0xFF1E293B),
+                  ),
+                ),
                 const SizedBox(height: 24),
               ],
   
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(color: const Color(0xFFFAF6EE), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFEDE8DF))),
+                decoration: BoxDecoration(
+                  color: isDark ? AppTheme.darkSurface : const Color(0xFFF1F5F9), 
+                  borderRadius: BorderRadius.circular(12), 
+                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey.shade200),
+                ),
                 child: Column(
                   children: [
-                    const Icon(Icons.copyright_rounded, color: Color(0xFF2E5A27), size: 20),
-                    const SizedBox(height: 6),
-                    Text('Sumber Video: YouTube Syeikh Hamdy Habeeb\nHak Cipta & Panduan sepenuhnya milik pemilik saluran video.', style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey.shade600, fontWeight: FontWeight.w500, height: 1.5), textAlign: TextAlign.center),
+                    Icon(Icons.copyright_rounded, color: isDark ? AppTheme.accentGreen : AppTheme.darkGreen, size: 20),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Sumber Video: YouTube Syeikh Hamdy Habeeb\nHak Cipta & Panduan sepenuhnya milik pemilik saluran video.', 
+                      style: GoogleFonts.poppins(
+                        fontSize: 11, 
+                        color: isDark ? Colors.white38 : Colors.grey.shade600, 
+                        fontWeight: FontWeight.w500, 
+                        height: 1.5,
+                      ), 
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               ),
