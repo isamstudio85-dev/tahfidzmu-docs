@@ -1,0 +1,19 @@
+name: pesantren_mu
+
+packages:
+  - "apps/**"
+  - "packages/**"
+
+command:
+  bootstrap:
+    # It seems so that running flutter pub get in each package is done via bootstrap.
+    usePubspecOverrides: true
+
+scripts:
+  analyze:
+    run: melos exec -- "flutter analyze"
+    description: Run `flutter analyze` in all packages.
+  
+  test:
+    run: melos exec --dir-exists="test" -- "flutter test"
+    description: Run `flutter test` in all packages with a test directory.
