@@ -468,10 +468,11 @@ class _EducationalDetailScreenState extends State<EducationalDetailScreen> {
           return _buildLinkButton(trimmed);
         }
 
-        // Detect Arabic lines (Must contain at least one Arabic letter, not just marks)
+        // Detect Arabic lines (Must contain at least one Arabic letter and NO Latin alphabetic characters)
         final hasArabicLetters = RegExp(r'[\u0621-\u064A\u0671-\u06D3]').hasMatch(line);
+        final hasLatinLetters = RegExp(r'[a-zA-Z]').hasMatch(line);
 
-        if (hasArabicLetters) {
+        if (hasArabicLetters && !hasLatinLetters) {
           return _buildArabicCard(line);
         }
 
